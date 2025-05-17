@@ -16,6 +16,12 @@ class ServiceLocator {
   /// API服务实例
   ApiService? _apiService;
   
+  /// 初始化服务
+  void setup() {
+    // 初始化API服务
+    _apiService = MockApiService();
+  }
+
   /// 获取API服务
   ApiService getApiService() {
     // 如果服务实例不存在，则创建一个新的实例

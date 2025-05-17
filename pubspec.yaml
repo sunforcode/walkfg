@@ -80,7 +80,6 @@ flutter:
     - assets/animations/
     - assets/maps/
     - assets/data/
-    - lib/core/mock/data/
     - .env
 
 flutter_native_splash:

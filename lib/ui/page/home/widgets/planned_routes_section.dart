@@ -1,7 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../model/route_model.dart';
 import '../../../../service/service_locator.dart';
+import '../../route/cupertino_route_list_screen.dart';
 
 /// 规划路线部分组件
 class PlannedRoutesSection extends StatefulWidget {
@@ -58,10 +59,11 @@ class _PlannedRoutesSectionState extends State<PlannedRoutesSection> with Automa
                 fontWeight: FontWeight.bold,
               ),
             ),
-            TextButton(
+            CupertinoButton(
+              padding: EdgeInsets.zero,
               onPressed: () {
                 // 查看全部规划路线
-                context.go('/trips');
+                _navigateToAllTrips(context);
               },
               child: const Text('查看全部'),
             ),
@@ -94,14 +96,30 @@ class _PlannedRoutesSectionState extends State<PlannedRoutesSection> with Automa
     );
   }
 
+  /// 导航到所有行程页面
+  void _navigateToAllTrips(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
+        builder: (context) => const RouteListScreen(),
+      ),
+    );
+  }
+
+  /// 导航到路线页面
+  void _navigateToRoutes(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
+        builder: (context) => const RouteListScreen(),
+      ),
+    );
+  }
+
   /// 构建加载指示器
   Widget _buildLoadingIndicator() {
     return SizedBox(
       height: 100,
       child: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(_blueColors[0]),
-        ),
+        child: CupertinoActivityIndicator(),
       ),
     );
   }
@@ -119,7 +137,7 @@ class _PlannedRoutesSectionState extends State<PlannedRoutesSection> with Automa
       child: Column(
         children: [
           Icon(
-            Icons.error_outline,
+            CupertinoIcons.exclamationmark_circle,
             color: color,
             size: 32,
           ),
@@ -130,19 +148,15 @@ class _PlannedRoutesSectionState extends State<PlannedRoutesSection> with Automa
             style: TextStyle(color: color.withOpacity(0.8)),
           ),
           const SizedBox(height: 8),
-          TextButton(
+          CupertinoButton(
             onPressed: () {
               setState(() {
                 _plannedRoutesFuture = _loadData();
               });
             },
-            style: TextButton.styleFrom(
-              foregroundColor: color,
-              backgroundColor: color.withOpacity(0.1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
+            color: color,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            borderRadius: BorderRadius.circular(8),
             child: const Text('重试'),
           ),
         ],
@@ -163,7 +177,7 @@ class _PlannedRoutesSectionState extends State<PlannedRoutesSection> with Automa
       child: Column(
         children: [
           Icon(
-            Icons.hiking,
+            CupertinoIcons.map,
             color: color,
             size: 48,
           ),
@@ -184,19 +198,20 @@ class _PlannedRoutesSectionState extends State<PlannedRoutesSection> with Automa
             ),
           ),
           const SizedBox(height: 16),
-          ElevatedButton.icon(
+          CupertinoButton(
             onPressed: () {
-              context.go('/routes');
+              _navigateToRoutes(context);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: color,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+            color: color,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(CupertinoIcons.add, size: 16),
+                SizedBox(width: 4),
+                Text('创建路线'),
+              ],
             ),
-            icon: const Icon(Icons.add),
-            label: const Text('创建路线'),
           ),
         ],
       ),
@@ -223,86 +238,133 @@ class _PlannedRoutesSectionState extends State<PlannedRoutesSection> with Automa
           ),
           elevation: 3,
           shadowColor: statusColor.withOpacity(0.3),
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(16),
-            title: Row(
-              children: [
-                Text(
-                  route.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: isCompleted ? Colors.grey : Colors.black87,
-                    decoration: isCompleted ? TextDecoration.lineThrough : null,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: statusColor.withOpacity(0.3), width: 1),
-                  ),
-                  child: Text(
-                    route.getStatusName(),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: statusColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            subtitle: Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Row(
+          child: CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              _showRouteDetails(context, route);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.calendar_today,
-                    size: 14,
-                    color: statusColor.withOpacity(0.7),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          route.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isCompleted ? Colors.grey : Colors.black87,
+                            decoration: isCompleted ? TextDecoration.lineThrough : null,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: statusColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: statusColor.withOpacity(0.3), width: 1),
+                        ),
+                        child: Text(
+                          route.getStatusName(),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: statusColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    route.getFormattedDate(),
-                    style: TextStyle(
-                      color: statusColor.withOpacity(0.8),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Icon(
-                    Icons.access_time,
-                    size: 14,
-                    color: statusColor.withOpacity(0.7),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${route.days}天',
-                    style: TextStyle(
-                      color: statusColor.withOpacity(0.8),
-                    ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        CupertinoIcons.calendar,
+                        size: 14,
+                        color: statusColor.withOpacity(0.7),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        route.getFormattedDate(),
+                        style: TextStyle(
+                          color: statusColor.withOpacity(0.8),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Icon(
+                        CupertinoIcons.time,
+                        size: 14,
+                        color: statusColor.withOpacity(0.7),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${route.days}天',
+                        style: TextStyle(
+                          color: statusColor.withOpacity(0.8),
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        CupertinoIcons.chevron_right,
+                        size: 16,
+                        color: statusColor.withOpacity(0.7),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ),
-            trailing: Container(
-              decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: Icon(Icons.arrow_forward_ios, size: 16, color: statusColor),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('查看${route.name}')),
-                  );
-                },
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  /// 显示路线详情
+  void _showRouteDetails(BuildContext context, PlannedRouteModel route) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text(route.name),
+        content: Column(
+          children: [
+            const SizedBox(height: 10),
+            Text('状态: ${route.getStatusName()}'),
+            Text('开始日期: ${route.getFormattedDate()}'),
+            Text('持续时间: ${route.days}天'),
+          ],
+        ),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('关闭'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          CupertinoDialogAction(
+            child: const Text('查看详情'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              // 导航到路线详情页
+              Navigator.of(context, rootNavigator: true).push(
+                CupertinoPageRoute(
+                  builder: (context) => CupertinoPageScaffold(
+                    navigationBar: CupertinoNavigationBar(
+                      middle: Text(route.name),
+                    ),
+                    child: const SafeArea(
+                      child: Center(
+                        child: Text('路线详情页面正在开发中...'),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

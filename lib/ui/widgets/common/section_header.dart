@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 /// 通用部分标题组件
@@ -31,9 +32,16 @@ class SectionHeader extends StatelessWidget {
           ),
         ),
         if (actionText != null && onAction != null)
-          TextButton(
+          CupertinoButton(
+            padding: EdgeInsets.zero,
             onPressed: onAction,
-            child: Text(actionText!),
+            child: Text(
+              actionText!,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
       ],
     );

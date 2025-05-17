@@ -1,5 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../model/guide_model.dart';
 import '../../../../service/service_locator.dart';
 import '../../../theme/app_colors.dart';
@@ -8,6 +8,7 @@ import '../../../widgets/common/error_widget.dart';
 import '../../../widgets/common/empty_content_widget.dart';
 import '../../../widgets/common/section_header.dart';
 import '../../../widgets/cards/guide_card.dart';
+import '../../route/cupertino_route_list_screen.dart';
 
 /// 徒步攻略部分组件
 class HikingGuidesSection extends StatefulWidget {
@@ -59,7 +60,7 @@ class _HikingGuidesSectionState extends State<HikingGuidesSection> with Automati
         SectionHeader(
           title: '徒步攻略',
           actionText: '查看全部',
-          onAction: () => context.go('/guides'),
+          onAction: () => _navigateToAllGuides(context),
         ),
 
         const SizedBox(height: 16),
@@ -98,6 +99,15 @@ class _HikingGuidesSectionState extends State<HikingGuidesSection> with Automati
           },
         ),
       ],
+    );
+  }
+
+  /// 导航到所有攻略页面
+  void _navigateToAllGuides(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
+        builder: (context) => const RouteListScreen(),
+      ),
     );
   }
 

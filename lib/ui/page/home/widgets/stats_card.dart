@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../model/user_model.dart';
 import '../../../../service/service_locator.dart';
+import '../../route/cupertino_route_list_screen.dart';
+import '../../equipment/cupertino_equipment_list_screen.dart';
 
 /// 统计信息卡片组件
 class StatsCard extends StatefulWidget {
@@ -73,9 +76,7 @@ class _StatsCardState extends State<StatsCard> with AutomaticKeepAliveClientMixi
         padding: const EdgeInsets.all(16),
         height: 120,
         child: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(_blueColors[0]),
-          ),
+          child: CupertinoActivityIndicator(),
         ),
       ),
     );
@@ -95,7 +96,7 @@ class _StatsCardState extends State<StatsCard> with AutomaticKeepAliveClientMixi
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.error_outline,
+              CupertinoIcons.exclamationmark_circle,
               color: color,
               size: 32,
             ),
@@ -106,19 +107,15 @@ class _StatsCardState extends State<StatsCard> with AutomaticKeepAliveClientMixi
               style: TextStyle(color: color.withOpacity(0.8)),
             ),
             const SizedBox(height: 8),
-            TextButton(
+            CupertinoButton(
               onPressed: () {
                 setState(() {
                   _userStatsFuture = _loadData();
                 });
               },
-              style: TextButton.styleFrom(
-                foregroundColor: color,
-                backgroundColor: color.withOpacity(0.1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
+              color: color,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              borderRadius: BorderRadius.circular(8),
               child: const Text('重试'),
             ),
           ],
@@ -142,7 +139,7 @@ class _StatsCardState extends State<StatsCard> with AutomaticKeepAliveClientMixi
             Row(
               children: [
                 Icon(
-                  Icons.bar_chart,
+                  CupertinoIcons.chart_bar,
                   size: 24,
                   color: _blueColors[0],
                 ),
@@ -163,30 +160,57 @@ class _StatsCardState extends State<StatsCard> with AutomaticKeepAliveClientMixi
                   context,
                   userStats.completedRoutes.toString(),
                   '已完成路线',
-                  Icons.flag,
+                  CupertinoIcons.flag,
                   _blueColors[0],
-                  () => context.go('/routes?filter=completed'),
+                  () => _navigateToCompletedRoutes(context),
                 ),
                 _buildStatItem(
                   context,
                   userStats.equipmentLists.toString(),
                   '装备清单',
-                  Icons.backpack_outlined,
+                  CupertinoIcons.bag,
                   _blueColors[2],
-                  () => context.go('/equipment'),
+                  () => _navigateToEquipment(context),
                 ),
                 _buildStatItem(
                   context,
                   userStats.favoriteRoutes.toString(),
                   '收藏路线',
-                  Icons.favorite,
+                  CupertinoIcons.heart,
                   _blueColors[4],
-                  () => context.go('/favorites'),
+                  () => _navigateToFavorites(context),
                 ),
               ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 导航到已完成路线页面
+  void _navigateToCompletedRoutes(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
+        builder: (context) => const RouteListScreen(),
+      ),
+    );
+  }
+
+  /// 导航到装备页面
+  void _navigateToEquipment(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
+        builder: (context) => const EquipmentListScreen(),
+      ),
+    );
+  }
+
+  /// 导航到收藏路线页面
+  void _navigateToFavorites(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
+        builder: (context) => const RouteListScreen(),
       ),
     );
   }
@@ -200,9 +224,9 @@ class _StatsCardState extends State<StatsCard> with AutomaticKeepAliveClientMixi
     Color color,
     VoidCallback onTap,
   ) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(

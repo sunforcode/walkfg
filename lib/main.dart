@@ -2,78 +2,49 @@
 ///
 /// 包含应用程序初始化、主题设置和路由配置
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'ui/router/app_router.dart';
-import 'ui/theme/app_theme.dart';
-import 'resource/services/service_locator.dart';
+import 'service/service_locator.dart';
+import 'ui/page/main_layout.dart';
+import 'ui/theme/app_colors.dart';
 
-/// 主题模式提供者
-final themeModeProvider = StateProvider<ThemeMode>((ref) {
-  return ThemeMode.system;
-});
-
-void main() async {
-  // 确保Flutter绑定初始化
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // 设置首选设备方向
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-
+void main() {
   // 初始化服务定位器
-  await ServiceLocator.init();
+  ServiceLocator.instance.setup();
 
-  // 运行应用
-  runApp(
-    const ProviderScope(
-      child: WalkApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
-/// 应用程序主类
-class WalkApp extends ConsumerWidget {
+/// 应用入口
+class MyApp extends StatelessWidget {
   /// 构造函数
-  const WalkApp({super.key});
+  const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // 获取主题模式
-    final themeMode = ref.watch(themeModeProvider);
-    // 获取路由配置
-    final router = ref.watch(routerProvider);
-
-    return MaterialApp.router(
-      // 应用标题
+  Widget build(BuildContext context) {
+    return CupertinoApp(
       title: 'Walk - 徒步旅行助手',
-
-      // 调试标志
-      debugShowCheckedModeBanner: false,
-
-      // 主题设置
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
-
-      // 路由配置
-      routerConfig: router,
-
-      // 本地化设置
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('zh', 'CN'), // 中文
-        Locale('en', 'US'), // 英文
-      ],
-      locale: const Locale('zh', 'CN'),
+      theme: const CupertinoThemeData(
+        primaryColor: AppColors.primary,
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Color(0xFFF5F5F5),
+        textTheme: CupertinoTextThemeData(
+          primaryColor: AppColors.primary,
+        ),
+      ),
+      home: const MainLayout(),
+      routes: {
+        '/settings': (context) => const CupertinoPageScaffold(
+          navigationBar: CupertinoNavigationBar(
+            middle: Text('设置'),
+          ),
+          child: SafeArea(
+            child: Center(
+              child: Text('设置页面'),
+            ),
+          ),
+        ),
+      },
     );
   }
 }

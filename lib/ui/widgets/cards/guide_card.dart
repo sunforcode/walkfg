@@ -1,8 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../model/guide_model.dart';
 import '../../../service/mock_api_service.dart';
 import '../../theme/app_colors.dart';
+import '../common/network_image_with_fallback.dart';
 
 /// 攻略卡片组件
 class GuideCard extends StatelessWidget {
@@ -35,59 +36,38 @@ class GuideCard extends StatelessWidget {
       ),
       elevation: 4,
       shadowColor: accentColor.withOpacity(0.4),
-      child: InkWell(
-        onTap: () {
-          // 导航到攻略详情页
-          context.go('/guides/${guide.id}');
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
+        onPressed: () {
+          // 导航到攻略详情页 - 使用iOS风格导航
+          Navigator.of(context, rootNavigator: true).push(
+            CupertinoPageRoute(
+              builder: (context) => _buildGuideDetailPlaceholder(context),
+            ),
+          );
         },
-        splashColor: accentColor.withOpacity(0.1),
-        highlightColor: accentColor.withOpacity(0.05),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 攻略封面图片 - 强化部分
-            Stack(
-              children: [
-                // 封面图片或图标
-                guide.coverUrl != null
-                    ? Hero(
-                        tag: 'guide_image_${guide.id}',
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                          child: AspectRatio(
-                            aspectRatio: 4/3, // 增大图片比例
-                            child: Image.network(
-                              guide.coverUrl!,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      accentColor.withOpacity(0.8),
-                                      accentColor.withOpacity(0.5),
-                                    ],
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Icon(
-                                    mockService.getIconData(guide.iconCode),
-                                    size: 48,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
+            // 攻略封面图片 - 填充剩余空间
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // 封面图片或图标
+                  guide.coverUrl != null
+                      ? Hero(
+                          tag: 'guide_image_${guide.id}',
+                          child: NetworkImageWithFallback(
+                            url: guide.coverUrl!,
+                            fit: BoxFit.cover,
+                            borderRadius: 0,
+                            fallbackColor: accentColor,
+                            fallbackIcon: mockService.getIconData(guide.iconCode),
                           ),
-                        ),
-                      )
-                    : AspectRatio(
-                        aspectRatio: 4/3, // 增大图片比例
-                        child: Container(
+                        )
+                      : Container(
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -101,122 +81,143 @@ class GuideCard extends StatelessWidget {
                             child: Icon(
                               mockService.getIconData(guide.iconCode),
                               size: 48,
-                              color: Colors.white,
+                              color: CupertinoColors.white,
                             ),
                           ),
                         ),
-                      ),
 
-                // 标签
-                if (guide.tags.isNotEmpty)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: accentColor,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
+                  // 标签
+                  if (guide.tags.isNotEmpty)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: accentColor,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          guide.tags.first,
+                          style: const TextStyle(
+                            color: CupertinoColors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        guide.tags.first,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-
-            // 标题部分
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-              child: Text(
-                guide.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: AppColors.textPrimary,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-
-            // 底部交互区域 - 弱化部分
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-              child: Row(
-                children: [
-                  // 作者头像和名称
-                  CircleAvatar(
-                    radius: 10,
-                    backgroundImage: guide.authorAvatarUrl != null
-                        ? NetworkImage(guide.authorAvatarUrl!)
-                        : null,
-                    backgroundColor: accentColor.withOpacity(0.1),
-                    child: guide.authorAvatarUrl == null
-                        ? Icon(Icons.person, size: 10, color: accentColor.withOpacity(0.5))
-                        : null,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    guide.author,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textSecondary.withOpacity(0.7),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  const Spacer(),
-
-                  // 阅读量
-                  Icon(
-                    Icons.remove_red_eye,
-                    size: 10,
-                    color: AppColors.textSecondary.withOpacity(0.5),
-                  ),
-                  const SizedBox(width: 2),
-                  Text(
-                    _formatNumber(guide.views),
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: AppColors.textSecondary.withOpacity(0.5),
-                    ),
-                  ),
-
-                  const SizedBox(width: 8),
-
-                  // 点赞按钮
-                  _buildLikeButton(guide, accentColor),
                 ],
               ),
             ),
 
-            // 底部时间指示
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 12, bottom: 6),
-                child: Text(
-                  _getTimeAgo(guide.publishDate),
-                  style: TextStyle(
-                    fontSize: 9,
-                    color: AppColors.textSecondary.withOpacity(0.5),
+            // 标题和用户信息部分 - 固定高度
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 标题部分 - 最多两行
+                  SizedBox(
+                    height: 40, // 固定高度，容纳两行文本
+                    child: Text(
+                      guide.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: AppColors.textPrimary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
+
+                  const SizedBox(height: 8),
+
+                  // 底部交互区域 - 作者信息和点赞
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // 作者头像和名称
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 10,
+                              backgroundImage: guide.authorAvatarUrl != null
+                                  ? NetworkImage(guide.authorAvatarUrl!)
+                                  : null,
+                              backgroundColor: accentColor.withOpacity(0.1),
+                              child: guide.authorAvatarUrl == null
+                                  ? Icon(CupertinoIcons.person, size: 10, color: accentColor.withOpacity(0.5))
+                                  : null,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                guide.author,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary.withOpacity(0.7),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // 右侧信息：阅读量和点赞
+                      Row(
+                        children: [
+                          // 阅读量
+                          Icon(
+                            CupertinoIcons.eye,
+                            size: 10,
+                            color: AppColors.textSecondary.withOpacity(0.5),
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            _formatNumber(guide.views),
+                            style: TextStyle(
+                              fontSize: 9,
+                              color: AppColors.textSecondary.withOpacity(0.5),
+                            ),
+                          ),
+
+                          const SizedBox(width: 8),
+
+                          // 点赞按钮
+                          _buildLikeButton(guide, accentColor),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // 底部时间指示
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        _getTimeAgo(guide.publishDate),
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: AppColors.textSecondary.withOpacity(0.5),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -225,7 +226,65 @@ class GuideCard extends StatelessWidget {
     );
   }
 
-  /// 构建点赞按钮 - 弱化
+  /// 构建攻略详情页占位
+  Widget _buildGuideDetailPlaceholder(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(guide.title),
+      ),
+      child: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (guide.coverUrl != null)
+                Hero(
+                  tag: 'guide_image_${guide.id}',
+                  child: Container(
+                    width: 200,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                        image: NetworkImage(guide.coverUrl!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 20),
+              Text(
+                guide.title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                '作者: ${guide.author}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: CupertinoColors.systemGrey,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                '攻略详情页面正在开发中...',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: CupertinoColors.systemBlue,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 构建点赞按钮
   Widget _buildLikeButton(GuideModel guide, Color accentColor) {
     final likeColor = guide.isLiked ? AppColors.like.withOpacity(0.7) : accentColor.withOpacity(0.5);
 
@@ -236,7 +295,7 @@ class GuideCard extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            guide.isLiked ? Icons.favorite : Icons.favorite_border,
+            guide.isLiked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
             size: 12,
             color: likeColor,
           ),
