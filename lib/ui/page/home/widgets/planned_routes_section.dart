@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../model/route_model.dart';
+import '../../../../model/route/route_model.dart';
 import '../../../../service/service_locator.dart';
 import '../../route/cupertino_route_list_screen.dart';
 import '../../route/cupertino_route_detail_screen.dart';

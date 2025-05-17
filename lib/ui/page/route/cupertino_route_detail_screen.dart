@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../model/route_model.dart';
+import '../../../model/route/route_model.dart';
 import '../../../service/service_locator.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_color_palette.dart';

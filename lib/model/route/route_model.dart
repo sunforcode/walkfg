@@ -1,93 +1,88 @@
-/// 路线模型类，用于存储徒步路线的信息
-///
-/// 包含路线的基本信息、地理数据、难度评级和关键点等
-
+import 'package:flutter/material.dart';
+import 'package:walk/model/base/base_model.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../base/base_model.dart';
 
 part 'route_model.g.dart';
 
-/// 难度级别
-enum DifficultyLevel {
+/// 路线难度枚举
+enum RouteDifficulty {
+  /// 简单
   easy,
-  moderate,
-  challenging,
-  difficult,
-  extreme
+
+  /// 中等
+  medium,
+
+  /// 困难
+  hard,
+
+  /// 极难
+  extreme,
 }
 
-/// 路线类型
-enum RouteType {
-  loop,
-  outAndBack,
-  pointToPoint,
-  network
-}
+/// 路线状态枚举
+enum RouteStatus {
+  /// 规划中
+  planning,
 
-/// 地形类型
-enum TerrainType {
-  flat,
-  rolling,
-  hilly,
-  mountainous,
-  rocky,
-  sandy,
-  muddy,
-  snowy,
-  icy,
-  mixed
+  /// 已完成
+  completed,
+
+  /// 已取消
+  cancelled,
 }
 
 /// 路线模型
 @JsonSerializable()
 class RouteModel extends BaseModel {
-  /// 路线ID
+  /// ID
   final String id;
 
-  /// 路线名称
+  /// 名称
   final String name;
 
-  /// 路线描述
+  /// 描述
   final String description;
 
-  /// 路线距离（公里）
+  /// 距离(公里)
   final double distance;
 
-  /// 预计时间
+  /// 持续时间(小时或天)
   final String duration;
 
-  /// 难度级别
-  final String difficulty;
+  /// 难度
+  final RouteDifficulty difficulty;
 
-  /// 海拔增益（米）
+  /// 最佳季节
+  final String bestSeason;
+
+  /// 累计上升(米)
   final int elevationGain;
 
-  /// 海拔损失（米）
+  /// 累计下降(米)
   final int elevationLoss;
 
-  /// 最高点（米）
+  /// 最高点(米)
   final int highestPoint;
 
-  /// 最低点（米）
+  /// 最低点(米)
   final int lowestPoint;
 
-  /// 地形类型
-  final List<String> terrainTypes;
+  /// 图片URL列表
+  final List<String> imageUrls;
 
-  /// 适宜季节
-  final List<String> seasons;
+  /// GPX轨迹文件URL
+  final String? gpxUrl;
 
-  /// 水源
-  final List<String> waterSources;
+  /// 地区
+  final String region;
 
-  /// 营地
-  final List<String> campingSites;
+  /// 评分
+  final double rating;
 
-  /// 创建时间
-  final DateTime? createdAt;
+  /// 最佳季节列表
+  final List<String> bestSeasons;
 
-  /// 更新时间
-  final DateTime? updatedAt;
+  final int reviewCount;
 
   /// 构造函数
   RouteModel({
@@ -97,37 +92,38 @@ class RouteModel extends BaseModel {
     required this.distance,
     required this.duration,
     required this.difficulty,
+    required this.bestSeason,
     required this.elevationGain,
     required this.elevationLoss,
     required this.highestPoint,
     required this.lowestPoint,
-    required this.terrainTypes,
-    required this.seasons,
-    required this.waterSources,
-    required this.campingSites,
-    this.createdAt,
-    this.updatedAt,
-  });
+    required this.imageUrls,
+    this.gpxUrl,
+    this.reviewCount = 0,
+    this.region = '',
+    this.rating = 0.0,
+    List<String>? bestSeasons,
+  }) : this.bestSeasons = bestSeasons ?? const [];
 
-  /// 从JSON创建路线模型
+  /// 从JSON创建
   factory RouteModel.fromJson(Map<String, dynamic> json) {
     return RouteModel(
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      distance: (json['distance'] as num).toDouble(),
+      distance: json['distance'] as double,
       duration: json['duration'] as String,
-      difficulty: json['difficulty'] as String,
-      elevationGain: json['elevation_gain'] as int,
-      elevationLoss: json['elevation_loss'] as int,
-      highestPoint: json['highest_point'] as int,
-      lowestPoint: json['lowest_point'] as int,
-      terrainTypes: (json['terrain_types'] as List<dynamic>).map((e) => e as String).toList(),
-      seasons: (json['seasons'] as List<dynamic>).map((e) => e as String).toList(),
-      waterSources: (json['water_sources'] as List<dynamic>).map((e) => e as String).toList(),
-      campingSites: (json['camping_sites'] as List<dynamic>).map((e) => e as String).toList(),
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : null,
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : null,
+      difficulty: RouteDifficulty.values[json['difficulty'] as int],
+      bestSeason: json['bestSeason'] as String,
+      elevationGain: json['elevationGain'] as int,
+      elevationLoss: json['elevationLoss'] as int,
+      highestPoint: json['highestPoint'] as int,
+      lowestPoint: json['lowestPoint'] as int,
+      imageUrls: (json['imageUrls'] as List).cast<String>(),
+      gpxUrl: json['gpxUrl'] as String?,
+      region: json['region'] as String? ?? '',
+      rating: json['rating'] as double? ?? 0.0,
+      bestSeasons: (json['bestSeasons'] as List?)?.cast<String>(),
     );
   }
 
@@ -139,56 +135,150 @@ class RouteModel extends BaseModel {
       'description': description,
       'distance': distance,
       'duration': duration,
-      'difficulty': difficulty,
-      'elevation_gain': elevationGain,
-      'elevation_loss': elevationLoss,
-      'highest_point': highestPoint,
-      'lowest_point': lowestPoint,
-      'terrain_types': terrainTypes,
-      'seasons': seasons,
-      'water_sources': waterSources,
-      'camping_sites': campingSites,
-      'created_at': createdAt?.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
+      'difficulty': difficulty.index,
+      'bestSeason': bestSeason,
+      'elevationGain': elevationGain,
+      'elevationLoss': elevationLoss,
+      'highestPoint': highestPoint,
+      'lowestPoint': lowestPoint,
+      'imageUrls': imageUrls,
+      'gpxUrl': gpxUrl,
+      'region': region,
+      'rating': rating,
+      'bestSeasons': bestSeasons,
     };
   }
 
-  /// 创建副本并更新指定字段
-  RouteModel copyWith({
-    String? id,
-    String? name,
-    String? description,
-    double? distance,
-    String? duration,
-    String? difficulty,
-    int? elevationGain,
-    int? elevationLoss,
-    int? highestPoint,
-    int? lowestPoint,
-    List<String>? terrainTypes,
-    List<String>? seasons,
-    List<String>? waterSources,
-    List<String>? campingSites,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return RouteModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      distance: distance ?? this.distance,
-      duration: duration ?? this.duration,
-      difficulty: difficulty ?? this.difficulty,
-      elevationGain: elevationGain ?? this.elevationGain,
-      elevationLoss: elevationLoss ?? this.elevationLoss,
-      highestPoint: highestPoint ?? this.highestPoint,
-      lowestPoint: lowestPoint ?? this.lowestPoint,
-      terrainTypes: terrainTypes ?? this.terrainTypes,
-      seasons: seasons ?? this.seasons,
-      waterSources: waterSources ?? this.waterSources,
-      campingSites: campingSites ?? this.campingSites,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+  /// 获取难度名称
+  String getDifficultyName() {
+    switch (difficulty) {
+      case RouteDifficulty.easy:
+        return '简单';
+      case RouteDifficulty.medium:
+        return '中等';
+      case RouteDifficulty.hard:
+        return '困难';
+      case RouteDifficulty.extreme:
+        return '极难';
+    }
+  }
+
+  /// 获取难度颜色
+  Color getDifficultyColor() {
+    switch (difficulty) {
+      case RouteDifficulty.easy:
+        return Colors.green;
+      case RouteDifficulty.medium:
+        return Colors.orange;
+      case RouteDifficulty.hard:
+        return Colors.red;
+      case RouteDifficulty.extreme:
+        return Colors.purple;
+    }
+  }
+
+  /// 获取行程天数
+  int get durationDays {
+    // 如果duration是"X天"格式，提取数字
+    if (duration.contains('天')) {
+      return int.tryParse(duration.split('天')[0]) ?? 1;
+    }
+    // 如果duration是"X小时"格式，转换为天数（假设8小时为1天）
+    else if (duration.contains('小时')) {
+      final hours = int.tryParse(duration.split('小时')[0]) ?? 0;
+      return (hours / 8).ceil();
+    }
+    // 默认返回1天
+    return 1;
+  }
+}
+
+/// 计划路线模型
+class PlannedRouteModel {
+  /// ID
+  final String id;
+
+  /// 路线ID
+  final String routeId;
+
+  /// 名称
+  final String name;
+
+  /// 日期
+  final DateTime date;
+
+  /// 天数
+  final int days;
+
+  /// 状态
+  final RouteStatus status;
+
+  /// 备注
+  final String? notes;
+
+  /// 构造函数
+  const PlannedRouteModel({
+    required this.id,
+    required this.routeId,
+    required this.name,
+    required this.date,
+    required this.days,
+    required this.status,
+    this.notes,
+  });
+
+  /// 从JSON创建
+  factory PlannedRouteModel.fromJson(Map<String, dynamic> json) {
+    return PlannedRouteModel(
+      id: json['id'] as String,
+      routeId: json['routeId'] as String,
+      name: json['name'] as String,
+      date: DateTime.parse(json['date'] as String),
+      days: json['days'] as int,
+      status: RouteStatus.values[json['status'] as int],
+      notes: json['notes'] as String?,
     );
+  }
+
+  /// 转换为JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'routeId': routeId,
+      'name': name,
+      'date': date.toIso8601String(),
+      'days': days,
+      'status': status.index,
+      'notes': notes,
+    };
+  }
+
+  /// 获取状态名称
+  String getStatusName() {
+    switch (status) {
+      case RouteStatus.planning:
+        return '规划中';
+      case RouteStatus.completed:
+        return '已完成';
+      case RouteStatus.cancelled:
+        return '已取消';
+    }
+  }
+
+  /// 获取状态颜色
+  Color getStatusColor() {
+    switch (status) {
+      case RouteStatus.planning:
+        return Colors.blue;
+      case RouteStatus.completed:
+        return Colors.green;
+      case RouteStatus.cancelled:
+        return Colors.red;
+    }
+  }
+
+  /// 格式化日期为字符串
+  String getFormattedDate() {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }
