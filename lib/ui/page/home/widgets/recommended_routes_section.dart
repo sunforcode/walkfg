@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../model/route_model.dart';
 import '../../../../service/service_locator.dart';
 import '../../route/cupertino_route_list_screen.dart';
+import '../../route/cupertino_route_detail_screen.dart';
 
 /// 当季推荐路线部分组件
 class RecommendedRoutesSection extends StatefulWidget {
@@ -121,39 +122,9 @@ class _RecommendedRoutesSectionState extends State<RecommendedRoutesSection> wit
   void _navigateToRouteDetail(BuildContext context, RouteModel route) {
     Navigator.of(context, rootNavigator: true).push(
       CupertinoPageRoute(
-        builder: (context) => CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-            middle: Text(route.name),
-          ),
-          child: SafeArea(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    CupertinoIcons.map,
-                    size: 48,
-                    color: CupertinoColors.systemBlue,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    route.name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text('距离: ${route.distance} km'),
-                  Text('时长: ${route.duration}'),
-                  Text('难度: ${route.getDifficultyName()}'),
-                  Text('最佳季节: ${route.bestSeason}'),
-                  const SizedBox(height: 20),
-                  const Text('路线详情页面正在开发中...'),
-                ],
-              ),
-            ),
-          ),
+        builder: (context) => RouteDetailScreen(
+          routeId: route.id,
+          route: route,
         ),
       ),
     );

@@ -4,6 +4,7 @@ import '../../../model/guide_model.dart';
 import '../../../service/mock_api_service.dart';
 import '../../theme/app_colors.dart';
 import '../common/network_image_with_fallback.dart';
+import '../../page/guide/cupertino_guide_detail_screen.dart';
 
 /// 攻略卡片组件
 class GuideCard extends StatelessWidget {
@@ -42,7 +43,10 @@ class GuideCard extends StatelessWidget {
           // 导航到攻略详情页 - 使用iOS风格导航
           Navigator.of(context, rootNavigator: true).push(
             CupertinoPageRoute(
-              builder: (context) => _buildGuideDetailPlaceholder(context),
+              builder: (context) => GuideDetailScreen(
+                guideId: guide.id,
+                guide: guide,
+              ),
             ),
           );
         },

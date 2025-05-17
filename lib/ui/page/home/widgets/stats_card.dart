@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../model/user_model.dart';
 import '../../../../service/service_locator.dart';
 import '../../route/cupertino_route_list_screen.dart';
+import '../../route/cupertino_route_detail_screen.dart';
 import '../../equipment/cupertino_equipment_list_screen.dart';
 
 /// 统计信息卡片组件

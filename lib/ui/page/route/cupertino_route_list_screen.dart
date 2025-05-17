@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'cupertino_route_detail_screen.dart';
 
 /// iOS风格的路线列表页面
 class RouteListScreen extends StatefulWidget {
@@ -197,97 +198,110 @@ class _RouteListScreenState extends State<RouteListScreen> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 路线图片
-            SizedBox(
-              height: 150,
-              width: double.infinity,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // 图片
-                  Image.network(
-                    route['imageUrl'],
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: CupertinoColors.systemBlue.withOpacity(0.2),
-                      child: const Center(
-                        child: Icon(
-                          CupertinoIcons.photo,
-                          size: 40,
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
+        onPressed: () {
+          // 导航到路线详情页
+          Navigator.of(context, rootNavigator: true).push(
+            CupertinoPageRoute(
+              builder: (context) => RouteDetailScreen(
+                routeId: route['id'],
+              ),
+            ),
+          );
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 路线图片
+              SizedBox(
+                height: 150,
+                width: double.infinity,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // 图片
+                    Image.network(
+                      route['imageUrl'],
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: CupertinoColors.systemBlue.withOpacity(0.2),
+                        child: const Center(
+                          child: Icon(
+                            CupertinoIcons.photo,
+                            size: 40,
+                            color: CupertinoColors.systemBlue,
+                          ),
+                        ),
+                      ),
+                    ),
+                  
+                    // 季节标签
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
                           color: CupertinoColors.systemBlue,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          route['bestSeason'],
+                          style: const TextStyle(
+                            color: CupertinoColors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  
-                  // 季节标签
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: CupertinoColors.systemBlue,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        route['bestSeason'],
-                        style: const TextStyle(
-                          color: CupertinoColors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
             
-            // 路线信息
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 路线名称
-                  Text(
-                    route['name'],
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              // 路线信息
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 路线名称
+                    Text(
+                      route['name'],
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
+                    const SizedBox(height: 8),
                   
-                  // 路线详情
-                  Row(
-                    children: [
-                      _buildInfoChip(
-                        CupertinoIcons.arrow_right_arrow_left,
-                        '${route['distance']} km',
-                      ),
-                      const SizedBox(width: 12),
-                      _buildInfoChip(
-                        CupertinoIcons.time,
-                        route['duration'],
-                      ),
-                      const SizedBox(width: 12),
-                      _buildInfoChip(
-                        CupertinoIcons.chart_bar,
-                        _getDifficultyText(route['difficulty']),
-                      ),
-                    ],
-                  ),
-                ],
+                    // 路线详情
+                    Row(
+                      children: [
+                        _buildInfoChip(
+                          CupertinoIcons.arrow_right_arrow_left,
+                          '${route['distance']} km',
+                        ),
+                        const SizedBox(width: 12),
+                        _buildInfoChip(
+                          CupertinoIcons.time,
+                          route['duration'],
+                        ),
+                        const SizedBox(width: 12),
+                        _buildInfoChip(
+                          CupertinoIcons.chart_bar,
+                          _getDifficultyText(route['difficulty']),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

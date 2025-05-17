@@ -2,13 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../model/guide_model.dart';
 import '../../../../service/service_locator.dart';
+import '../../route/cupertino_route_list_screen.dart';
+import '../../guide/cupertino_guide_detail_screen.dart';
 import '../../../theme/app_colors.dart';
 import '../../../widgets/common/loading_indicator.dart';
 import '../../../widgets/common/error_widget.dart';
 import '../../../widgets/common/empty_content_widget.dart';
 import '../../../widgets/common/section_header.dart';
 import '../../../widgets/cards/guide_card.dart';
-import '../../route/cupertino_route_list_screen.dart';
 
 /// 徒步攻略部分组件
 class HikingGuidesSection extends StatefulWidget {
@@ -107,6 +108,18 @@ class _HikingGuidesSectionState extends State<HikingGuidesSection> with Automati
     Navigator.of(context, rootNavigator: true).push(
       CupertinoPageRoute(
         builder: (context) => const RouteListScreen(),
+      ),
+    );
+  }
+
+  /// 导航到攻略详情页面
+  void _navigateToGuideDetail(BuildContext context, GuideModel guide) {
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
+        builder: (context) => GuideDetailScreen(
+          guideId: guide.id,
+          guide: guide,
+        ),
       ),
     );
   }
