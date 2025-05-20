@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../model/trip_plan_model.dart';
-import '../../../service/service_locator.dart';
-import '../../theme/app_colors.dart';
+import '../../../service/service_manager.dart';
+import '../../../theme/theme/app_colors.dart';
+import '../../../common/utils/date_time_utils.dart';
+import '../../../common/utils/trip_utils.dart';
 import 'trip_planning_detail_screen.dart';
 
 /// 我的行程规划页面
@@ -17,19 +19,19 @@ class MyTripPlansScreen extends StatefulWidget {
 class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
   /// 行程规划列表Future
   late Future<List<TripPlanModel>> _tripPlansFuture;
-  
+
   @override
   void initState() {
     super.initState();
     _loadTripPlans();
   }
-  
+
   /// 加载行程规划
   void _loadTripPlans() {
-    final apiService = ServiceLocator.instance.getApiService();
+    final apiService = ServiceLocator.instance.getTripPlanService();
     _tripPlansFuture = apiService.getUserTripPlans();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -45,7 +47,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                 child: CupertinoActivityIndicator(),
               );
             }
-            
+
             if (snapshot.hasError) {
               return Center(
                 child: Column(
@@ -79,7 +81,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                 ),
               );
             }
-            
+
             final tripPlans = snapshot.data!;
             if (tripPlans.isEmpty) {
               return Center(
@@ -117,17 +119,16 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                 ),
               );
             }
-            
+
             // 将行程规划按状态分组
-            final inProgressPlans = tripPlans.where((plan) => 
-                plan.status == TripPlanStatus.draft || 
-                plan.status == TripPlanStatus.confirmed ||
-                plan.status == TripPlanStatus.inProgress).toList();
-            
-            final historyPlans = tripPlans.where((plan) => 
-                plan.status == TripPlanStatus.completed || 
-                plan.status == TripPlanStatus.cancelled).toList();
-            
+            final inProgressPlans = tripPlans
+                .where((plan) => TripUtils.isInProgress(plan.status))
+                .toList();
+
+            final historyPlans = tripPlans
+                .where((plan) => TripUtils.isCompleted(plan.status))
+                .toList();
+
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
@@ -143,7 +144,6 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                   ...inProgressPlans.map((plan) => _buildTripPlanCard(plan)),
                   const SizedBox(height: 24),
                 ],
-                
                 if (historyPlans.isNotEmpty) ...[
                   const Text(
                     '历史规划',
@@ -162,12 +162,12 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
       ),
     );
   }
-  
+
   /// 构建行程规划卡片
   Widget _buildTripPlanCard(TripPlanModel plan) {
-    final bool isCompleted = plan.status == TripPlanStatus.completed || plan.status == TripPlanStatus.cancelled;
-    final Color statusColor = _getStatusColor(plan.status);
-    
+    final bool isCompleted = TripUtils.isCompleted(plan.status);
+    final Color statusColor = TripUtils.getStatusColor(plan.status);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -200,12 +200,15 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: isCompleted ? CupertinoColors.systemGrey : CupertinoColors.label,
+                        color: isCompleted
+                            ? CupertinoColors.systemGrey
+                            : CupertinoColors.label,
                       ),
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: statusColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -215,7 +218,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                       ),
                     ),
                     child: Text(
-                      _getStatusName(plan.status),
+                      TripUtils.getStatusName(plan.status),
                       style: TextStyle(
                         fontSize: 12,
                         color: statusColor,
@@ -225,17 +228,15 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               // 行程信息
               Row(
                 children: [
                   _buildInfoChip(
                     CupertinoIcons.calendar,
-                    plan.startDate != null 
-                        ? '${plan.startDate!.year}-${plan.startDate!.month}-${plan.startDate!.day}'
-                        : '未设置',
+                    DateTimeUtils.formatDate(plan.startDate),
                   ),
                   const SizedBox(width: 16),
                   _buildInfoChip(
@@ -249,15 +250,15 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               // 最后编辑时间
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '最后编辑: ${_getTimeAgo(plan.lastEdited)}',
+                    '最后编辑: ${DateTimeUtils.getTimeAgo(plan.updatedAt ?? DateTime.now())}',
                     style: const TextStyle(
                       fontSize: 12,
                       color: CupertinoColors.systemGrey,
@@ -280,7 +281,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
       ),
     );
   }
-  
+
   /// 构建信息标签
   Widget _buildInfoChip(IconData icon, String label) {
     return Row(
@@ -301,62 +302,10 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
       ],
     );
   }
-  
-  /// 获取状态名称
-  String _getStatusName(TripPlanStatus status) {
-    switch (status) {
-      case TripPlanStatus.draft:
-        return '草稿';
-      case TripPlanStatus.confirmed:
-        return '已确认';
-      case TripPlanStatus.inProgress:
-        return '进行中';
-      case TripPlanStatus.completed:
-        return '已完成';
-      case TripPlanStatus.cancelled:
-        return '已取消';
-    }
-  }
-  
-  /// 获取状态颜色
-  Color _getStatusColor(TripPlanStatus status) {
-    switch (status) {
-      case TripPlanStatus.draft:
-        return CupertinoColors.systemBlue;
-      case TripPlanStatus.confirmed:
-        return CupertinoColors.systemGreen;
-      case TripPlanStatus.inProgress:
-        return CupertinoColors.systemOrange;
-      case TripPlanStatus.completed:
-        return CupertinoColors.systemGrey;
-      case TripPlanStatus.cancelled:
-        return CupertinoColors.systemRed;
-    }
-  }
-  
-  /// 获取相对时间
-  String _getTimeAgo(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
 
-    if (difference.inDays > 365) {
-      return '${(difference.inDays / 365).floor()}年前';
-    } else if (difference.inDays > 30) {
-      return '${(difference.inDays / 30).floor()}月前';
-    } else if (difference.inDays > 0) {
-      return '${difference.inDays}天前';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}小时前';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}分钟前';
-    } else {
-      return '刚刚';
-    }
-  }
-  
   /// 继续规划
   void _continuePlanning(TripPlanModel plan) {
-    final apiService = ServiceLocator.instance.getApiService();
+    final apiService = ServiceLocator.instance.getRouteService();
     apiService.getRouteById(plan.routeId).then((route) {
       Navigator.of(context).push(
         CupertinoPageRoute(

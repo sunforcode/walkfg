@@ -10,9 +10,6 @@ part 'trip_adjustment_model.g.dart';
 /// 行程调整模型
 @JsonSerializable()
 class TripAdjustmentModel extends BaseModel {
-  /// 行程调整ID
-  final String id;
-
   /// 行程调整名称
   final String name;
 
@@ -34,15 +31,11 @@ class TripAdjustmentModel extends BaseModel {
   /// 调整原因
   final String reason;
 
-  /// 创建时间
-  final DateTime? createdAt;
-
-  /// 更新时间
-  final DateTime? updatedAt;
-
   /// 构造函数
   TripAdjustmentModel({
-    required this.id,
+    required super.id,
+    super.createdAt,
+    super.updatedAt,
     required this.name,
     required this.description,
     required this.originalDays,
@@ -50,8 +43,6 @@ class TripAdjustmentModel extends BaseModel {
     required this.originalStartDate,
     required this.adjustedStartDate,
     required this.reason,
-    this.createdAt,
-    this.updatedAt,
   });
 
   /// 从JSON创建行程调整模型

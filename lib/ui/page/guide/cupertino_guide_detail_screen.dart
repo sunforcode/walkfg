@@ -1,22 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../model/guide_model.dart';
-import '../../../service/service_locator.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_color_palette.dart';
+import '../../../service/service_manager.dart';
+import '../../../theme/theme/app_colors.dart';
+import '../../../theme/theme/app_color_palette.dart';
 import '../../widgets/common/network_image_with_fallback.dart';
 
 /// iOS风格的徒步攻略详情页面
 class GuideDetailScreen extends StatefulWidget {
   /// 攻略ID
   final String guideId;
-  
+
   /// 攻略数据（可选，如果提供则不需要加载）
   final GuideModel? guide;
 
   /// 构造函数
   const GuideDetailScreen({
-    super.key, 
+    super.key,
     required this.guideId,
     this.guide,
   });
@@ -28,13 +28,13 @@ class GuideDetailScreen extends StatefulWidget {
 class _GuideDetailScreenState extends State<GuideDetailScreen> {
   late Future<GuideModel> _guideFuture;
   bool _isLiked = false;
-  
+
   @override
   void initState() {
     super.initState();
     _loadGuideDetail();
   }
-  
+
   /// 加载攻略详情
   void _loadGuideDetail() {
     if (widget.guide != null) {
@@ -61,7 +61,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
                 child: CupertinoActivityIndicator(),
               );
             }
-            
+
             if (snapshot.hasError) {
               return Center(
                 child: Column(
@@ -95,7 +95,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
                 ),
               );
             }
-            
+
             final guide = snapshot.data!;
             _isLiked = guide.isLiked;
             return _buildGuideDetail(context, guide);
@@ -104,7 +104,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       ),
     );
   }
-  
+
   /// 构建攻略详情内容
   Widget _buildGuideDetail(BuildContext context, GuideModel guide) {
     return CustomScrollView(
@@ -113,22 +113,22 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
         SliverToBoxAdapter(
           child: _buildCoverImage(guide),
         ),
-        
+
         // 攻略标题和作者信息
         SliverToBoxAdapter(
           child: _buildTitleAndAuthor(guide),
         ),
-        
+
         // 攻略内容
         SliverToBoxAdapter(
           child: _buildContent(guide),
         ),
-        
+
         // 底部操作按钮
         SliverToBoxAdapter(
           child: _buildActionButtons(guide),
         ),
-        
+
         // 底部间距
         const SliverToBoxAdapter(
           child: SizedBox(height: 24),
@@ -136,11 +136,11 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       ],
     );
   }
-  
+
   /// 构建封面图片
   Widget _buildCoverImage(GuideModel guide) {
     final accentColor = AppColors.primary;
-    
+
     return Container(
       height: 220,
       width: double.infinity,
@@ -168,14 +168,15 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
                     ),
                   ),
           ),
-          
+
           // 标签
           if (guide.tags.isNotEmpty)
             Positioned(
               top: 16,
               right: 16,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: accentColor,
                   borderRadius: BorderRadius.circular(16),
@@ -197,7 +198,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
                 ),
               ),
             ),
-          
+
           // 渐变遮罩
           Positioned(
             bottom: 0,
@@ -221,7 +222,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       ),
     );
   }
-  
+
   /// 构建标题和作者信息
   Widget _buildTitleAndAuthor(GuideModel guide) {
     return Container(
@@ -237,9 +238,9 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 作者信息和统计
           Row(
             children: [
@@ -251,7 +252,8 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
                     : null,
                 backgroundColor: AppColors.primary.withOpacity(0.1),
                 child: guide.authorAvatarUrl == null
-                    ? Icon(CupertinoIcons.person, size: 16, color: AppColors.primary)
+                    ? Icon(CupertinoIcons.person,
+                        size: 16, color: AppColors.primary)
                     : null,
               ),
               const SizedBox(width: 8),
@@ -262,9 +264,9 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              
+
               const Spacer(),
-              
+
               // 阅读量
               Row(
                 children: [
@@ -283,9 +285,9 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(width: 16),
-              
+
               // 发布日期
               Text(
                 _getTimeAgo(guide.publishDate),
@@ -296,16 +298,16 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // 分隔线
           const Divider(),
         ],
       ),
     );
   }
-  
+
   /// 构建内容
   Widget _buildContent(GuideModel guide) {
     return Container(
@@ -321,9 +323,9 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
               height: 1.6,
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // 标签列表
           if (guide.tags.length > 1) ...[
             const Text(
@@ -345,7 +347,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       ),
     );
   }
-  
+
   /// 构建标签
   Widget _buildTag(String tag) {
     return Container(
@@ -367,7 +369,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       ),
     );
   }
-  
+
   /// 构建操作按钮
   Widget _buildActionButtons(GuideModel guide) {
     return Container(
@@ -422,18 +424,19 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       ),
     );
   }
-  
+
   /// 构建点赞按钮
   Widget _buildLikeButton(GuideModel guide) {
-    final color = _isLiked ? CupertinoColors.systemRed : AppColorPalette.blueColors[2];
-    
+    final color =
+        _isLiked ? CupertinoColors.systemRed : AppColorPalette.blueColors[2];
+
     return CupertinoButton(
       onPressed: () {
         setState(() {
           _isLiked = !_isLiked;
         });
         // 调用点赞API
-        final apiService = ServiceLocator.instance.getApiService();
+        final apiService = ServiceLocator.instance.getGuideService();
         apiService.likeGuide(guide.id);
       },
       padding: EdgeInsets.zero,
@@ -463,9 +466,10 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       ),
     );
   }
-  
+
   /// 构建操作按钮
-  Widget _buildActionButton(IconData icon, String label, Color color, VoidCallback onPressed) {
+  Widget _buildActionButton(
+      IconData icon, String label, Color color, VoidCallback onPressed) {
     return CupertinoButton(
       onPressed: onPressed,
       padding: EdgeInsets.zero,
@@ -495,7 +499,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       ),
     );
   }
-  
+
   /// 格式化数字（大于1000显示为k）
   String _formatNumber(int number) {
     if (number >= 1000) {
@@ -504,7 +508,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
     }
     return number.toString();
   }
-  
+
   /// 获取相对时间
   String _getTimeAgo(DateTime dateTime) {
     final now = DateTime.now();

@@ -5,12 +5,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../model/equipment/equipment_model.dart';
-import '../../../state/equipment/equipment_providers.dart';
+import 'equipment_providers.dart';
 import '../../../common/widgets/info_card.dart';
 import '../../../common/widgets/info_item.dart';
 import '../../../common/widgets/section_header.dart';
-import '../../widgets/equipment/equipment_category_list.dart';
-import '../../widgets/equipment/equipment_summary_card.dart';
+import 'widgets/equipment_category_list.dart';
+import 'widgets/equipment_summary_card.dart';
 
 /// 装备详情页面
 class EquipmentDetailScreen extends ConsumerWidget {

@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "keyword": "北京",
+      "timestamp": "2023-05-10T10:30:00Z"
+    },
+    {
+      "keyword": "上海",
+      "timestamp": "2023-05-09T14:20:00Z"
+    },
+    {
+      "keyword": "美食",
+      "timestamp": "2023-05-08T09:15:00Z"
+    },
+    {
+      "keyword": "咖啡店",
+      "timestamp": "2023-05-07T16:45:00Z"
+    },
+    {
+      "keyword": "公园",
+      "timestamp": "2023-05-06T11:30:00Z"
+    }
+  ],
+  "maxItems": 10
+}

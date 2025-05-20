@@ -1,116 +1,213 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import '../../../../model/route/route_model.dart';
-import '../../../../service/service_locator.dart';
 import '../../route/cupertino_route_list_screen.dart';
 import '../../route/cupertino_route_detail_screen.dart';
+import '../../../widgets/common/section_header.dart';
+import '../../../widgets/common/loading_indicator.dart';
+import '../../../widgets/common/error_widget.dart';
+import '../../../widgets/common/empty_content_widget.dart';
 
 /// 当季推荐路线部分组件
-class RecommendedRoutesSection extends StatefulWidget {
-  /// 构造函数
-  const RecommendedRoutesSection({super.key});
-
-  @override
-  State<RecommendedRoutesSection> createState() => _RecommendedRoutesSectionState();
-}
-
-class _RecommendedRoutesSectionState extends State<RecommendedRoutesSection> with AutomaticKeepAliveClientMixin {
+class RecommendedRoutesSection extends StatelessWidget {
   /// 推荐路线列表Future
-  late Future<List<RouteModel>> _recommendedRoutesFuture;
+  final Future<List<RouteModel>> recommendedRoutesFuture;
 
-  /// 蓝色系颜色列表
-  final List<Color> _blueColors = [
-    const Color(0xFF1976D2), // 深蓝色
-    const Color(0xFF2196F3), // 蓝色
-    const Color(0xFF42A5F5), // 浅蓝色
-    const Color(0xFF64B5F6), // 更浅的蓝色
-    const Color(0xFF0D47A1), // 深邃蓝色
-    const Color(0xFF0288D1), // 亮蓝色
-  ];
-
-  /// 真实图片URL列表
-  final List<String> _realImageUrls = [
-    'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80', // 山峰
-    'https://images.unsplash.com/photo-1486870591958-9b9d0690cb7a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80', // 竹林
-    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80', // 山脉
-    'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80', // 森林
-  ];
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    _recommendedRoutesFuture = _loadData();
-  }
-
-  /// 加载数据
-  Future<List<RouteModel>> _loadData() async {
-    final apiService = ServiceLocator.instance.getApiService();
-    // 获取当季推荐路线，限制3条
-    return apiService.getRecommendedRoutes(limit: 3);
-  }
+  /// 构造函数
+  const RecommendedRoutesSection({
+    super.key,
+    required this.recommendedRoutesFuture,
+  });
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // 必须调用super.build
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 当季推荐路线标题
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '当季推荐徒步路线',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                // 查看全部推荐路线
-                _navigateToRecommendedRoutes(context);
-              },
-              child: const Text('查看全部'),
-            ),
-          ],
+        SectionHeader(
+          title: '当季推荐路线',
+          actionText: '查看全部',
+          onAction: () => _navigateToAllRoutes(context),
         ),
 
         const SizedBox(height: 16),
 
-        // 当季推荐路线横向列表
+        // 推荐路线列表
         FutureBuilder<List<RouteModel>>(
-          future: _recommendedRoutesFuture,
+          future: recommendedRoutesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildLoadingIndicator();
+              return const LoadingIndicator(height: 200);
             }
 
             if (snapshot.hasError) {
-              return _buildErrorWidget(snapshot.error.toString());
+              return ErrorMessageWidget(
+                errorMessage: snapshot.error.toString(),
+                onRetry: () {}, // 提供一个空函数而不是null
+              );
             }
 
             final recommendedRoutes = snapshot.data;
             if (recommendedRoutes == null || recommendedRoutes.isEmpty) {
-              return _buildEmptyWidget();
+              return const EmptyContentWidget(
+                icon: CupertinoIcons.map,
+                title: '暂无推荐路线',
+                subtitle: '敬请期待更多精彩路线',
+              );
             }
 
-            return SizedBox(
-              height: 260, // 增加高度以容纳所有内容
-              child: _buildRecommendedRoutes(context, recommendedRoutes),
-            );
+            return _buildRecommendedRoutesList(context, recommendedRoutes);
           },
         ),
       ],
     );
   }
 
-  /// 导航到推荐路线页面
-  void _navigateToRecommendedRoutes(BuildContext context) {
+  /// 构建推荐路线列表
+  Widget _buildRecommendedRoutesList(
+      BuildContext context, List<RouteModel> recommendedRoutes) {
+    // 蓝色系颜色列表
+    final List<Color> blueColors = [
+      const Color(0xFF1976D2), // 深蓝色
+      const Color(0xFF2196F3), // 蓝色
+      const Color(0xFF42A5F5), // 浅蓝色
+      const Color(0xFF64B5F6), // 更浅的蓝色
+      const Color(0xFF0D47A1), // 深邃蓝色
+      const Color(0xFF0288D1), // 亮蓝色
+    ];
+
+    return SizedBox(
+      height: 220,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: recommendedRoutes.length,
+        itemBuilder: (context, index) {
+          final route = recommendedRoutes[index];
+          final color = blueColors[index % blueColors.length];
+
+          return Padding(
+            padding: EdgeInsets.only(
+              right: index == recommendedRoutes.length - 1 ? 0 : 16,
+            ),
+            child: _buildRouteCard(context, route, color),
+          );
+        },
+      ),
+    );
+  }
+
+  /// 构建路线卡片
+  Widget _buildRouteCard(BuildContext context, RouteModel route, Color color) {
+    return GestureDetector(
+      onTap: () => _navigateToRouteDetail(context, route),
+      child: Container(
+        width: 280,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 路线图片
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
+              child: Image.network(
+                route.imageUrls.isNotEmpty
+                    ? route.imageUrls.first
+                    : 'https://via.placeholder.com/280x140',
+                height: 140,
+                width: 280,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 140,
+                    width: 280,
+                    color: color.withOpacity(0.1),
+                    child: const Center(
+                      child: Icon(
+                        CupertinoIcons.photo,
+                        size: 40,
+                        color: CupertinoColors.systemGrey,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            // 路线信息
+            Container(
+              decoration: const BoxDecoration(
+                color: CupertinoColors.white,
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(12),
+                ),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    route.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        CupertinoIcons.location_solid,
+                        size: 12,
+                        color: color,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        route.region,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: CupertinoColors.systemGrey,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        CupertinoIcons.arrow_up_right_square,
+                        size: 12,
+                        color: color,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${route.distance} km',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: CupertinoColors.systemGrey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 导航到所有路线页面
+  void _navigateToAllRoutes(BuildContext context) {
     Navigator.of(context, rootNavigator: true).push(
       CupertinoPageRoute(
         builder: (context) => const RouteListScreen(),
@@ -124,293 +221,8 @@ class _RecommendedRoutesSectionState extends State<RecommendedRoutesSection> wit
       CupertinoPageRoute(
         builder: (context) => RouteDetailScreen(
           routeId: route.id,
-          route: route,
         ),
       ),
     );
-  }
-
-  /// 构建加载指示器
-  Widget _buildLoadingIndicator() {
-    return SizedBox(
-      height: 180,
-      child: Center(
-        child: CupertinoActivityIndicator(),
-      ),
-    );
-  }
-
-  /// 构建错误提示
-  Widget _buildErrorWidget(String errorMessage) {
-    final color = _blueColors[0];
-    return Container(
-      height: 180,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            CupertinoIcons.exclamationmark_circle,
-            color: color,
-            size: 32,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            errorMessage,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: color.withOpacity(0.8)),
-          ),
-          const SizedBox(height: 8),
-          CupertinoButton(
-            onPressed: () {
-              setState(() {
-                _recommendedRoutesFuture = _loadData();
-              });
-            },
-            color: color,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            borderRadius: BorderRadius.circular(8),
-            child: const Text('重试'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 构建空数据提示
-  Widget _buildEmptyWidget() {
-    final color = _blueColors[2];
-    return Container(
-      height: 180,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            CupertinoIcons.map,
-            color: color,
-            size: 48,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            '暂无推荐路线',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: color.withOpacity(0.8),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '敬请期待更多精彩路线',
-            style: TextStyle(
-              color: color.withOpacity(0.6),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 构建推荐路线
-  Widget _buildRecommendedRoutes(BuildContext context, List<RouteModel> recommendedRoutes) {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: recommendedRoutes.length,
-      itemBuilder: (context, index) {
-        final route = recommendedRoutes[index];
-        final cardColor = _blueColors[index % _blueColors.length];
-        final imageUrl = _realImageUrls[index % _realImageUrls.length];
-
-        return Container(
-          width: 280,
-          margin: const EdgeInsets.only(right: 16),
-          child: Card(
-            clipBehavior: Clip.antiAlias,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide.none, // 移除边框
-            ),
-            elevation: 4,
-            shadowColor: cardColor.withOpacity(0.4),
-            child: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                // 导航到路线详情页
-                _navigateToRouteDetail(context, route);
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 路线图片
-                  Stack(
-                    children: [
-                      ShaderMask(
-                        shaderCallback: (rect) {
-                          return LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.black.withOpacity(0.5)],
-                            stops: const [0.7, 1.0],
-                          ).createShader(rect);
-                        },
-                        blendMode: BlendMode.darken,
-                        child: Image.network(
-                          imageUrl,
-                          height: 160,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            height: 160,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  cardColor.withOpacity(0.8),
-                                  cardColor.withOpacity(0.5),
-                                ],
-                              ),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                CupertinoIcons.map,
-                                size: 48,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: cardColor,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Text(
-                            route.bestSeason,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // 路线信息
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          route.name,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            _buildRouteInfoChip(
-                              context,
-                              CupertinoIcons.arrow_right_arrow_left,
-                              '${route.distance} km',
-                              cardColor,
-                            ),
-                            const SizedBox(width: 8),
-                            _buildRouteInfoChip(
-                              context,
-                              CupertinoIcons.time,
-                              route.duration,
-                              cardColor,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  /// 构建路线信息标签
-  Widget _buildRouteInfoChip(BuildContext context, IconData icon, String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 12,
-            color: color,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 获取难度文本
-  String _getDifficultyText(int difficulty) {
-    switch (difficulty) {
-      case 1:
-        return '简单';
-      case 2:
-        return '初级';
-      case 3:
-        return '中级';
-      case 4:
-        return '高级';
-      case 5:
-        return '专业';
-      default:
-        return '未知';
-    }
   }
 }

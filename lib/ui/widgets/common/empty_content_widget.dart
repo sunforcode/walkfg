@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
+import '../../../theme/theme/app_colors.dart';
 
 /// 通用空内容提示组件
 class EmptyContentWidget extends StatelessWidget {

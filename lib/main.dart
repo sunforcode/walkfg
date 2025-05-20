@@ -2,49 +2,43 @@
 ///
 /// 包含应用程序初始化、主题设置和路由配置
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'service/service_locator.dart';
-import 'ui/page/main_layout.dart';
-import 'ui/theme/app_colors.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'ui/app.dart';
+import 'service/service_manager.dart';
 
-void main() {
+void main() async {
+  // 确保Flutter绑定初始化
+  WidgetsFlutterBinding.ensureInitialized();
+
   // 初始化服务定位器
-  ServiceLocator.instance.setup();
+  ServiceLocator.instance.initialize(useMock: true);
 
-  runApp(const MyApp());
+  // 预加载JSON数据
+  await _preloadJsonData();
+
+  runApp(const App());
 }
 
-/// 应用入口
-class MyApp extends StatelessWidget {
-  /// 构造函数
-  const MyApp({super.key});
+/// 预加载JSON数据文件
+Future<void> _preloadJsonData() async {
+  final jsonFiles = [
+    'assets/mock_data/guides.json',
+    'assets/mock_data/routes.json',
+    'assets/mock_data/users.json',
+    'assets/mock_data/weather.json',
+    'assets/mock_data/hot_searches.json',
+    'assets/mock_data/recommended_routes.json',
+  ];
 
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoApp(
-      title: 'Walk - 徒步旅行助手',
-      theme: const CupertinoThemeData(
-        primaryColor: AppColors.primary,
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: Color(0xFFF5F5F5),
-        textTheme: CupertinoTextThemeData(
-          primaryColor: AppColors.primary,
-        ),
-      ),
-      home: const MainLayout(),
-      routes: {
-        '/settings': (context) => const CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-            middle: Text('设置'),
-          ),
-          child: SafeArea(
-            child: Center(
-              child: Text('设置页面'),
-            ),
-          ),
-        ),
-      },
-    );
+  // 预加载所有JSON文件
+  for (final file in jsonFiles) {
+    try {
+      await rootBundle.loadString(file);
+      debugPrint('预加载成功: $file');
+    } catch (e) {
+      debugPrint('预加载失败: $file - $e');
+    }
   }
 }

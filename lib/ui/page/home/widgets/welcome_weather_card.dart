@@ -1,292 +1,326 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../model/user_model.dart';
-import '../../../../model/weather_model.dart';
-import '../../../../service/service_locator.dart';
-import '../../../theme/app_color_palette.dart';
-import '../../../widgets/common/async_content_builder.dart';
-import '../../../widgets/common/cupertino_card.dart';
+import '../../../../model/weather/weather_model.dart';
 
-/// 欢迎卡片与天气预报结合组件
-class WelcomeWeatherCard extends StatefulWidget {
+/// 欢迎和天气卡片组件
+class WelcomeWeatherCard extends StatelessWidget {
+  /// 用户数据
+  final UserModel? user;
+
+  /// 天气数据
+  final WeatherModel? weather;
+
+  /// 问候语
+  final String? greeting;
+
+  /// 天气描述
+  final String? weatherDescription;
+
+  /// 天气状况文本
+  final String? weatherConditionText;
+
+  /// 背景颜色
+  final Color? backgroundColor;
+
   /// 构造函数
-  const WelcomeWeatherCard({super.key});
+  const WelcomeWeatherCard({
+    super.key,
+    required this.user,
+    required this.weather,
+    this.greeting,
+    this.weatherDescription,
+    this.weatherConditionText,
+    this.backgroundColor,
+  });
 
-  @override
-  State<WelcomeWeatherCard> createState() => _WelcomeWeatherCardState();
-}
-
-class _WelcomeWeatherCardState extends State<WelcomeWeatherCard> with AutomaticKeepAliveClientMixin {
-  /// 数据加载Future
-  late Future<Map<String, dynamic>> _dataFuture;
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    _dataFuture = _loadData();
+  /// 创建加载中状态的卡片
+  static Widget loading() {
+    return const _LoadingWelcomeWeatherCard();
   }
 
-  /// 加载数据
-  Future<Map<String, dynamic>> _loadData() async {
-    final apiService = ServiceLocator.instance.getApiService();
-
-    // 并行加载用户和天气数据
-    final results = await Future.wait([
-      apiService.getCurrentUser(),
-      apiService.getWeather(30.2741, 120.1551), // 杭州的经纬度
-    ]);
-
-    return {
-      'user': results[0] as UserModel,
-      'weather': results[1] as WeatherModel,
-    };
+  /// 创建错误状态的卡片
+  static Widget error({required String errorMessage}) {
+    return _ErrorWelcomeWeatherCard(errorMessage: errorMessage);
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // 必须调用super.build
+    // 确保user和weather不为null
+    if (user == null || weather == null) {
+      return _ErrorWelcomeWeatherCard(errorMessage: '数据不完整');
+    }
 
-    return AsyncContentBuilder<Map<String, dynamic>>(
-      future: _dataFuture,
-      loadingBuilder: (context) => _buildLoadingCard(context),
-      errorBuilder: (context, error) => _buildErrorCard(context, error),
-      builder: (context, data) {
-        final user = data['user'] as UserModel;
-        final weather = data['weather'] as WeatherModel;
-        return _buildCard(context, user, weather);
-      },
-      onRetry: () {
-        setState(() {
-          _dataFuture = _loadData();
-        });
-      },
-    );
-  }
+    // 使用提供的背景颜色或默认颜色
+    final bgColor = backgroundColor ?? const Color(0xFF3498DB);
 
-  /// 构建加载中的卡片
-  Widget _buildLoadingCard(BuildContext context) {
-    return CupertinoCard(
-      gradient: AppColorPalette.blueGradient,
-      child: const SizedBox(
-        height: 200,
-        child: Center(
-          child: CupertinoActivityIndicator(
-            color: CupertinoColors.white,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            bgColor,
+            bgColor.withOpacity(0.8),
+          ],
         ),
-      ),
-    );
-  }
-
-  /// 构建错误卡片
-  Widget _buildErrorCard(BuildContext context, String errorMessage) {
-    return CupertinoCard(
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.red,
-          Color(0xFFE57373),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            CupertinoIcons.exclamationmark_circle,
-            color: CupertinoColors.white,
-            size: 48,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            errorMessage,
-            style: const TextStyle(color: CupertinoColors.white),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          CupertinoButton(
-            color: CupertinoColors.white,
-            onPressed: () {
-              setState(() {
-                _dataFuture = _loadData();
-              });
-            },
-            child: const Text(
-              '重试',
-              style: TextStyle(color: CupertinoColors.systemRed),
-            ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: bgColor.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-    );
-  }
-
-  /// 构建数据卡片
-  Widget _buildCard(BuildContext context, UserModel user, WeatherModel weather) {
-    return CupertinoCard(
-      gradient: AppColorPalette.blueGradient,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: CupertinoColors.white, width: 2),
-                ),
-                child: CircleAvatar(
-                  radius: 28,
-                  backgroundColor: CupertinoColors.white.withOpacity(0.9),
-                  child: Icon(
-                    CupertinoIcons.person,
-                    size: 32,
-                    color: AppColorPalette.blueColors[0],
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${greeting ?? '你好'}，${user!.nickname}',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        weatherDescription != null
+                            ? '今天是个$weatherDescription的日子'
+                            : weather!.advice,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '欢迎回来',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: CupertinoColors.white,
+                      '${weather!.temperature.toStringAsFixed(1)}°C',
+                      style: const TextStyle(
+                        fontSize: 32,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
-                      user.nickname,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: CupertinoColors.white.withOpacity(0.9),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: const Icon(CupertinoIcons.pencil, color: CupertinoColors.white),
-                onPressed: () {
-                  showCupertinoDialog(
-                    context: context,
-                    builder: (context) => CupertinoAlertDialog(
-                      title: const Text('提示'),
-                      content: const Text('编辑个人资料功能尚未实现'),
-                      actions: [
-                        CupertinoDialogAction(
-                          child: const Text('确定'),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // 天气信息
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      CupertinoIcons.sun_max,
-                      size: 24,
-                      color: CupertinoColors.systemYellow,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '今日天气',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: CupertinoColors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          CupertinoIcons.thermometer,
-                          size: 20,
-                          color: CupertinoColors.white,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          weather.temperature,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: CupertinoColors.white,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Text(
-                          weather.condition,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: CupertinoColors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: weather.isSuitableForHiking
-                            ? CupertinoColors.systemGreen.withOpacity(0.3)
-                            : CupertinoColors.systemRed.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            weather.isSuitableForHiking
-                                ? CupertinoIcons.checkmark_circle
-                                : CupertinoIcons.xmark_circle,
-                            size: 16,
-                            color: CupertinoColors.white,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            weather.isSuitableForHiking
-                                ? '适合徒步'
-                                : '不宜徒步',
-                            style: const TextStyle(
-                              color: CupertinoColors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                      weatherConditionText ?? weather!.condition,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
               ],
             ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                _buildWeatherDetail(
+                  icon: CupertinoIcons.wind,
+                  label: '风速',
+                  value: '${weather!.windSpeed.toStringAsFixed(1)} m/s',
+                ),
+                const SizedBox(width: 24),
+                _buildWeatherDetail(
+                  icon: CupertinoIcons.drop,
+                  label: '湿度',
+                  value: '${weather!.humidityValue}%',
+                ),
+                const SizedBox(width: 24),
+                _buildWeatherDetail(
+                  icon: CupertinoIcons.location,
+                  label: '城市',
+                  value: weather!.city,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 构建天气详情项
+  Widget _buildWeatherDetail({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Expanded(
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 18,
+            ),
           ),
-
-          const SizedBox(height: 16),
-
-          Text(
-            weather.advice,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: CupertinoColors.white,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white.withOpacity(0.8),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 加载中状态的欢迎和天气卡片
+class _LoadingWelcomeWeatherCard extends StatelessWidget {
+  /// 构造函数
+  const _LoadingWelcomeWeatherCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 180,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF3498DB).withOpacity(0.7),
+            const Color(0xFF2980B9).withOpacity(0.7),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF3498DB).withOpacity(0.2),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: const Center(
+        child: CupertinoActivityIndicator(
+          color: Colors.white,
+          radius: 15,
+        ),
+      ),
+    );
+  }
+}
+
+/// 错误状态的欢迎和天气卡片
+class _ErrorWelcomeWeatherCard extends StatelessWidget {
+  /// 错误信息
+  final String errorMessage;
+
+  /// 构造函数
+  const _ErrorWelcomeWeatherCard({required this.errorMessage});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 180,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF3498DB).withOpacity(0.7),
+            const Color(0xFF2980B9).withOpacity(0.7),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF3498DB).withOpacity(0.2),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                CupertinoIcons.exclamationmark_circle,
+                color: Colors.white,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              '天气数据加载失败',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                errorMessage,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.8),
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

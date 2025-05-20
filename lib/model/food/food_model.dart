@@ -8,20 +8,11 @@ import '../base/base_model.dart';
 part 'food_model.g.dart';
 
 /// 食物类型
-enum FoodType {
-  breakfast,
-  lunch,
-  dinner,
-  snack,
-  drink
-}
+enum FoodType { breakfast, lunch, dinner, snack, drink }
 
 /// 食物模型
 @JsonSerializable()
 class FoodModel extends BaseModel {
-  /// 食物ID
-  final String id;
-
   /// 食物名称
   final String name;
 
@@ -49,15 +40,11 @@ class FoodModel extends BaseModel {
   /// 单价(元)
   final double price;
 
-  /// 创建时间
-  final DateTime? createdAt;
-
-  /// 更新时间
-  final DateTime? updatedAt;
-
   /// 构造函数
   FoodModel({
-    required this.id,
+    required super.id,
+    super.createdAt,
+    super.updatedAt,
     required this.name,
     required this.description,
     required this.type,
@@ -67,8 +54,6 @@ class FoodModel extends BaseModel {
     required this.carbs,
     required this.weight,
     required this.price,
-    this.createdAt,
-    this.updatedAt,
   });
 
   /// 从JSON创建食物模型

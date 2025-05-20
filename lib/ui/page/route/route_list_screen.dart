@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../resource/services/route_service.dart';
+import 'package:walk/model/route/route_model.dart';
+import 'package:walk/service/api_service.dart';
+import 'package:walk/service/service_manager.dart';
 import '../../../common/widgets/error_view.dart';
 import '../../../common/widgets/empty_view.dart';
 import '../../../common/widgets/loading_view.dart';
-import '../../widgets/route/route_card.dart';
+import 'route/route_card.dart';
 
 /// 路线列表屏幕
 class RouteListScreen extends StatefulWidget {
@@ -16,8 +18,8 @@ class RouteListScreen extends StatefulWidget {
 }
 
 class _RouteListScreenState extends State<RouteListScreen> {
-  final _routeService = RouteService();
-  List<Map<String, dynamic>> _routes = [];
+  final _routeService = ServiceLocator.instance.getRouteService();
+  List<RouteModel> _routes = [];
   bool _isLoading = true;
   String? _error;
 
@@ -34,7 +36,7 @@ class _RouteListScreenState extends State<RouteListScreen> {
         _error = null;
       });
 
-      final routes = await _routeService.getRoutes();
+      final routes = await _routeService.getNewRoutes();
 
       setState(() {
         _routes = routes;

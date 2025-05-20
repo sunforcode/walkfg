@@ -1,0 +1,72 @@
+{
+  "trackPoints": [
+    {
+      "latitude": 39.9042,
+      "longitude": 116.4074,
+      "elevation": 55.0,
+      "time": "2023-05-10T10:00:00Z",
+      "name": "起点",
+      "description": "北京天安门"
+    },
+    {
+      "latitude": 39.9052,
+      "longitude": 116.4084,
+      "elevation": 56.0,
+      "time": "2023-05-10T10:05:00Z"
+    },
+    {
+      "latitude": 39.9062,
+      "longitude": 116.4094,
+      "elevation": 58.0,
+      "time": "2023-05-10T10:10:00Z"
+    },
+    {
+      "latitude": 39.9072,
+      "longitude": 116.4104,
+      "elevation": 60.0,
+      "time": "2023-05-10T10:15:00Z",
+      "name": "途经点1",
+      "description": "故宫博物院"
+    },
+    {
+      "latitude": 39.9082,
+      "longitude": 116.4114,
+      "elevation": 62.0,
+      "time": "2023-05-10T10:20:00Z"
+    },
+    {
+      "latitude": 39.9092,
+      "longitude": 116.4124,
+      "elevation": 64.0,
+      "time": "2023-05-10T10:25:00Z"
+    },
+    {
+      "latitude": 39.9102,
+      "longitude": 116.4134,
+      "elevation": 66.0,
+      "time": "2023-05-10T10:30:00Z",
+      "name": "途经点2",
+      "description": "景山公园"
+    },
+    {
+      "latitude": 39.9112,
+      "longitude": 116.4144,
+      "elevation": 68.0,
+      "time": "2023-05-10T10:35:00Z"
+    },
+    {
+      "latitude": 39.9122,
+      "longitude": 116.4154,
+      "elevation": 70.0,
+      "time": "2023-05-10T10:40:00Z"
+    },
+    {
+      "latitude": 39.9132,
+      "longitude": 116.4164,
+      "elevation": 72.0,
+      "time": "2023-05-10T10:45:00Z",
+      "name": "终点",
+      "description": "北海公园"
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'base/base_model.dart';
 import 'route/route_model.dart';
+import 'equipment/equipment_model.dart' as equipment;
+
+part 'trip_plan_model.g.dart';
 
 /// 行程计划状态枚举
 enum TripPlanStatus {
@@ -59,53 +64,109 @@ enum TransportationType {
   other,
 }
 
-class TransportModel {}
+/// 交通模型
+@JsonSerializable()
+class TransportModel extends BaseModel {
+  /// 交通方式
+  final TransportationType type;
+
+  /// 出发地点
+  final String departureLocation;
+
+  /// 到达地点
+  final String arrivalLocation;
+
+  /// 出发时间
+  final DateTime departureTime;
+
+  /// 到达时间
+  final DateTime arrivalTime;
+
+  /// 费用
+  final double cost;
+
+  /// 备注
+  final String? notes;
+
+  /// 构造函数
+  TransportModel({
+    required super.id,
+    super.createdAt,
+    super.updatedAt,
+    required this.type,
+    required this.departureLocation,
+    required this.arrivalLocation,
+    required this.departureTime,
+    required this.arrivalTime,
+    this.cost = 0.0,
+    this.notes,
+  });
+
+  /// 从JSON创建
+  factory TransportModel.fromJson(Map<String, dynamic> json) =>
+      _$TransportModelFromJson(json);
+
+  /// 转换为JSON
+  @override
+  Map<String, dynamic> toJson() => _$TransportModelToJson(this);
+}
 
 /// 行程计划模型
-class TripPlanModel {
-  /// ID
-  final String id;
-
-  List<TransportModel> transportToStart = [];
-
-  List<TransportModel> transportToEnd = [];
-
+@JsonSerializable()
+class TripPlanModel extends BaseModel {
   /// 用户ID
+  @JsonKey(name: 'user_id')
   final String userId;
 
   /// 路线ID
+  @JsonKey(name: 'route_id')
   final String routeId;
 
   /// 路线名称
+  @JsonKey(name: 'route_name')
   final String routeName;
 
   /// 出发日期
+  @JsonKey(name: 'start_date')
   DateTime? startDate;
 
   /// 参与人数
+  @JsonKey(name: 'participant_count')
   int participantCount;
 
   /// 出发城市
+  @JsonKey(name: 'departure_city')
   String departureCity;
 
   /// 每日行程列表
+  @JsonKey(name: 'customized_itinerary')
   List<DailyItinerary> customizedItinerary;
 
   /// 交通方案列表
+  @JsonKey(name: 'transportation_plans')
   List<TransportationPlanModel> transportationPlans;
 
   /// 装备清单
+  @JsonKey(name: 'equipment_list')
   List<EquipmentItemModel> equipmentList;
 
-  /// 最后编辑时间
-  final DateTime lastEdited;
-
   /// 计划状态
+  @JsonKey(fromJson: _parseStatus, toJson: _statusToJson)
   TripPlanStatus status;
+
+  /// 到起点的交通
+  @JsonKey(name: 'transport_to_start')
+  List<TransportModel> transportToStart;
+
+  /// 从终点返回的交通
+  @JsonKey(name: 'transport_to_end')
+  List<TransportModel> transportToEnd;
 
   /// 构造函数
   TripPlanModel({
-    required this.id,
+    required super.id,
+    super.createdAt,
+    super.updatedAt,
     required this.userId,
     required this.routeId,
     required this.routeName,
@@ -115,62 +176,34 @@ class TripPlanModel {
     List<DailyItinerary>? customizedItinerary,
     List<TransportationPlanModel>? transportationPlans,
     List<EquipmentItemModel>? equipmentList,
-    DateTime? lastEdited,
     this.status = TripPlanStatus.draft,
+    List<TransportModel>? transportToStart,
+    List<TransportModel>? transportToEnd,
   })  : this.customizedItinerary = customizedItinerary ?? [],
         this.transportationPlans = transportationPlans ?? [],
         this.equipmentList = equipmentList ?? [],
-        this.lastEdited = lastEdited ?? DateTime.now();
+        this.transportToStart = transportToStart ?? [],
+        this.transportToEnd = transportToEnd ?? [];
 
   /// 从JSON创建
-  factory TripPlanModel.fromJson(Map<String, dynamic> json) {
-    return TripPlanModel(
-      id: json['id'] as String,
-      userId: json['userId'] as String,
-      routeId: json['routeId'] as String,
-      routeName: json['routeName'] as String,
-      startDate: json['startDate'] != null
-          ? DateTime.parse(json['startDate'] as String)
-          : null,
-      participantCount: json['participantCount'] as int,
-      departureCity: json['departureCity'] as String,
-      customizedItinerary: (json['customizedItinerary'] as List?)
-              ?.map((e) => DailyItinerary.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      transportationPlans: (json['transportationPlans'] as List?)
-              ?.map((e) =>
-                  TransportationPlanModel.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      equipmentList: (json['equipmentList'] as List?)
-              ?.map(
-                  (e) => EquipmentItemModel.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      lastEdited: DateTime.parse(json['lastEdited'] as String),
-      status: TripPlanStatus.values[json['status'] as int],
-    );
-  }
+  factory TripPlanModel.fromJson(Map<String, dynamic> json) =>
+      _$TripPlanModelFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'userId': userId,
-      'routeId': routeId,
-      'routeName': routeName,
-      'startDate': startDate?.toIso8601String(),
-      'participantCount': participantCount,
-      'departureCity': departureCity,
-      'customizedItinerary':
-          customizedItinerary.map((e) => e.toJson()).toList(),
-      'transportationPlans':
-          transportationPlans.map((e) => e.toJson()).toList(),
-      'equipmentList': equipmentList.map((e) => e.toJson()).toList(),
-      'lastEdited': lastEdited.toIso8601String(),
-      'status': status.index,
-    };
+  @override
+  Map<String, dynamic> toJson() => _$TripPlanModelToJson(this);
+
+  /// 解析状态
+  static TripPlanStatus _parseStatus(dynamic status) {
+    if (status is int && status >= 0 && status < TripPlanStatus.values.length) {
+      return TripPlanStatus.values[status];
+    }
+    return TripPlanStatus.draft;
+  }
+
+  /// 状态转JSON
+  static int _statusToJson(TripPlanStatus status) {
+    return status.index;
   }
 
   /// 创建副本
@@ -187,6 +220,8 @@ class TripPlanModel {
     List<EquipmentItemModel>? equipmentList,
     DateTime? lastEdited,
     TripPlanStatus? status,
+    List<TransportModel>? transportToStart,
+    List<TransportModel>? transportToEnd,
   }) {
     return TripPlanModel(
       id: id ?? this.id,
@@ -201,40 +236,47 @@ class TripPlanModel {
       transportationPlans:
           transportationPlans ?? List.from(this.transportationPlans),
       equipmentList: equipmentList ?? List.from(this.equipmentList),
-      lastEdited: lastEdited ?? DateTime.now(),
       status: status ?? this.status,
+      transportToStart: transportToStart ?? List.from(this.transportToStart),
+      transportToEnd: transportToEnd ?? List.from(this.transportToEnd),
     );
   }
 }
 
 /// 每日行程模型
+@JsonSerializable()
 class DailyItinerary {
   /// 起点
-  String startPoint;
+  final String startPoint;
 
   /// 终点
-  String endPoint;
+  final String endPoint;
 
   /// 距离(公里)
-  double distance;
+  final double distance;
 
   /// 累计上升(米)
-  int elevationGain;
+  @JsonKey(name: 'elevation_gain')
+  final int elevationGain;
 
   /// 累计下降(米)
-  int elevationLoss;
+  @JsonKey(name: 'elevation_loss')
+  final int elevationLoss;
 
   /// 预计用时(小时)
-  double estimatedTime;
+  @JsonKey(name: 'estimated_time')
+  final double estimatedTime;
 
   /// 途经点列表
-  List<WaypointModel> waypoints;
+  final List<WaypointModel> waypoints;
 
   /// 推荐营地
-  CampSiteModel? recommendedCampsite;
+  @JsonKey(name: 'recommended_campsite')
+  final CampSiteModel? recommendedCampsite;
 
   /// 备选营地列表
-  List<CampSiteModel> alternateCampsites;
+  @JsonKey(name: 'alternate_campsites')
+  final List<CampSiteModel> alternateCampsites;
 
   /// 构造函数
   DailyItinerary({
@@ -251,74 +293,49 @@ class DailyItinerary {
         this.alternateCampsites = alternateCampsites ?? [];
 
   /// 从JSON创建
-  factory DailyItinerary.fromJson(Map<String, dynamic> json) {
-    return DailyItinerary(
-      startPoint: json['startPoint'] as String,
-      endPoint: json['endPoint'] as String,
-      distance: json['distance'] as double,
-      elevationGain: json['elevationGain'] as int,
-      elevationLoss: json['elevationLoss'] as int,
-      estimatedTime: json['estimatedTime'] as double,
-      waypoints: (json['waypoints'] as List?)
-              ?.map((e) => WaypointModel.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      recommendedCampsite: json['recommendedCampsite'] != null
-          ? CampSiteModel.fromJson(
-              json['recommendedCampsite'] as Map<String, dynamic>)
-          : null,
-      alternateCampsites: (json['alternateCampsites'] as List?)
-              ?.map((e) => CampSiteModel.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-    );
-  }
+  factory DailyItinerary.fromJson(Map<String, dynamic> json) =>
+      _$DailyItineraryFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'startPoint': startPoint,
-      'endPoint': endPoint,
-      'distance': distance,
-      'elevationGain': elevationGain,
-      'elevationLoss': elevationLoss,
-      'estimatedTime': estimatedTime,
-      'waypoints': waypoints.map((e) => e.toJson()).toList(),
-      'recommendedCampsite': recommendedCampsite?.toJson(),
-      'alternateCampsites': alternateCampsites.map((e) => e.toJson()).toList(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$DailyItineraryToJson(this);
 }
 
 /// 途经点模型
+@JsonSerializable()
 class WaypointModel {
   /// ID
   final String id;
 
   /// 名称
-  String name;
+  final String name;
 
   /// 描述
-  String description;
+  final String description;
 
   /// 纬度
-  double latitude;
+  final double latitude;
 
   /// 经度
-  double longitude;
+  final double longitude;
 
   /// 海拔(米)
-  int elevation;
+  final int elevation;
 
   /// 类型
-  WaypointType type;
+  @JsonKey(fromJson: _parseWaypointType, toJson: _waypointTypeToJson)
+  final WaypointType type;
 
   /// 预计到达时间
-  String estimatedArrivalTime;
+  @JsonKey(name: 'estimated_arrival_time')
+  final String estimatedArrivalTime;
 
-  double distanceFromStart = 0;
+  /// 距起点距离(公里)
+  @JsonKey(name: 'distance_from_start')
+  double distanceFromStart;
 
-  int estimatedTimeFromStart = 0;
+  /// 距起点预计时间(分钟)
+  @JsonKey(name: 'estimated_time_from_start')
+  int estimatedTimeFromStart;
 
   /// 构造函数
   WaypointModel({
@@ -330,68 +347,64 @@ class WaypointModel {
     required this.elevation,
     this.type = WaypointType.other,
     this.estimatedArrivalTime = '',
+    this.distanceFromStart = 0,
+    this.estimatedTimeFromStart = 0,
   });
 
   /// 从JSON创建
-  factory WaypointModel.fromJson(Map<String, dynamic> json) {
-    return WaypointModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      latitude: json['latitude'] as double,
-      longitude: json['longitude'] as double,
-      elevation: json['elevation'] as int,
-      type: WaypointType.values[json['type'] as int],
-      estimatedArrivalTime: json['estimatedArrivalTime'] as String,
-    );
-  }
+  factory WaypointModel.fromJson(Map<String, dynamic> json) =>
+      _$WaypointModelFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'latitude': latitude,
-      'longitude': longitude,
-      'elevation': elevation,
-      'type': type.index,
-      'estimatedArrivalTime': estimatedArrivalTime,
-    };
+  Map<String, dynamic> toJson() => _$WaypointModelToJson(this);
+
+  /// 解析途经点类型
+  static WaypointType _parseWaypointType(dynamic type) {
+    if (type is int && type >= 0 && type < WaypointType.values.length) {
+      return WaypointType.values[type];
+    }
+    return WaypointType.other;
+  }
+
+  /// 途经点类型转JSON
+  static int _waypointTypeToJson(WaypointType type) {
+    return type.index;
   }
 }
 
 /// 营地模型
+@JsonSerializable()
 class CampSiteModel {
   /// ID
   final String id;
 
   /// 名称
-  String name;
+  final String name;
 
   /// 描述
-  String description;
+  final String description;
 
   /// 纬度
-  double latitude;
+  final double latitude;
 
   /// 经度
-  double longitude;
+  final double longitude;
 
   /// 海拔(米)
-  int elevation;
+  final int elevation;
 
   /// 容量(帐篷数)
-  int capacity;
+  final int capacity;
 
   /// 水源距离(米)
-  int waterSourceDistance;
+  @JsonKey(name: 'water_source_distance')
+  final int waterSourceDistance;
 
   /// 设施列表
-  List<String> facilities;
+  final List<String> facilities;
 
   /// 特点列表
-  List<String> features;
+  final List<String> features;
 
   /// 构造函数
   CampSiteModel({
@@ -409,68 +422,48 @@ class CampSiteModel {
         this.features = features ?? [];
 
   /// 从JSON创建
-  factory CampSiteModel.fromJson(Map<String, dynamic> json) {
-    return CampSiteModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      latitude: json['latitude'] as double,
-      longitude: json['longitude'] as double,
-      elevation: json['elevation'] as int,
-      capacity: json['capacity'] as int,
-      waterSourceDistance: json['waterSourceDistance'] as int,
-      facilities:
-          (json['facilities'] as List?)?.map((e) => e as String).toList() ?? [],
-      features:
-          (json['features'] as List?)?.map((e) => e as String).toList() ?? [],
-    );
-  }
+  factory CampSiteModel.fromJson(Map<String, dynamic> json) =>
+      _$CampSiteModelFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'latitude': latitude,
-      'longitude': longitude,
-      'elevation': elevation,
-      'capacity': capacity,
-      'waterSourceDistance': waterSourceDistance,
-      'facilities': facilities,
-      'features': features,
-    };
-  }
+  Map<String, dynamic> toJson() => _$CampSiteModelToJson(this);
 }
 
 /// 交通方案模型
+@JsonSerializable()
 class TransportationPlanModel {
   /// ID
   final String id;
 
   /// 名称
-  String name;
+  final String name;
 
   /// 类型
-  TransportationType type;
+  @JsonKey(
+      fromJson: _parseTransportationType, toJson: _transportationTypeToJson)
+  final TransportationType type;
 
   /// 出发地
-  String departureLocation;
+  @JsonKey(name: 'departure_location')
+  final String departureLocation;
 
   /// 目的地
-  String arrivalLocation;
+  @JsonKey(name: 'arrival_location')
+  final String arrivalLocation;
 
   /// 出发时间
-  String departureTime;
+  @JsonKey(name: 'departure_time')
+  final String departureTime;
 
   /// 到达时间
-  String arrivalTime;
+  @JsonKey(name: 'arrival_time')
+  final String arrivalTime;
 
   /// 费用
-  double cost;
+  final double cost;
 
   /// 描述
-  String description;
+  final String description;
 
   /// 构造函数
   TransportationPlanModel({
@@ -486,57 +479,54 @@ class TransportationPlanModel {
   });
 
   /// 从JSON创建
-  factory TransportationPlanModel.fromJson(Map<String, dynamic> json) {
-    return TransportationPlanModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      type: TransportationType.values[json['type'] as int],
-      departureLocation: json['departureLocation'] as String,
-      arrivalLocation: json['arrivalLocation'] as String,
-      departureTime: json['departureTime'] as String,
-      arrivalTime: json['arrivalTime'] as String,
-      cost: json['cost'] as double,
-      description: json['description'] as String,
-    );
-  }
+  factory TransportationPlanModel.fromJson(Map<String, dynamic> json) =>
+      _$TransportationPlanModelFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'type': type.index,
-      'departureLocation': departureLocation,
-      'arrivalLocation': arrivalLocation,
-      'departureTime': departureTime,
-      'arrivalTime': arrivalTime,
-      'cost': cost,
-      'description': description,
-    };
+  Map<String, dynamic> toJson() => _$TransportationPlanModelToJson(this);
+
+  /// 解析交通方式类型
+  static TransportationType _parseTransportationType(dynamic type) {
+    if (type is int && type >= 0 && type < TransportationType.values.length) {
+      return TransportationType.values[type];
+    }
+    return TransportationType.other;
+  }
+
+  /// 交通方式类型转JSON
+  static int _transportationTypeToJson(TransportationType type) {
+    return type.index;
   }
 }
 
-/// 装备项模型
+/// 装备项目模型
+///
+/// 注意：这是一个简化版的装备项目模型，用于行程计划中
+/// 完整版请使用 equipment.EquipmentItem
+@JsonSerializable()
 class EquipmentItemModel {
   /// ID
   final String id;
 
   /// 名称
-  String name;
+  final String name;
 
   /// 类别
-  String category;
+  final String category;
 
   /// 是否必备
-  bool isEssential;
+  @JsonKey(name: 'is_essential')
+  final bool isEssential;
 
   /// 描述
-  String description;
+  final String description;
 
   /// 是否已准备
+  @JsonKey(name: 'is_prepared')
   bool isPrepared;
 
-  String recommendation;
+  /// 推荐信息
+  final String recommendation;
 
   /// 构造函数
   EquipmentItemModel({
@@ -549,27 +539,37 @@ class EquipmentItemModel {
     this.recommendation = '',
   });
 
-  /// 从JSON创建
-  factory EquipmentItemModel.fromJson(Map<String, dynamic> json) {
+  /// 从完整版装备项目创建
+  factory EquipmentItemModel.fromEquipmentItem(equipment.EquipmentItem item) {
     return EquipmentItemModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      category: json['category'] as String,
-      isEssential: json['isEssential'] as bool,
-      description: json['description'] as String,
-      isPrepared: json['isPrepared'] as bool,
+      id: item.name.hashCode.toString(),
+      name: item.name,
+      category: item.brand ?? '未分类',
+      isEssential: item.necessity == equipment.EquipmentNecessity.essential,
+      description: item.description ?? '',
+      isPrepared: false,
+      recommendation: '',
+    );
+  }
+
+  /// 从JSON创建
+  factory EquipmentItemModel.fromJson(Map<String, dynamic> json) =>
+      _$EquipmentItemModelFromJson(json);
+
+  /// 转换为完整版装备项目
+  equipment.EquipmentItem toEquipmentItem() {
+    return equipment.EquipmentItem(
+      name: name,
+      description: description,
+      weight: 0.0, // 默认值
+      quantity: 1, // 默认值
+      necessity: isEssential
+          ? equipment.EquipmentNecessity.essential
+          : equipment.EquipmentNecessity.optional,
+      brand: category,
     );
   }
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'category': category,
-      'isEssential': isEssential,
-      'description': description,
-      'isPrepared': isPrepared,
-    };
-  }
+  Map<String, dynamic> toJson() => _$EquipmentItemModelToJson(this);
 }

@@ -3,24 +3,18 @@
 /// 用于存储装备清单、分类和项目信息
 
 import '../base/base_model.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'equipment_model.g.dart';
 
 /// 装备必要性
-enum EquipmentNecessity {
-  essential,
-  recommended,
-  optional
-}
+enum EquipmentNecessity { essential, recommended, optional }
 
 /// 装备季节适用性
-enum SeasonSuitability {
-  spring,
-  summer,
-  autumn,
-  winter,
-  allSeasons
-}
+enum SeasonSuitability { spring, summer, autumn, winter, allSeasons }
 
 /// 装备清单模型
+@JsonSerializable()
 class EquipmentListModel extends BaseModel {
   /// 清单名称
   final String name;
@@ -38,9 +32,11 @@ class EquipmentListModel extends BaseModel {
   final int tripDays;
 
   /// 季节
+  @JsonKey(fromJson: _seasonsFromJson, toJson: _seasonsToJson)
   final List<SeasonSuitability> seasons;
 
   /// 装备分类列表
+  @JsonKey(fromJson: _categoriesFromJson, toJson: _categoriesToJson)
   final List<EquipmentCategory> categories;
 
   /// 总重量(g)
@@ -69,7 +65,7 @@ class EquipmentListModel extends BaseModel {
 
   /// 构造函数
   EquipmentListModel({
-    super.id,
+    required super.id,
     super.createdAt,
     super.updatedAt,
     required this.name,
@@ -89,20 +85,55 @@ class EquipmentListModel extends BaseModel {
     this.isOfficial = false,
   });
 
+  /// 从JSON创建
+  factory EquipmentListModel.fromJson(Map<String, dynamic> json) =>
+      _$EquipmentListModelFromJson(json);
+
+  /// 转换为JSON
+  @override
+  Map<String, dynamic> toJson() => _$EquipmentListModelToJson(this);
+
+  /// 季节列表从JSON转换
+  static List<SeasonSuitability> _seasonsFromJson(List<dynamic> list) {
+    return list.map((i) => SeasonSuitability.values[i as int]).toList();
+  }
+
+  /// 季节列表转JSON
+  static List<int> _seasonsToJson(List<SeasonSuitability> seasons) {
+    return seasons.map((e) => e.index).toList();
+  }
+
+  /// 分类列表从JSON转换
+  static List<EquipmentCategory> _categoriesFromJson(List<dynamic> list) {
+    return list
+        .map((i) => EquipmentCategory.fromJson(i as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// 分类列表转JSON
+  static List<Map<String, dynamic>> _categoriesToJson(
+      List<EquipmentCategory> categories) {
+    return categories.map((e) => e.toJson()).toList();
+  }
+
   /// 获取每人每日平均重量
   double get weightPerPersonPerDay => totalWeight / tripDays;
 
   /// 获取总装备数
-  int get totalItems => categories.fold(0, (sum, category) => sum + category.itemCount);
+  int get totalItems =>
+      categories.fold(0, (sum, category) => sum + category.itemCount);
 
   /// 获取必需装备数
-  int get essentialItems => categories.fold(0, (sum, category) => sum + category.essentialItems);
+  int get essentialItems =>
+      categories.fold(0, (sum, category) => sum + category.essentialItems);
 
   /// 获取推荐装备数
-  int get recommendedItems => categories.fold(0, (sum, category) => sum + category.recommendedItems);
+  int get recommendedItems =>
+      categories.fold(0, (sum, category) => sum + category.recommendedItems);
 
   /// 获取可选装备数
-  int get optionalItems => categories.fold(0, (sum, category) => sum + category.optionalItems);
+  int get optionalItems =>
+      categories.fold(0, (sum, category) => sum + category.optionalItems);
 
   /// 获取季节名称列表
   List<String> getSeasonNames() {
@@ -195,20 +226,52 @@ class EquipmentCategory {
     required this.items,
   });
 
+  /// 从JSON创建
+  factory EquipmentCategory.fromJson(Map<String, dynamic> json) {
+    final List<dynamic> itemsJson = json['items'] as List<dynamic>;
+    final items = itemsJson
+        .map((item) => EquipmentItem.fromJson(item as Map<String, dynamic>))
+        .toList();
+
+    return EquipmentCategory(
+      name: json['name'] as String,
+      icon: json['icon'] as String?,
+      description: json['description'] as String?,
+      items: items,
+    );
+  }
+
+  /// 转换为JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'icon': icon,
+      'description': description,
+      'items': items.map((item) => item.toJson()).toList(),
+    };
+  }
+
   /// 获取装备项目数量
   int get itemCount => items.length;
 
   /// 获取总重量
-  double get totalWeight => items.fold(0.0, (sum, item) => sum + item.totalWeight);
+  double get totalWeight =>
+      items.fold(0.0, (sum, item) => sum + item.totalWeight);
 
   /// 获取必需装备数
-  int get essentialItems => items.where((item) => item.necessity == EquipmentNecessity.essential).length;
+  int get essentialItems => items
+      .where((item) => item.necessity == EquipmentNecessity.essential)
+      .length;
 
   /// 获取推荐装备数
-  int get recommendedItems => items.where((item) => item.necessity == EquipmentNecessity.recommended).length;
+  int get recommendedItems => items
+      .where((item) => item.necessity == EquipmentNecessity.recommended)
+      .length;
 
   /// 获取可选装备数
-  int get optionalItems => items.where((item) => item.necessity == EquipmentNecessity.optional).length;
+  int get optionalItems => items
+      .where((item) => item.necessity == EquipmentNecessity.optional)
+      .length;
 }
 
 /// 装备项目
@@ -252,6 +315,36 @@ class EquipmentItem {
     this.price,
     this.notes,
   });
+
+  /// 从JSON创建
+  factory EquipmentItem.fromJson(Map<String, dynamic> json) {
+    return EquipmentItem(
+      name: json['name'] as String,
+      description: json['description'] as String?,
+      weight: (json['weight'] as num).toDouble(),
+      quantity: json['quantity'] as int,
+      necessity: EquipmentNecessity.values[json['necessity'] as int],
+      brand: json['brand'] as String?,
+      model: json['model'] as String?,
+      price: json['price'] != null ? (json['price'] as num).toDouble() : null,
+      notes: json['notes'] as String?,
+    );
+  }
+
+  /// 转换为JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'weight': weight,
+      'quantity': quantity,
+      'necessity': necessity.index,
+      'brand': brand,
+      'model': model,
+      'price': price,
+      'notes': notes,
+    };
+  }
 
   /// 获取总重量
   double get totalWeight => weight * quantity;

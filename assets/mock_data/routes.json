@@ -1,0 +1,86 @@
+[
+  {
+    "id": "route1",
+    "name": "黄山主峰徒步路线",
+    "description": "黄山主峰徒步路线是一条经典的徒步路线，沿途可以欣赏到黄山的壮丽景色。",
+    "distance": 15.5,
+    "duration": "6小时",
+    "difficulty": "medium",
+    "best_season": "春季最佳",
+    "elevation_gain": 1200,
+    "elevation_loss": 800,
+    "highest_point": 1864,
+    "lowest_point": 680,
+    "image_urls": [
+      "https://data.tibetcn.com/pictures/huangshan-hiking1.jpg",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToHbxyHtwh6SAqZGN0iBQ11FevmMyCsojk3g&s",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcneJjUD-H-sEHvhBVTm4dpHp5UUn2QULedg&s"
+    ],
+    "gpx_url": "https://example.com/huangshan.gpx",
+    "region": "安徽",
+    "rating": 4.8,
+    "best_seasons": ["春", "秋"],
+    "review_count": 120
+  },
+  {
+    "id": "route2",
+    "name": "莫干山竹海徒步",
+    "description": "莫干山竹海徒步路线穿越茂密的竹林，空气清新，视野开阔。",
+    "distance": 8.2,
+    "duration": "3小时",
+    "difficulty": "easy",
+    "best_season": "四季皆宜",
+    "elevation_gain": 450,
+    "elevation_loss": 450,
+    "highest_point": 758,
+    "lowest_point": 350,
+    "image_urls": ["https://img2.baidu.com/it/u=1329181008,1636789453&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=712"],
+    "gpx_url": null,
+    "region": "浙江",
+    "rating": 4.5,
+    "best_seasons": ["春", "夏", "秋", "冬"],
+    "review_count": 85
+  },
+  {
+    "id": "route3",
+    "name": "庐山三日穿越",
+    "description": "庐山三日穿越路线是一条挑战性较高的路线，需要较好的体力和装备。",
+    "distance": 32.0,
+    "duration": "3天",
+    "difficulty": "hard",
+    "best_season": "秋季最佳",
+    "elevation_gain": 2200,
+    "elevation_loss": 2200,
+    "highest_point": 1474,
+    "lowest_point": 120,
+    "image_urls": [
+  "https://iknow-pic.cdn.bcebos.com/48540923dd54564ea76d8db8a1de9c82d1584f22"
+    ],
+    "gpx_url": "https://example.com/lushan.gpx",
+    "region": "江西",
+    "rating": 4.9,
+    "best_seasons": ["秋"],
+    "review_count": 65
+  },
+  {
+    "id": "route4",
+    "name": "四姑娘山大峰环线",
+    "description": "四姑娘山大峰环线是一条高海拔徒步路线，沿途可以欣赏到壮丽的雪山景色。",
+    "distance": 45.0,
+    "duration": "4天",
+    "difficulty": "hard",
+    "best_season": "夏季最佳",
+    "elevation_gain": 3200,
+    "elevation_loss": 3200,
+    "highest_point": 4500,
+    "lowest_point": 2800,
+    "image_urls": [
+      "https://img0.baidu.com/it/u=2908921372,4047104809&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=653"
+    ],
+    "gpx_url": "https://example.com/siguniang.gpx",
+    "region": "四川",
+    "rating": 4.9,
+    "best_seasons": ["夏"],
+    "review_count": 42
+  }
+]

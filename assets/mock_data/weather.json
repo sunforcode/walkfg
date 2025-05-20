@@ -1,0 +1,10 @@
+{
+  "city": "北京市",
+  "temperature": 23.5,
+  "condition": "晴",
+  "is_suitable_for_hiking": true,
+  "icon_code": "clear_day",
+  "humidity": 45,
+  "wind_speed": 3.5,
+  "advice": "今天是个徒步的好日子！"
+}

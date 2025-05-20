@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:walk/model/base/base_model.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'track_point_model.dart';
 
 part 'route_model.g.dart';
 
 /// 路线难度枚举
 enum RouteDifficulty {
-  /// 简单
+  /// 初级
   easy,
 
-  /// 中等
+  /// 中级
   medium,
 
-  /// 困难
+  /// 高级
   hard,
 
-  /// 极难
+  /// 专业级
   extreme,
 }
 
@@ -34,11 +35,11 @@ enum RouteStatus {
 /// 路线模型
 @JsonSerializable()
 class RouteModel extends BaseModel {
-  /// ID
-  final String id;
-
   /// 名称
   final String name;
+
+  /// 地区
+  final String region;
 
   /// 描述
   final String description;
@@ -50,44 +51,59 @@ class RouteModel extends BaseModel {
   final String duration;
 
   /// 难度
+  @JsonKey(fromJson: _parseDifficulty, toJson: _difficultyToString)
   final RouteDifficulty difficulty;
 
   /// 最佳季节
+  @JsonKey(name: 'best_season')
   final String bestSeason;
 
   /// 累计上升(米)
+  @JsonKey(name: 'elevation_gain')
   final int elevationGain;
 
   /// 累计下降(米)
+  @JsonKey(name: 'elevation_loss')
   final int elevationLoss;
 
   /// 最高点(米)
+  @JsonKey(name: 'highest_point')
   final int highestPoint;
 
   /// 最低点(米)
+  @JsonKey(name: 'lowest_point')
   final int lowestPoint;
 
   /// 图片URL列表
+  @JsonKey(name: 'image_urls')
   final List<String> imageUrls;
 
   /// GPX轨迹文件URL
+  @JsonKey(name: 'gpx_url')
   final String? gpxUrl;
-
-  /// 地区
-  final String region;
 
   /// 评分
   final double rating;
 
   /// 最佳季节列表
+  @JsonKey(name: 'best_seasons')
   final List<String> bestSeasons;
 
+  /// 评论数量
+  @JsonKey(name: 'review_count')
   final int reviewCount;
+
+  /// 轨迹点列表
+  @JsonKey(name: 'track_points')
+  final List<TrackPointModel> trackPoints;
 
   /// 构造函数
   RouteModel({
-    required this.id,
+    required super.id,
+    super.createdAt,
+    super.updatedAt,
     required this.name,
+    required this.region,
     required this.description,
     required this.distance,
     required this.duration,
@@ -100,66 +116,52 @@ class RouteModel extends BaseModel {
     required this.imageUrls,
     this.gpxUrl,
     this.reviewCount = 0,
-    this.region = '',
     this.rating = 0.0,
     List<String>? bestSeasons,
-  }) : this.bestSeasons = bestSeasons ?? const [];
+    List<TrackPointModel>? trackPoints,
+  })  : this.bestSeasons = bestSeasons ?? const [],
+        this.trackPoints = trackPoints ?? [];
 
   /// 从JSON创建
-  factory RouteModel.fromJson(Map<String, dynamic> json) {
-    return RouteModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      distance: json['distance'] as double,
-      duration: json['duration'] as String,
-      difficulty: RouteDifficulty.values[json['difficulty'] as int],
-      bestSeason: json['bestSeason'] as String,
-      elevationGain: json['elevationGain'] as int,
-      elevationLoss: json['elevationLoss'] as int,
-      highestPoint: json['highestPoint'] as int,
-      lowestPoint: json['lowestPoint'] as int,
-      imageUrls: (json['imageUrls'] as List).cast<String>(),
-      gpxUrl: json['gpxUrl'] as String?,
-      region: json['region'] as String? ?? '',
-      rating: json['rating'] as double? ?? 0.0,
-      bestSeasons: (json['bestSeasons'] as List?)?.cast<String>(),
-    );
-  }
+  factory RouteModel.fromJson(Map<String, dynamic> json) =>
+      _$RouteModelFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'distance': distance,
-      'duration': duration,
-      'difficulty': difficulty.index,
-      'bestSeason': bestSeason,
-      'elevationGain': elevationGain,
-      'elevationLoss': elevationLoss,
-      'highestPoint': highestPoint,
-      'lowestPoint': lowestPoint,
-      'imageUrls': imageUrls,
-      'gpxUrl': gpxUrl,
-      'region': region,
-      'rating': rating,
-      'bestSeasons': bestSeasons,
-    };
+  @override
+  Map<String, dynamic> toJson() => _$RouteModelToJson(this);
+
+  /// 解析难度字符串为枚举值
+  static RouteDifficulty _parseDifficulty(String? difficultyStr) {
+    switch (difficultyStr?.toLowerCase()) {
+      case 'easy':
+        return RouteDifficulty.easy;
+      case 'medium':
+        return RouteDifficulty.medium;
+      case 'hard':
+        return RouteDifficulty.hard;
+      case 'extreme':
+        return RouteDifficulty.extreme;
+      default:
+        return RouteDifficulty.medium;
+    }
+  }
+
+  /// 将难度枚举转换为字符串
+  static String _difficultyToString(RouteDifficulty difficulty) {
+    return difficulty.toString().split('.').last;
   }
 
   /// 获取难度名称
   String getDifficultyName() {
     switch (difficulty) {
       case RouteDifficulty.easy:
-        return '简单';
+        return '初级';
       case RouteDifficulty.medium:
-        return '中等';
+        return '中级';
       case RouteDifficulty.hard:
-        return '困难';
+        return '高级';
       case RouteDifficulty.extreme:
-        return '极难';
+        return '专业级';
     }
   }
 
@@ -168,12 +170,12 @@ class RouteModel extends BaseModel {
     switch (difficulty) {
       case RouteDifficulty.easy:
         return Colors.green;
+      case RouteDifficulty.extreme:
+        return Colors.purple;
       case RouteDifficulty.medium:
         return Colors.orange;
       case RouteDifficulty.hard:
         return Colors.red;
-      case RouteDifficulty.extreme:
-        return Colors.purple;
     }
   }
 
@@ -194,11 +196,10 @@ class RouteModel extends BaseModel {
 }
 
 /// 计划路线模型
-class PlannedRouteModel {
-  /// ID
-  final String id;
-
+@JsonSerializable()
+class PlannedRouteModel extends BaseModel {
   /// 路线ID
+  @JsonKey(name: 'route_id')
   final String routeId;
 
   /// 名称
@@ -211,14 +212,17 @@ class PlannedRouteModel {
   final int days;
 
   /// 状态
+  @JsonKey(fromJson: _parseStatus, toJson: _statusToJson)
   final RouteStatus status;
 
   /// 备注
   final String? notes;
 
   /// 构造函数
-  const PlannedRouteModel({
-    required this.id,
+  PlannedRouteModel({
+    required super.id,
+    super.createdAt,
+    super.updatedAt,
     required this.routeId,
     required this.name,
     required this.date,
@@ -228,29 +232,24 @@ class PlannedRouteModel {
   });
 
   /// 从JSON创建
-  factory PlannedRouteModel.fromJson(Map<String, dynamic> json) {
-    return PlannedRouteModel(
-      id: json['id'] as String,
-      routeId: json['routeId'] as String,
-      name: json['name'] as String,
-      date: DateTime.parse(json['date'] as String),
-      days: json['days'] as int,
-      status: RouteStatus.values[json['status'] as int],
-      notes: json['notes'] as String?,
-    );
-  }
+  factory PlannedRouteModel.fromJson(Map<String, dynamic> json) =>
+      _$PlannedRouteModelFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'routeId': routeId,
-      'name': name,
-      'date': date.toIso8601String(),
-      'days': days,
-      'status': status.index,
-      'notes': notes,
-    };
+  @override
+  Map<String, dynamic> toJson() => _$PlannedRouteModelToJson(this);
+
+  /// 解析状态
+  static RouteStatus _parseStatus(dynamic status) {
+    if (status is int && status >= 0 && status < RouteStatus.values.length) {
+      return RouteStatus.values[status];
+    }
+    return RouteStatus.planning;
+  }
+
+  /// 状态转JSON
+  static int _statusToJson(RouteStatus status) {
+    return status.index;
   }
 
   /// 获取状态名称

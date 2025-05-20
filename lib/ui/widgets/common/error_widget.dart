@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
+import '../../../theme/theme/app_colors.dart';
 
 /// 通用错误提示组件
 class ErrorMessageWidget extends StatelessWidget {

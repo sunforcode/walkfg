@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../resource/services/route_service.dart';
-import '../../../common/widgets/loading_view.dart';
-import '../../../common/widgets/error_view.dart';
+import '../../../model/route/route_model.dart';
+import '../../../service/route_service.dart';
+import '../../../service/service_manager.dart';
 
 /// 路线地图屏幕
 class RouteMapScreen extends StatefulWidget {
@@ -16,8 +16,8 @@ class RouteMapScreen extends StatefulWidget {
 }
 
 class _RouteMapScreenState extends State<RouteMapScreen> {
-  final _routeService = RouteService();
-  Map<String, dynamic>? _route;
+  final _routeService = ServiceLocator.instance.getRouteService();
+  RouteModel? _route;
   bool _isLoading = true;
   String? _error;
 
@@ -34,7 +34,7 @@ class _RouteMapScreenState extends State<RouteMapScreen> {
         _error = null;
       });
 
-      final route = await _routeService.getRouteDetail(widget.routeId);
+      final route = await _routeService.getRouteById(widget.routeId);
 
       setState(() {
         _route = route;
@@ -52,7 +52,7 @@ class _RouteMapScreenState extends State<RouteMapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_route != null ? '${_route!['name']} 地图' : '路线地图'),
+        title: Text(_route != null ? '${_route!.name} 地图' : '路线地图'),
       ),
       body: _buildBody(),
     );
@@ -60,14 +60,35 @@ class _RouteMapScreenState extends State<RouteMapScreen> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const LoadingView(message: '加载地图...');
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
     }
 
     if (_error != null) {
-      return ErrorView(
-        message: _error!,
-        title: '加载失败',
-        onRetry: _loadRouteDetail,
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 60,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '加载失败',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(_error!),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadRouteDetail,
+              child: const Text('重试'),
+            ),
+          ],
+        ),
       );
     }
 
@@ -89,17 +110,17 @@ class _RouteMapScreenState extends State<RouteMapScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            '${_route!['name']} 地图',
+            '${_route!.name} 地图',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
           Text(
-            '距离: ${_route!['distance']} km',
+            '距离: ${_route!.distance} km',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 8),
           Text(
-            '难度: ${_route!['difficulty']}',
+            '难度: ${_getDifficultyName(_route!.difficulty)}',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
@@ -110,5 +131,19 @@ class _RouteMapScreenState extends State<RouteMapScreen> {
         ],
       ),
     );
+  }
+
+  /// 获取难度名称
+  String _getDifficultyName(RouteDifficulty difficulty) {
+    switch (difficulty) {
+      case RouteDifficulty.easy:
+        return '初级';
+      case RouteDifficulty.medium:
+        return '中级';
+      case RouteDifficulty.hard:
+        return '高级';
+      case RouteDifficulty.extreme:
+        return '专业级';
+    }
   }
 }

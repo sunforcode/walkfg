@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../model/route/route_model.dart';
-import '../../theme/app_colors.dart';
+import '../../../theme/theme/app_colors.dart';
+import '../../../common/utils/trip_utils.dart';
 import '../route/cupertino_route_detail_screen.dart';
 
 /// 路线列表页面
@@ -207,7 +208,7 @@ class _RouteListScreenState extends State<RouteListScreen> {
                       const SizedBox(width: 12),
                       _buildInfoChip(
                         CupertinoIcons.chart_bar,
-                        _getDifficultyName(route.difficulty),
+                        TripUtils.getDifficultyName(route.difficulty),
                       ),
                     ],
                   ),
@@ -270,20 +271,6 @@ class _RouteListScreenState extends State<RouteListScreen> {
         ),
       ],
     );
-  }
-
-  /// 获取难度名称
-  String _getDifficultyName(RouteDifficulty difficulty) {
-    switch (difficulty) {
-      case RouteDifficulty.easy:
-        return '初级';
-      case RouteDifficulty.medium:
-        return '中级';
-      case RouteDifficulty.hard:
-        return '高级';
-      case RouteDifficulty.extreme:
-        return '专业级';
-    }
   }
 
   /// 导航到路线详情页面

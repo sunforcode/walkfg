@@ -1,10 +1,10 @@
 name: walk
-description: 一款功能强大的徒步旅行助手应用，帮助户外爱好者规划、准备和享受徒步旅行。
+description: "A hiking app for planning and tracking your hiking trips."
 publish_to: 'none'
-version: 1.0.0+1
+version: 0.1.0
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
   flutter:
@@ -54,12 +54,22 @@ dependencies:
   permission_handler: ^11.0.1
   connectivity_plus: ^5.0.1
   package_info_plus: ^4.2.0
-  device_info_plus: ^9.1.0
+  device_info_plus: ^9.1.1
   flutter_dotenv: ^5.1.0
   logger: ^2.0.2+1
   json_annotation: ^4.8.1
   vector_math: ^2.1.4
   get_it: ^8.0.0
+
+  # 地图和轨迹相关
+  gpx: ^2.3.0
+  xml: ^6.5.0
+  archive: ^3.6.1
+  flutter_map_location_marker: ^8.0.5
+  flutter_map_line_editor: ^6.0.0
+  flutter_map_marker_cluster: ^1.3.6
+  polyline_codec: ^0.1.6
+  tuple: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -73,25 +83,27 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
   assets:
     - assets/images/
     - assets/icons/
     - assets/animations/
-    - assets/maps/
-    - assets/data/
-    - .env
+    - assets/mock_data/
+    - assets/mock_data/search_history.json
+
+  fonts:
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/NotoSansSC-Regular.otf
+          weight: 400
+        - asset: assets/fonts/NotoSansSC-Medium.otf
+          weight: 500
+        - asset: assets/fonts/NotoSansSC-Bold.otf
+          weight: 700
+        - asset: assets/fonts/NotoSansSC-Light.otf
+          weight: 300
 
 flutter_native_splash:
   color: "#4CAF50"
   image: assets/images/splash.png
   android: true
   ios: true
-
-flutter_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/icons/app_icon.png"
-  min_sdk_android: 21
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
