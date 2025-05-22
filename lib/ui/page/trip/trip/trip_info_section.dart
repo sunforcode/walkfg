@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import '../../../../model/route/route_model.dart';
+import '../../../../model/model/route/route_model.dart';
 import '../../../../theme/theme/app_colors.dart';
-import '../../../widgets/common/info_chip.dart';
 
 /// 行程基本信息设置区组件
 class TripInfoSection extends StatelessWidget {
@@ -68,12 +66,12 @@ class TripInfoSection extends StatelessWidget {
             children: [
               _buildInfoChip(
                 CupertinoIcons.location,
-                route.region,
+                route.region!,
               ),
               const SizedBox(width: 16),
               _buildInfoChip(
                 CupertinoIcons.clock,
-                '${route.durationDays}天',
+                '${route.basicInfo.duration}天',
               ),
               const SizedBox(width: 16),
               _buildInfoChip(

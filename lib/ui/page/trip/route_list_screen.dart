@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../model/route/route_model.dart';
+import '../../../model/model/route/route_model.dart';
 import '../../../theme/theme/app_colors.dart';
-import '../../../common/utils/trip_utils.dart';
 import '../route/cupertino_route_detail_screen.dart';
 
 /// 路线列表页面
@@ -143,9 +142,9 @@ class _RouteListScreenState extends State<RouteListScreen> {
               child: SizedBox(
                 height: 150,
                 width: double.infinity,
-                child: route.imageUrls.isNotEmpty
+                child: route.coverUrl != null
                     ? Image.network(
-                        route.imageUrls[0],
+                        route.coverUrl!,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
                           color: AppColors.primary.withOpacity(0.1),
@@ -193,22 +192,22 @@ class _RouteListScreenState extends State<RouteListScreen> {
                     children: [
                       _buildInfoChip(
                         CupertinoIcons.star_fill,
-                        '${route.rating}分',
+                        '${route.ratings.overall}分',
                       ),
                       const SizedBox(width: 12),
                       _buildInfoChip(
                         CupertinoIcons.arrow_right_arrow_left,
-                        '${route.distance}公里',
+                        '${route.basicInfo.distance}公里',
                       ),
                       const SizedBox(width: 12),
                       _buildInfoChip(
                         CupertinoIcons.time,
-                        '${route.durationDays}天',
+                        route.basicInfo.duration,
                       ),
                       const SizedBox(width: 12),
                       _buildInfoChip(
                         CupertinoIcons.chart_bar,
-                        TripUtils.getDifficultyName(route.difficulty),
+                        route.getDifficultyName(),
                       ),
                     ],
                   ),
@@ -217,7 +216,7 @@ class _RouteListScreenState extends State<RouteListScreen> {
 
                   // 最佳季节
                   Text(
-                    '最佳季节: ${route.bestSeasons.join(", ")}',
+                    '最佳季节: ${route.basicInfo.bestSeason.join(", ")}',
                     style: const TextStyle(
                       fontSize: 14,
                       color: CupertinoColors.systemGrey,

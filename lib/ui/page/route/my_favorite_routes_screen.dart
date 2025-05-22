@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../model/route/route_model.dart';
+import '../../../model/model/route/route_model.dart';
 import '../../../service/service_manager.dart';
 import '../../widgets/common/loading_indicator.dart';
 import '../../widgets/common/error_widget.dart';
@@ -112,9 +112,9 @@ class _MyFavoriteRoutesScreenState extends State<MyFavoriteRoutesScreen> {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(12),
                 ),
-                child: route.imageUrls.isNotEmpty
+                child: route.coverUrl == null
                     ? Image.network(
-                        route.imageUrls.first,
+                        route.coverUrl!,
                         height: 150,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -149,17 +149,17 @@ class _MyFavoriteRoutesScreenState extends State<MyFavoriteRoutesScreen> {
                       children: [
                         _buildInfoChip(
                           CupertinoIcons.location_solid,
-                          route.region,
+                          route.region!,
                         ),
                         const SizedBox(width: 12),
                         _buildInfoChip(
                           CupertinoIcons.arrow_right_arrow_left,
-                          '${route.distance} km',
+                          '${route.basicInfo.distance} km',
                         ),
                         const SizedBox(width: 12),
                         _buildInfoChip(
                           CupertinoIcons.time,
-                          route.duration,
+                          route.basicInfo.duration,
                         ),
                       ],
                     ),

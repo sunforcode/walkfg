@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../../../model/equipment/equipment_model.dart';
+import '../../../../model/equipment/equipment_item_model.dart';
+import '../../../../model/equipment/equipment_necessity.dart';
 import 'equipment_item_detail_dialog.dart';
 
 /// 装备项目列表项组件
 class EquipmentItemTile extends StatelessWidget {
   /// 装备项目
-  final EquipmentItem item;
+  final EquipmentItemModel item;
 
   /// 构造函数
   const EquipmentItemTile({
@@ -19,24 +20,26 @@ class EquipmentItemTile extends StatelessWidget {
 
     return ListTile(
       title: Text(item.name),
-      subtitle: item.description != null ? Text(
-        item.description!,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ) : null,
+      subtitle: item.description != null
+          ? Text(
+              item.description!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )
+          : null,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: Color(item.getNecessityColor()).withOpacity(0.2),
+              color: Color(getNecessityColor(item.necessity)).withOpacity(0.2),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              item.getNecessityName(),
+              item.getNecessityText(),
               style: theme.textTheme.bodySmall?.copyWith(
-                color: Color(item.getNecessityColor()),
+                color: Color(getNecessityColor(item.necessity)),
               ),
             ),
           ),

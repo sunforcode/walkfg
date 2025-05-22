@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../model/equipment/equipment_model.dart';
+import '../../model/equipment/equipment_item_model.dart';
+import '../../model/equipment/equipment_necessity.dart';
 
 /// 装备相关工具类
 class EquipmentUtils {
@@ -73,10 +74,10 @@ class EquipmentUtils {
   }
 
   /// 计算装备清单总重量
-  static double calculateTotalWeight(List<EquipmentItem> items) {
+  static double calculateTotalWeight(List<EquipmentItemModel> items) {
     double totalWeight = 0;
     for (var item in items) {
-      totalWeight += (item.weight ?? 0) * (item.quantity ?? 1);
+      totalWeight += item.weight * item.quantity;
     }
     return totalWeight;
   }
@@ -91,23 +92,23 @@ class EquipmentUtils {
   }
 
   /// 按类别分组装备
-  static Map<String, List<EquipmentItem>> groupByCategory(
-      List<EquipmentItem> items) {
-    final Map<String, List<EquipmentItem>> grouped = {};
-    
+  static Map<String, List<EquipmentItemModel>> groupByCategory(
+      List<EquipmentItemModel> items) {
+    final Map<String, List<EquipmentItemModel>> grouped = {};
+
     for (var item in items) {
-      final category = item.brand ?? '未分类';
+      final category = item.category;
       if (!grouped.containsKey(category)) {
         grouped[category] = [];
       }
       grouped[category]!.add(item);
     }
-    
+
     return grouped;
   }
 
   /// 获取装备推荐建议
-  static String getRecommendation(EquipmentItem item) {
+  static String getRecommendation(EquipmentItemModel item) {
     switch (item.name.toLowerCase()) {
       case '徒步鞋':
         return '选择防水、支撑性好的徒步鞋，确保合脚舒适';

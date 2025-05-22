@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/service/route_service.dart';
-import '../../../model/route/route_model.dart';
+import '../../../model/model/route/route_model.dart';
 import '../../../model/trip/recommended_route_model.dart';
 import '../../../service/service_manager.dart';
-import '../../../service/trip_service.dart';
+import '../../../service/recommendation_service.dart';
 import '../../../common/utils/trip_utils.dart';
 import '../../widgets/common/loading_indicator.dart';
 import 'trip/search_section.dart';
@@ -23,8 +23,11 @@ class TripPlanningHomeScreen extends StatefulWidget {
 }
 
 class _TripPlanningHomeScreenState extends State<TripPlanningHomeScreen> {
-  /// 行程服务
-  late RouteService _tripService;
+  /// 路线服务
+  late RouteService _routeService;
+
+  /// 推荐服务
+  late RecommendationService _recommendationService;
 
   /// 搜索控制器
   final TextEditingController _searchController = TextEditingController();
@@ -100,7 +103,8 @@ class _TripPlanningHomeScreenState extends State<TripPlanningHomeScreen> {
   @override
   void initState() {
     super.initState();
-    _tripService = ServiceLocator.instance.getRouteService();
+    _routeService = ServiceLocator.instance.getRouteService();
+    _recommendationService = ServiceLocator.instance.getRecommendationService();
     _loadData();
   }
 
@@ -112,17 +116,16 @@ class _TripPlanningHomeScreenState extends State<TripPlanningHomeScreen> {
 
     try {
       // 加载推荐路线
-      _recommendedRoutesFuture =
-          ServiceLocator.instance.getTripService().getRecommendedRoutes();
+      _recommendedRoutesFuture = _recommendationService.getRecommendedRoutes();
       final recommendedRoutes = await _recommendedRoutesFuture;
 
       // 获取不同类型的推荐路线
       _featuredRoutes =
-          recommendedRoutes.getByType(RecommendedRouteType.featured);
+          _findRoutesByType(recommendedRoutes, RecommendedRouteType.popular);
       _popularRoutes =
-          recommendedRoutes.getByType(RecommendedRouteType.popular);
+          _findRoutesByType(recommendedRoutes, RecommendedRouteType.popular);
       _seasonalRoutes =
-          recommendedRoutes.getByType(RecommendedRouteType.seasonal);
+          _findRoutesByType(recommendedRoutes, RecommendedRouteType.seasonal);
 
       setState(() {
         _isLoading = false;
@@ -131,7 +134,19 @@ class _TripPlanningHomeScreenState extends State<TripPlanningHomeScreen> {
       setState(() {
         _isLoading = false;
       });
+      print('加载推荐路线失败: $e');
     }
+  }
+
+  /// 根据类型查找推荐路线
+  RecommendedRouteModel? _findRoutesByType(
+      RecommendedRouteListModel recommendedRoutes, RecommendedRouteType type) {
+    for (var item in recommendedRoutes.items) {
+      if (item.type == type) {
+        return item;
+      }
+    }
+    return null;
   }
 
   @override
@@ -280,7 +295,7 @@ class _TripPlanningHomeScreenState extends State<TripPlanningHomeScreen> {
       CupertinoPageRoute(
         builder: (context) => RouteListScreen(
           title: '搜索结果: $query',
-          routesFuture: _tripService.searchRoutes(query),
+          routesFuture: _routeService.searchRoutes(query),
         ),
       ),
     );
@@ -305,7 +320,7 @@ class _TripPlanningHomeScreenState extends State<TripPlanningHomeScreen> {
       CupertinoPageRoute(
         builder: (context) => RouteListScreen(
           title: '$region 地区路线',
-          routesFuture: _tripService.getRoutesByRegion(region),
+          routesFuture: _routeService.getRoutesByRegion(region),
         ),
       ),
     );
@@ -318,7 +333,7 @@ class _TripPlanningHomeScreenState extends State<TripPlanningHomeScreen> {
       CupertinoPageRoute(
         builder: (context) => RouteListScreen(
           title: '${TripUtils.getDifficultyName(difficulty)} 难度路线',
-          routesFuture: _tripService.getRoutesByDifficulty(difficulty),
+          routesFuture: _routeService.getRoutesByDifficulty(difficulty),
         ),
       ),
     );
@@ -331,7 +346,7 @@ class _TripPlanningHomeScreenState extends State<TripPlanningHomeScreen> {
       CupertinoPageRoute(
         builder: (context) => RouteListScreen(
           title: '$minDays-$maxDays 天路线',
-          routesFuture: _tripService.getRoutesByDuration(minDays, maxDays),
+          routesFuture: _routeService.getRoutesByDuration(minDays, maxDays),
         ),
       ),
     );

@@ -1,15 +1,13 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import '../../../model/user_model.dart';
-import '../../../model/guide_model.dart';
-import '../../../model/route/route_model.dart';
+import '../../../model/user/user_model.dart';
+import '../../../model/guide/guide_model.dart';
+import '../../../model/model/route/route_model.dart';
+import '../../../model/model/trip/trip_model.dart';
 import '../../../model/weather/weather_model.dart';
 import '../../../service/service_manager.dart';
-import '../../../common/utils/date_time_utils.dart';
-import '../../../common/utils/weather_utils.dart';
 import 'widgets/welcome_weather_card.dart';
 import 'widgets/stats_card.dart';
-import 'widgets/planned_routes_section.dart';
+import 'widgets/planned_trips_section.dart';
 import 'widgets/recommended_routes_section.dart';
 import 'widgets/hiking_guides_section.dart';
 import 'widgets/trip_planning_entries.dart';
@@ -31,8 +29,8 @@ class _HomeScreenState extends State<HomeScreen>
   /// 用户统计数据Future
   late Future<UserModel> _userStatsFuture;
 
-  /// 规划路线列表Future
-  late Future<List<PlannedRouteModel>> _plannedRoutesFuture;
+  /// 规划行程列表Future
+  late Future<List<TripModel>> _plannedTripsFuture;
 
   /// 推荐路线列表Future
   late Future<List<RouteModel>> _recommendedRoutesFuture;
@@ -51,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     _userWeatherFuture = _loadUserWeatherData();
     _userStatsFuture = _loadUserStatsData();
-    _plannedRoutesFuture = _loadPlannedRoutesData();
+    _plannedTripsFuture = _loadPlannedTripsData();
     _recommendedRoutesFuture = _loadRecommendedRoutesData();
     _hikingGuidesFuture = _loadHikingGuidesData();
     _loadUnfinishedPlansCount();
@@ -80,10 +78,10 @@ class _HomeScreenState extends State<HomeScreen>
     return userService.getUserStats();
   }
 
-  /// 加载规划路线数据
-  Future<List<PlannedRouteModel>> _loadPlannedRoutesData() async {
-    final apiService = ServiceLocator.instance.getRouteService();
-    return apiService.getPlannedRoutes();
+  /// 加载规划行程数据
+  Future<List<TripModel>> _loadPlannedTripsData() async {
+    final tripService = ServiceLocator.instance.getTripService();
+    return tripService.getPlannedTrips();
   }
 
   /// 加载推荐路线数据
@@ -102,40 +100,42 @@ class _HomeScreenState extends State<HomeScreen>
   /// 加载未完成行程计划数量
   void _loadUnfinishedPlansCount() {
     final tripPlanService = ServiceLocator.instance.getTripPlanService();
-    _unfinishedPlansCount = tripPlanService.getUnfinishedTripPlansCount();
+    _unfinishedPlansCount = 5;
+    //tripPlanService.getUnfinishedTripPlansCount();
+  }
+
+  /// 显示提示信息
+  void _showToast(String message) {
+    showCupertinoDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        Future.delayed(const Duration(seconds: 1), () {
+          Navigator.of(context, rootNavigator: true).pop();
+        });
+        return CupertinoAlertDialog(
+          content: Text(message),
+        );
+      },
+    );
   }
 
   /// 导航到已完成路线页面
   void _navigateToCompletedRoutes() {
     // TODO: 实现导航到已完成路线页面
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('导航到已完成路线页面'),
-        duration: Duration(seconds: 1),
-      ),
-    );
+    _showToast('导航到已完成路线页面');
   }
 
   /// 导航到装备列表页面
   void _navigateToEquipmentList() {
     // TODO: 实现导航到装备列表页面
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('导航到装备列表页面'),
-        duration: Duration(seconds: 1),
-      ),
-    );
+    _showToast('导航到装备列表页面');
   }
 
   /// 导航到收藏路线页面
   void _navigateToFavoriteRoutes() {
     // TODO: 实现导航到收藏路线页面
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('导航到收藏路线页面'),
-        duration: Duration(seconds: 1),
-      ),
-    );
+    _showToast('导航到收藏路线页面');
   }
 
   /// 刷新用户统计数据
@@ -145,12 +145,7 @@ class _HomeScreenState extends State<HomeScreen>
     });
 
     // 显示刷新提示
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('统计数据已更新'),
-        duration: Duration(seconds: 1),
-      ),
-    );
+    _showToast('统计数据已更新');
   }
 
   @override
@@ -169,43 +164,8 @@ class _HomeScreenState extends State<HomeScreen>
               // 天气卡片
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: FutureBuilder<Map<String, dynamic>>(
+                child: WelcomeWeatherCard.fromFuture(
                   future: _userWeatherFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return WelcomeWeatherCard.loading();
-                    } else if (snapshot.hasError) {
-                      return WelcomeWeatherCard.error(
-                        errorMessage: snapshot.error.toString(),
-                      );
-                    } else if (snapshot.hasData) {
-                      final user = snapshot.data!['user'] as UserModel;
-                      final weather = snapshot.data!['weather'] as WeatherModel;
-
-                      // 获取问候语和天气相关文本
-                      final greeting = DateTimeUtils.getGreeting();
-                      final weatherDescription =
-                          WeatherUtils.getWeatherDescription(weather.condition);
-                      final weatherConditionText =
-                          WeatherUtils.getWeatherConditionText(
-                              weather.condition);
-                      final backgroundColor =
-                          WeatherUtils.getWeatherColor(weather.condition);
-
-                      return WelcomeWeatherCard(
-                        user: user,
-                        weather: weather,
-                        greeting: greeting,
-                        weatherDescription: weatherDescription,
-                        weatherConditionText: weatherConditionText,
-                        backgroundColor: backgroundColor,
-                      );
-                    } else {
-                      return WelcomeWeatherCard.error(
-                        errorMessage: '数据加载失败',
-                      );
-                    }
-                  },
                 ),
               ),
 
@@ -228,11 +188,11 @@ class _HomeScreenState extends State<HomeScreen>
 
               const SizedBox(height: 24),
 
-              // 规划路线部分
+              // 规划行程部分
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: PlannedRoutesSection(
-                  plannedRoutesFuture: _plannedRoutesFuture,
+                child: PlannedTripsSection(
+                  plannedTripsFuture: _plannedTripsFuture,
                 ),
               ),
 

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../model/route/route_model.dart';
+import '../../../../model/model/route/route_model.dart';
 import '../../../widgets/common/loading_indicator.dart';
 import '../../../widgets/common/error_widget.dart';
 import '../../../widgets/common/empty_content_widget.dart';

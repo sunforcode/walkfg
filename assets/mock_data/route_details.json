@@ -1,0 +1,274 @@
+[
+  {
+    "id": "route1",
+    "name": "黄山主峰徒步路线",
+    "description": "黄山主峰徒步路线，包括光明顶、莲花峰、天都峰等主要景点，适合2-3天行程。",
+    "distance": 25.5,
+    "elevationGain": 1800,
+    "elevation_loss": 1600.5,
+    "difficulty": "中级",
+    "routeDifficulty": 1,
+    "best_season": ["春", "秋"],
+    "duration": "2-3天",
+    "rating": 4.8,
+    "popularity": 1256,
+    "region": "安徽省黄山市",
+    "start_latitude": 30.1325,
+    "start_longitude": 118.1742,
+    "end_latitude": 30.1435,
+    "end_longitude": 118.1923,
+    "cover_url": "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+    "is_favorite": false,
+    "track_points": [
+      {
+        "latitude": 30.1325,
+        "longitude": 118.1742,
+        "elevation": 800,
+        "time": "2023-01-01T08:00:00.000Z"
+      },
+      {
+        "latitude": 30.1350,
+        "longitude": 118.1780,
+        "elevation": 1200,
+        "time": "2023-01-01T10:00:00.000Z"
+      },
+      {
+        "latitude": 30.1380,
+        "longitude": 118.1820,
+        "elevation": 1600,
+        "time": "2023-01-01T12:00:00.000Z"
+      },
+      {
+        "latitude": 30.1400,
+        "longitude": 118.1860,
+        "elevation": 1860,
+        "time": "2023-01-01T14:00:00.000Z"
+      },
+      {
+        "latitude": 30.1435,
+        "longitude": 118.1923,
+        "elevation": 1600,
+        "time": "2023-01-01T16:00:00.000Z"
+      }
+    ],
+    "highest_point": {
+      "latitude": 30.1400,
+      "longitude": 118.1860,
+      "elevation": 1860,
+      "name": "光明顶",
+      "description": "黄山最高峰，海拔1860米"
+    },
+    "lowest_point": {
+      "latitude": 30.1325,
+      "longitude": 118.1742,
+      "elevation": 800,
+      "name": "黄山北门",
+      "description": "黄山风景区北门入口"
+    },
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z",
+    "detailedDescription": "黄山主峰徒步路线是一条经典的黄山徒步路线，全程约25.5公里，累计爬升1800米。路线起点为黄山北门，终点为排云亭，途经光明顶、莲花峰、天都峰等黄山著名景点。沿途可欣赏到黄山奇松、怪石、云海、温泉等自然景观。\n\n路线难度为中级，适合有一定徒步经验的游客。建议2-3天完成，可在山上住宿1-2晚。最佳徒步季节为春季（4-5月）和秋季（9-10月），此时天气晴朗，视野开阔，可欣赏到最美的黄山风光。",
+    "notes": [
+      "请携带足够的饮用水和食物",
+      "山上气温较低，请准备保暖衣物",
+      "雨天路滑，请注意安全",
+      "请提前预订山上住宿",
+      "请遵守景区规定，不要在非指定区域露营"
+    ],
+    "waypoints": [
+      {
+        "name": "黄山北门",
+        "description": "黄山风景区北门入口",
+        "latitude": 30.1325,
+        "longitude": 118.1742,
+        "elevation": 800,
+        "distance_from_start": 0,
+        "estimated_time_from_start": 0,
+        "type": "start"
+      },
+      {
+        "name": "始信峰",
+        "description": "黄山著名景点，可观云海",
+        "latitude": 30.1325,
+        "longitude": 118.1742,
+        "elevation": 1600,
+        "distance_from_start": 3.2,
+        "estimated_time_from_start": 2.0,
+        "type": "scenic"
+      },
+      {
+        "name": "光明顶",
+        "description": "黄山最高峰，海拔1860米",
+        "latitude": 30.1325,
+        "longitude": 118.1742,
+        "elevation": 1860,
+        "distance_from_start": 8.5,
+        "estimated_time_from_start": 5.0,
+        "type": "scenic"
+      },
+      {
+        "name": "排云亭",
+        "description": "黄山著名景点，可观云海日出",
+        "latitude": 30.1435,
+        "longitude": 118.1923,
+        "elevation": 1600,
+        "distance_from_start": 25.5,
+        "estimated_time_from_start": 16.0,
+        "type": "end"
+      }
+    ],
+    "daily_plans": [
+      {
+        "day": 1,
+        "title": "黄山北门 - 始信峰 - 白鹅岭",
+        "description": "从黄山北门进入景区，经过云谷寺，登上始信峰，欣赏奇松怪石，傍晚抵达白鹅岭住宿。",
+        "distance": 8.5,
+        "elevation_gain": 800,
+        "estimated_time": 6
+      },
+      {
+        "day": 2,
+        "title": "白鹅岭 - 光明顶 - 西海大峡谷",
+        "description": "早起观赏日出，登顶光明顶，游览西海大峡谷，傍晚返回白鹅岭住宿。",
+        "distance": 10.2,
+        "elevation_gain": 600,
+        "estimated_time": 7
+      },
+      {
+        "day": 3,
+        "title": "白鹅岭 - 莲花峰 - 排云亭",
+        "description": "游览莲花峰，经过百步云梯，抵达排云亭结束行程。",
+        "distance": 6.8,
+        "elevation_gain": 400,
+        "estimated_time": 5
+      }
+    ]
+  },
+  {
+    "id": "route2",
+    "name": "莫干山徒步路线",
+    "description": "莫干山徒步路线，穿越竹海和茶园，欣赏江南山水风光，适合1-2天行程。",
+    "distance": 15.8,
+    "elevationGain": 850,
+    "elevation_loss": 750.5,
+    "difficulty": "初级",
+    "routeDifficulty": 0,
+    "best_season": ["春", "夏", "秋"],
+    "duration": "1-2天",
+    "rating": 4.5,
+    "popularity": 987,
+    "region": "浙江省湖州市德清县",
+    "start_latitude": 30.5623,
+    "start_longitude": 119.8456,
+    "end_latitude": 30.5723,
+    "end_longitude": 119.8556,
+    "cover_url": "https://images.unsplash.com/photo-1501555088652-021faa106b9b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+    "is_favorite": true,
+    "track_points": [
+      {
+        "latitude": 30.5623,
+        "longitude": 119.8456,
+        "elevation": 200,
+        "time": "2023-01-15T08:00:00.000Z"
+      },
+      {
+        "latitude": 30.5650,
+        "longitude": 119.8480,
+        "elevation": 400,
+        "time": "2023-01-15T10:00:00.000Z"
+      },
+      {
+        "latitude": 30.5680,
+        "longitude": 119.8510,
+        "elevation": 600,
+        "time": "2023-01-15T12:00:00.000Z"
+      },
+      {
+        "latitude": 30.5700,
+        "longitude": 119.8530,
+        "elevation": 758,
+        "time": "2023-01-15T14:00:00.000Z"
+      },
+      {
+        "latitude": 30.5723,
+        "longitude": 119.8556,
+        "elevation": 700,
+        "time": "2023-01-15T16:00:00.000Z"
+      }
+    ],
+    "highest_point": {
+      "latitude": 30.5700,
+      "longitude": 119.8530,
+      "elevation": 758,
+      "name": "莫干山顶",
+      "description": "莫干山最高点，可俯瞰全景"
+    },
+    "lowest_point": {
+      "latitude": 30.5623,
+      "longitude": 119.8456,
+      "elevation": 200,
+      "name": "莫干山景区入口",
+      "description": "莫干山景区主入口"
+    },
+    "createdAt": "2023-01-15T00:00:00.000Z",
+    "updatedAt": "2023-01-15T00:00:00.000Z",
+    "detailedDescription": "莫干山徒步路线是一条轻松愉快的徒步路线，全程约15.8公里，累计爬升850米。路线起点为莫干山景区入口，终点为莫干山顶，途经竹海、茶园、溪流等自然景观。沿途可欣赏到江南山水风光，体验乡村田园风情。\n\n路线难度为初级，适合初次徒步的游客。建议1-2天完成，可在山上住宿1晚。最佳徒步季节为春季（3-5月）、夏季（6-8月）和秋季（9-11月），此时天气宜人，景色优美。",
+    "notes": [
+      "请携带足够的饮用水和食物",
+      "夏季蚊虫较多，请做好防蚊准备",
+      "雨天路滑，请注意安全",
+      "请提前预订民宿",
+      "请尊重当地居民和环境"
+    ],
+    "waypoints": [
+      {
+        "name": "莫干山景区入口",
+        "description": "莫干山景区主入口",
+        "latitude": 30.5623,
+        "longitude": 119.8456,
+        "elevation": 200,
+        "distance_from_start": 0,
+        "estimated_time_from_start": 0,
+        "type": "start"
+      },
+      {
+        "name": "竹海观景台",
+        "description": "可俯瞰莫干山竹海",
+        "latitude": 30.5623,
+        "longitude": 119.8456,
+        "elevation": 500,
+        "distance_from_start": 5.2,
+        "estimated_time_from_start": 2.5,
+        "type": "scenic"
+      },
+      {
+        "name": "莫干山顶",
+        "description": "莫干山最高点，可俯瞰全景",
+        "latitude": 30.5723,
+        "longitude": 119.8556,
+        "elevation": 758,
+        "distance_from_start": 15.8,
+        "estimated_time_from_start": 8.0,
+        "type": "end"
+      }
+    ],
+    "daily_plans": [
+      {
+        "day": 1,
+        "title": "莫干山景区入口 - 竹海观景台 - 山间民宿",
+        "description": "从莫干山景区入口出发，穿越竹海，抵达观景台，欣赏竹海风光，傍晚入住山间民宿。",
+        "distance": 8.5,
+        "elevation_gain": 400,
+        "estimated_time": 4
+      },
+      {
+        "day": 2,
+        "title": "山间民宿 - 茶园 - 莫干山顶",
+        "description": "早起体验乡村生活，穿越茶园，登顶莫干山，俯瞰全景。",
+        "distance": 7.3,
+        "elevation_gain": 450,
+        "estimated_time": 4
+      }
+    ]
+  }
+]

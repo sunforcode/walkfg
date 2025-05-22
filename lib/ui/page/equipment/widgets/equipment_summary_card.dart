@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../model/equipment/equipment_model.dart';
+import '../../../../model/equipment/equipment_necessity.dart';
 
 /// 装备摘要卡片组件
 class EquipmentSummaryCard extends StatelessWidget {
@@ -15,7 +16,7 @@ class EquipmentSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -99,9 +100,9 @@ class EquipmentSummaryCard extends StatelessWidget {
               equipmentList.totalWeight,
               theme.colorScheme.tertiary,
             ),
-          
+
             const SizedBox(height: 16),
-          
+
             // 装备统计
             Text(
               '装备统计',
@@ -117,7 +118,7 @@ class EquipmentSummaryCard extends StatelessWidget {
                   '必需',
                   equipmentList.essentialItems,
                   equipmentList.totalItems,
-                  Color(EquipmentNecessity.essential.index),
+                  Color(getNecessityColor(EquipmentNecessity.essential)),
                 ),
                 const SizedBox(width: 8),
                 _buildStatItem(
@@ -125,7 +126,7 @@ class EquipmentSummaryCard extends StatelessWidget {
                   '推荐',
                   equipmentList.recommendedItems,
                   equipmentList.totalItems,
-                  Color(EquipmentNecessity.recommended.index),
+                  Color(getNecessityColor(EquipmentNecessity.recommended)),
                 ),
                 const SizedBox(width: 8),
                 _buildStatItem(
@@ -133,13 +134,13 @@ class EquipmentSummaryCard extends StatelessWidget {
                   '可选',
                   equipmentList.optionalItems,
                   equipmentList.totalItems,
-                  Color(EquipmentNecessity.optional.index),
+                  Color(getNecessityColor(EquipmentNecessity.optional)),
                 ),
               ],
             ),
-          
+
             const SizedBox(height: 16),
-          
+
             // 季节标签
             Wrap(
               spacing: 8,
@@ -171,7 +172,7 @@ class EquipmentSummaryCard extends StatelessWidget {
   ) {
     final theme = Theme.of(context);
     final percentage = (weight / totalWeight * 100).toStringAsFixed(1);
-    
+
     return Row(
       children: [
         SizedBox(
@@ -216,8 +217,9 @@ class EquipmentSummaryCard extends StatelessWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
-    final percentage = total > 0 ? (count / total * 100).toStringAsFixed(0) : '0';
-    
+    final percentage =
+        total > 0 ? (count / total * 100).toStringAsFixed(0) : '0';
+
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(8),

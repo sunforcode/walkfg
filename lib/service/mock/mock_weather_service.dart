@@ -1,111 +1,141 @@
-import 'package:flutter/material.dart';
-import 'package:walk/service/weather_service.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import '../weather_service.dart';
 import '../../model/weather/weather_model.dart';
 
-/// 模拟天气服务实现
+/// Mock天气服务实现
 class MockWeatherService implements WeatherService {
+  /// 单例实例
+  static final MockWeatherService _instance = MockWeatherService._internal();
+
+  /// 工厂构造函数
+  factory MockWeatherService() {
+    return _instance;
+  }
+
+  /// 私有构造函数
+  MockWeatherService._internal();
+
+  /// 从JSON文件加载数据
+  Future<dynamic> _loadJsonData(String path) async {
+    try {
+      final String jsonString = await rootBundle.loadString(path);
+      return json.decode(jsonString);
+    } catch (e) {
+      print('加载JSON文件失败: $e');
+      return null;
+    }
+  }
+
   @override
   Future<WeatherModel> getWeather(double latitude, double longitude) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    // 模拟天气数据
-    return WeatherModel(
-      city: '北京市',
-      condition: '晴朗',
-      suitability: '适合徒步',
-      temperature: 22.0,
-      windLevel: '3级风',
-      humidity: '湿度30%',
-      weatherIcon: Icons.sunny,
-    );
+    final weatherJson =
+        await _loadJsonData('assets/mock_data/current_weather.json');
+    if (weatherJson == null) {
+      throw Exception('Failed to load weather data');
+    }
+
+    return WeatherModel.fromJson(weatherJson);
   }
 
   @override
   Future<WeatherModel> getWeatherByCity(String city) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    // 模拟天气数据
-    return WeatherModel(
-      city: city,
-      condition: '多云',
-      suitability: '适合徒步',
-      temperature: 20.0,
-      windLevel: '2级风',
-      humidity: '湿度45%',
-      weatherIcon: _getWeatherIcon('cloudy'),
-    );
-  }
+    final weatherJson =
+        await _loadJsonData('assets/mock_data/current_weather.json');
+    if (weatherJson == null) {
+      throw Exception('Failed to load weather data');
+    }
 
-  @override
-  Future<double> getAltitude(double latitude, double longitude) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 300));
+    // 修改位置信息
+    final modifiedJson = Map<String, dynamic>.from(weatherJson);
+    modifiedJson['city'] = city;
 
-    // 模拟海拔数据 (根据经纬度生成一个随机但合理的海拔值)
-    final random = DateTime.now().millisecondsSinceEpoch % 3000;
-    return random.toDouble();
+    return WeatherModel.fromJson(modifiedJson);
   }
 
   @override
   Future<List<WeatherModel>> getForecast(double latitude, double longitude,
       {int days = 7}) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 800));
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    // 生成未来几天的天气预报
-    final List<WeatherModel> forecast = [];
-    final conditions = [
-      'sunny',
-      'cloudy',
-      'partly_cloudy',
-      'rainy',
-      'thunderstorm'
-    ];
-
-    for (int i = 0; i < days; i++) {
-      final condition =
-          conditions[(i + DateTime.now().day) % conditions.length];
-      final temp = 15.0 + (i % 3) * 5; // 温度在15-25之间波动
-
-      forecast.add(WeatherModel(
-        city: '北京市',
-        condition: _getConditionName(condition),
-        suitability: condition == 'rainy' || condition == 'thunderstorm'
-            ? '不适合徒步'
-            : '适合徒步',
-        temperature: temp,
-        windLevel: '${1 + (i % 4)}级风',
-        humidity: '湿度${30 + (i * 5) % 40}%',
-        weatherIcon: _getWeatherIcon(condition),
-      ));
+    final forecastJson =
+        await _loadJsonData('assets/mock_data/weather_forecast.json');
+    if (forecastJson == null || !(forecastJson is List)) {
+      return [];
     }
 
-    return forecast;
-  }
+    // 将JSON数据转换为WeatherModel列表
+    List<WeatherModel> forecasts = [];
+    for (var item in forecastJson) {
+      // 添加城市信息
+      final itemWithCity = Map<String, dynamic>.from(item);
+      itemWithCity['city'] = '黄山'; // 默认城市
 
-  /// 获取天气图标
-  dynamic _getWeatherIcon(String condition) {
-    // 这里返回一个占位符，实际应用中应返回适当的图标
-    return condition;
-  }
-
-  /// 获取天气状况名称
-  String _getConditionName(String condition) {
-    switch (condition) {
-      case 'sunny':
-        return '晴朗';
-      case 'cloudy':
-        return '多云';
-      case 'partly_cloudy':
-        return '局部多云';
-      case 'rainy':
-        return '雨';
-      case 'thunderstorm':
-        return '雷雨';
-      default:
-        return '未知';
+      final forecast = WeatherModel.forecastFromJson(itemWithCity);
+      forecasts.add(forecast);
     }
+
+    // 限制天数
+    if (forecasts.length > days) {
+      forecasts = forecasts.sublist(0, days);
+    }
+
+    return forecasts;
+  }
+
+  @override
+  Future<double> getAltitude(double latitude, double longitude) async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    // 模拟海拔数据
+    return 1250.0; // 返回一个固定的海拔值，单位为米
+  }
+
+  Future<Map<String, dynamic>> getWeatherAlerts(
+      double latitude, double longitude) async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    final alertsJson =
+        await _loadJsonData('assets/mock_data/weather_alerts.json');
+    if (alertsJson == null) {
+      return {'alerts': []};
+    }
+
+    return alertsJson;
+  }
+
+  Future<Map<String, dynamic>> getAirQuality(
+      double latitude, double longitude) async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    final airQualityJson =
+        await _loadJsonData('assets/mock_data/air_quality.json');
+    if (airQualityJson == null) {
+      return {
+        'aqi': 50,
+        'level': 'Good',
+        'description': '空气质量良好，适合户外活动',
+        'pollutants': {
+          'pm25': 15,
+          'pm10': 30,
+          'o3': 40,
+          'no2': 20,
+          'so2': 10,
+          'co': 0.5,
+        },
+      };
+    }
+
+    return airQualityJson;
   }
 }

@@ -1,0 +1,179 @@
+{
+  "衣物": [
+    {
+      "id": "gear_001",
+      "category": "衣物",
+      "name": "防风外套",
+      "description": "轻量防风外套，适合春季徒步",
+      "necessity": "essential",
+      "weight": {
+        "min": 300,
+        "max": 500
+      },
+      "estimatedCost": {
+        "min": 200,
+        "max": 600
+      },
+      "rentalAvailability": true,
+      "sharable": false,
+      "brand": "Columbia",
+      "model": "Watertight II",
+      "quantity": 1,
+      "createdAt": "2023-01-01T00:00:00.000Z",
+      "updatedAt": "2023-05-15T10:30:00.000Z"
+    },
+    {
+      "id": "gear_002",
+      "category": "衣物",
+      "name": "速干T恤",
+      "description": "速干透气T恤，适合春季徒步",
+      "necessity": "essential",
+      "weight": {
+        "min": 150,
+        "max": 250
+      },
+      "estimatedCost": {
+        "min": 100,
+        "max": 300
+      },
+      "rentalAvailability": false,
+      "sharable": false,
+      "quantity": 2,
+      "createdAt": "2023-01-05T00:00:00.000Z",
+      "updatedAt": "2023-05-10T08:20:00.000Z"
+    },
+    {
+      "id": "gear_005",
+      "category": "衣物",
+      "name": "抓绒衣",
+      "description": "保暖抓绒衣，适合秋季徒步",
+      "necessity": "essential",
+      "weight": {
+        "min": 400,
+        "max": 600
+      },
+      "estimatedCost": {
+        "min": 200,
+        "max": 500
+      },
+      "rentalAvailability": true,
+      "sharable": false,
+      "brand": "The North Face",
+      "quantity": 1,
+      "createdAt": "2023-01-10T00:00:00.000Z",
+      "updatedAt": "2023-05-12T14:45:00.000Z"
+    }
+  ],
+  "鞋类": [
+    {
+      "id": "gear_008",
+      "category": "鞋类",
+      "name": "徒步鞋",
+      "description": "防滑耐磨徒步鞋，适合多种地形",
+      "necessity": "essential",
+      "weight": {
+        "min": 700,
+        "max": 1000
+      },
+      "estimatedCost": {
+        "min": 400,
+        "max": 1200
+      },
+      "rentalAvailability": false,
+      "sharable": false,
+      "brand": "Merrell",
+      "quantity": 1,
+      "createdAt": "2023-02-10T00:00:00.000Z",
+      "updatedAt": "2023-05-18T09:15:00.000Z"
+    }
+  ],
+  "背包": [
+    {
+      "id": "gear_007",
+      "category": "背包",
+      "name": "徒步背包",
+      "description": "30-40L徒步背包，适合1-3天行程",
+      "necessity": "essential",
+      "weight": {
+        "min": 1000,
+        "max": 1500
+      },
+      "estimatedCost": {
+        "min": 300,
+        "max": 1000
+      },
+      "rentalAvailability": true,
+      "sharable": false,
+      "brand": "Osprey",
+      "model": "Kestrel 38",
+      "quantity": 1,
+      "createdAt": "2023-01-15T00:00:00.000Z",
+      "updatedAt": "2023-05-20T14:30:00.000Z"
+    }
+  ],
+  "配件": [
+    {
+      "id": "gear_004",
+      "category": "配件",
+      "name": "遮阳帽",
+      "description": "宽檐遮阳帽，防晒必备",
+      "necessity": "essential",
+      "weight": {
+        "min": 100,
+        "max": 150
+      },
+      "estimatedCost": {
+        "min": 50,
+        "max": 200
+      },
+      "rentalAvailability": false,
+      "sharable": true,
+      "quantity": 1,
+      "createdAt": "2023-01-08T00:00:00.000Z",
+      "updatedAt": "2023-05-11T11:25:00.000Z"
+    },
+    {
+      "id": "gear_009",
+      "category": "配件",
+      "name": "登山杖",
+      "description": "减轻膝盖负担，提高稳定性",
+      "necessity": "recommended",
+      "weight": {
+        "min": 400,
+        "max": 600
+      },
+      "estimatedCost": {
+        "min": 100,
+        "max": 500
+      },
+      "rentalAvailability": true,
+      "sharable": true,
+      "quantity": 1,
+      "createdAt": "2023-01-20T00:00:00.000Z",
+      "updatedAt": "2023-05-15T16:40:00.000Z"
+    }
+  ],
+  "安全装备": [
+    {
+      "id": "gear_010",
+      "category": "安全装备",
+      "name": "头灯",
+      "description": "夜间照明必备",
+      "necessity": "essential",
+      "weight": {
+        "min": 100,
+        "max": 200
+      },
+      "estimatedCost": {
+        "min": 100,
+        "max": 300
+      },
+      "rentalAvailability": true,
+      "sharable": false,
+      "brand": "Petzl",
+      "quantity": 1,
+      "createdAt": "2023-01-25T00:00:00.000Z",
+      "updatedAt": "2023-05-18T13:10:00.000Z"
+    }
+  ]
+}

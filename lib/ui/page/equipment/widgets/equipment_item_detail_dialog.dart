@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../model/equipment/equipment_model.dart';
+import '../../../../model/equipment/equipment_item_model.dart';
+import '../../../../model/equipment/equipment_necessity.dart';
 
 /// 装备项目详情对话框组件
 class EquipmentItemDetailDialog extends StatelessWidget {
   /// 装备项目
-  final EquipmentItem item;
+  final EquipmentItemModel item;
 
   /// 构造函数
   const EquipmentItemDetailDialog({
@@ -15,7 +16,7 @@ class EquipmentItemDetailDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AlertDialog(
       title: Text(item.name),
       content: SingleChildScrollView(
@@ -34,22 +35,15 @@ class EquipmentItemDetailDialog extends StatelessWidget {
               Text(item.description!),
               const SizedBox(height: 16),
             ],
-            
             _buildInfoRow(context, '重量', item.getWeightText()),
             _buildInfoRow(context, '数量', '${item.quantity}个'),
             _buildInfoRow(context, '总重量', item.getTotalWeightText()),
-            _buildInfoRow(context, '必要性', item.getNecessityName(),
-              textColor: Color(item.getNecessityColor())),
-            
-            if (item.brand != null)
-              _buildInfoRow(context, '品牌', item.brand!),
-            
-            if (item.model != null)
-              _buildInfoRow(context, '型号', item.model!),
-
+            _buildInfoRow(context, '必要性', getNecessityName(item.necessity),
+                textColor: Color(getNecessityColor(item.necessity))),
+            if (item.brand != null) _buildInfoRow(context, '品牌', item.brand!),
+            if (item.model != null) _buildInfoRow(context, '型号', item.model!),
             if (item.price != null)
               _buildInfoRow(context, '价格', item.getPriceText()!),
-
             if (item.notes != null) ...[
               const SizedBox(height: 16),
               Text(
@@ -74,7 +68,8 @@ class EquipmentItemDetailDialog extends StatelessWidget {
   }
 
   /// 构建信息行
-  Widget _buildInfoRow(BuildContext context, String label, String value, {Color? textColor}) {
+  Widget _buildInfoRow(BuildContext context, String label, String value,
+      {Color? textColor}) {
     final theme = Theme.of(context);
 
     return Padding(

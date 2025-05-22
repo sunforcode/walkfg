@@ -1,285 +1,105 @@
 {
   "items": [
     {
-      "type": "featured",
-      "title": "精选路线",
-      "description": "精心挑选的热门徒步路线",
-      "routes": [
-        {
-          "id": "route1",
-          "name": "贡嘎大环线",
-          "description": "贡嘎大环线是中国最经典的长线徒步路线之一，环绕贡嘎山，途经多种地形和景观，包括森林、草甸、冰川和高山湖泊。",
-          "distance": 115.0,
-          "duration": "7天",
-          "difficulty": "hard",
-          "best_season": "春季、夏季、秋季",
-          "elevation_gain": 5000,
-          "elevation_loss": 5000,
-          "highest_point": 4800,
-          "lowest_point": 2000,
-          "image_urls": [
-            "https://example.com/gongga1.jpg",
-            "https://example.com/gongga2.jpg"
-          ],
-          "region": "川西",
-          "rating": 4.8,
-          "best_seasons": ["春", "夏", "秋"],
-          "review_count": 245
-        },
-        {
-          "id": "route2",
-          "name": "四姑娘山大峰环线",
-          "description": "四姑娘山大峰环线是一条经典的高山徒步路线，途经四姑娘山脚下的多个山谷和垭口，可以欣赏到壮观的雪山景色。",
-          "distance": 45.0,
-          "duration": "4天",
-          "difficulty": "hard",
-          "best_season": "春季、夏季、秋季",
-          "elevation_gain": 3000,
-          "elevation_loss": 3000,
-          "highest_point": 4200,
-          "lowest_point": 2500,
-          "image_urls": [
-            "https://example.com/siguniang1.jpg",
-            "https://example.com/siguniang2.jpg"
-          ],
-          "region": "川西",
-          "rating": 4.9,
-          "best_seasons": ["春", "夏", "秋"],
-          "review_count": 187
-        },
-        {
-          "id": "route3",
-          "name": "雨崩徒步",
-          "description": "雨崩徒步是一条通往梅里雪山脚下神秘村落的路线，途经原始森林和高山草甸，终点是被雪山环绕的雨崩村。",
-          "distance": 30.0,
-          "duration": "3天",
-          "difficulty": "medium",
-          "best_season": "春季、秋季",
-          "elevation_gain": 1800,
-          "elevation_loss": 1800,
-          "highest_point": 3800,
-          "lowest_point": 2000,
-          "image_urls": [
-            "https://example.com/yubeng1.jpg",
-            "https://example.com/yubeng2.jpg"
-          ],
-          "region": "云南",
-          "rating": 4.9,
-          "best_seasons": ["春", "秋"],
-          "review_count": 278
-        }
-      ]
-    },
-    {
-      "type": "popular",
+      "type": 0,
       "title": "热门路线",
       "description": "最受徒步爱好者欢迎的路线",
       "routes": [
         {
-          "id": "route3",
-          "name": "雨崩徒步",
-          "description": "雨崩徒步是一条通往梅里雪山脚下神秘村落的路线，途经原始森林和高山草甸，终点是被雪山环绕的雨崩村。",
-          "distance": 30.0,
-          "duration": "3天",
-          "difficulty": "medium",
-          "best_season": "春季、秋季",
-          "elevation_gain": 1800,
-          "elevation_loss": 1800,
-          "highest_point": 3800,
-          "lowest_point": 2000,
-          "image_urls": [
-            "https://example.com/yubeng1.jpg",
-            "https://example.com/yubeng2.jpg"
-          ],
-          "region": "云南",
-          "rating": 4.9,
-          "best_seasons": ["春", "秋"],
-          "review_count": 278
-        },
-        {
           "id": "route1",
-          "name": "贡嘎大环线",
-          "description": "贡嘎大环线是中国最经典的长线徒步路线之一，环绕贡嘎山，途经多种地形和景观，包括森林、草甸、冰川和高山湖泊。",
-          "distance": 115.0,
-          "duration": "7天",
-          "difficulty": "hard",
-          "best_season": "春季、夏季、秋季",
-          "elevation_gain": 5000,
-          "elevation_loss": 5000,
-          "highest_point": 4800,
-          "lowest_point": 2000,
-          "image_urls": [
-            "https://example.com/gongga1.jpg",
-            "https://example.com/gongga2.jpg"
-          ],
-          "region": "川西",
+          "name": "黄山主峰徒步路线",
+          "description": "黄山主峰徒步路线，包括光明顶、莲花峰、天都峰等主要景点，适合2-3天行程。",
+          "distance": 25.5,
+          "elevationGain": 1800,
+          "difficulty": "中级",
+          "best_season": ["春", "秋"],
+          "duration": "2-3天",
           "rating": 4.8,
-          "best_seasons": ["春", "夏", "秋"],
-          "review_count": 245
+          "popularity": 1256,
+          "start_latitude": 30.1325,
+          "start_longitude": 118.1742,
+          "end_latitude": 30.1435,
+          "end_longitude": 118.1923,
+          "cover_url": "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+          "is_favorite": false,
+          "createdAt": "2023-01-01T00:00:00.000Z",
+          "updatedAt": "2023-01-01T00:00:00.000Z"
         },
         {
           "id": "route2",
-          "name": "四姑娘山大峰环线",
-          "description": "四姑娘山大峰环线是一条经典的高山徒步路线，途经四姑娘山脚下的多个山谷和垭口，可以欣赏到壮观的雪山景色。",
-          "distance": 45.0,
-          "duration": "4天",
-          "difficulty": "hard",
-          "best_season": "春季、夏季、秋季",
-          "elevation_gain": 3000,
-          "elevation_loss": 3000,
-          "highest_point": 4200,
-          "lowest_point": 2500,
-          "image_urls": [
-            "https://example.com/siguniang1.jpg",
-            "https://example.com/siguniang2.jpg"
-          ],
-          "region": "川西",
-          "rating": 4.9,
-          "best_seasons": ["春", "夏", "秋"],
-          "review_count": 187
+          "name": "莫干山徒步路线",
+          "description": "莫干山徒步路线，穿越竹海和茶园，欣赏江南山水风光，适合1-2天行程。",
+          "distance": 15.8,
+          "elevationGain": 850,
+          "difficulty": "初级",
+          "best_season": ["春", "夏", "秋"],
+          "duration": "1-2天",
+          "rating": 4.5,
+          "popularity": 987,
+          "start_latitude": 30.5623,
+          "start_longitude": 119.8456,
+          "end_latitude": 30.5723,
+          "end_longitude": 119.8556,
+          "cover_url": "https://images.unsplash.com/photo-1501555088652-021faa106b9b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+          "is_favorite": true,
+          "createdAt": "2023-01-15T00:00:00.000Z",
+          "updatedAt": "2023-01-15T00:00:00.000Z"
         }
       ]
     },
     {
-      "type": "seasonal",
-      "title": "秋季推荐",
-      "description": "最适合秋季徒步的路线",
+      "type": 1,
+      "title": "新上线路线",
+      "description": "最新上线的徒步路线",
       "routes": [
         {
-          "id": "route5",
-          "name": "毕棚沟徒步",
-          "description": "毕棚沟是一条位于四川阿坝的徒步路线，以其秋季的红叶和多彩的森林景观而闻名。",
-          "distance": 20.0,
-          "duration": "2天",
-          "difficulty": "medium",
-          "best_season": "春季、夏季、秋季",
-          "elevation_gain": 1200,
-          "elevation_loss": 1200,
-          "highest_point": 3200,
-          "lowest_point": 2000,
-          "image_urls": [
-            "https://example.com/bipangou1.jpg",
-            "https://example.com/bipangou2.jpg"
-          ],
-          "region": "川西",
-          "rating": 4.5,
-          "best_seasons": ["春", "夏", "秋"],
-          "review_count": 210
-        },
-        {
-          "id": "route4",
-          "name": "梅里雪山环线",
-          "description": "梅里雪山环线是一条环绕梅里雪山的徒步路线，途经多个藏族村落和高山草甸，可以欣赏到壮观的雪山景色。",
-          "distance": 80.0,
-          "duration": "6天",
-          "difficulty": "hard",
-          "best_season": "春季、秋季",
-          "elevation_gain": 4000,
-          "elevation_loss": 4000,
-          "highest_point": 4500,
-          "lowest_point": 2200,
-          "image_urls": [
-            "https://example.com/meili1.jpg",
-            "https://example.com/meili2.jpg"
-          ],
-          "region": "云南",
-          "rating": 4.8,
-          "best_seasons": ["春", "秋"],
-          "review_count": 134
-        },
-        {
-          "id": "route7",
-          "name": "鳌太穿越",
-          "description": "鳌太穿越是一条连接鳌头和太湖的徒步路线，途经多个山峰和村落，是华东地区经典的周末徒步路线。",
-          "distance": 25.0,
-          "duration": "2天",
-          "difficulty": "medium",
-          "best_season": "春季、秋季",
-          "elevation_gain": 1000,
-          "elevation_loss": 1000,
-          "highest_point": 1200,
-          "lowest_point": 200,
-          "image_urls": [
-            "https://example.com/aotai1.jpg",
-            "https://example.com/aotai2.jpg"
-          ],
-          "region": "华东",
-          "rating": 4.3,
-          "best_seasons": ["春", "秋"],
-          "review_count": 156
+          "id": "route3",
+          "name": "庐山三日穿越",
+          "description": "庐山三日穿越路线，包括五老峰、含鄱口、三叠泉等主要景点，体验云海和瀑布。",
+          "distance": 35.2,
+          "elevationGain": 2200,
+          "difficulty": "中级",
+          "best_season": ["春", "秋"],
+          "duration": "3天",
+          "rating": 4.7,
+          "popularity": 876,
+          "start_latitude": 29.5623,
+          "start_longitude": 115.9856,
+          "end_latitude": 29.5823,
+          "end_longitude": 116.0056,
+          "cover_url": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+          "is_favorite": false,
+          "createdAt": "2023-02-01T00:00:00.000Z",
+          "updatedAt": "2023-02-01T00:00:00.000Z"
         }
       ]
     },
     {
-      "type": "weekend",
-      "title": "周末短途",
-      "description": "适合周末出行的短途徒步路线",
+      "type": 4,
+      "title": "适合初学者的路线",
+      "description": "难度适中，适合徒步新手的路线",
       "routes": [
         {
-          "id": "route10",
-          "name": "莫干山徒步",
-          "description": "莫干山徒步是一条位于浙江的徒步路线，以其竹林景观和清新空气而闻名，是华东地区经典的一日徒步路线。",
-          "distance": 15.0,
-          "duration": "1天",
-          "difficulty": "easy",
-          "best_season": "春季、秋季、冬季",
-          "elevation_gain": 500,
-          "elevation_loss": 500,
-          "highest_point": 700,
-          "lowest_point": 200,
-          "image_urls": [
-            "https://example.com/moganshan1.jpg",
-            "https://example.com/moganshan2.jpg"
-          ],
-          "region": "华东",
-          "rating": 4.4,
-          "best_seasons": ["春", "秋", "冬"],
-          "review_count": 312
-        },
-        {
-          "id": "route7",
-          "name": "鳌太穿越",
-          "description": "鳌太穿越是一条连接鳌头和太湖的徒步路线，途经多个山峰和村落，是华东地区经典的周末徒步路线。",
-          "distance": 25.0,
-          "duration": "2天",
-          "difficulty": "medium",
-          "best_season": "春季、秋季",
-          "elevation_gain": 1000,
-          "elevation_loss": 1000,
-          "highest_point": 1200,
-          "lowest_point": 200,
-          "image_urls": [
-            "https://example.com/aotai1.jpg",
-            "https://example.com/aotai2.jpg"
-          ],
-          "region": "华东",
-          "rating": 4.3,
-          "best_seasons": ["春", "秋"],
-          "review_count": 156
-        },
-        {
-          "id": "route5",
-          "name": "毕棚沟徒步",
-          "description": "毕棚沟是一条位于四川阿坝的徒步路线，以其秋季的红叶和多彩的森林景观而闻名。",
-          "distance": 20.0,
-          "duration": "2天",
-          "difficulty": "medium",
-          "best_season": "春季、夏季、秋季",
-          "elevation_gain": 1200,
-          "elevation_loss": 1200,
-          "highest_point": 3200,
-          "lowest_point": 2000,
-          "image_urls": [
-            "https://example.com/bipangou1.jpg",
-            "https://example.com/bipangou2.jpg"
-          ],
-          "region": "川西",
+          "id": "route2",
+          "name": "莫干山徒步路线",
+          "description": "莫干山徒步路线，穿越竹海和茶园，欣赏江南山水风光，适合1-2天行程。",
+          "distance": 15.8,
+          "elevationGain": 850,
+          "difficulty": "初级",
+          "best_season": ["春", "夏", "秋"],
+          "duration": "1-2天",
           "rating": 4.5,
-          "best_seasons": ["春", "夏", "秋"],
-          "review_count": 210
+          "popularity": 987,
+          "start_latitude": 30.5623,
+          "start_longitude": 119.8456,
+          "end_latitude": 30.5723,
+          "end_longitude": 119.8556,
+          "cover_url": "https://images.unsplash.com/photo-1501555088652-021faa106b9b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+          "is_favorite": true,
+          "createdAt": "2023-01-15T00:00:00.000Z",
+          "updatedAt": "2023-01-15T00:00:00.000Z"
         }
       ]
     }
-  ],
-  "updated_at": "2023-10-15T08:00:00.000Z"
+  ]
 }

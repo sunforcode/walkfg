@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import '../ui/page/home/home_screen.dart';
 import '../ui/page/route/cupertino_route_list_screen.dart';
 import '../ui/page/equipment/cupertino_equipment_list_screen.dart';
@@ -35,39 +34,33 @@ class _MainLayoutState extends State<MainLayout> {
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
-        currentIndex: _currentIndex,
         activeColor: AppColors.primary,
-        inactiveColor: AppColors.textSecondary,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.home),
+            label: '首页',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.map),
+            label: '路线',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.square_list),
+            label: '装备',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.person),
+            label: '我的',
+          ),
+        ],
+        currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home),
-            activeIcon: Icon(CupertinoIcons.house_fill),
-            label: '首页',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.map),
-            activeIcon: Icon(CupertinoIcons.map_fill),
-            label: '路线',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.bag),
-            activeIcon: Icon(CupertinoIcons.bag_fill),
-            label: '装备',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.person),
-            activeIcon: Icon(CupertinoIcons.person_fill),
-            label: '我的',
-          ),
-        ],
       ),
       tabBuilder: (context, index) {
-        // 根据索引返回对应的页面
         switch (index) {
           case 0:
             return CupertinoTabView(

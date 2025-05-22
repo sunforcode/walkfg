@@ -1,4 +1,4 @@
-import '../model/user_model.dart';
+import '../model/user/user_model.dart';
 
 /// 用户服务接口
 abstract class UserService {

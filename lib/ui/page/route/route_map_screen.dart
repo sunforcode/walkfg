@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../model/route/route_model.dart';
-import '../../../service/route_service.dart';
+import '../../../model/model/route/route_model.dart';
 import '../../../service/service_manager.dart';
 
 /// 路线地图屏幕
@@ -115,12 +114,12 @@ class _RouteMapScreenState extends State<RouteMapScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            '距离: ${_route!.distance} km',
+            '距离: ${_route?.basicInfo.distance ?? 0} km',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 8),
           Text(
-            '难度: ${_getDifficultyName(_route!.difficulty)}',
+            '难度: ${_route!.getDifficultyName()}',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
@@ -131,19 +130,5 @@ class _RouteMapScreenState extends State<RouteMapScreen> {
         ],
       ),
     );
-  }
-
-  /// 获取难度名称
-  String _getDifficultyName(RouteDifficulty difficulty) {
-    switch (difficulty) {
-      case RouteDifficulty.easy:
-        return '初级';
-      case RouteDifficulty.medium:
-        return '中级';
-      case RouteDifficulty.hard:
-        return '高级';
-      case RouteDifficulty.extreme:
-        return '专业级';
-    }
   }
 }

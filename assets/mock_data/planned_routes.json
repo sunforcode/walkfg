@@ -1,35 +1,27 @@
 [
   {
-    "id": "plan1",
-    "route_id": "route1",
-    "name": "贡嘎大环线行程",
-    "date": "2023-06-15T00:00:00.000",
-    "days": 7,
-    "status": "planning",
-    "notes": "准备中的行程，需要提前准备装备",
-    "created_at": "2023-05-01T10:30:00.000",
-    "updated_at": "2023-05-10T15:45:00.000"
-  },
-  {
-    "id": "plan2",
-    "route_id": "route2",
-    "name": "雨崩徒步行程",
-    "date": "2023-07-20T00:00:00.000",
-    "days": 5,
-    "status": "planning",
-    "notes": "即将出发，已经准备好装备",
-    "created_at": "2023-05-05T09:15:00.000",
-    "updated_at": "2023-05-12T11:20:00.000"
-  },
-  {
-    "id": "plan3",
-    "route_id": "route3",
-    "name": "丙察察线行程",
-    "date": "2023-08-10T00:00:00.000",
-    "days": 10,
-    "status": "planning",
-    "notes": "需要提前办理边境通行证",
-    "created_at": "2023-04-20T14:00:00.000",
-    "updated_at": "2023-05-08T16:30:00.000"
+    "id": "route1",
+    "name": "黄山主峰徒步路线",
+    "description": "黄山主峰徒步路线，包括光明顶、莲花峰、天都峰等主要景点，适合2-3天行程。",
+    "distance": 25.5,
+    "elevation_gain": 1800,
+    "difficulty": "中级",
+    "best_season": ["春", "秋"],
+    "duration": "2-3天",
+    "rating": 4.8,
+    "popularity": 1256,
+    "start_latitude": 30.1325,
+    "start_longitude": 118.1742,
+    "end_latitude": 30.1435,
+    "end_longitude": 118.1923,
+    "cover_url": "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+    "is_favorite": false,
+    "created_at": "2023-05-01T00:00:00.000Z",
+    "updated_at": "2023-05-01T00:00:00.000Z",
+    "planned_start_date": "2023-10-01T00:00:00.000Z",
+    "planned_end_date": "2023-10-03T00:00:00.000Z",
+    "status": 0,
+    "participant_count": 3,
+    "notes": "带好防雨装备"
   }
 ]

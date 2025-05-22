@@ -16,4 +16,5 @@ abstract class SearchHistoryService {
 
   /// 获取搜索关键词列表
   Future<List<String>> getSearchKeywords();
+  /// get hot search
 }

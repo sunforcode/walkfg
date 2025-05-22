@@ -1,65 +1,45 @@
 {
   "items": [
     {
-      "keyword": "贡嘎大环线",
-      "count": 1245,
-      "is_hot": true,
-      "tag_color": "#FF5722"
-    },
-    {
-      "keyword": "雨崩徒步",
-      "count": 987,
-      "is_hot": true,
-      "tag_color": "#FF9800"
-    },
-    {
-      "keyword": "丙察察线",
-      "count": 876,
-      "is_hot": true,
-      "tag_color": "#FFC107"
-    },
-    {
-      "keyword": "南迦巴瓦",
-      "count": 765,
-      "is_hot": false,
-      "tag_color": null
-    },
-    {
-      "keyword": "毕棚沟",
-      "count": 654,
-      "is_hot": false,
-      "tag_color": null
-    },
-    {
-      "keyword": "鳌太穿越",
-      "count": 543,
-      "is_hot": false,
-      "tag_color": null
-    },
-    {
-      "keyword": "四姑娘山",
-      "count": 432,
-      "is_hot": false,
-      "tag_color": null
+      "keyword": "黄山",
+      "count": 1256
     },
     {
       "keyword": "莫干山",
-      "count": 321,
-      "is_hot": false,
-      "tag_color": null
+      "count": 987
     },
     {
-      "keyword": "腾格里沙漠",
-      "count": 210,
-      "is_hot": false,
-      "tag_color": null
+      "keyword": "庐山",
+      "count": 876
     },
     {
-      "keyword": "黄山",
-      "count": 198,
-      "is_hot": false,
-      "tag_color": null
+      "keyword": "泰山",
+      "count": 765
+    },
+    {
+      "keyword": "华山",
+      "count": 654
+    },
+    {
+      "keyword": "武功山",
+      "count": 543
+    },
+    {
+      "keyword": "张家界",
+      "count": 432
+    },
+    {
+      "keyword": "九寨沟",
+      "count": 321
+    },
+    {
+      "keyword": "神农架",
+      "count": 210
+    },
+    {
+      "keyword": "长白山",
+      "count": 198
     }
   ],
-  "updated_at": "2023-10-15T08:00:00.000Z"
+  "updated_at": "2023-05-21T07:53:00.000Z"
 }

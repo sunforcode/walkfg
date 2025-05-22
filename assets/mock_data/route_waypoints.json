@@ -1,0 +1,167 @@
+{
+  "route1": [
+    {
+      "id": "wp1",
+      "type": "start",
+      "name": "塔院寺起点",
+      "description": "五台山塔院寺停车场，徒步起点。",
+      "latitude": 39.0123,
+      "longitude": 113.5678,
+      "elevation": 1800,
+      "distance_from_start": 0,
+      "estimated_time_from_start": 0,
+      "facilities": ["停车场", "厕所", "商店"],
+      "tips": "出发前请确保水量充足，至少2升/人。"
+    },
+    {
+      "id": "wp2",
+      "type": "viewpoint",
+      "name": "松林观景台",
+      "description": "位于海拔2100米处的观景平台，可俯瞰整个塔院寺区域。",
+      "coordinates": {
+        "latitude": 39.0223,
+        "longitude": 113.5778,
+        "altitude": 2100
+      },
+      "distanceFromStart": 5.2,
+      "images": [
+        "https://example.com/images/viewpoint1.jpg",
+        "https://example.com/images/viewpoint2.jpg"
+      ],
+      "bestTimeToVisit": "早晨或傍晚",
+      "estimatedStayTime": 15
+    },
+    {
+      "id": "wp3",
+      "type": "water",
+      "name": "龙泉寺水源",
+      "description": "清澈的山泉水，可直接饮用。",
+      "coordinates": {
+        "latitude": 39.0323,
+        "longitude": 113.5878,
+        "altitude": 2200
+      },
+      "distanceFromStart": 8.7,
+      "tips": "请节约用水，并带走所有垃圾。"
+    },
+    {
+      "id": "wp4",
+      "type": "danger",
+      "name": "陡峭石阶路段",
+      "description": "约500米长的陡峭石阶，雨天湿滑。",
+      "coordinates": {
+        "latitude": 39.0423,
+        "longitude": 113.5978,
+        "altitude": 2300
+      },
+      "distanceFromStart": 12.3,
+      "tips": "建议使用登山杖，雨天请特别小心。"
+    },
+    {
+      "id": "wp5",
+      "type": "campsite",
+      "name": "北台顶营地",
+      "description": "位于北台顶附近的营地，视野开阔。",
+      "coordinates": {
+        "latitude": 39.0523,
+        "longitude": 113.6078,
+        "altitude": 2500
+      },
+      "distanceFromStart": 15.0,
+      "facilities": ["水源", "厕所", "遮蔽"],
+      "tips": "此处风大，请确保帐篷牢固固定。"
+    },
+    {
+      "id": "wp6",
+      "type": "viewpoint",
+      "name": "中台寺观景点",
+      "description": "中台寺附近的观景点，可俯瞰山谷。",
+      "coordinates": {
+        "latitude": 39.0623,
+        "longitude": 113.6178,
+        "altitude": 2200
+      },
+      "distanceFromStart": 33.0,
+      "images": [
+        "https://example.com/images/viewpoint3.jpg"
+      ],
+      "bestTimeToVisit": "日出时分",
+      "estimatedStayTime": 20
+    },
+    {
+      "id": "wp7",
+      "type": "end",
+      "name": "塔院寺终点",
+      "description": "徒步终点，回到起始点。",
+      "coordinates": {
+        "latitude": 39.0123,
+        "longitude": 113.5678,
+        "altitude": 1800
+      },
+      "distanceFromStart": 45.0,
+      "facilities": ["停车场", "厕所", "商店", "餐厅"],
+      "tips": "可在附近餐厅享用当地特色美食。"
+    }
+  ],
+  "route2": [
+    {
+      "id": "wp8",
+      "type": "start",
+      "name": "东湖入口",
+      "description": "东湖景区入口，有停车场和游客中心。",
+      "coordinates": {
+        "latitude": 40.0123,
+        "longitude": 116.5678,
+        "altitude": 1200
+      },
+      "distanceFromStart": 0,
+      "facilities": ["停车场", "厕所", "游客中心", "商店"],
+      "tips": "入口处可购买地图和补给。"
+    },
+    {
+      "id": "wp9",
+      "type": "viewpoint",
+      "name": "东湖观景台",
+      "description": "可俯瞰整个东湖的观景平台。",
+      "coordinates": {
+        "latitude": 40.0223,
+        "longitude": 116.5778,
+        "altitude": 1250
+      },
+      "distanceFromStart": 3.5,
+      "images": [
+        "https://example.com/images/east_lake1.jpg",
+        "https://example.com/images/east_lake2.jpg"
+      ],
+      "bestTimeToVisit": "日落时分",
+      "estimatedStayTime": 30
+    },
+    {
+      "id": "wp10",
+      "type": "water",
+      "name": "清泉补给点",
+      "description": "山泉水补给点，水质清澈。",
+      "coordinates": {
+        "latitude": 40.0323,
+        "longitude": 116.5878,
+        "altitude": 1300
+      },
+      "distanceFromStart": 7.2,
+      "tips": "此处水源充足，可补充水壶。"
+    },
+    {
+      "id": "wp11",
+      "type": "campsite",
+      "name": "松林营地",
+      "description": "位于松林中的营地，环境优美。",
+      "coordinates": {
+        "latitude": 40.0423,
+        "longitude": 116.5978,
+        "altitude": 1350
+      },
+      "distanceFromStart": 12.0,
+      "facilities": ["水源", "厕所", "遮蔽", "商店"],
+      "tips": "营地提供基本补给，但价格较高。"
+    }
+  ]
+}

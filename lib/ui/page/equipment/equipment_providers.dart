@@ -4,17 +4,23 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../model/equipment/equipment_model.dart';
+import '../../../model/equipment/equipment_item_model.dart';
+import '../../../model/equipment/equipment_necessity.dart';
 
 /// 装备清单列表提供者
-final equipmentListsProvider = StateNotifierProvider<EquipmentListsNotifier, List<EquipmentListModel>>((ref) {
+final equipmentListsProvider =
+    StateNotifierProvider<EquipmentListsNotifier, List<EquipmentListModel>>(
+        (ref) {
   return EquipmentListsNotifier();
 });
 
 /// 选中的装备清单提供者
-final selectedEquipmentListProvider = StateProvider<EquipmentListModel?>((ref) => null);
+final selectedEquipmentListProvider =
+    StateProvider<EquipmentListModel?>((ref) => null);
 
 /// 装备筛选提供者
-final equipmentFilterProvider = StateProvider<EquipmentFilter>((ref) => const EquipmentFilter());
+final equipmentFilterProvider =
+    StateProvider<EquipmentFilter>((ref) => const EquipmentFilter());
 
 /// 装备清单列表状态管理
 class EquipmentListsNotifier extends StateNotifier<List<EquipmentListModel>> {
@@ -35,7 +41,8 @@ class EquipmentListsNotifier extends StateNotifier<List<EquipmentListModel>> {
 
   /// 更新装备清单
   void updateEquipmentList(EquipmentListModel equipmentList) {
-    state = state.map((e) => e.id == equipmentList.id ? equipmentList : e).toList();
+    state =
+        state.map((e) => e.id == equipmentList.id ? equipmentList : e).toList();
   }
 
   /// 删除装备清单
@@ -45,7 +52,8 @@ class EquipmentListsNotifier extends StateNotifier<List<EquipmentListModel>> {
 
   /// 获取装备清单
   EquipmentListModel? getEquipmentList(String id) {
-    return state.firstWhere((e) => e.id == id, orElse: () => throw Exception('装备清单不存在'));
+    return state.firstWhere((e) => e.id == id,
+        orElse: () => throw Exception('装备清单不存在'));
   }
 
   /// 获取模拟装备清单列表
@@ -62,8 +70,10 @@ class EquipmentListsNotifier extends StateNotifier<List<EquipmentListModel>> {
             name: '背包系统',
             icon: 'backpack',
             items: [
-              EquipmentItem(
+              EquipmentItemModel(
+                id: '1',
                 name: '徒步背包',
+                category: '背包系统',
                 description: '40-50L容量的轻量化徒步背包',
                 weight: 1200,
                 quantity: 1,
@@ -72,8 +82,10 @@ class EquipmentListsNotifier extends StateNotifier<List<EquipmentListModel>> {
                 model: 'Exos 48',
                 price: 1200,
               ),
-              EquipmentItem(
+              EquipmentItemModel(
+                id: '2',
                 name: '防雨罩',
+                category: '背包系统',
                 weight: 80,
                 quantity: 1,
                 necessity: EquipmentNecessity.essential,
@@ -84,8 +96,10 @@ class EquipmentListsNotifier extends StateNotifier<List<EquipmentListModel>> {
             name: '睡眠系统',
             icon: 'hotel',
             items: [
-              EquipmentItem(
+              EquipmentItemModel(
+                id: '3',
                 name: '睡袋',
+                category: '睡眠系统',
                 description: '适合5-15℃的轻量化睡袋',
                 weight: 800,
                 quantity: 1,
@@ -94,8 +108,10 @@ class EquipmentListsNotifier extends StateNotifier<List<EquipmentListModel>> {
                 model: 'UL400',
                 price: 500,
               ),
-              EquipmentItem(
+              EquipmentItemModel(
+                id: '4',
                 name: '睡垫',
+                category: '睡眠系统',
                 weight: 350,
                 quantity: 1,
                 necessity: EquipmentNecessity.essential,
@@ -123,8 +139,10 @@ class EquipmentListsNotifier extends StateNotifier<List<EquipmentListModel>> {
             name: '背包系统',
             icon: 'backpack',
             items: [
-              EquipmentItem(
+              EquipmentItemModel(
+                id: '5',
                 name: '徒步背包',
+                category: '背包系统',
                 description: '60-70L容量的徒步背包',
                 weight: 1800,
                 quantity: 1,
@@ -133,8 +151,10 @@ class EquipmentListsNotifier extends StateNotifier<List<EquipmentListModel>> {
                 model: 'Aircontact 65+10',
                 price: 1500,
               ),
-              EquipmentItem(
+              EquipmentItemModel(
+                id: '6',
                 name: '防雨罩',
+                category: '背包系统',
                 weight: 100,
                 quantity: 1,
                 necessity: EquipmentNecessity.essential,
@@ -212,8 +232,11 @@ class EquipmentFilter {
     if (searchQuery != null && searchQuery!.isNotEmpty) {
       filteredLists = filteredLists.where((list) {
         return list.name.toLowerCase().contains(searchQuery!.toLowerCase()) ||
-            list.description.toLowerCase().contains(searchQuery!.toLowerCase()) ||
-            list.tags.any((tag) => tag.toLowerCase().contains(searchQuery!.toLowerCase()));
+            list.description
+                .toLowerCase()
+                .contains(searchQuery!.toLowerCase()) ||
+            list.tags.any((tag) =>
+                tag.toLowerCase().contains(searchQuery!.toLowerCase()));
       }).toList();
     }
 
@@ -226,10 +249,12 @@ class EquipmentFilter {
 
     // 行程天数筛选
     if (minTripDays != null) {
-      filteredLists = filteredLists.where((list) => list.tripDays >= minTripDays!).toList();
+      filteredLists =
+          filteredLists.where((list) => list.tripDays >= minTripDays!).toList();
     }
     if (maxTripDays != null) {
-      filteredLists = filteredLists.where((list) => list.tripDays <= maxTripDays!).toList();
+      filteredLists =
+          filteredLists.where((list) => list.tripDays <= maxTripDays!).toList();
     }
 
     // 官方推荐筛选

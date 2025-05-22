@@ -4,11 +4,10 @@
 
 import '../base/base_model.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'equipment_item_model.dart';
+import 'equipment_necessity.dart';
 
 part 'equipment_model.g.dart';
-
-/// 装备必要性
-enum EquipmentNecessity { essential, recommended, optional }
 
 /// 装备季节适用性
 enum SeasonSuitability { spring, summer, autumn, winter, allSeasons }
@@ -135,6 +134,15 @@ class EquipmentListModel extends BaseModel {
   int get optionalItems =>
       categories.fold(0, (sum, category) => sum + category.optionalItems);
 
+  /// 获取所有装备项目列表
+  List<EquipmentItemModel> get allItems {
+    final List<EquipmentItemModel> result = [];
+    for (final category in categories) {
+      result.addAll(category.items);
+    }
+    return result;
+  }
+
   /// 获取季节名称列表
   List<String> getSeasonNames() {
     final seasonNames = <String>[];
@@ -216,7 +224,7 @@ class EquipmentCategory {
   final String? description;
 
   /// 装备项目列表
-  final List<EquipmentItem> items;
+  final List<EquipmentItemModel> items;
 
   /// 构造函数
   EquipmentCategory({
@@ -229,9 +237,25 @@ class EquipmentCategory {
   /// 从JSON创建
   factory EquipmentCategory.fromJson(Map<String, dynamic> json) {
     final List<dynamic> itemsJson = json['items'] as List<dynamic>;
-    final items = itemsJson
-        .map((item) => EquipmentItem.fromJson(item as Map<String, dynamic>))
-        .toList();
+    final items = itemsJson.map((item) {
+      final itemMap = item as Map<String, dynamic>;
+      // 生成一个唯一ID，如果没有的话
+      final id = itemMap['id'] as String? ??
+          DateTime.now().millisecondsSinceEpoch.toString();
+      return EquipmentItemModel(
+        id: id,
+        name: itemMap['name'] as String,
+        category: json['name'] as String, // 使用分类名称作为类别
+        description: itemMap['description'] as String?,
+        weight: (itemMap['weight']).toDouble(),
+        quantity: itemMap['quantity'] as int,
+        necessity: EquipmentNecessity.values[itemMap['necessity'] as int],
+        brand: itemMap['brand'] as String?,
+        model: itemMap['model'] as String?,
+        price: itemMap['price'] != null ? (itemMap['price']).toDouble() : null,
+        notes: itemMap['notes'] as String?,
+      );
+    }).toList();
 
     return EquipmentCategory(
       name: json['name'] as String,
@@ -247,7 +271,19 @@ class EquipmentCategory {
       'name': name,
       'icon': icon,
       'description': description,
-      'items': items.map((item) => item.toJson()).toList(),
+      'items': items
+          .map((item) => {
+                'name': item.name,
+                'description': item.description,
+                'weight': item.weight,
+                'quantity': item.quantity,
+                'necessity': item.necessity.index,
+                'brand': item.brand,
+                'model': item.model,
+                'price': item.price,
+                'notes': item.notes,
+              })
+          .toList(),
     };
   }
 
@@ -272,141 +308,4 @@ class EquipmentCategory {
   int get optionalItems => items
       .where((item) => item.necessity == EquipmentNecessity.optional)
       .length;
-}
-
-/// 装备项目
-class EquipmentItem {
-  /// 项目名称
-  final String name;
-
-  /// 项目描述
-  final String? description;
-
-  /// 重量(g)
-  final double weight;
-
-  /// 数量
-  final int quantity;
-
-  /// 必要性
-  final EquipmentNecessity necessity;
-
-  /// 品牌
-  final String? brand;
-
-  /// 型号
-  final String? model;
-
-  /// 价格
-  final double? price;
-
-  /// 备注
-  final String? notes;
-
-  /// 构造函数
-  EquipmentItem({
-    required this.name,
-    this.description,
-    required this.weight,
-    required this.quantity,
-    required this.necessity,
-    this.brand,
-    this.model,
-    this.price,
-    this.notes,
-  });
-
-  /// 从JSON创建
-  factory EquipmentItem.fromJson(Map<String, dynamic> json) {
-    return EquipmentItem(
-      name: json['name'] as String,
-      description: json['description'] as String?,
-      weight: (json['weight'] as num).toDouble(),
-      quantity: json['quantity'] as int,
-      necessity: EquipmentNecessity.values[json['necessity'] as int],
-      brand: json['brand'] as String?,
-      model: json['model'] as String?,
-      price: json['price'] != null ? (json['price'] as num).toDouble() : null,
-      notes: json['notes'] as String?,
-    );
-  }
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'description': description,
-      'weight': weight,
-      'quantity': quantity,
-      'necessity': necessity.index,
-      'brand': brand,
-      'model': model,
-      'price': price,
-      'notes': notes,
-    };
-  }
-
-  /// 获取总重量
-  double get totalWeight => weight * quantity;
-
-  /// 获取重量文本
-  String getWeightText() {
-    if (weight >= 1000) {
-      return '${(weight / 1000).toStringAsFixed(2)}kg';
-    } else {
-      return '${weight.toStringAsFixed(0)}g';
-    }
-  }
-
-  /// 获取总重量文本
-  String getTotalWeightText() {
-    if (totalWeight >= 1000) {
-      return '${(totalWeight / 1000).toStringAsFixed(2)}kg';
-    } else {
-      return '${totalWeight.toStringAsFixed(0)}g';
-    }
-  }
-
-  /// 获取价格文本
-  String? getPriceText() {
-    if (price == null) return null;
-    return '¥${price!.toStringAsFixed(2)}';
-  }
-
-  /// 获取品牌型号文本
-  String? getBrandModelText() {
-    if (brand != null && model != null) {
-      return '$brand $model';
-    } else if (brand != null) {
-      return brand;
-    } else if (model != null) {
-      return model;
-    } else {
-      return null;
-    }
-  }
-
-  /// 获取必要性名称
-  String getNecessityName() {
-    switch (necessity) {
-      case EquipmentNecessity.essential:
-        return '必需';
-      case EquipmentNecessity.recommended:
-        return '推荐';
-      case EquipmentNecessity.optional:
-        return '可选';
-    }
-  }
-
-  /// 获取必要性颜色
-  int getNecessityColor() {
-    switch (necessity) {
-      case EquipmentNecessity.essential:
-        return 0xFFF44336; // 红色
-      case EquipmentNecessity.recommended:
-        return 0xFFFF9800; // 橙色
-      case EquipmentNecessity.optional:
-        return 0xFF2196F3; // 蓝色
-    }
-  }
 }

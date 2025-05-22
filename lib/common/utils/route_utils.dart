@@ -1,12 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../model/route/route_model.dart';
-import '../../model/route/track_point_model.dart';
+import '../../model/model/route/route_model.dart';
+import '../../model/model/map/track_point_model.dart';
 
 /// 路线相关工具类
 class RouteUtils {
   /// 计算路线的总距离（公里）
-  static double calculateTotalDistance(List<TrackPointModel> trackPoints) {
+  static double calculateTotalDistance(List<TrackPointVO> trackPoints) {
     if (trackPoints.isEmpty || trackPoints.length < 2) {
       return 0.0;
     }
@@ -46,7 +46,7 @@ class RouteUtils {
   }
 
   /// 计算路线的总爬升（米）
-  static double calculateTotalElevationGain(List<TrackPointModel> trackPoints) {
+  static double calculateTotalElevationGain(List<TrackPointVO> trackPoints) {
     if (trackPoints.isEmpty || trackPoints.length < 2) {
       return 0;
     }
@@ -54,7 +54,7 @@ class RouteUtils {
     double totalGain = 0;
     for (int i = 0; i < trackPoints.length - 1; i++) {
       final double elevationDiff =
-          trackPoints[i + 1].elevation - trackPoints[i].elevation;
+          trackPoints[i + 1].elevation! - trackPoints[i].elevation!;
       if (elevationDiff > 0) {
         totalGain += elevationDiff;
       }
@@ -64,7 +64,7 @@ class RouteUtils {
   }
 
   /// 计算路线的总下降（米）
-  static double calculateTotalElevationLoss(List<TrackPointModel> trackPoints) {
+  static double calculateTotalElevationLoss(List<TrackPointVO> trackPoints) {
     if (trackPoints.isEmpty || trackPoints.length < 2) {
       return 0;
     }
@@ -72,7 +72,7 @@ class RouteUtils {
     double totalLoss = 0;
     for (int i = 0; i < trackPoints.length - 1; i++) {
       final double elevationDiff =
-          trackPoints[i].elevation - trackPoints[i + 1].elevation;
+          trackPoints[i].elevation! - trackPoints[i + 1].elevation!;
       if (elevationDiff > 0) {
         totalLoss += elevationDiff;
       }

@@ -4,21 +4,36 @@
     "name": "徒步背包",
     "category": "背包",
     "is_essential": true,
-    "description": "30-40L容量，带防雨罩"
+    "description": "30-40L容量，带防雨罩",
+    "weight": 1500.0,
+    "quantity": 1,
+    "prepared": false,
+    "created_at": "2023-01-01T00:00:00.000Z",
+    "updated_at": "2023-01-01T00:00:00.000Z"
   },
   {
     "id": "equip_2",
     "name": "登山鞋",
     "category": "鞋类",
     "is_essential": true,
-    "description": "防滑耐磨，支撑性好"
+    "description": "防滑耐磨，支撑性好",
+    "weight": 800.0,
+    "quantity": 1,
+    "prepared": false,
+    "created_at": "2023-01-01T00:00:00.000Z",
+    "updated_at": "2023-01-01T00:00:00.000Z"
   },
   {
     "id": "equip_3",
     "name": "速干衣裤",
     "category": "服装",
     "is_essential": true,
-    "description": "轻便透气，快速排汗"
+    "description": "轻便透气，快速排汗",
+    "weight": 300.0,
+    "quantity": 1,
+    "prepared": false,
+    "created_at": "2023-01-01T00:00:00.000Z",
+    "updated_at": "2023-01-01T00:00:00.000Z"
   },
   {
     "id": "equip_4",

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../model/trip_plan_model.dart';
+import 'package:walk/model/enums/route_status.dart';
+import 'package:walk/model/model/trip/trip_model.dart';
 import '../../../service/service_manager.dart';
 import '../../../theme/theme/app_colors.dart';
 import '../../../common/utils/date_time_utils.dart';
-import '../../../common/utils/trip_utils.dart';
 import 'trip_planning_detail_screen.dart';
 
 /// 我的行程规划页面
@@ -18,7 +18,7 @@ class MyTripPlansScreen extends StatefulWidget {
 
 class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
   /// 行程规划列表Future
-  late Future<List<TripPlanModel>> _tripPlansFuture;
+  late Future<List<TripModel>> _tripPlansFuture;
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
   /// 加载行程规划
   void _loadTripPlans() {
     final apiService = ServiceLocator.instance.getTripPlanService();
-    _tripPlansFuture = apiService.getUserTripPlans();
+    // _tripPlansFuture = apiService.getUserTripPlans();
   }
 
   @override
@@ -39,7 +39,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
         middle: Text('我的行程规划'),
       ),
       child: SafeArea(
-        child: FutureBuilder<List<TripPlanModel>>(
+        child: FutureBuilder<List<TripModel>>(
           future: _tripPlansFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -122,11 +122,11 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
 
             // 将行程规划按状态分组
             final inProgressPlans = tripPlans
-                .where((plan) => TripUtils.isInProgress(plan.status))
+                // .where((plan) => plan?.status == RouteStatus.planning)
                 .toList();
 
             final historyPlans = tripPlans
-                .where((plan) => TripUtils.isCompleted(plan.status))
+                // .where((plan) => plan?.status == RouteStatus.completed)
                 .toList();
 
             return ListView(
@@ -164,9 +164,9 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
   }
 
   /// 构建行程规划卡片
-  Widget _buildTripPlanCard(TripPlanModel plan) {
-    final bool isCompleted = TripUtils.isCompleted(plan.status);
-    final Color statusColor = TripUtils.getStatusColor(plan.status);
+  Widget _buildTripPlanCard(TripModel plan) {
+    final bool isCompleted = plan.status == RouteStatus.completed;
+    final Color statusColor = Colors.red; //plan.getStatusColor();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -196,7 +196,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      plan.routeName,
+                      plan.routeIds.first,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -218,7 +218,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                       ),
                     ),
                     child: Text(
-                      TripUtils.getStatusName(plan.status),
+                      plan.status.name,
                       style: TextStyle(
                         fontSize: 12,
                         color: statusColor,
@@ -241,7 +241,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                   const SizedBox(width: 16),
                   _buildInfoChip(
                     CupertinoIcons.clock,
-                    '${plan.customizedItinerary.length}天',
+                    '${1}天',
                   ),
                   const SizedBox(width: 16),
                   _buildInfoChip(
@@ -304,9 +304,9 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
   }
 
   /// 继续规划
-  void _continuePlanning(TripPlanModel plan) {
+  void _continuePlanning(TripModel plan) {
     final apiService = ServiceLocator.instance.getRouteService();
-    apiService.getRouteById(plan.routeId).then((route) {
+    apiService.getRouteById(plan.routeIds.first).then((route) {
       Navigator.of(context).push(
         CupertinoPageRoute(
           builder: (context) => TripPlanningDetailScreen(

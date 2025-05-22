@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import '../theme/main_layout.dart';
 
 /// 应用入口组件

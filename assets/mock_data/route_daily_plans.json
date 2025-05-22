@@ -1,0 +1,96 @@
+{
+  "route1": [
+    {
+      "day": 1,
+      "title": "塔院寺 → 北台顶",
+      "description": "第一天从塔院寺出发，经过森林步道，到达北台顶营地。",
+      "startPoint": "塔院寺(海拔1800m)",
+      "endPoint": "北台顶营地(海拔2500m)",
+      "distance": 15.0,
+      "elevationGain": 800,
+      "elevationLoss": 100,
+      "estimatedTime": 6.5,
+      "difficulty": 3,
+      "highlights": ["塔院古建筑群", "北台日落"],
+      "tips": "北台风大,需准备防风装备",
+      "campsite": {
+        "name": "北台顶营地",
+        "facilities": ["水源✓", "厕所✓", "遮蔽✓"],
+        "capacity": 20,
+        "reservationRequired": false
+      }
+    },
+    {
+      "day": 2,
+      "title": "北台顶 → 中台寺",
+      "description": "第二天从北台顶出发，经过高山草甸，到达中台寺。",
+      "startPoint": "北台顶营地(海拔2500m)",
+      "endPoint": "中台寺(海拔2200m)",
+      "distance": 18.0,
+      "elevationGain": 300,
+      "elevationLoss": 600,
+      "estimatedTime": 7.0,
+      "difficulty": 4,
+      "highlights": ["高山草甸", "中台寺古建筑"],
+      "tips": "中午经过龙泉寺可补充水源",
+      "campsite": {
+        "name": "中台寺营地",
+        "facilities": ["水源✓", "厕所✓", "遮蔽✓", "充电✓"],
+        "capacity": 30,
+        "reservationRequired": true
+      }
+    },
+    {
+      "day": 3,
+      "title": "中台寺 → 塔院寺",
+      "description": "第三天从中台寺出发，经过南台，返回塔院寺。",
+      "startPoint": "中台寺(海拔2200m)",
+      "endPoint": "塔院寺(海拔1800m)",
+      "distance": 12.0,
+      "elevationGain": 200,
+      "elevationLoss": 600,
+      "estimatedTime": 5.0,
+      "difficulty": 2,
+      "highlights": ["南台观景台", "塔院寺晚钟"],
+      "tips": "下山路段较陡，注意防滑",
+      "campsite": null
+    }
+  ],
+  "route2": [
+    {
+      "day": 1,
+      "title": "东湖入口 → 松林营地",
+      "description": "从东湖入口出发，沿湖岸徒步，到达松林营地。",
+      "startPoint": "东湖入口(海拔1200m)",
+      "endPoint": "松林营地(海拔1350m)",
+      "distance": 12.0,
+      "elevationGain": 250,
+      "elevationLoss": 100,
+      "estimatedTime": 5.0,
+      "difficulty": 2,
+      "highlights": ["东湖全景", "松林瀑布"],
+      "tips": "湖边蚊虫较多，请做好防蚊准备",
+      "campsite": {
+        "name": "松林营地",
+        "facilities": ["水源✓", "厕所✓", "遮蔽✓", "商店✓"],
+        "capacity": 40,
+        "reservationRequired": true
+      }
+    },
+    {
+      "day": 2,
+      "title": "松林营地 → 东湖入口",
+      "description": "从松林营地出发，经过瀑布群，返回东湖入口。",
+      "startPoint": "松林营地(海拔1350m)",
+      "endPoint": "东湖入口(海拔1200m)",
+      "distance": 14.0,
+      "elevationGain": 150,
+      "elevationLoss": 300,
+      "estimatedTime": 5.5,
+      "difficulty": 2,
+      "highlights": ["七彩瀑布", "观鸟平台"],
+      "tips": "瀑布附近路滑，请小心行走",
+      "campsite": null
+    }
+  ]
+}

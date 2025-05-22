@@ -1,0 +1,418 @@
+[
+  {
+    "id": "wp001",
+    "name": "三日徒步饮水计划",
+    "description": "适合三日高山徒步的饮水计划，包含水源规划和饮水建议",
+    "tripDays": 3,
+    "personCount": 2,
+    "dayWaterPlans": [
+      {
+        "dayNumber": 1,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 3000,
+        "temperature": 28.5,
+        "activityIntensity": 2,
+        "availableSources": [
+          {
+            "id": "ws001",
+            "name": "山涧溪流",
+            "description": "位于营地西北方向500米处的小溪流，水质清澈",
+            "type": 1,
+            "location": "营地西北方向500米",
+            "distanceFromTrail": 50.0,
+            "quality": 0,
+            "reliability": 4,
+            "estimatedVolume": 5000,
+            "needsTreatment": true,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "dayNumber": 2,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 3500,
+        "temperature": 30.0,
+        "activityIntensity": 3,
+        "availableSources": [
+          {
+            "id": "ws002",
+            "name": "高山湖泊",
+            "description": "海拔2000米的高山湖泊，水质良好但需要处理",
+            "type": 2,
+            "location": "路线中点附近的高山湖泊",
+            "distanceFromTrail": 200.0,
+            "quality": 1,
+            "reliability": 5,
+            "estimatedVolume": 10000,
+            "needsTreatment": true,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          },
+          {
+            "id": "ws003",
+            "name": "山间泉水",
+            "description": "从岩石中流出的泉水，水质优良",
+            "type": 3,
+            "location": "第二天路线3公里处",
+            "distanceFromTrail": 10.0,
+            "quality": 0,
+            "reliability": 3,
+            "estimatedVolume": 2000,
+            "needsTreatment": false,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "dayNumber": 3,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 2500,
+        "temperature": 25.0,
+        "activityIntensity": 1,
+        "availableSources": [
+          {
+            "id": "ws004",
+            "name": "山庄水龙头",
+            "description": "山庄提供的自来水，可直接饮用",
+            "type": 4,
+            "location": "第三天住宿的山庄",
+            "distanceFromTrail": 0.0,
+            "quality": 0,
+            "reliability": 5,
+            "estimatedVolume": 20000,
+            "needsTreatment": false,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      }
+    ],
+    "waterSources": [
+      {
+        "id": "ws001",
+        "name": "山涧溪流",
+        "description": "位于营地西北方向500米处的小溪流，水质清澈",
+        "type": 1,
+        "location": "营地西北方向500米",
+        "distanceFromTrail": 50.0,
+        "quality": 0,
+        "reliability": 4,
+        "estimatedVolume": 5000,
+        "needsTreatment": true,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws002",
+        "name": "高山湖泊",
+        "description": "海拔2000米的高山湖泊，水质良好但需要处理",
+        "type": 2,
+        "location": "路线中点附近的高山湖泊",
+        "distanceFromTrail": 200.0,
+        "quality": 1,
+        "reliability": 5,
+        "estimatedVolume": 10000,
+        "needsTreatment": true,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws003",
+        "name": "山间泉水",
+        "description": "从岩石中流出的泉水，水质优良",
+        "type": 3,
+        "location": "第二天路线3公里处",
+        "distanceFromTrail": 10.0,
+        "quality": 0,
+        "reliability": 3,
+        "estimatedVolume": 2000,
+        "needsTreatment": false,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws004",
+        "name": "山庄水龙头",
+        "description": "山庄提供的自来水，可直接饮用",
+        "type": 4,
+        "location": "第三天住宿的山庄",
+        "distanceFromTrail": 0.0,
+        "quality": 0,
+        "reliability": 5,
+        "estimatedVolume": 20000,
+        "needsTreatment": false,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      }
+    ],
+    "tags": ["高山", "夏季", "徒步"],
+    "creatorId": "user001",
+    "creatorName": "户外爱好者",
+    "createdAt": "2023-05-01T08:00:00.000Z",
+    "updatedAt": "2023-05-01T08:00:00.000Z"
+  },
+  {
+    "id": "wp002",
+    "name": "五日穿越饮水计划",
+    "description": "适合五日穿越无人区的饮水计划，重点关注水源补给",
+    "tripDays": 5,
+    "personCount": 3,
+    "dayWaterPlans": [
+      {
+        "dayNumber": 1,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 2500,
+        "temperature": 26.0,
+        "activityIntensity": 1,
+        "availableSources": []
+      },
+      {
+        "dayNumber": 2,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 3000,
+        "temperature": 28.0,
+        "activityIntensity": 2,
+        "availableSources": [
+          {
+            "id": "ws001",
+            "name": "山涧溪流",
+            "description": "位于营地西北方向500米处的小溪流，水质清澈",
+            "type": 1,
+            "location": "营地西北方向500米",
+            "distanceFromTrail": 50.0,
+            "quality": 0,
+            "reliability": 4,
+            "estimatedVolume": 5000,
+            "needsTreatment": true,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "dayNumber": 3,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 3500,
+        "temperature": 30.0,
+        "activityIntensity": 3,
+        "availableSources": []
+      },
+      {
+        "dayNumber": 4,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 3000,
+        "temperature": 29.0,
+        "activityIntensity": 2,
+        "availableSources": [
+          {
+            "id": "ws002",
+            "name": "高山湖泊",
+            "description": "海拔2000米的高山湖泊，水质良好但需要处理",
+            "type": 2,
+            "location": "路线中点附近的高山湖泊",
+            "distanceFromTrail": 200.0,
+            "quality": 1,
+            "reliability": 5,
+            "estimatedVolume": 10000,
+            "needsTreatment": true,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "dayNumber": 5,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 2000,
+        "temperature": 25.0,
+        "activityIntensity": 1,
+        "availableSources": [
+          {
+            "id": "ws004",
+            "name": "山庄水龙头",
+            "description": "山庄提供的自来水，可直接饮用",
+            "type": 4,
+            "location": "第三天住宿的山庄",
+            "distanceFromTrail": 0.0,
+            "quality": 0,
+            "reliability": 5,
+            "estimatedVolume": 20000,
+            "needsTreatment": false,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      }
+    ],
+    "waterSources": [
+      {
+        "id": "ws001",
+        "name": "山涧溪流",
+        "description": "位于营地西北方向500米处的小溪流，水质清澈",
+        "type": 1,
+        "location": "营地西北方向500米",
+        "distanceFromTrail": 50.0,
+        "quality": 0,
+        "reliability": 4,
+        "estimatedVolume": 5000,
+        "needsTreatment": true,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws002",
+        "name": "高山湖泊",
+        "description": "海拔2000米的高山湖泊，水质良好但需要处理",
+        "type": 2,
+        "location": "路线中点附近的高山湖泊",
+        "distanceFromTrail": 200.0,
+        "quality": 1,
+        "reliability": 5,
+        "estimatedVolume": 10000,
+        "needsTreatment": true,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws004",
+        "name": "山庄水龙头",
+        "description": "山庄提供的自来水，可直接饮用",
+        "type": 4,
+        "location": "第三天住宿的山庄",
+        "distanceFromTrail": 0.0,
+        "quality": 0,
+        "reliability": 5,
+        "estimatedVolume": 20000,
+        "needsTreatment": false,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      }
+    ],
+    "tags": ["穿越", "无人区", "夏季"],
+    "creatorId": "user002",
+    "creatorName": "探险家",
+    "createdAt": "2023-06-01T10:00:00.000Z",
+    "updatedAt": "2023-06-01T10:00:00.000Z"
+  },
+  {
+    "id": "wp003",
+    "name": "两日休闲徒步饮水计划",
+    "description": "适合初学者的两日休闲徒步饮水计划，水源充足",
+    "tripDays": 2,
+    "personCount": 4,
+    "dayWaterPlans": [
+      {
+        "dayNumber": 1,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 2000,
+        "temperature": 22.0,
+        "activityIntensity": 0,
+        "availableSources": [
+          {
+            "id": "ws001",
+            "name": "山涧溪流",
+            "description": "位于营地西北方向500米处的小溪流，水质清澈",
+            "type": 1,
+            "location": "营地西北方向500米",
+            "distanceFromTrail": 50.0,
+            "quality": 0,
+            "reliability": 4,
+            "estimatedVolume": 5000,
+            "needsTreatment": true,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          },
+          {
+            "id": "ws003",
+            "name": "山间泉水",
+            "description": "从岩石中流出的泉水，水质优良",
+            "type": 3,
+            "location": "第二天路线3公里处",
+            "distanceFromTrail": 10.0,
+            "quality": 0,
+            "reliability": 3,
+            "estimatedVolume": 2000,
+            "needsTreatment": false,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "dayNumber": 2,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 2200,
+        "temperature": 24.0,
+        "activityIntensity": 1,
+        "availableSources": [
+          {
+            "id": "ws004",
+            "name": "山庄水龙头",
+            "description": "山庄提供的自来水，可直接饮用",
+            "type": 4,
+            "location": "第三天住宿的山庄",
+            "distanceFromTrail": 0.0,
+            "quality": 0,
+            "reliability": 5,
+            "estimatedVolume": 20000,
+            "needsTreatment": false,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      }
+    ],
+    "waterSources": [
+      {
+        "id": "ws001",
+        "name": "山涧溪流",
+        "description": "位于营地西北方向500米处的小溪流，水质清澈",
+        "type": 1,
+        "location": "营地西北方向500米",
+        "distanceFromTrail": 50.0,
+        "quality": 0,
+        "reliability": 4,
+        "estimatedVolume": 5000,
+        "needsTreatment": true,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws003",
+        "name": "山间泉水",
+        "description": "从岩石中流出的泉水，水质优良",
+        "type": 3,
+        "location": "第二天路线3公里处",
+        "distanceFromTrail": 10.0,
+        "quality": 0,
+        "reliability": 3,
+        "estimatedVolume": 2000,
+        "needsTreatment": false,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws004",
+        "name": "山庄水龙头",
+        "description": "山庄提供的自来水，可直接饮用",
+        "type": 4,
+        "location": "第三天住宿的山庄",
+        "distanceFromTrail": 0.0,
+        "quality": 0,
+        "reliability": 5,
+        "estimatedVolume": 20000,
+        "needsTreatment": false,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      }
+    ],
+    "tags": ["休闲", "初学者", "春季"],
+    "creatorId": "user003",
+    "creatorName": "户外教练",
+    "createdAt": "2023-04-15T09:00:00.000Z",
+    "updatedAt": "2023-04-15T09:00:00.000Z"
+  }
+]

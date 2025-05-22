@@ -1,0 +1,12 @@
+[
+  {
+    "id": "comment1",
+    "route_id": "route1",
+    "user_id": "user1",
+    "user_name": "徒步爱好者",
+    "user_avatar": "https://randomuser.me/api/portraits/men/1.jpg",
+    "content": "黄山主峰徒步路线非常棒，景色壮观，路线清晰。建议春秋季节前往，夏季雨水多，冬季太冷。一定要在山顶看日出，非常震撼！",
+    "rating": 5.0,
+    "created_at": "2023-05-15T08:30:00.000Z"
+  }
+]

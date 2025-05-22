@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import '../../../model/route/route_model.dart';
+import '../../../model/model/route/route_model.dart';
+import '../../../model/trip/recommended_route_model.dart';
 import '../../../service/service_manager.dart';
 import '../../widgets/common/loading_indicator.dart';
 import '../../widgets/common/error_widget.dart';
@@ -38,11 +38,21 @@ class _RouteListScreenState extends State<RouteListScreen> {
 
   /// 加载路线
   void _loadRoutes() {
-    final apiService = ServiceLocator.instance.getRouteService();
     if (widget.showCompletedOnly) {
+      final apiService = ServiceLocator.instance.getRouteService();
       _routesFuture = apiService.getCompletedRoutes();
     } else {
-      _routesFuture = apiService.getRecommendedRoutes();
+      final apiService = ServiceLocator.instance.getRecommendationService();
+      // 将RecommendedRouteListModel转换为List<RouteModel>
+      _routesFuture =
+          apiService.getRecommendedRoutes().then((recommendedRoutes) {
+        // 合并所有推荐路线分类中的路线
+        List<RouteModel> allRoutes = [];
+        for (var item in recommendedRoutes.items) {
+          allRoutes.addAll(item.routes);
+        }
+        return allRoutes;
+      });
     }
   }
 
@@ -104,9 +114,8 @@ class _RouteListScreenState extends State<RouteListScreen> {
   Widget _buildRouteCard(RouteModel route) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: () => _navigateToRouteDetail(route),
+      child: GestureDetector(
+        onTap: () => _navigateToRouteDetail(route),
         child: Container(
           decoration: BoxDecoration(
             color: CupertinoColors.systemBackground,
@@ -127,12 +136,24 @@ class _RouteListScreenState extends State<RouteListScreen> {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(12),
                 ),
-                child: route.imageUrls.isNotEmpty
+                child: route.coverUrl != null
                     ? Image.network(
-                        route.imageUrls.first,
+                        route.coverUrl!,
                         height: 150,
                         width: double.infinity,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 150,
+                            width: double.infinity,
+                            color: CupertinoColors.systemGrey.withOpacity(0.2),
+                            child: const Icon(
+                              CupertinoIcons.photo,
+                              size: 48,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                          );
+                        },
                       )
                     : Container(
                         height: 150,
@@ -169,12 +190,12 @@ class _RouteListScreenState extends State<RouteListScreen> {
                         const SizedBox(width: 12),
                         _buildInfoChip(
                           CupertinoIcons.arrow_right_arrow_left,
-                          '${route.distance} km',
+                          '${route.basicInfo.distance} km',
                         ),
                         const SizedBox(width: 12),
                         _buildInfoChip(
                           CupertinoIcons.time,
-                          route.duration,
+                          route.basicInfo.duration,
                         ),
                       ],
                     ),
@@ -185,7 +206,7 @@ class _RouteListScreenState extends State<RouteListScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 14,
-                        color: CupertinoColors.systemGrey.darkColor,
+                        color: CupertinoColors.systemGrey,
                       ),
                     ),
                   ],

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "rating1",
+    "route_id": "route1",
+    "user_id": "user1",
+    "rating": 5.0,
+    "created_at": "2023-05-15T08:30:00.000Z"
+  }
+]

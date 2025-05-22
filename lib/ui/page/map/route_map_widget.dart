@@ -4,8 +4,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../model/route/route_model.dart';
-import '../../../model/route/track_point_model.dart';
+import '../../../model/model/route/route_model.dart';
+import '../../../model/model/map/track_point_model.dart';
 import '../../../theme/theme/app_colors.dart';
 
 /// 地图类型
@@ -25,11 +25,12 @@ class RouteMapWidget extends StatefulWidget {
   /// 路线模型
   final RouteModel? route;
 
+
   /// 轨迹点列表
-  final List<TrackPointModel>? trackPoints;
+  final List<TrackPointVO>? trackPoints;
 
   /// 标记点列表
-  final List<TrackPointModel>? waypoints;
+  final List<TrackPointVO>? waypoints;
 
   /// 是否显示当前位置
   final bool showCurrentLocation;
@@ -53,7 +54,7 @@ class RouteMapWidget extends StatefulWidget {
   final double trackWidth;
 
   /// 标记点点击回调
-  final Function(TrackPointModel)? onWaypointTap;
+  final Function(TrackPointVO)? onWaypointTap;
 
   /// 地图点击回调
   final Function(LatLng)? onMapTap;
@@ -108,23 +109,23 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
   }
 
   /// 获取轨迹点列表
-  List<TrackPointModel> get _trackPoints {
-    if (widget.trackPoints != null) {
-      return widget.trackPoints!;
-    } else if (widget.route != null && widget.route!.trackPoints.isNotEmpty) {
-      return widget.route!.trackPoints;
-    }
+  List<TrackPointVO> get _trackPoints {
+    // if (widget.trackPoints != null) {
+    //   return widget.trackPoints!;
+    // } else if (widget.route != null && widget.route!.trackPoints.isNotEmpty) {
+    //   return widget.route!.trackPoints!;
+    // }
     return [];
   }
 
   /// 获取标记点列表
-  List<TrackPointModel> get _waypoints {
-    if (widget.waypoints != null) {
-      return widget.waypoints!;
-    } else if (widget.route != null && widget.route!.trackPoints.isNotEmpty) {
-      // 从轨迹点中提取有名称的点作为标记点
-      return widget.route!.trackPoints.where((p) => p.name != null).toList();
-    }
+  List<TrackPointVO> get _waypoints {
+    // if (widget.waypoints != null) {
+    //   return widget.waypoints!;
+    // } else if (widget.route != null && widget.route!.trackPoints!.isNotEmpty) {
+    //   // 从轨迹点中提取有名称的点作为标记点
+    //   return widget.route!.trackPoints!.where((p) => p.name != null).toList();
+    // }
     return [];
   }
 
@@ -419,7 +420,7 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
   }
 
   /// 根据标记点获取图标
-  IconData _getWaypointIcon(TrackPointModel waypoint) {
+  IconData _getWaypointIcon(TrackPointVO waypoint) {
     if (waypoint.name?.contains('营地') ?? false) {
       return Icons.night_shelter;
     } else if (waypoint.name?.contains('水源') ?? false) {

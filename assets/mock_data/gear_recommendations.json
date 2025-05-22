@@ -1,0 +1,209 @@
+[
+  {
+    "routeId": "route_001",
+    "seasonalGear": {
+      "spring": [
+        {
+          "id": "gear_001",
+          "category": "衣物",
+          "name": "防风外套",
+          "description": "轻量防风外套，适合春季徒步",
+          "necessity": "essential",
+          "weight": {
+            "min": 300,
+            "max": 500
+          },
+          "estimatedCost": {
+            "min": 200,
+            "max": 600
+          },
+          "rentalAvailability": true,
+          "sharable": false,
+          "brand": "Columbia",
+          "model": "Watertight II",
+          "quantity": 1
+        },
+        {
+          "id": "gear_002",
+          "category": "衣物",
+          "name": "速干T恤",
+          "description": "速干透气T恤，适合春季徒步",
+          "necessity": "essential",
+          "weight": {
+            "min": 150,
+            "max": 250
+          },
+          "estimatedCost": {
+            "min": 100,
+            "max": 300
+          },
+          "rentalAvailability": false,
+          "sharable": false,
+          "quantity": 2
+        }
+      ],
+      "summer": [
+        {
+          "id": "gear_003",
+          "category": "衣物",
+          "name": "防晒衣",
+          "description": "轻薄防晒衣，适合夏季徒步",
+          "necessity": "essential",
+          "weight": {
+            "min": 200,
+            "max": 300
+          },
+          "estimatedCost": {
+            "min": 150,
+            "max": 400
+          },
+          "rentalAvailability": false,
+          "sharable": false,
+          "quantity": 1
+        },
+        {
+          "id": "gear_004",
+          "category": "配件",
+          "name": "遮阳帽",
+          "description": "宽檐遮阳帽，防晒必备",
+          "necessity": "essential",
+          "weight": {
+            "min": 100,
+            "max": 150
+          },
+          "estimatedCost": {
+            "min": 50,
+            "max": 200
+          },
+          "rentalAvailability": false,
+          "sharable": true,
+          "quantity": 1
+        }
+      ],
+      "autumn": [
+        {
+          "id": "gear_005",
+          "category": "衣物",
+          "name": "抓绒衣",
+          "description": "保暖抓绒衣，适合秋季徒步",
+          "necessity": "essential",
+          "weight": {
+            "min": 400,
+            "max": 600
+          },
+          "estimatedCost": {
+            "min": 200,
+            "max": 500
+          },
+          "rentalAvailability": true,
+          "sharable": false,
+          "brand": "The North Face",
+          "quantity": 1
+        }
+      ],
+      "winter": [
+        {
+          "id": "gear_006",
+          "category": "衣物",
+          "name": "羽绒服",
+          "description": "保暖羽绒服，适合冬季徒步",
+          "necessity": "essential",
+          "weight": {
+            "min": 800,
+            "max": 1200
+          },
+          "estimatedCost": {
+            "min": 500,
+            "max": 2000
+          },
+          "rentalAvailability": true,
+          "sharable": false,
+          "brand": "Patagonia",
+          "quantity": 1
+        }
+      ]
+    },
+    "essentialGear": [
+      {
+        "id": "gear_007",
+        "category": "背包",
+        "name": "徒步背包",
+        "description": "30-40L徒步背包，适合1-3天行程",
+        "necessity": "essential",
+        "weight": {
+          "min": 1000,
+          "max": 1500
+        },
+        "estimatedCost": {
+          "min": 300,
+          "max": 1000
+        },
+        "rentalAvailability": true,
+        "sharable": false,
+        "brand": "Osprey",
+        "model": "Kestrel 38",
+        "quantity": 1
+      },
+      {
+        "id": "gear_008",
+        "category": "鞋类",
+        "name": "徒步鞋",
+        "description": "防滑耐磨徒步鞋，适合多种地形",
+        "necessity": "essential",
+        "weight": {
+          "min": 700,
+          "max": 1000
+        },
+        "estimatedCost": {
+          "min": 400,
+          "max": 1200
+        },
+        "rentalAvailability": false,
+        "sharable": false,
+        "brand": "Merrell",
+        "quantity": 1
+      }
+    ],
+    "optionalGear": [
+      {
+        "id": "gear_009",
+        "category": "配件",
+        "name": "登山杖",
+        "description": "减轻膝盖负担，提高稳定性",
+        "necessity": "recommended",
+        "weight": {
+          "min": 400,
+          "max": 600
+        },
+        "estimatedCost": {
+          "min": 100,
+          "max": 500
+        },
+        "rentalAvailability": true,
+        "sharable": true,
+        "quantity": 1
+      }
+    ],
+    "specializedGear": [
+      {
+        "id": "gear_010",
+        "category": "安全装备",
+        "name": "头灯",
+        "description": "夜间照明必备",
+        "necessity": "essential",
+        "weight": {
+          "min": 100,
+          "max": 200
+        },
+        "estimatedCost": {
+          "min": 100,
+          "max": 300
+        },
+        "rentalAvailability": true,
+        "sharable": false,
+        "brand": "Petzl",
+        "quantity": 1
+      }
+    ]
+  }
+]

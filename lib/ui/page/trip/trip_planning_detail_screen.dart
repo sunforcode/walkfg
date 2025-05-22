@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' as material;
-import 'package:walk/service/mock/mock_api_service.dart';
-import 'package:walk/service/trip_service.dart';
-import '../../../model/route/route_model.dart';
-import '../../../model/trip_plan_model.dart';
+import 'package:walk/model/equipment/equipment_item_model.dart';
+import 'package:walk/model/model/trip/trip_model.dart';
+import 'package:walk/model/route/daily_itinerary_model.dart';
+import 'package:walk/model/transportation/transportation_plan_model.dart';
+import '../../../model/model/route/route_model.dart';
 import '../../../service/service_manager.dart';
 import '../../../theme/theme/app_colors.dart';
 import 'trip/trip_info_section.dart';
@@ -19,7 +19,7 @@ class TripPlanningDetailScreen extends StatefulWidget {
   final RouteModel route;
 
   /// 行程计划(可选，用于编辑现有计划)
-  final TripPlanModel? tripPlan;
+  final TripModel? tripPlan;
 
   /// 构造函数
   const TripPlanningDetailScreen({
@@ -80,7 +80,7 @@ class _TripPlanningDetailScreenState extends State<TripPlanningDetailScreen> {
 
   /// 加载路线详情（包含轨迹点）
   void _loadRouteDetail() {
-    final apiService = ServiceLocator.instance.getApiService();
+    final apiService = ServiceLocator.instance.getRouteService();
     _routeFuture = apiService.getRouteDetail(widget.route.id);
   }
 
@@ -88,12 +88,12 @@ class _TripPlanningDetailScreenState extends State<TripPlanningDetailScreen> {
   void _initTripPlan() {
     if (widget.tripPlan != null) {
       // 编辑现有计划
-      _startDate = widget.tripPlan!.startDate;
-      _participantCount = widget.tripPlan!.participantCount;
-      _departureCity = widget.tripPlan!.departureCity;
-      _dailyItineraries = widget.tripPlan!.customizedItinerary;
-      _transportationPlans = widget.tripPlan!.transportationPlans;
-      _equipmentList = widget.tripPlan!.equipmentList;
+      // _startDate = widget.tripPlan!.startDate;
+      // _participantCount = widget.tripPlan!.participantCount;
+      // _departureCity = widget.tripPlan!.departureCity;
+      // _dailyItineraries = widget.tripPlan!.customizedItinerary;
+      // _transportationPlans = widget.tripPlan!.transportationPlans;
+      // _equipmentList = widget.tripPlan!.equipmentList;
     } else {
       // 创建新计划
       _loadDefaultItineraries();
@@ -104,21 +104,21 @@ class _TripPlanningDetailScreenState extends State<TripPlanningDetailScreen> {
   /// 加载默认每日行程
   void _loadDefaultItineraries() {
     final apiService = ServiceLocator.instance.getTripPlanService();
-    apiService.getRouteItineraries(widget.route.id).then((itineraries) {
-      setState(() {
-        _dailyItineraries = itineraries;
-      });
-    });
+    // apiService.getRouteItineraries(widget.route.id).then((itineraries) {
+    //   setState(() {
+    //     _dailyItineraries = itineraries;
+    //   });
+    // });
   }
 
   /// 加载默认装备清单
   void _loadDefaultEquipmentList() {
-    final apiService = MockApiService();
-    apiService.getRecommendedEquipment(widget.route.id).then((equipment) {
-      setState(() {
-        _equipmentList = equipment;
-      });
-    });
+    final apiService = ServiceLocator.instance.getTripPlanService();
+    // apiService.getRecommendedEquipment(widget.route.id, 5).then((equipment) {
+    //   setState(() {
+    //     _equipmentList = equipment;
+    //   });
+    // });
   }
 
   @override
@@ -207,7 +207,7 @@ class _TripPlanningDetailScreenState extends State<TripPlanningDetailScreen> {
 
         // 使用加载的路线数据（包含轨迹点）
         final routeWithTrack = snapshot.data!;
-        print('地图头部 - 轨迹点数量: ${routeWithTrack.trackPoints.length}');
+        // print('地图头部 - 轨迹点数量: ${routeWithTrack.trackPoints!.length}');
 
         return RouteMapWidget(
           route: routeWithTrack,
@@ -303,8 +303,8 @@ class _TripPlanningDetailScreenState extends State<TripPlanningDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatItem('距离', '${widget.route.distance} 公里'),
-              _buildStatItem('时长', '${widget.route.durationDays} 天'),
+              _buildStatItem('距离', '${widget.route.basicInfo.distance} 公里'),
+              _buildStatItem('时长', '${widget.route.basicInfo.duration} 天'),
               _buildStatItem('难度', widget.route.getDifficultyName()),
             ],
           ),
@@ -387,7 +387,7 @@ class _TripPlanningDetailScreenState extends State<TripPlanningDetailScreen> {
 
         // 使用加载的路线数据（包含轨迹点）
         final routeWithTrack = snapshot.data!;
-        print('轨迹下载 - 轨迹点数量: ${routeWithTrack.trackPoints.length}');
+        // print('轨迹下载 - 轨迹点数量: ${routeWithTrack.trackPoints!.length}');
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import '../../../../model/guide_model.dart';
+import '../../../../model/guide/guide_model.dart';
 import '../../guide/cupertino_guide_detail_screen.dart';
 import '../../../../theme/theme/app_colors.dart';
 import '../../../widgets/common/loading_indicator.dart';
@@ -68,7 +67,6 @@ class HikingGuidesSection extends StatelessWidget {
   /// 构建徒步攻略瀑布流
   Widget _buildHikingGuides(
       BuildContext context, List<GuideModel> hikingGuides) {
-
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -98,28 +96,33 @@ class HikingGuidesSection extends StatelessWidget {
     );
   }
 
-
   /// 处理攻略点赞
   void _handleGuideLike(BuildContext context, String guideId, bool isLiked) {
     // 这里可以添加点赞逻辑，例如调用API
     final message = isLiked ? '已添加到收藏' : '已取消收藏';
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 1),
-      ),
+    _showToast(context, message);
+  }
+
+  /// 显示提示信息
+  void _showToast(BuildContext context, String message) {
+    showCupertinoDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        Future.delayed(const Duration(seconds: 1), () {
+          Navigator.of(context, rootNavigator: true).pop();
+        });
+        return CupertinoAlertDialog(
+          content: Text(message),
+        );
+      },
     );
   }
 
   /// 导航到所有攻略页面
   void _navigateToAllGuides(BuildContext context) {
     // TODO: 实现导航到攻略列表页面
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('攻略列表页面尚未实现'),
-        duration: Duration(seconds: 1),
-      ),
-    );
+    _showToast(context, '攻略列表页面尚未实现');
     // Navigator.of(context, rootNavigator: true).push(
     //   CupertinoPageRoute(
     //     builder: (context) => const GuideListScreen(),

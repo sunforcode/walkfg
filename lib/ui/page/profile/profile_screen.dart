@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../service/mock/mock_api_service.dart';
-import '../../../model/user_model.dart';
+import 'package:walk/service/service_manager.dart';
+import '../../../model/user/user_model.dart';
 
 /// 个人页面
 class ProfileScreen extends StatefulWidget {
@@ -14,7 +14,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   /// API服务
-  final MockApiService _apiService = MockApiService();
 
   /// 用户数据
   UserModel? _user;
@@ -33,7 +32,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadUserData() async {
     print('ProfileScreen - 开始加载用户数据');
     try {
-      final user = await _apiService.getCurrentUser();
+      final apiService = ServiceLocator.instance.getUserService();
+      final user = await apiService.getCurrentUser();
       print('ProfileScreen - 用户数据加载成功: ${user.nickname}');
       if (mounted) {
         setState(() {

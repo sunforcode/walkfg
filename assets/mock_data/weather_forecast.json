@@ -1,0 +1,72 @@
+[
+  {
+    "forecast_date": "2023-10-01T00:00:00.000Z",
+    "condition": "晴",
+    "max_temperature": 25.0,
+    "min_temperature": 18.0,
+    "precipitation_probability": 10,
+    "wind_speed": 3.5,
+    "humidity": 60,
+    "city": "黄山"
+  },
+  {
+    "forecast_date": "2023-10-02T00:00:00.000Z",
+    "condition": "多云",
+    "max_temperature": 24.0,
+    "min_temperature": 17.0,
+    "precipitation_probability": 20,
+    "wind_speed": 4.0,
+    "humidity": 65,
+    "city": "黄山"
+  },
+  {
+    "forecast_date": "2023-10-03T00:00:00.000Z",
+    "condition": "局部多云",
+    "max_temperature": 23.0,
+    "min_temperature": 16.0,
+    "precipitation_probability": 30,
+    "wind_speed": 4.5,
+    "humidity": 70,
+    "city": "黄山"
+  },
+  {
+    "forecast_date": "2023-10-04T00:00:00.000Z",
+    "condition": "雨",
+    "max_temperature": 20.0,
+    "min_temperature": 15.0,
+    "precipitation_probability": 80,
+    "wind_speed": 5.0,
+    "humidity": 85,
+    "city": "黄山"
+  },
+  {
+    "forecast_date": "2023-10-05T00:00:00.000Z",
+    "condition": "雨",
+    "max_temperature": 19.0,
+    "min_temperature": 14.0,
+    "precipitation_probability": 90,
+    "wind_speed": 5.5,
+    "humidity": 90,
+    "city": "黄山"
+  },
+  {
+    "forecast_date": "2023-10-06T00:00:00.000Z",
+    "condition": "多云",
+    "max_temperature": 21.0,
+    "min_temperature": 15.0,
+    "precipitation_probability": 40,
+    "wind_speed": 4.0,
+    "humidity": 75,
+    "city": "黄山"
+  },
+  {
+    "forecast_date": "2023-10-07T00:00:00.000Z",
+    "condition": "晴",
+    "max_temperature": 23.0,
+    "min_temperature": 16.0,
+    "precipitation_probability": 10,
+    "wind_speed": 3.0,
+    "humidity": 60,
+    "city": "黄山"
+  }
+]

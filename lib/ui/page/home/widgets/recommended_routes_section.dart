@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import '../../../../model/route/route_model.dart';
+import '../../../../model/model/route/route_model.dart';
 import '../../route/cupertino_route_list_screen.dart';
 import '../../route/cupertino_route_detail_screen.dart';
 import '../../../widgets/common/section_header.dart';
@@ -121,8 +121,8 @@ class RecommendedRoutesSection extends StatelessWidget {
                 top: Radius.circular(12),
               ),
               child: Image.network(
-                route.imageUrls.isNotEmpty
-                    ? route.imageUrls.first
+                route.coverUrl != null
+                    ? route.coverUrl!
                     : 'https://via.placeholder.com/280x140',
                 height: 140,
                 width: 280,
@@ -189,7 +189,7 @@ class RecommendedRoutesSection extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${route.distance} km',
+                        '${route.basicInfo.distance} km',
                         style: const TextStyle(
                           fontSize: 12,
                           color: CupertinoColors.systemGrey,

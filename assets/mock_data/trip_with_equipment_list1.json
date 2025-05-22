@@ -1,0 +1,465 @@
+[{
+  "id": "trip_001",
+  "created_at": "2023-06-01T14:30:00Z",
+  "updated_at": "2023-06-10T09:15:00Z",
+  "name": "黄山三日游",
+  "description": "一次难忘的黄山徒步之旅，体验云海、奇松、怪石和温泉。",
+  "start_date": "2023-07-15T00:00:00Z",
+  "end_date": "2023-07-17T23:59:59Z",
+  "status": 0,
+  "route_ids": ["route_001"],
+  "primary_route_id": "route_001",
+  "participants": [
+    {
+      "id": "part_001",
+      "user_id": "user_001",
+      "name": "张三",
+      "role": "organizer",
+      "status": "confirmed",
+      "contact": "13800138000",
+      "notes": "负责行程规划和预订"
+    },
+    {
+      "id": "part_002",
+      "user_id": "user_002",
+      "name": "李四",
+      "role": "participant",
+      "status": "confirmed",
+      "contact": "13900139000",
+      "notes": "负责摄影"
+    },
+    {
+      "id": "part_003",
+      "user_id": "user_003",
+      "name": "王五",
+      "role": "participant",
+      "status": "pending",
+      "contact": "13700137000",
+      "notes": "等待确认"
+    }
+  ],
+  "participant_count": 3,
+  "organizer_id": "user_001",
+  "equipment_items": [
+    {
+      "id": "equip_001",
+      "name": "登山鞋",
+      "category": "鞋类",
+      "quantity": 3,
+      "weight": 800,
+      "is_essential": true,
+      "notes": "防滑耐磨"
+    },
+    {
+      "id": "equip_002",
+      "name": "登山杖",
+      "category": "工具",
+      "quantity": 3,
+      "weight": 300,
+      "is_essential": true,
+      "notes": "减轻膝盖负担"
+    },
+    {
+      "id": "equip_003",
+      "name": "防雨衣",
+      "category": "服装",
+      "quantity": 3,
+      "weight": 250,
+      "is_essential": true,
+      "notes": "山顶天气多变"
+    },
+    {
+      "id": "equip_004",
+      "name": "保温水壶",
+      "category": "饮水",
+      "quantity": 3,
+      "weight": 400,
+      "is_essential": true,
+      "notes": "保持水分补充"
+    },
+    {
+      "id": "equip_005",
+      "name": "头灯",
+      "category": "照明",
+      "quantity": 3,
+      "weight": 100,
+      "is_essential": false,
+      "notes": "以防万一"
+    }
+  ],
+  "food_items": [
+    {
+      "id": "food_001",
+      "name": "能量棒",
+      "category": "零食",
+      "quantity": 12,
+      "calories": 250,
+      "day_numbers": [1, 2],
+      "notes": "补充能量"
+    },
+    {
+      "id": "food_002",
+      "name": "巧克力",
+      "category": "零食",
+      "quantity": 6,
+      "calories": 200,
+      "day_numbers": [1, 2],
+      "notes": "提供快速能量"
+    },
+    {
+      "id": "food_003",
+      "name": "混合坚果",
+      "category": "零食",
+      "quantity": 3,
+      "calories": 180,
+      "day_numbers": [1, 2, 3],
+      "notes": "补充蛋白质"
+    },
+    {
+      "id": "food_004",
+      "name": "饼干",
+      "category": "主食",
+      "quantity": 6,
+      "calories": 150,
+      "day_numbers": [1, 2, 3],
+      "notes": "应急食品"
+    }
+  ],
+  "itinerary": [
+    {
+      "id": "itin_001",
+      "day_number": 1,
+      "date": "2023-07-15T00:00:00Z",
+      "title": "抵达黄山，游览云谷寺至迎客松",
+      "description": "上午抵达黄山，从云谷寺入口进入景区，下午徒步至迎客松，晚上入住北海宾馆。",
+      "route_id": "route_001",
+      "daily_plan_id": "dp_001",
+      "accommodation": "北海宾馆",
+      "transportation": "汽车到达黄山风景区，步行进入景区",
+      "meals": "午餐：自带干粮，晚餐：北海宾馆",
+      "activities": ["徒步", "摄影", "观景"],
+      "notes": "第一天行程较轻松，适应高海拔环境"
+    },
+    {
+      "id": "itin_002",
+      "day_number": 2,
+      "date": "2023-07-16T00:00:00Z",
+      "title": "游览光明顶和西海大峡谷",
+      "description": "早起观日出，游览光明顶，然后前往西海大峡谷，晚上继续住宿北海宾馆。",
+      "route_id": "route_001",
+      "daily_plan_id": null,
+      "accommodation": "北海宾馆",
+      "transportation": "步行",
+      "meals": "早餐：北海宾馆，午餐：自带干粮，晚餐：北海宾馆",
+      "activities": ["观日出", "徒步", "摄影", "观景"],
+      "notes": "西海大峡谷景色壮观，注意安全"
+    },
+    {
+      "id": "itin_003",
+      "day_number": 3,
+      "date": "2023-07-17T00:00:00Z",
+      "title": "游览排云亭，下山返程",
+      "description": "早起观云海，游览排云亭，然后从慈光阁下山，返回市区。",
+      "route_id": "route_001",
+      "daily_plan_id": "dp_002",
+      "accommodation": "黄山市区酒店",
+      "transportation": "步行下山，汽车返回市区",
+      "meals": "早餐：北海宾馆，午餐：自带干粮，晚餐：市区餐厅",
+      "activities": ["观云海", "徒步", "摄影", "温泉"],
+      "notes": "下山后可以去汤口镇泡温泉放松"
+    }
+  ],
+  "log_entries": [
+    {
+      "id": "log_001",
+      "timestamp": "2023-06-05T10:00:00Z",
+      "title": "预订完成",
+      "content": "已预订北海宾馆住宿两晚，7月15-16日。",
+      "type": "note",
+      "location": null,
+      "image_urls": null
+    },
+    {
+      "id": "log_002",
+      "timestamp": "2023-06-08T14:30:00Z",
+      "title": "行程调整",
+      "content": "因天气预报显示7月16日可能有雨，调整了第二天的行程安排，增加了雨天备选方案。",
+      "type": "adjustment",
+      "location": null,
+      "image_urls": null
+    }
+  ],
+  "cover_url": "https://example.com/images/huangshan_trip_cover.jpg",
+  "image_urls": [
+    "https://example.com/images/huangshan_trip1.jpg",
+    "https://example.com/images/huangshan_trip2.jpg",
+    "https://example.com/images/huangshan_trip3.jpg"
+  ],
+  "budget": 3000.0,
+  "actual_cost": 0.0,
+  "notes": "请所有参与者提前准备好防雨装备和保暖衣物，山顶温度较低且天气多变。",
+  "privacy_setting": "private"
+},
+{
+  "id": "trip_002",
+  "created_at": "2023-06-02T10:00:00Z",
+  "updated_at": "2023-06-12T08:45:00Z",
+  "name": "九寨沟五日游",
+  "description": "探索九寨沟的自然奇观，欣赏五彩池和瀑布群。",
+  "start_date": "2023-08-10T00:00:00Z",
+  "end_date": "2023-08-14T23:59:59Z",
+  "status": 0,
+  "route_ids": ["route_002"],
+  "primary_route_id": "route_002",
+  "participants": [
+    {
+      "id": "part_004",
+      "user_id": "user_004",
+      "name": "赵六",
+      "role": "organizer",
+      "status": "confirmed",
+      "contact": "13600136000",
+      "notes": "负责行程规划和预订"
+    },
+    {
+      "id": "part_005",
+      "user_id": "user_005",
+      "name": "钱七",
+      "role": "participant",
+      "status": "confirmed",
+      "contact": "13500135000",
+      "notes": "负责后勤"
+    }
+  ],
+  "participant_count": 2,
+  "organizer_id": "user_004",
+  "equipment_items": [
+    {
+      "id": "equip_006",
+      "name": "防水背包",
+      "category": "背包",
+      "quantity": 2,
+      "weight": 500,
+      "is_essential": true,
+      "notes": "保护物品不被淋湿"
+    },
+    {
+      "id": "equip_007",
+      "name": "防晒霜",
+      "category": "护肤",
+      "quantity": 2,
+      "weight": 100,
+      "is_essential": true,
+      "notes": "高原紫外线强"
+    }
+  ],
+  "food_items": [
+    {
+      "id": "food_005",
+      "name": "牛肉干",
+      "category": "零食",
+      "quantity": 4,
+      "calories": 300,
+      "day_numbers": [1, 2, 3],
+      "notes": "高蛋白补充"
+    }
+  ],
+  "itinerary": [
+    {
+      "id": "itin_004",
+      "day_number": 1,
+      "date": "2023-08-10T00:00:00Z",
+      "title": "抵达九寨沟，入住酒店",
+      "description": "下午抵达九寨沟，入住沟口酒店，晚上自由活动。",
+      "route_id": "route_002",
+      "daily_plan_id": "dp_003",
+      "accommodation": "九寨沟口酒店",
+      "transportation": "飞机到达成都，转乘大巴至九寨沟",
+      "meals": "晚餐：酒店餐厅",
+      "activities": ["自由活动"],
+      "notes": "适应高原环境"
+    }
+  ],
+  "log_entries": [
+    {
+      "id": "log_003",
+      "timestamp": "2023-06-10T09:00:00Z",
+      "title": "机票预订",
+      "content": "已预订往返成都的机票。",
+      "type": "note",
+      "location": null,
+      "image_urls": null
+    }
+  ],
+  "cover_url": "https://example.com/images/jiuzhaigou_trip_cover.jpg",
+  "image_urls": [
+    "https://example.com/images/jiuzhaigou_trip1.jpg"
+  ],
+  "budget": 5000.0,
+  "actual_cost": 0.0,
+  "notes": "请携带高原反应药物和保暖衣物。",
+  "privacy_setting": "private"
+},
+{
+  "id": "trip_003",
+  "created_at": "2023-06-03T11:30:00Z",
+  "updated_at": "2023-06-15T16:20:00Z",
+  "name": "丽江古城周末游",
+  "description": "漫步丽江古城，感受纳西文化。",
+  "start_date": "2023-09-02T00:00:00Z",
+  "end_date": "2023-09-03T23:59:59Z",
+  "status": 0,
+  "route_ids": ["route_003"],
+  "primary_route_id": "route_003",
+  "participants": [
+    {
+      "id": "part_006",
+      "user_id": "user_006",
+      "name": "孙八",
+      "role": "organizer",
+      "status": "confirmed",
+      "contact": "13400134000",
+      "notes": "负责行程规划和预订"
+    }
+  ],
+  "participant_count": 1,
+  "organizer_id": "user_006",
+  "equipment_items": [
+    {
+      "id": "equip_008",
+      "name": "相机",
+      "category": "电子设备",
+      "quantity": 1,
+      "weight": 600,
+      "is_essential": false,
+      "notes": "记录古城美景"
+    }
+  ],
+  "food_items": [],
+  "itinerary": [
+    {
+      "id": "itin_005",
+      "day_number": 1,
+      "date": "2023-09-02T00:00:00Z",
+      "title": "抵达丽江，游览古城",
+      "description": "上午抵达丽江，下午游览四方街和木府。",
+      "route_id": "route_003",
+      "daily_plan_id": "dp_004",
+      "accommodation": "丽江古城客栈",
+      "transportation": "飞机到达丽江，打车至古城",
+      "meals": "午餐：古城餐厅，晚餐：古城餐厅",
+      "activities": ["游览", "摄影"],
+      "notes": "古城石板路较多，建议穿舒适鞋子"
+    }
+  ],
+  "log_entries": [],
+  "cover_url": "https://example.com/images/lijiang_trip_cover.jpg",
+  "image_urls": [
+    "https://example.com/images/lijiang_trip1.jpg"
+  ],
+  "budget": 2000.0,
+  "actual_cost": 0.0,
+  "notes": "丽江海拔较高，注意防晒和补水。",
+  "privacy_setting": "private"
+},
+{
+  "id": "trip_004",
+  "created_at": "2023-06-04T09:15:00Z",
+  "updated_at": "2023-06-18T12:00:00Z",
+  "name": "三亚海滩度假",
+  "description": "享受阳光、沙滩和海浪，放松身心。",
+  "start_date": "2023-10-05T00:00:00Z",
+  "end_date": "2023-10-09T23:59:59Z",
+  "status": 0,
+  "route_ids": ["route_004"],
+  "primary_route_id": "route_004",
+  "participants": [
+    {
+      "id": "part_007",
+      "user_id": "user_007",
+      "name": "周九",
+      "role": "organizer",
+      "status": "confirmed",
+      "contact": "13300133000",
+      "notes": "负责行程规划和预订"
+    },
+    {
+      "id": "part_008",
+      "user_id": "user_008",
+      "name": "吴十",
+      "role": "participant",
+      "status": "confirmed",
+      "contact": "13200132000",
+      "notes": "负责水上活动安排"
+    }
+  ],
+  "participant_count": 2,
+  "organizer_id": "user_007",
+  "equipment_items": [
+    {
+      "id": "equip_009",
+      "name": "泳衣",
+      "category": "服装",
+      "quantity": 2,
+      "weight": 200,
+      "is_essential": true,
+      "notes": "海滩必备"
+    },
+    {
+      "id": "equip_010",
+      "name": "防晒帽",
+      "category": "配饰",
+      "quantity": 2,
+      "weight": 100,
+      "is_essential": true,
+      "notes": "防晒保护"
+    }
+  ],
+  "food_items": [
+    {
+      "id": "food_006",
+      "name": "椰子",
+      "category": "水果",
+      "quantity": 4,
+      "calories": 150,
+      "day_numbers": [1, 2, 3, 4],
+      "notes": "解暑饮品"
+    }
+  ],
+  "itinerary": [
+    {
+      "id": "itin_006",
+      "day_number": 1,
+      "date": "2023-10-05T00:00:00Z",
+      "title": "抵达三亚，入住酒店",
+      "description": "下午抵达三亚，入住海滩酒店，晚上自由活动。",
+      "route_id": "route_004",
+      "daily_plan_id": "dp_005",
+      "accommodation": "三亚海滩酒店",
+      "transportation": "飞机到达三亚，打车至酒店",
+      "meals": "晚餐：酒店餐厅",
+      "activities": ["自由活动"],
+      "notes": "适应热带气候"
+    }
+  ],
+  "log_entries": [
+    {
+      "id": "log_004",
+      "timestamp": "2023-06-15T14:00:00Z",
+      "title": "酒店预订",
+      "content": "已预订三亚海滩酒店海景房。",
+      "type": "note",
+      "location": null,
+      "image_urls": null
+    }
+  ],
+  "cover_url": "https://example.com/images/sanya_trip_cover.jpg",
+  "image_urls": [
+    "https://example.com/images/sanya_trip1.jpg"
+  ],
+  "budget": 6000.0,
+  "actual_cost": 0.0,
+  "notes": "请携带防晒霜和泳衣。",
+  "privacy_setting": "private"
+}
+]

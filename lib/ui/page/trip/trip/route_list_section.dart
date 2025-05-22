@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../model/route/route_model.dart';
+import '../../../../model/model/route/route_model.dart';
 import '../../../../theme/theme/app_colors.dart';
 import '../../../../common/utils/trip_utils.dart';
 import '../../../widgets/common/loading_indicator.dart';
@@ -143,12 +143,12 @@ class RouteListSection extends StatelessWidget {
                 height: 180,
                 width: double.infinity,
                 color: AppColors.primary.withOpacity(0.1),
-                child: route.imageUrls.isNotEmpty
+                child: route.coverUrl == null
                     ? Stack(
                         fit: StackFit.expand,
                         children: [
                           Image.network(
-                            route.imageUrls[0],
+                            route.coverUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) => Center(
                               child: Icon(
@@ -165,12 +165,11 @@ class RouteListSection extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: TripUtils.getDifficultyColor(route.difficulty)
-                                    .withOpacity(0.8),
+                                color: route.getDifficultyColor()!.withOpacity(0.8),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                TripUtils.getDifficultyName(route.difficulty),
+                                route.getDifficultyName(),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
@@ -217,7 +216,7 @@ class RouteListSection extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  route.rating.toStringAsFixed(1),
+                  "",
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.systemGrey,
@@ -225,7 +224,7 @@ class RouteListSection extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${route.durationDays}天',
+                  '${route.basicInfo.duration}天',
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.systemGrey,
@@ -233,7 +232,7 @@ class RouteListSection extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  route.region,
+                  route.region!,
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.systemGrey,
@@ -246,7 +245,7 @@ class RouteListSection extends StatelessWidget {
 
             // 最佳季节
             Text(
-              '最佳季节: ${route.bestSeasons.join(", ")}',
+              '最佳季节: ${route.basicInfo.bestSeason.join(", ")}',
               style: const TextStyle(
                 fontSize: 12,
                 color: CupertinoColors.systemGrey,
@@ -277,9 +276,9 @@ class RouteListSection extends StatelessWidget {
                 height: 80,
                 width: 80,
                 color: AppColors.primary.withOpacity(0.1),
-                child: route.imageUrls.isNotEmpty
+                child: route.coverUrl == null
                     ? Image.network(
-                        route.imageUrls[0],
+                        route.coverUrl!,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Center(
                           child: Icon(
@@ -331,7 +330,7 @@ class RouteListSection extends StatelessWidget {
                       ),
                       const SizedBox(width: 2),
                       Text(
-                        route.rating.toStringAsFixed(1),
+                        route.ratings.overall.toStringAsFixed(1),
                         style: const TextStyle(
                           fontSize: 12,
                           color: CupertinoColors.systemGrey,
@@ -349,15 +348,14 @@ class RouteListSection extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: TripUtils.getDifficultyColor(route.difficulty)
-                              .withOpacity(0.1),
+                          color: route.getDifficultyColor()!.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          TripUtils.getDifficultyName(route.difficulty),
+                          route.getDifficultyName(),
                           style: TextStyle(
                             fontSize: 10,
-                            color: TripUtils.getDifficultyColor(route.difficulty),
+                            color: route.getDifficultyColor(),
                           ),
                         ),
                       ),
@@ -370,7 +368,7 @@ class RouteListSection extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          '${route.durationDays}天',
+                          '${route.basicInfo.duration}天',
                           style: TextStyle(
                             fontSize: 10,
                             color: AppColors.primary,

@@ -1,0 +1,522 @@
+[
+  {
+    "id": "el001",
+    "name": "三日高山徒步装备清单",
+    "description": "适合三日高山徒步的基础装备清单，包含住宿、穿着、工具等必要装备",
+    "routeId": "route001",
+    "routeName": "某某山三日穿越路线",
+    "tripDays": 3,
+    "seasons": [1, 2],
+    "categories": [
+      {
+        "name": "住宿装备",
+        "icon": "tent",
+        "description": "帐篷、睡袋等住宿相关装备",
+        "items": [
+          {
+            "name": "三季帐篷",
+            "description": "轻量化三季帐篷，适合春夏秋季使用",
+            "weight": 1800.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "牧高笛",
+            "model": "冷山2",
+            "price": 699.0,
+            "notes": "防水性能良好，内帐透气"
+          },
+          {
+            "name": "睡袋",
+            "description": "三季睡袋，舒适温度5°C",
+            "weight": 1200.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "探路者",
+            "model": "羽绒睡袋",
+            "price": 499.0,
+            "notes": "压缩后体积小，保暖性好"
+          },
+          {
+            "name": "防潮垫",
+            "description": "可折叠防潮垫，隔热保暖",
+            "weight": 350.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "迪卡侬",
+            "model": "充气防潮垫",
+            "price": 199.0,
+            "notes": "厚度2.5cm，R值3.2"
+          }
+        ]
+      },
+      {
+        "name": "背包装备",
+        "icon": "backpack",
+        "description": "背包及相关收纳装备",
+        "items": [
+          {
+            "name": "登山包",
+            "description": "50L登山包，适合2-4天徒步",
+            "weight": 1500.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "始祖鸟",
+            "model": "Bora 50",
+            "price": 2499.0,
+            "notes": "背负系统舒适，多功能口袋"
+          },
+          {
+            "name": "防水袋",
+            "description": "用于保护电子设备和衣物的防水袋",
+            "weight": 80.0,
+            "quantity": 2,
+            "necessity": 1,
+            "brand": "迪卡侬",
+            "model": "防水袋5L",
+            "price": 39.0,
+            "notes": "完全防水，可装手机和钱包"
+          }
+        ]
+      },
+      {
+        "name": "穿着装备",
+        "icon": "clothes",
+        "description": "衣物、鞋子等穿着装备",
+        "items": [
+          {
+            "name": "登山鞋",
+            "description": "中帮登山鞋，防水透气",
+            "weight": 850.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "SCARPA",
+            "model": "Zodiac Plus GTX",
+            "price": 1899.0,
+            "notes": "抓地力强，适合复杂地形"
+          },
+          {
+            "name": "速干T恤",
+            "description": "速干透气T恤",
+            "weight": 120.0,
+            "quantity": 2,
+            "necessity": 0,
+            "brand": "Columbia",
+            "model": "速干T恤",
+            "price": 199.0,
+            "notes": "排汗快，防晒UPF40+"
+          },
+          {
+            "name": "冲锋衣",
+            "description": "三层压胶冲锋衣，防风防水",
+            "weight": 450.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "始祖鸟",
+            "model": "Beta AR",
+            "price": 3999.0,
+            "notes": "GORE-TEX面料，耐用防水"
+          }
+        ]
+      },
+      {
+        "name": "工具装备",
+        "icon": "tools",
+        "description": "头灯、登山杖等工具装备",
+        "items": [
+          {
+            "name": "头灯",
+            "description": "LED头灯，多档亮度调节",
+            "weight": 85.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "黑钻",
+            "model": "Storm 400",
+            "price": 399.0,
+            "notes": "最高400流明，防水IPX4"
+          },
+          {
+            "name": "登山杖",
+            "description": "可伸缩碳纤维登山杖",
+            "weight": 220.0,
+            "quantity": 2,
+            "necessity": 1,
+            "brand": "黑钻",
+            "model": "Distance Carbon Z",
+            "price": 899.0,
+            "notes": "轻量化设计，可折叠收纳"
+          },
+          {
+            "name": "指南针",
+            "description": "专业户外指南针",
+            "weight": 40.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Silva",
+            "model": "Ranger",
+            "price": 299.0,
+            "notes": "带夜光功能，精准度高"
+          }
+        ]
+      },
+      {
+        "name": "安全装备",
+        "icon": "safety",
+        "description": "急救包等安全装备",
+        "items": [
+          {
+            "name": "急救包",
+            "description": "户外急救包，含基本医疗用品",
+            "weight": 250.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "探路者",
+            "model": "户外急救包",
+            "price": 159.0,
+            "notes": "包含绷带、消毒药水、创可贴等"
+          }
+        ]
+      },
+      {
+        "name": "个人护理",
+        "icon": "personal",
+        "description": "防晒霜、洗漱用品等个人护理装备",
+        "items": [
+          {
+            "name": "防晒霜",
+            "description": "SPF50+防晒霜",
+            "weight": 60.0,
+            "quantity": 1,
+            "necessity": 1,
+            "brand": "安耐晒",
+            "model": "金瓶防晒霜",
+            "price": 199.0,
+            "notes": "防水配方，适合户外活动"
+          },
+          {
+            "name": "洗漱套装",
+            "description": "旅行装洗漱套装",
+            "weight": 150.0,
+            "quantity": 1,
+            "necessity": 1,
+            "brand": "无印良品",
+            "model": "旅行装",
+            "price": 99.0,
+            "notes": "含牙刷、牙膏、洗面奶等"
+          }
+        ]
+      },
+      {
+        "name": "炊具装备",
+        "icon": "cooking",
+        "description": "炉具、炊具等烹饪装备",
+        "items": [
+          {
+            "name": "便携炉具",
+            "description": "户外便携气炉",
+            "weight": 100.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "火枫",
+            "model": "FMS-300T",
+            "price": 299.0,
+            "notes": "火力强，节能省气"
+          },
+          {
+            "name": "炊具套装",
+            "description": "户外炊具套装，含锅、碗、勺",
+            "weight": 350.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "TOAKS",
+            "model": "钛合金套装",
+            "price": 599.0,
+            "notes": "轻量化设计，耐用耐腐蚀"
+          }
+        ]
+      }
+    ],
+    "totalWeight": 7605.0,
+    "baseWeight": 5605.0,
+    "consumableWeight": 1000.0,
+    "wornWeight": 1000.0,
+    "creatorId": "user001",
+    "creatorName": "户外爱好者",
+    "tags": ["高山", "夏季", "徒步"],
+    "isOfficial": true,
+    "createdAt": "2023-05-01T08:00:00.000Z",
+    "updatedAt": "2023-05-01T08:00:00.000Z"
+  },
+  {
+    "id": "el002",
+    "name": "五日穿越无人区装备清单",
+    "description": "适合五日穿越无人区的专业装备清单，注重轻量化和安全性",
+    "routeId": "route002",
+    "routeName": "某某无人区穿越路线",
+    "tripDays": 5,
+    "seasons": [1, 2],
+    "categories": [
+      {
+        "name": "住宿装备",
+        "icon": "tent",
+        "description": "帐篷、睡袋等住宿相关装备",
+        "items": [
+          {
+            "name": "超轻帐篷",
+            "description": "双人超轻帐篷，适合长途穿越",
+            "weight": 1200.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Big Agnes",
+            "model": "Copper Spur HV UL2",
+            "price": 3499.0,
+            "notes": "双人设计，搭建简单，防水性能好"
+          },
+          {
+            "name": "轻量睡袋",
+            "description": "800蓬鹅绒睡袋，舒适温度0°C",
+            "weight": 800.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Western Mountaineering",
+            "model": "UltraLite",
+            "price": 2999.0,
+            "notes": "高蓬松度鹅绒填充，保暖轻量"
+          },
+          {
+            "name": "充气防潮垫",
+            "description": "超轻充气防潮垫",
+            "weight": 250.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Therm-a-Rest",
+            "model": "NeoAir XLite",
+            "price": 1299.0,
+            "notes": "R值4.2，厚度6.4cm，舒适保暖"
+          }
+        ]
+      },
+      {
+        "name": "背包装备",
+        "icon": "backpack",
+        "description": "背包及相关收纳装备",
+        "items": [
+          {
+            "name": "轻量登山包",
+            "description": "65L轻量登山包，适合长途穿越",
+            "weight": 1300.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Osprey",
+            "model": "Atmos AG 65",
+            "price": 2799.0,
+            "notes": "防雨罩，多功能收纳，背负舒适"
+          },
+          {
+            "name": "防水袋套装",
+            "description": "多尺寸防水袋套装",
+            "weight": 150.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Sea to Summit",
+            "model": "防水袋套装",
+            "price": 399.0,
+            "notes": "包含5L、8L、13L三个尺寸"
+          }
+        ]
+      },
+      {
+        "name": "工具装备",
+        "icon": "tools",
+        "description": "头灯、登山杖等工具装备",
+        "items": [
+          {
+            "name": "GPS设备",
+            "description": "户外GPS导航设备",
+            "weight": 230.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Garmin",
+            "model": "GPSMAP 66i",
+            "price": 4999.0,
+            "notes": "内置卫星通讯功能，SOS求救"
+          },
+          {
+            "name": "多功能工具钳",
+            "description": "多功能工具钳",
+            "weight": 150.0,
+            "quantity": 1,
+            "necessity": 1,
+            "brand": "Leatherman",
+            "model": "Wave+",
+            "price": 899.0,
+            "notes": "包含18种工具，应急维修必备"
+          }
+        ]
+      },
+      {
+        "name": "安全装备",
+        "icon": "safety",
+        "description": "急救包等安全装备",
+        "items": [
+          {
+            "name": "专业急救包",
+            "description": "专业户外急救包，含全面医疗用品",
+            "weight": 450.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Adventure Medical Kits",
+            "model": "Mountain Series",
+            "price": 699.0,
+            "notes": "适合5人5天使用，含医疗手册"
+          },
+          {
+            "name": "卫星通讯设备",
+            "description": "卫星通讯设备，可在无信号区域发送消息",
+            "weight": 100.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Garmin",
+            "model": "inReach Mini",
+            "price": 2499.0,
+            "notes": "SOS功能，双向短信，位置共享"
+          }
+        ]
+      }
+    ],
+    "totalWeight": 4630.0,
+    "baseWeight": 3630.0,
+    "consumableWeight": 500.0,
+    "wornWeight": 500.0,
+    "creatorId": "user002",
+    "creatorName": "探险家",
+    "tags": ["穿越", "无人区", "夏季"],
+    "isOfficial": true,
+    "createdAt": "2023-06-01T10:00:00.000Z",
+    "updatedAt": "2023-06-01T10:00:00.000Z"
+  },
+  {
+    "id": "el003",
+    "name": "两日休闲徒步装备清单",
+    "description": "适合初学者的两日休闲徒步装备清单，注重舒适性和实用性",
+    "routeId": "route003",
+    "routeName": "某某山两日休闲路线",
+    "tripDays": 2,
+    "seasons": [0, 1, 2],
+    "categories": [
+      {
+        "name": "住宿装备",
+        "icon": "tent",
+        "description": "帐篷、睡袋等住宿相关装备",
+        "items": [
+          {
+            "name": "双人帐篷",
+            "description": "入门级双人帐篷，简单易搭",
+            "weight": 2200.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "迪卡侬",
+            "model": "QUECHUA MH100",
+            "price": 399.0,
+            "notes": "性价比高，适合初学者"
+          },
+          {
+            "name": "舒适睡袋",
+            "description": "舒适温度10°C的睡袋",
+            "weight": 1000.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "迪卡侬",
+            "model": "QUECHUA MH500 15°",
+            "price": 299.0,
+            "notes": "适合春夏秋季使用"
+          }
+        ]
+      },
+      {
+        "name": "背包装备",
+        "icon": "backpack",
+        "description": "背包及相关收纳装备",
+        "items": [
+          {
+            "name": "徒步背包",
+            "description": "30L徒步背包，适合1-2天徒步",
+            "weight": 900.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "迪卡侬",
+            "model": "NH500 30L",
+            "price": 199.0,
+            "notes": "多口袋设计，含防雨罩"
+          }
+        ]
+      },
+      {
+        "name": "穿着装备",
+        "icon": "clothes",
+        "description": "衣物、鞋子等穿着装备",
+        "items": [
+          {
+            "name": "徒步鞋",
+            "description": "低帮徒步鞋，适合简单地形",
+            "weight": 700.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "迪卡侬",
+            "model": "MH100",
+            "price": 299.0,
+            "notes": "透气防滑，适合干燥路况"
+          },
+          {
+            "name": "徒步裤",
+            "description": "速干徒步裤",
+            "weight": 300.0,
+            "quantity": 1,
+            "necessity": 1,
+            "brand": "迪卡侬",
+            "model": "MH500",
+            "price": 149.0,
+            "notes": "弹性面料，舒适耐穿"
+          }
+        ]
+      },
+      {
+        "name": "个人护理",
+        "icon": "personal",
+        "description": "防晒霜、洗漱用品等个人护理装备",
+        "items": [
+          {
+            "name": "防晒霜",
+            "description": "SPF30防晒霜",
+            "weight": 50.0,
+            "quantity": 1,
+            "necessity": 1,
+            "brand": "妮维雅",
+            "model": "防晒乳液",
+            "price": 69.0,
+            "notes": "防水防汗，易吸收"
+          },
+          {
+            "name": "湿巾",
+            "description": "便携湿巾",
+            "weight": 100.0,
+            "quantity": 1,
+            "necessity": 2,
+            "brand": "舒洁",
+            "model": "便携湿巾",
+            "price": 19.9,
+            "notes": "20片装，清洁消毒"
+          }
+        ]
+      }
+    ],
+    "totalWeight": 5250.0,
+    "baseWeight": 4250.0,
+    "consumableWeight": 500.0,
+    "wornWeight": 500.0,
+    "creatorId": "user003",
+    "creatorName": "户外教练",
+    "tags": ["休闲", "初学者", "春季"],
+    "isOfficial": true,
+    "createdAt": "2023-04-15T09:00:00.000Z",
+    "updatedAt": "2023-04-15T09:00:00.000Z"
+  }
+]

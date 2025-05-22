@@ -57,7 +57,7 @@ dependencies:
   device_info_plus: ^9.1.1
   flutter_dotenv: ^5.1.0
   logger: ^2.0.2+1
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
   vector_math: ^2.1.4
   get_it: ^8.0.0
 
@@ -76,7 +76,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.1
   build_runner: ^2.4.6
-  json_serializable: ^6.7.1
+  json_serializable: ^6.7.2
   riverpod_generator: ^2.3.2
   flutter_native_splash: ^2.3.6
   flutter_launcher_icons: ^0.13.1
@@ -88,7 +88,20 @@ flutter:
     - assets/icons/
     - assets/animations/
     - assets/mock_data/
+    - assets/mock_data_new/
     - assets/mock_data/search_history.json
+    - assets/mock_data/gear_details.json
+    - assets/mock_data/gear_recommendations.json
+    - assets/mock_data/route_ratings.json
+    - assets/mock_data/route_tags.json
+    - assets/mock_data/route_daily_plans.json
+    - assets/mock_data/route_waypoints.json
+    - assets/mock_data/user_gear.json
+    - assets/mock_data/gear_categories.json
+    - assets/mock_data/gear_by_category.json
+    - assets/mock_data/gear_purchase_options.json
+    - assets/mock_data/gear_rental_options.json
+    - assets/mock_data/routes.json
 
   fonts:
     - family: NotoSansSC

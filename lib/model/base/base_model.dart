@@ -1,10 +1,7 @@
-/// 基础模型类
-///
-/// 所有模型类的基类，提供通用属性和方法
-/// 包含ID、创建时间和更新时间等基础字段
+import 'package:json_annotation/json_annotation.dart';
 
-/// 基础模型
-class BaseModel {
+/// 基础模型类
+abstract class BaseModel {
   /// ID
   final String id;
 
@@ -21,25 +18,6 @@ class BaseModel {
     this.updatedAt,
   });
 
-  /// 从JSON创建
-  factory BaseModel.fromJson(Map<String, dynamic> json) {
-    return BaseModel(
-      id: json['id'] as String,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
-          : null,
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'] as String)
-          : null,
-    );
-  }
-
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'created_at': createdAt?.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
-    };
-  }
+  Map<String, dynamic> toJson();
 }

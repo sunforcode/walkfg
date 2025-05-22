@@ -1,0 +1,87 @@
+[
+  {
+    "gearId": "gear_001",
+    "options": [
+      {
+        "store": "户外之家",
+        "price": 399,
+        "url": "https://example.com/outdoor_home/jacket",
+        "inStock": true,
+        "deliveryDays": 3
+      },
+      {
+        "store": "探险者",
+        "price": 349,
+        "url": "https://example.com/explorer/jacket",
+        "inStock": true,
+        "deliveryDays": 2
+      },
+      {
+        "store": "山野户外",
+        "price": 429,
+        "url": "https://example.com/mountain_outdoor/jacket",
+        "inStock": false,
+        "deliveryDays": 5
+      }
+    ]
+  },
+  {
+    "gearId": "gear_007",
+    "options": [
+      {
+        "store": "户外之家",
+        "price": 799,
+        "url": "https://example.com/outdoor_home/backpack",
+        "inStock": true,
+        "deliveryDays": 3
+      },
+      {
+        "store": "探险者",
+        "price": 849,
+        "url": "https://example.com/explorer/backpack",
+        "inStock": true,
+        "deliveryDays": 2
+      },
+      {
+        "store": "山野户外",
+        "price": 699,
+        "url": "https://example.com/mountain_outdoor/backpack",
+        "inStock": true,
+        "deliveryDays": 4
+      },
+      {
+        "store": "官方旗舰店",
+        "price": 899,
+        "url": "https://example.com/official/backpack",
+        "inStock": true,
+        "deliveryDays": 1
+      }
+    ]
+  },
+  {
+    "gearId": "gear_008",
+    "options": [
+      {
+        "store": "户外之家",
+        "price": 599,
+        "url": "https://example.com/outdoor_home/shoes",
+        "inStock": true,
+        "deliveryDays": 3
+      },
+      {
+        "store": "探险者",
+        "price": 649,
+        "url": "https://example.com/explorer/shoes",
+        "inStock": false,
+        "deliveryDays": 7
+      },
+      {
+        "store": "山野户外",
+        "price": 549,
+        "url": "https://example.com/mountain_outdoor/shoes",
+        "inStock": true,
+        "deliveryDays": 4
+      }
+    ]
+  }
+]

@@ -63,7 +63,7 @@ class _SearchSectionState extends State<SearchSection> {
       final keywords = await _searchHistoryService.getSearchKeywords();
 
       // 加载热门搜索
-      final tripService = ServiceLocator.instance.getTripService();
+      final tripService = ServiceLocator.instance.getRecommendationService();
       final hotSearches = await tripService.getHotSearches();
 
       setState(() {
@@ -234,8 +234,8 @@ class _SearchSectionState extends State<SearchSection> {
                       : _hotSearches.map((search) {
                           return _buildSearchTag(
                             search.keyword,
-                            search.tagColor,
-                            search.isHot,
+                            null,
+                            true,
                           );
                         }).toList(),
                 ),

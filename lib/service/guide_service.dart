@@ -1,4 +1,4 @@
-import '../model/guide_model.dart';
+import '../model/guide/guide_model.dart';
 
 /// 攻略服务接口
 abstract class GuideService {
@@ -37,5 +37,7 @@ abstract class GuideService {
 
   /// 删除攻略
   Future<bool> deleteGuide(String guideId);
-}
 
+  /// 获取攻略分类
+  Future<List<String>> getGuideCategories();
+}

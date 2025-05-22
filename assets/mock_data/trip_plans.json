@@ -3,30 +3,30 @@
     "id": "trip1",
     "user_id": "user1",
     "route_id": "route1",
+    "name": "黄山主峰徒步行程",
+    "description": "黄山主峰徒步行程，包括光明顶、莲花峰、天都峰等主要景点",
     "route_name": "黄山主峰徒步行程",
     "start_date": "2023-10-01T00:00:00.000Z",
+    "end_date": "2023-10-03T00:00:00.000Z",
     "participant_count": 3,
     "departure_city": "上海",
-    "status": 0
+    "status": 0,
+    "created_at": "2023-05-01T00:00:00.000Z",
+    "updated_at": "2023-05-01T00:00:00.000Z"
   },
   {
     "id": "trip2",
     "user_id": "user1",
     "route_id": "route2",
+    "name": "莫干山周末徒步",
+    "description": "莫干山周末徒步，穿越竹海和茶园，欣赏江南山水风光",
     "route_name": "莫干山周末徒步",
     "start_date": "2023-09-15T00:00:00.000Z",
+    "end_date": "2023-09-16T00:00:00.000Z",
     "participant_count": 2,
     "departure_city": "杭州",
-    "status": 3
-  },
-  {
-    "id": "trip3",
-    "user_id": "user1",
-    "route_id": "route3",
-    "route_name": "庐山三日穿越计划",
-    "start_date": "2023-11-20T00:00:00.000Z",
-    "participant_count": 4,
-    "departure_city": "南昌",
-    "status": 0
+    "status": 3,
+    "created_at": "2023-04-15T00:00:00.000Z",
+    "updated_at": "2023-04-15T00:00:00.000Z"
   }
 ]

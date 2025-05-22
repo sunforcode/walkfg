@@ -1,20 +1,48 @@
-import 'package:walk/service/guide_service.dart';
-import '../../model/guide_model.dart';
-import 'json_data_provider.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import '../guide_service.dart';
+import '../../model/guide/guide_model.dart';
 
-/// 从JSON文件读取数据的攻略服务实现
+/// Mock攻略服务实现
 class MockGuideService implements GuideService {
-  final JsonDataProvider _dataProvider = JsonDataProvider();
+  /// 单例实例
+  static final MockGuideService _instance = MockGuideService._internal();
+
+  /// 工厂构造函数
+  factory MockGuideService() {
+    return _instance;
+  }
+
+  /// 私有构造函数
+  MockGuideService._internal();
+
+  /// 从JSON文件加载数据
+  Future<dynamic> _loadJsonData(String path) async {
+    try {
+      final String jsonString = await rootBundle.loadString(path);
+      return json.decode(jsonString);
+    } catch (e) {
+      print('加载JSON文件失败: $e');
+      return null;
+    }
+  }
 
   @override
   Future<List<GuideModel>> getGuides({String? tag, int? limit}) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    var guides = await _dataProvider.getGuides();
+    final guidesJson = await _loadJsonData('assets/mock_data/guides.json');
+    if (guidesJson == null || !(guidesJson is List)) {
+      return [];
+    }
 
-    // 按标签筛选
-    if (tag != null) {
+    List<GuideModel> guides = guidesJson
+        .map<GuideModel>((json) => GuideModel.fromJson(json))
+        .toList();
+
+    // 根据标签筛选
+    if (tag != null && tag.isNotEmpty) {
       guides = guides.where((guide) => guide.tags.contains(tag)).toList();
     }
 
@@ -29,18 +57,36 @@ class MockGuideService implements GuideService {
   @override
   Future<GuideModel> getGuideById(String guideId) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    return _dataProvider.getGuideById(guideId);
+    final guidesJson = await _loadJsonData('assets/mock_data/guides.json');
+    if (guidesJson == null || !(guidesJson is List)) {
+      throw Exception('Failed to load guides data');
+    }
+
+    final guideJson = guidesJson.firstWhere(
+      (guide) => guide['id'] == guideId,
+      orElse: () => throw Exception('Guide not found: $guideId'),
+    );
+
+    return GuideModel.fromJson(guideJson);
   }
 
   @override
   Future<List<GuideModel>> getPopularGuides({int? limit}) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    final guidesJson = await _loadJsonData('assets/mock_data/guides.json');
+    if (guidesJson == null || !(guidesJson is List)) {
+      return [];
+    }
+
+    List<GuideModel> guides = guidesJson
+        .map<GuideModel>((json) => GuideModel.fromJson(json))
+        .toList();
 
     // 按点赞数排序
-    var guides = await _dataProvider.getGuides();
     guides.sort((a, b) => b.likes.compareTo(a.likes));
 
     // 限制数量
@@ -54,10 +100,18 @@ class MockGuideService implements GuideService {
   @override
   Future<List<GuideModel>> getLatestGuides({int? limit}) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    final guidesJson = await _loadJsonData('assets/mock_data/guides.json');
+    if (guidesJson == null || !(guidesJson is List)) {
+      return [];
+    }
+
+    List<GuideModel> guides = guidesJson
+        .map<GuideModel>((json) => GuideModel.fromJson(json))
+        .toList();
 
     // 按发布日期排序
-    var guides = await _dataProvider.getGuides();
     guides.sort((a, b) => b.publishDate.compareTo(a.publishDate));
 
     // 限制数量
@@ -71,22 +125,29 @@ class MockGuideService implements GuideService {
   @override
   Future<List<GuideModel>> getFavoriteGuides() async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    // 获取所有攻略
-    var guides = await _dataProvider.getGuides();
+    final guidesJson = await _loadJsonData('assets/mock_data/guides.json');
+    if (guidesJson == null || !(guidesJson is List)) {
+      return [];
+    }
 
-    // 模拟收藏的攻略（随机选择几个）
-    guides.shuffle();
-    return guides.take(3).toList();
+    List<GuideModel> guides = guidesJson
+        .map<GuideModel>((json) => GuideModel.fromJson(json))
+        .toList();
+
+    // 筛选已点赞的攻略
+    guides = guides.where((guide) => guide.isLiked).toList();
+
+    return guides;
   }
 
   @override
   Future<GuideModel> likeGuide(String guideId) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    // 获取攻略
+    // 获取攻略详情
     final guide = await getGuideById(guideId);
 
     // 更新点赞状态
@@ -96,9 +157,9 @@ class MockGuideService implements GuideService {
   @override
   Future<GuideModel> unlikeGuide(String guideId) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    // 获取攻略
+    // 获取攻略详情
     final guide = await getGuideById(guideId);
 
     // 更新点赞状态
@@ -108,7 +169,7 @@ class MockGuideService implements GuideService {
   @override
   Future<bool> favoriteGuide(String guideId) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 400));
 
     // 模拟收藏成功
     return true;
@@ -117,7 +178,7 @@ class MockGuideService implements GuideService {
   @override
   Future<bool> unfavoriteGuide(String guideId) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 400));
 
     // 模拟取消收藏成功
     return true;
@@ -126,12 +187,12 @@ class MockGuideService implements GuideService {
   @override
   Future<GuideModel> createGuide(GuideModel guide) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 800));
+    await Future.delayed(const Duration(milliseconds: 400));
 
     // 模拟创建成功，返回带有ID的对象
     final now = DateTime.now();
     return GuideModel(
-      id: 'new_${now.millisecondsSinceEpoch}',
+      id: 'guide_${now.millisecondsSinceEpoch}',
       title: guide.title,
       content: guide.content,
       author: guide.author,
@@ -153,9 +214,10 @@ class MockGuideService implements GuideService {
   @override
   Future<GuideModel> updateGuide(GuideModel guide) async {
     // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    // 模拟更新成功
+    // 模拟更新成功，返回更新后的对象
+    final now = DateTime.now();
     return GuideModel(
       id: guide.id,
       title: guide.title,
@@ -166,13 +228,13 @@ class MockGuideService implements GuideService {
       likes: guide.likes,
       views: guide.views,
       publishDate: guide.publishDate,
-      updateDate: DateTime.now(),
+      updateDate: now,
       iconCode: guide.iconCode,
       coverUrl: guide.coverUrl,
       tags: guide.tags,
       isLiked: guide.isLiked,
       createdAt: guide.createdAt,
-      updatedAt: DateTime.now(),
+      updatedAt: now,
     );
   }
 
@@ -183,5 +245,19 @@ class MockGuideService implements GuideService {
 
     // 模拟删除成功
     return true;
+  }
+
+  @override
+  Future<List<String>> getGuideCategories() async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    final categoriesJson =
+        await _loadJsonData('assets/mock_data/guide_categories.json');
+    if (categoriesJson == null || !(categoriesJson is List)) {
+      return [];
+    }
+
+    return List<String>.from(categoriesJson);
   }
 }

@@ -1,146 +1,92 @@
-import '../route/route_model.dart';
+import 'package:json_annotation/json_annotation.dart';
+import '../model/route/route_model.dart';
+
+part 'recommended_route_model.g.dart';
 
 /// 推荐路线类型
 enum RecommendedRouteType {
-  /// 精选路线
-  featured,
-
   /// 热门路线
   popular,
 
-  /// 季节推荐
-  seasonal,
-
-  /// 新晋路线
+  /// 新路线
   new_routes,
 
-  /// 周末短途
-  weekend,
+  /// 附近路线
+  nearby,
+
+  /// 季节性路线
+  seasonal,
+
+  /// 难度适中路线
+  moderate,
+
+  /// 初学者路线
+  beginner,
+
+  /// 高级路线
+  advanced,
 }
 
 /// 推荐路线模型
+@JsonSerializable()
 class RecommendedRouteModel {
-  /// 推荐类型
+  /// 类型
+  @JsonKey(fromJson: _typeFromJson, toJson: _typeToJson)
   final RecommendedRouteType type;
 
-  /// 推荐标题
+  /// 标题
   final String title;
 
-  /// 推荐描述
-  final String? description;
+  /// 描述
+  final String description;
 
   /// 路线列表
   final List<RouteModel> routes;
 
   /// 构造函数
-  const RecommendedRouteModel({
+  RecommendedRouteModel({
     required this.type,
     required this.title,
-    this.description,
+    required this.description,
     required this.routes,
   });
 
   /// 从JSON创建
-  factory RecommendedRouteModel.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> routesJson = json['routes'] as List<dynamic>;
-    final routes = routesJson
-        .map((route) => RouteModel.fromJson(route as Map<String, dynamic>))
-        .toList();
-
-    return RecommendedRouteModel(
-      type: _typeFromString(json['type'] as String),
-      title: json['title'] as String,
-      description: json['description'] as String?,
-      routes: routes,
-    );
-  }
+  factory RecommendedRouteModel.fromJson(Map<String, dynamic> json) =>
+      _$RecommendedRouteModelFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'type': _typeToString(type),
-      'title': title,
-      'description': description,
-      'routes': routes.map((route) => route.toJson()).toList(),
-    };
+  Map<String, dynamic> toJson() => _$RecommendedRouteModelToJson(this);
+
+  /// 解析类型
+  static RecommendedRouteType _typeFromJson(dynamic type) {
+    if (type is int && type >= 0 && type < RecommendedRouteType.values.length) {
+      return RecommendedRouteType.values[type];
+    }
+    return RecommendedRouteType.popular;
   }
 
-  /// 从字符串转换为推荐类型
-  static RecommendedRouteType _typeFromString(String typeStr) {
-    switch (typeStr) {
-      case 'featured':
-        return RecommendedRouteType.featured;
-      case 'popular':
-        return RecommendedRouteType.popular;
-      case 'seasonal':
-        return RecommendedRouteType.seasonal;
-      case 'new_routes':
-        return RecommendedRouteType.new_routes;
-      case 'weekend':
-        return RecommendedRouteType.weekend;
-      default:
-        return RecommendedRouteType.featured;
-    }
-  }
-
-  /// 将推荐类型转换为字符串
-  static String _typeToString(RecommendedRouteType type) {
-    switch (type) {
-      case RecommendedRouteType.featured:
-        return 'featured';
-      case RecommendedRouteType.popular:
-        return 'popular';
-      case RecommendedRouteType.seasonal:
-        return 'seasonal';
-      case RecommendedRouteType.new_routes:
-        return 'new_routes';
-      case RecommendedRouteType.weekend:
-        return 'weekend';
-    }
+  /// 类型转JSON
+  static int _typeToJson(RecommendedRouteType type) {
+    return type.index;
   }
 }
 
 /// 推荐路线列表模型
+@JsonSerializable()
 class RecommendedRouteListModel {
   /// 推荐路线列表
   final List<RecommendedRouteModel> items;
 
-  /// 更新时间
-  final DateTime updatedAt;
-
   /// 构造函数
-  const RecommendedRouteListModel({
+  RecommendedRouteListModel({
     required this.items,
-    required this.updatedAt,
   });
 
   /// 从JSON创建
-  factory RecommendedRouteListModel.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> itemsJson = json['items'] as List<dynamic>;
-    final items = itemsJson
-        .map((item) => RecommendedRouteModel.fromJson(item as Map<String, dynamic>))
-        .toList();
-
-    return RecommendedRouteListModel(
-      items: items,
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-    );
-  }
+  factory RecommendedRouteListModel.fromJson(Map<String, dynamic> json) =>
+      _$RecommendedRouteListModelFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'items': items.map((item) => item.toJson()).toList(),
-      'updated_at': updatedAt.toIso8601String(),
-    };
-  }
-
-  /// 获取指定类型的推荐路线
-  RecommendedRouteModel? getByType(RecommendedRouteType type) {
-    try {
-      return items.firstWhere((item) => item.type == type);
-    } catch (e) {
-      return null;
-    }
-  }
+  Map<String, dynamic> toJson() => _$RecommendedRouteListModelToJson(this);
 }

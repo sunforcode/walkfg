@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../../model/equipment/equipment_model.dart';
+import '../../../../model/equipment/equipment_item_model.dart';
 import 'equipment_item_tile.dart';
 
 /// 装备分类卡片组件
 class EquipmentCategoryCard extends StatefulWidget {
   /// 装备分类
   final EquipmentCategory category;
-  
+
   /// 构造函数
   const EquipmentCategoryCard({
     super.key,
@@ -24,7 +25,7 @@ class _EquipmentCategoryCardState extends State<EquipmentCategoryCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final category = widget.category;
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -87,7 +88,7 @@ class _EquipmentCategoryCardState extends State<EquipmentCategoryCard> {
               ),
             ),
           ),
-          
+
           // 分类内容
           if (_isExpanded)
             ListView.separated(

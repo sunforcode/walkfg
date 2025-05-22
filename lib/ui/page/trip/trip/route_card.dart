@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../model/route/route_model.dart';
+import '../../../../model/model/route/route_model.dart';
 import '../../../../theme/theme/app_colors.dart';
 
 /// 路线卡片组件
@@ -45,15 +45,17 @@ class RouteCard extends StatelessWidget {
           children: [
             // 路线图片
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
               child: SizedBox(
                 height: 150,
                 width: double.infinity,
-                child: route.imageUrls.isNotEmpty
+                child: route.coverUrl == null
                     ? Image.network(
-                        route.imageUrls.first,
+                        route.coverUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => _buildPlaceholderImage(),
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildPlaceholderImage(),
                       )
                     : _buildPlaceholderImage(),
               ),
@@ -80,7 +82,7 @@ class RouteCard extends StatelessWidget {
                     children: [
                       _buildInfoChip(
                         CupertinoIcons.clock,
-                        '${route.durationDays}天',
+                        '${route.basicInfo.duration}天',
                       ),
                       const SizedBox(width: 16),
                       _buildInfoChip(
@@ -90,7 +92,7 @@ class RouteCard extends StatelessWidget {
                       const SizedBox(width: 16),
                       _buildInfoChip(
                         CupertinoIcons.calendar,
-                        route.bestSeason,
+                        route.basicInfo.bestSeason.join(','),
                       ),
                     ],
                   ),

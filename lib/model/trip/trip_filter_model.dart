@@ -1,110 +1,84 @@
-import 'package:flutter/foundation.dart';
-import '../route/route_model.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'trip_filter_model.g.dart';
 
 /// 行程筛选模型
+@JsonSerializable()
 class TripFilterModel {
-  /// 搜索关键词
+  /// 关键词
   final String? keyword;
 
-  /// 地区
-  final String? region;
-
   /// 难度
-  final RouteDifficulty? difficulty;
-
-  /// 最小天数
-  final int? minDays;
-
-  /// 最大天数
-  final int? maxDays;
+  final String? difficulty;
 
   /// 季节
   final String? season;
 
+  /// 时长
+  final String? duration;
+
+  /// 最小距离(km)
+  final double? minDistance;
+
+  /// 最大距离(km)
+  final double? maxDistance;
+
+  /// 最小海拔(m)
+  final double? minElevation;
+
+  /// 最大海拔(m)
+  final double? maxElevation;
+
+  /// 排序字段
+  final String? sortBy;
+
+  /// 是否升序
+  final bool? ascending;
+
   /// 构造函数
-  const TripFilterModel({
+  TripFilterModel({
     this.keyword,
-    this.region,
     this.difficulty,
-    this.minDays,
-    this.maxDays,
     this.season,
+    this.duration,
+    this.minDistance,
+    this.maxDistance,
+    this.minElevation,
+    this.maxElevation,
+    this.sortBy,
+    this.ascending,
   });
 
-  /// 创建副本
+  /// 从JSON创建
+  factory TripFilterModel.fromJson(Map<String, dynamic> json) =>
+      _$TripFilterModelFromJson(json);
+
+  /// 转换为JSON
+  Map<String, dynamic> toJson() => _$TripFilterModelToJson(this);
+
+  /// 创建副本并更新部分属性
   TripFilterModel copyWith({
     String? keyword,
-    String? region,
-    RouteDifficulty? difficulty,
-    int? minDays,
-    int? maxDays,
+    String? difficulty,
     String? season,
+    String? duration,
+    double? minDistance,
+    double? maxDistance,
+    double? minElevation,
+    double? maxElevation,
+    String? sortBy,
+    bool? ascending,
   }) {
     return TripFilterModel(
       keyword: keyword ?? this.keyword,
-      region: region ?? this.region,
       difficulty: difficulty ?? this.difficulty,
-      minDays: minDays ?? this.minDays,
-      maxDays: maxDays ?? this.maxDays,
       season: season ?? this.season,
+      duration: duration ?? this.duration,
+      minDistance: minDistance ?? this.minDistance,
+      maxDistance: maxDistance ?? this.maxDistance,
+      minElevation: minElevation ?? this.minElevation,
+      maxElevation: maxElevation ?? this.maxElevation,
+      sortBy: sortBy ?? this.sortBy,
+      ascending: ascending ?? this.ascending,
     );
   }
-
-  /// 从JSON创建
-  factory TripFilterModel.fromJson(Map<String, dynamic> json) {
-    return TripFilterModel(
-      keyword: json['keyword'] as String?,
-      region: json['region'] as String?,
-      difficulty: json['difficulty'] != null
-          ? RouteDifficulty.values[json['difficulty'] as int]
-          : null,
-      minDays: json['min_days'] as int?,
-      maxDays: json['max_days'] as int?,
-      season: json['season'] as String?,
-    );
-  }
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'keyword': keyword,
-      'region': region,
-      'difficulty': difficulty?.index,
-      'min_days': minDays,
-      'max_days': maxDays,
-      'season': season,
-    };
-  }
-
-  /// 判断是否为空
-  bool get isEmpty =>
-      keyword == null &&
-      region == null &&
-      difficulty == null &&
-      minDays == null &&
-      maxDays == null &&
-      season == null;
-
-  /// 判断是否相等
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is TripFilterModel &&
-        other.keyword == keyword &&
-        other.region == region &&
-        other.difficulty == difficulty &&
-        other.minDays == minDays &&
-        other.maxDays == maxDays &&
-        other.season == season;
-  }
-
-  @override
-  int get hashCode => Object.hash(
-        keyword,
-        region,
-        difficulty,
-        minDays,
-        maxDays,
-        season,
-      );
 }

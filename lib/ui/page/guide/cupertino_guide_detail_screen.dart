@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../model/guide_model.dart';
+import '../../../model/guide/guide_model.dart';
 import '../../../service/service_manager.dart';
 import '../../../theme/theme/app_colors.dart';
 import '../../../theme/theme/app_color_palette.dart';
@@ -41,8 +41,8 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       _guideFuture = Future.value(widget.guide!);
       _isLiked = widget.guide!.isLiked;
     } else {
-      final apiService = ServiceLocator.instance.getApiService();
-      _guideFuture = apiService.getGuideDetail(widget.guideId);
+      final apiService = ServiceLocator.instance.getGuideService();
+      _guideFuture = apiService.getGuideById(widget.guideId);
     }
   }
 
@@ -363,7 +363,6 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
       child: Text(
         tag,
         style: TextStyle(
-          fontSize: 14,
           color: AppColors.primary,
         ),
       ),

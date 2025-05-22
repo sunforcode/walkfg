@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../model/user_model.dart';
+import '../../../../model/user/user_model.dart';
 import '../../../widgets/common/async_content_builder.dart';
 
 /// 统计信息卡片组件

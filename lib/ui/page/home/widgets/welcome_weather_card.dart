@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../model/user_model.dart';
+import '../../../../model/user/user_model.dart';
 import '../../../../model/weather/weather_model.dart';
+import '../../../../common/utils/date_time_utils.dart';
 
 /// 欢迎和天气卡片组件
 class WelcomeWeatherCard extends StatelessWidget {
@@ -44,6 +45,44 @@ class WelcomeWeatherCard extends StatelessWidget {
     return _ErrorWelcomeWeatherCard(errorMessage: errorMessage);
   }
 
+  /// 从Future创建卡片
+  ///
+  /// 处理数据加载、错误处理和状态管理
+  static Widget fromFuture({
+    required Future<Map<String, dynamic>> future,
+  }) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return loading();
+        } else if (snapshot.hasError) {
+          return error(errorMessage: snapshot.error.toString());
+        } else if (snapshot.hasData) {
+          final user = snapshot.data!['user'] as UserModel;
+          final weather = snapshot.data!['weather'] as WeatherModel;
+
+          // 获取问候语和天气相关文本
+          final greeting = DateTimeUtils.getGreeting();
+          final weatherDescription = weather.getWeatherDescription();
+          final weatherConditionText = weather.getWeatherConditionText();
+          final backgroundColor = weather.getWeatherColor();
+
+          return WelcomeWeatherCard(
+            user: user,
+            weather: weather,
+            greeting: greeting,
+            weatherDescription: weatherDescription,
+            weatherConditionText: weatherConditionText,
+            backgroundColor: backgroundColor,
+          );
+        } else {
+          return error(errorMessage: '数据加载失败');
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // 确保user和weather不为null
@@ -53,6 +92,15 @@ class WelcomeWeatherCard extends StatelessWidget {
 
     // 使用提供的背景颜色或默认颜色
     final bgColor = backgroundColor ?? const Color(0xFF3498DB);
+
+    // 安全获取温度字符串
+    final temperatureStr = weather?.temperature.toStringAsFixed(1) ?? "";
+
+    // 安全获取风速字符串
+    final windSpeedStr = weather?.windSpeed.toStringAsFixed(1) ?? "";
+
+    // 安全获取湿度值
+    final humidityStr = '${weather?.humidityValue}';
 
     return Container(
       decoration: BoxDecoration(
@@ -86,7 +134,7 @@ class WelcomeWeatherCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${greeting ?? '你好'}，${user!.nickname}',
+                        '${greeting ?? '你好'}，${user?.nickname}',
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -97,7 +145,7 @@ class WelcomeWeatherCard extends StatelessWidget {
                       Text(
                         weatherDescription != null
                             ? '今天是个$weatherDescription的日子'
-                            : weather!.advice,
+                            : weather?.advice ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.white,
@@ -112,7 +160,7 @@ class WelcomeWeatherCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${weather!.temperature.toStringAsFixed(1)}°C',
+                      '$temperatureStr°C',
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -121,7 +169,7 @@ class WelcomeWeatherCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      weatherConditionText ?? weather!.condition,
+                      weatherConditionText ?? weather?.condition ?? "",
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -138,19 +186,19 @@ class WelcomeWeatherCard extends StatelessWidget {
                 _buildWeatherDetail(
                   icon: CupertinoIcons.wind,
                   label: '风速',
-                  value: '${weather!.windSpeed.toStringAsFixed(1)} m/s',
+                  value: '$windSpeedStr m/s',
                 ),
                 const SizedBox(width: 24),
                 _buildWeatherDetail(
                   icon: CupertinoIcons.drop,
                   label: '湿度',
-                  value: '${weather!.humidityValue}%',
+                  value: '$humidityStr%',
                 ),
                 const SizedBox(width: 24),
                 _buildWeatherDetail(
                   icon: CupertinoIcons.location,
                   label: '城市',
-                  value: weather!.city,
+                  value: weather?.city ?? "位置城市",
                 ),
               ],
             ),

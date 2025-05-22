@@ -5,10 +5,9 @@ import 'package:walk/service/mock/mock_track_format_service.dart';
 import 'package:walk/service/mock/mock_trip_plan_service.dart';
 import 'package:walk/service/mock/mock_user_service.dart';
 import 'package:walk/service/mock/mock_weather_service.dart';
-import 'api_service.dart';
-import 'mock/mock_api_service.dart';
-import 'trip_service.dart';
-import 'mock/mock_trip_service.dart';
+import 'package:walk/service/mock/mock_gear_service.dart';
+import 'package:walk/service/mock/mock_recommendation_service.dart';
+import 'package:walk/service/mock/mock_trip_service.dart';
 import 'search_history_service.dart';
 import 'track_format_service.dart';
 import 'route_service.dart';
@@ -16,6 +15,9 @@ import 'user_service.dart';
 import 'guide_service.dart';
 import 'weather_service.dart';
 import 'trip_plan_service.dart';
+import 'gear_service.dart';
+import 'recommendation_service.dart';
+import 'trip_service.dart';
 
 /// 服务定位器
 ///
@@ -23,9 +25,6 @@ import 'trip_plan_service.dart';
 class ServiceLocator {
   /// 单例实例
   static final ServiceLocator instance = ServiceLocator._internal();
-
-  /// API服务 - 底层服务，提供基础API调用
-  late final ApiService _apiService;
 
   /// 行程服务 - 提供行程相关功能
   late final TripService _tripService;
@@ -51,6 +50,11 @@ class ServiceLocator {
   /// 行程计划服务 - 提供行程计划相关功能
   late final TripPlanService _tripPlanService;
 
+  /// 装备服务 - 提供装备相关功能
+  late final GearService _gearService;
+
+  /// 推荐服务 - 提供推荐相关功能
+  late final RecommendationService _recommendationService;
 
   /// 私有构造函数
   ServiceLocator._internal();
@@ -71,7 +75,6 @@ class ServiceLocator {
   /// 注册模拟服务
   void _registerMockServices() {
     // 首先初始化底层API服务
-    _apiService = MockApiService();
 
     // 然后初始化其他依赖API服务的服务
     _tripService = MockTripService();
@@ -80,24 +83,22 @@ class ServiceLocator {
     _guideService = MockGuideService();
     _weatherService = MockWeatherService();
     _tripPlanService = MockTripPlanService();
+    _gearService = MockGearService();
+    _recommendationService = MockRecommendationService();
   }
 
   /// 注册真实服务
   void _registerRealServices() {
     // 在生产环境中注册真实的服务实现
     // TODO: 实现真实服务
-    _apiService = MockApiService(); // 临时使用Mock
     _tripService = MockTripService(); // 临时使用Mock
     _routeService = MockRouteService(); // 临时使用Mock
     _userService = MockUserService(); // 临时使用Mock
     _guideService = MockGuideService(); // 临时使用Mock
     _weatherService = MockWeatherService(); // 临时使用Mock
     _tripPlanService = MockTripPlanService(); // 临时使用Mock
-  }
-
-  /// 获取API服务
-  ApiService getApiService() {
-    return _apiService;
+    _gearService = MockGearService(); // 临时使用Mock
+    _recommendationService = MockRecommendationService(); // 临时使用Mock
   }
 
   /// 获取行程服务
@@ -138,5 +139,15 @@ class ServiceLocator {
   /// 获取行程计划服务
   TripPlanService getTripPlanService() {
     return _tripPlanService;
+  }
+
+  /// 获取装备服务
+  GearService getGearService() {
+    return _gearService;
+  }
+
+  /// 获取推荐服务
+  RecommendationService getRecommendationService() {
+    return _recommendationService;
   }
 }

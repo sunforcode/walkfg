@@ -1,25 +1,32 @@
-{
-  "items": [
-    {
-      "keyword": "北京",
-      "timestamp": "2023-05-10T10:30:00Z"
-    },
-    {
-      "keyword": "上海",
-      "timestamp": "2023-05-09T14:20:00Z"
-    },
-    {
-      "keyword": "美食",
-      "timestamp": "2023-05-08T09:15:00Z"
-    },
-    {
-      "keyword": "咖啡店",
-      "timestamp": "2023-05-07T16:45:00Z"
-    },
-    {
-      "keyword": "公园",
-      "timestamp": "2023-05-06T11:30:00Z"
-    }
-  ],
-  "maxItems": 10
-}
+[
+  {
+    "id": "history1",
+    "keyword": "黄山",
+    "timestamp": "2023-09-30T10:30:00.000Z",
+    "type": 0
+  },
+  {
+    "id": "history2",
+    "keyword": "莫干山",
+    "timestamp": "2023-09-29T15:45:00.000Z",
+    "type": 0
+  },
+  {
+    "id": "history3",
+    "keyword": "登山鞋",
+    "timestamp": "2023-09-28T09:20:00.000Z",
+    "type": 2
+  },
+  {
+    "id": "history4",
+    "keyword": "徒步攻略",
+    "timestamp": "2023-09-27T14:10:00.000Z",
+    "type": 1
+  },
+  {
+    "id": "history5",
+    "keyword": "庐山",
+    "timestamp": "2023-09-26T11:05:00.000Z",
+    "type": 0
+  }
+]

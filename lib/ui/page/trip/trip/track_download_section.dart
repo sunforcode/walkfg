@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../model/route/route_model.dart';
-import '../../../../model/route/track_point_model.dart';
+import '../../../../model/model/route/route_model.dart';
+import '../../../../model/model/map/track_point_model.dart';
 import '../../../../service/service_manager.dart';
 import '../../../../service/track_format_service.dart';
 import '../../../../theme/theme/app_colors.dart';
@@ -79,13 +79,14 @@ class _TrackDownloadSectionState extends State<TrackDownloadSection> {
   /// 构建轨迹信息
   Widget _buildTrackInfo() {
     // 计算轨迹统计信息
-    final trackPoints = widget.route.trackPoints;
+    List<TrackPointVO> trackPoints = [];
+    //widget.route.trackPoints;
     final distance =
         _trackFormatService.calculateTrackDistance(trackPoints) / 1000; // 转换为公里
     final elevationGain =
-        _trackFormatService.calculateElevationGain(trackPoints);
+        _trackFormatService.calculateElevationGain(trackPoints!);
     final elevationLoss =
-        _trackFormatService.calculateElevationLoss(trackPoints);
+        _trackFormatService.calculateElevationLoss(trackPoints!);
     final waypointCount = trackPoints.where((p) => p.name != null).length;
 
     return CupertinoSection(
