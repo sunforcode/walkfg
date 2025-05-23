@@ -13,7 +13,7 @@ class TrackPointVO {
   final double longitude;
 
   /// 海拔（米）
-  final double elevation = 0;
+  final double elevation;
 
   /// 时间戳
   final DateTime? timestamp;
@@ -40,6 +40,7 @@ class TrackPointVO {
     this.distanceFromStart,
     this.pointType,
     this.name,
+    required this.elevation,
     this.description,
   });
 

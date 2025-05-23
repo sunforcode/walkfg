@@ -482,6 +482,34 @@ class MockRouteService implements RouteService {
   }
 
   @override
+  Future<bool> checkIfFavorite(String routeId) async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    // 模拟检查收藏状态
+    // 这里可以随机返回true或false，或者根据路线ID进行一些简单的判断
+    return routeId.hashCode % 2 == 0; // 偶数ID为已收藏
+  }
+
+  @override
+  Future<bool> addFavorite(String routeId) async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    // 模拟添加收藏成功
+    return true;
+  }
+
+  @override
+  Future<bool> removeFavorite(String routeId) async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    // 模拟移除收藏成功
+    return true;
+  }
+
+  @override
   Future<List<RouteModel>> getPlannedRoutes() async {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 400));

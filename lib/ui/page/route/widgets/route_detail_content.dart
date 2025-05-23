@@ -16,6 +16,7 @@ class RouteDetailContent extends StatelessWidget {
   final VoidCallback onViewMap;
   final VoidCallback onPlanTrip;
   final VoidCallback onFavorite;
+  final bool isFavorite;
 
   const RouteDetailContent({
     super.key,
@@ -25,6 +26,7 @@ class RouteDetailContent extends StatelessWidget {
     required this.onViewMap,
     required this.onPlanTrip,
     required this.onFavorite,
+    this.isFavorite = false,
   });
 
   @override
@@ -61,6 +63,7 @@ class RouteDetailContent extends StatelessWidget {
             onViewMap: onViewMap,
             onPlanTrip: onPlanTrip,
             onFavorite: onFavorite,
+            isFavorite: isFavorite,
           ),
         ),
 

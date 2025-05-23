@@ -37,12 +37,9 @@ class MockTrackFormatService implements TrackFormatService {
           if (parts.length >= 3) {
             final longitude = double.parse(parts[0]);
             final latitude = double.parse(parts[1]);
-          
 
             trackPoints.add(TrackPointVO(
-              latitude: latitude,
-              longitude: longitude,
-            ));
+                latitude: latitude, longitude: longitude, elevation: 10));
           }
         }
       }

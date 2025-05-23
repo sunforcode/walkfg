@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../../../model/user/user_model.dart';
 import '../../../model/guide/guide_model.dart';
 import '../../../model/model/route/route_model.dart';
 import '../../../model/model/trip/trip_model.dart';
 import '../../../model/weather/weather_model.dart';
 import '../../../service/service_manager.dart';
+import '../../map/screens/map_demo_screen.dart';
 import 'widgets/welcome_weather_card.dart';
 import 'widgets/stats_card.dart';
 import 'widgets/planned_trips_section.dart';
@@ -183,6 +185,24 @@ class _HomeScreenState extends State<HomeScreen>
                   onEquipmentListPressed: _navigateToEquipmentList,
                   onFavoriteRoutesPressed: _navigateToFavoriteRoutes,
                   onRefreshPressed: _refreshUserStats,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // 地图演示按钮
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: CupertinoButton(
+                  color: CupertinoColors.activeBlue,
+                  child: const Text('地图演示'),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const MapDemoScreen(),
+                      ),
+                    );
+                  },
                 ),
               ),
 

@@ -64,6 +64,15 @@ abstract class RouteService {
   /// 取消收藏路线
   Future<bool> unfavoriteRoute(String routeId);
 
+  /// 检查路线是否已收藏
+  Future<bool> checkIfFavorite(String routeId);
+
+  /// 添加收藏
+  Future<bool> addFavorite(String routeId);
+
+  /// 移除收藏
+  Future<bool> removeFavorite(String routeId);
+
   /// 获取计划路线
   Future<List<RouteModel>> getPlannedRoutes();
 

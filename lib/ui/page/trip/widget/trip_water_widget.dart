@@ -5,7 +5,7 @@ import 'package:walk/model/model/water/water_source_model.dart';
 import 'package:walk/model/model/water/day_water_plan_model.dart';
 import 'package:walk/model/model/water/water_types.dart';
 
-class TripWaterWidget extends StatelessWidget {
+class TripWaterWidget extends StatefulWidget {
   final WaterPlanModel? waterPlan;
 
   const TripWaterWidget({
@@ -14,8 +14,39 @@ class TripWaterWidget extends StatelessWidget {
   });
 
   @override
+  State<TripWaterWidget> createState() => _TripWaterWidgetState();
+}
+
+class _TripWaterWidgetState extends State<TripWaterWidget> {
+  bool _isExpanded = false;
+  List<bool> _dayExpanded = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _initDayExpandedState();
+  }
+
+  @override
+  void didUpdateWidget(TripWaterWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.waterPlan != widget.waterPlan) {
+      _initDayExpandedState();
+    }
+  }
+
+  void _initDayExpandedState() {
+    if (widget.waterPlan != null) {
+      _dayExpanded =
+          List.generate(widget.waterPlan!.dayWaterPlans.length, (_) => false);
+    } else {
+      _dayExpanded = [];
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (waterPlan == null || waterPlan!.dayWaterPlans.isEmpty) {
+    if (widget.waterPlan == null || widget.waterPlan!.dayWaterPlans.isEmpty) {
       return const Text(
         '暂无饮水计划',
         style: TextStyle(
@@ -28,76 +59,322 @@ class TripWaterWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 饮水计划基本信息
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: CupertinoColors.systemGrey6,
-            borderRadius: BorderRadius.circular(12),
+        // 饮水计划概览卡片（始终显示）
+        _buildWaterPlanOverview(),
+
+        // 详细信息（根据展开状态显示）
+        if (_isExpanded) ...[
+          const SizedBox(height: 16),
+          ..._buildDetailedContent(),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildWaterPlanOverview() {
+    final waterPlan = widget.waterPlan!;
+
+    // 计算需要处理的水源数量
+    final needTreatmentCount =
+        waterPlan.waterSources.where((source) => source.needsTreatment).length;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _isExpanded = !_isExpanded;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: CupertinoColors.activeBlue.withOpacity(0.3),
+            width: 1,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                waterPlan!.name,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 标题行
+            Row(
+              children: [
+                Icon(
+                  CupertinoIcons.drop_fill,
+                  color: CupertinoColors.activeBlue,
+                  size: 20,
                 ),
-              ),
-              const SizedBox(height: 8),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    waterPlan.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Icon(
+                  _isExpanded
+                      ? CupertinoIcons.chevron_up
+                      : CupertinoIcons.chevron_down,
+                  color: CupertinoColors.systemGrey,
+                  size: 16,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            // 关键数据行
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildKeyMetric(
+                  label: '总需求',
+                  value: _formatVolume(waterPlan.totalWaterNeed),
+                  icon: CupertinoIcons.drop_fill,
+                ),
+                _buildKeyMetric(
+                  label: '人均/天',
+                  value: _formatVolume(waterPlan.waterPerPersonPerDay),
+                  icon: CupertinoIcons.person_crop_circle_fill,
+                ),
+                _buildKeyMetric(
+                  label: '水源点',
+                  value: '${waterPlan.waterSources.length}个',
+                  icon: CupertinoIcons.map_fill,
+                ),
+                _buildKeyMetric(
+                  label: '需处理',
+                  value: '${needTreatmentCount}个',
+                  icon: CupertinoIcons.exclamationmark_triangle,
+                  valueColor: needTreatmentCount > 0
+                      ? CupertinoColors.systemOrange
+                      : null,
+                ),
+              ],
+            ),
+
+            if (!_isExpanded) ...[
+              const SizedBox(height: 12),
+              // 简短描述
               Text(
-                waterPlan!.description,
+                waterPlan.description,
                 style: const TextStyle(
                   fontSize: 14,
                   color: CupertinoColors.systemGrey,
                 ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  _buildInfoItem(
-                    icon: CupertinoIcons.person_2_fill,
-                    label: '${waterPlan!.personCount}人',
-                  ),
-                  const SizedBox(width: 16),
-                  _buildInfoItem(
-                    icon: CupertinoIcons.calendar,
-                    label: '${waterPlan!.tripDays}天',
-                  ),
-                  const SizedBox(width: 16),
-                  _buildInfoItem(
-                    icon: CupertinoIcons.drop_fill,
-                    label: '${_formatVolume(waterPlan!.totalWaterNeed)}/总需求',
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  _buildInfoItem(
-                    icon: CupertinoIcons.drop,
-                    label:
-                        '${_formatVolume(waterPlan!.totalWaterNeed / waterPlan!.tripDays)}/天',
-                  ),
-                  const SizedBox(width: 16),
-                  _buildInfoItem(
-                    icon: CupertinoIcons.person_crop_circle_fill,
-                    label:
-                        '${_formatVolume(waterPlan!.totalWaterNeed / (waterPlan!.personCount * waterPlan!.tripDays))}/人/天',
-                  ),
-                ],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
+
+            const SizedBox(height: 8),
+
+            // 展开/折叠提示
+            Center(
+              child: Text(
+                _isExpanded ? '点击收起详情' : '点击查看详情',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: CupertinoColors.activeBlue.withOpacity(0.8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildKeyMetric({
+    required String label,
+    required String value,
+    required IconData icon,
+    Color? valueColor,
+  }) {
+    return Column(
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: CupertinoColors.systemGrey,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                color: CupertinoColors.systemGrey,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: valueColor ?? CupertinoColors.activeBlue,
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildDetailedContent() {
+    final waterPlan = widget.waterPlan!;
+
+    return [
+      // 详细描述
+      if (waterPlan.description.isNotEmpty) ...[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(
+            waterPlan.description,
+            style: const TextStyle(
+              fontSize: 14,
+              color: CupertinoColors.systemGrey,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
+
+      // 每日饮水计划
+      ...List.generate(
+        waterPlan.dayWaterPlans.length,
+        (index) => _buildDayWaterPlanCollapsible(
+          waterPlan.dayWaterPlans[index],
+          index,
+        ),
+      ),
+    ];
+  }
+
+  Widget _buildDayWaterPlanCollapsible(DayWaterPlanModel dayPlan, int index) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 可点击的日期标题
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _dayExpanded[index] = !_dayExpanded[index];
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+            child: Row(
+              children: [
+                Text(
+                  '第${dayPlan.dayNumber}天饮水计划',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                // 饮水量概览
+                Text(
+                  _formatVolume(dayPlan.totalWaterNeed),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: CupertinoColors.activeBlue,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  _dayExpanded[index]
+                      ? CupertinoIcons.chevron_up
+                      : CupertinoIcons.chevron_down,
+                  size: 14,
+                  color: CupertinoColors.systemGrey,
+                ),
+              ],
+            ),
           ),
         ),
 
-        const SizedBox(height: 16),
+        // 展开时显示详情
+        if (_dayExpanded[index]) ...[
+          // 饮水需求
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: CupertinoColors.systemGrey6,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildWaterNeedItem(
+                      label: '基础饮水',
+                      volume: dayPlan.baseWaterIntake,
+                      color: CupertinoColors.activeBlue,
+                    ),
+                    _buildWaterNeedItem(
+                      label: '活动饮水',
+                      volume: dayPlan.activityWaterIntake,
+                      color: CupertinoColors.systemGreen,
+                    ),
+                    _buildWaterNeedItem(
+                      label: '总需求',
+                      volume: dayPlan.totalWaterNeed,
+                      color: CupertinoColors.systemIndigo,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _buildInfoItem(
+                      icon: CupertinoIcons.thermometer,
+                      label: '温度: ${dayPlan.temperature}°C',
+                    ),
+                    const SizedBox(width: 16),
+                    _buildInfoItem(
+                      icon: CupertinoIcons.speedometer,
+                      label: '强度: ${dayPlan.getIntensityText()}',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
 
-        // 每日饮水计划
-        ...waterPlan!.dayWaterPlans
-            .map((dayPlan) => _buildDayWaterPlan(dayPlan))
-            .toList(),
+          const SizedBox(height: 12),
+
+          // 可用水源
+          if (dayPlan.availableSources.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 4, left: 4),
+              child: Text(
+                '可用水源',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: CupertinoColors.systemGrey.darkColor,
+                ),
+              ),
+            ),
+            ...dayPlan.availableSources
+                .map((source) => _buildWaterSource(source))
+                .toList(),
+          ],
+        ],
+
+        const Divider(height: 24, thickness: 0.5),
       ],
     );
   }
@@ -128,94 +405,6 @@ class TripWaterWidget extends StatelessWidget {
     } else {
       return '${volume.toStringAsFixed(0)}ml';
     }
-  }
-
-  Widget _buildDayWaterPlan(DayWaterPlanModel dayPlan) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            '第${dayPlan.dayNumber}天饮水计划',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-
-        // 饮水需求
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: CupertinoColors.systemGrey6,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildWaterNeedItem(
-                    label: '基础饮水',
-                    volume: dayPlan.baseWaterIntake,
-                    color: CupertinoColors.activeBlue,
-                  ),
-                  _buildWaterNeedItem(
-                    label: '活动饮水',
-                    volume: dayPlan.activityWaterIntake,
-                    color: CupertinoColors.systemGreen,
-                  ),
-                  _buildWaterNeedItem(
-                    label: '总需求',
-                    volume: dayPlan.totalWaterNeed,
-                    color: CupertinoColors.systemIndigo,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  _buildInfoItem(
-                    icon: CupertinoIcons.thermometer,
-                    label: '温度: ${dayPlan.temperature}°C',
-                  ),
-                  const SizedBox(width: 16),
-                  _buildInfoItem(
-                    icon: CupertinoIcons.speedometer,
-                    label: '强度: ${dayPlan.getIntensityText()}',
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        // 可用水源
-        if (dayPlan.availableSources.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 4),
-            child: Text(
-              '可用水源',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: CupertinoColors.systemGrey.darkColor,
-              ),
-            ),
-          ),
-          ...dayPlan.availableSources
-              .map((source) => _buildWaterSource(source))
-              .toList(),
-        ],
-
-        const Divider(height: 32),
-      ],
-    );
   }
 
   Widget _buildWaterNeedItem({

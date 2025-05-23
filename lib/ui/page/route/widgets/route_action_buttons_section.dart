@@ -6,12 +6,14 @@ class RouteActionButtonsSection extends StatelessWidget {
   final VoidCallback onViewMap;
   final VoidCallback onPlanTrip;
   final VoidCallback onFavorite;
+  final bool isFavorite;
 
   const RouteActionButtonsSection({
     super.key,
     required this.onViewMap,
     required this.onPlanTrip,
     required this.onFavorite,
+    this.isFavorite = false,
   });
 
   @override
@@ -34,9 +36,11 @@ class RouteActionButtonsSection extends StatelessWidget {
             onPlanTrip,
           ),
           _buildActionButton(
-            CupertinoIcons.heart,
-            '收藏',
-            AppColorPalette.blueColors[4],
+            isFavorite ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+            isFavorite ? '已收藏' : '收藏',
+            isFavorite
+                ? CupertinoColors.systemRed
+                : AppColorPalette.blueColors[4],
             onFavorite,
           ),
         ],

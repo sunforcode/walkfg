@@ -15,6 +15,7 @@ class WelcomeWeatherCard extends StatelessWidget {
   /// 问候语
   final String? greeting;
 
+  /// 现在海拔
   /// 天气描述
   final String? weatherDescription;
 

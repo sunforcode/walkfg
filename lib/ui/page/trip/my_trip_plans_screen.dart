@@ -28,7 +28,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
 
   /// 加载行程规划
   void _loadTripPlans() {
-    final apiService = ServiceLocator.instance.getTripPlanService();
+    // final apiService = ServiceLocator.instance.getTripPlanService();
     // _tripPlansFuture = apiService.getUserTripPlans();
   }
 
