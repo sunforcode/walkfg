@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import '../trip_service.dart';
-import '../../model/model/trip/trip_model.dart';
+import '../../model/trip/trip_model.dart';
 
 /// 模拟行程服务实现
 class MockTripService implements TripService {
@@ -143,27 +144,83 @@ class MockTripService implements TripService {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 400));
 
-    // 从JSON文件加载行程数据
-    final tripsJson = await _loadJsonData('assets/mock_data/trips.json');
-    if (tripsJson == null || !(tripsJson is List)) {
+    try {
+      // 从JSON文件加载行程数据
+      final tripsJson = await _loadJsonData('assets/mock_data/trips.json');
+      if (tripsJson == null || !(tripsJson is List)) {
+        debugPrint('行程数据为空或格式不正确');
+        return [];
+      }
+
+      // 将JSON数据转换为TripModel对象列表
+      debugPrint('开始解析行程数据，共 ${tripsJson.length} 条记录');
+
+      List<TripModel> allTrips = [];
+      for (int i = 0; i < tripsJson.length; i++) {
+        try {
+          debugPrint('解析第 ${i + 1} 条行程数据...');
+          final tripJson = tripsJson[i];
+
+          // 检查关键字段
+          debugPrint('检查行程字段: id=${tripJson['id']}, name=${tripJson['name']}');
+          debugPrint(
+              'itinerary字段: ${tripJson.containsKey('itinerary') ? '存在' : '不存在'}');
+
+          if (tripJson.containsKey('itinerary')) {
+            final itinerary = tripJson['itinerary'];
+            debugPrint(
+                'itinerary类型: ${itinerary.runtimeType}, ${itinerary is List ? '是List' : '不是List'}');
+
+            if (itinerary != null && itinerary is List) {
+              debugPrint('itinerary长度: ${itinerary.length}');
+
+              for (int j = 0; j < itinerary.length; j++) {
+                final day = itinerary[j];
+                debugPrint(
+                    '第 ${j + 1} 天: day=${day['day']}, title=${day['title']}');
+
+                if (day.containsKey('campsite')) {
+                  final campsite = day['campsite'];
+                  debugPrint('campsite: ${campsite != null ? '存在' : 'null'}');
+
+                  if (campsite != null) {
+                    debugPrint(
+                        'campsite字段: id=${campsite['id']}, name=${campsite['name']}');
+                  }
+                }
+              }
+            }
+          }
+
+          final trip = TripModel.fromJson(tripJson);
+          allTrips.add(trip);
+          debugPrint('成功解析第 ${i + 1} 条行程数据');
+        } catch (e, stackTrace) {
+          debugPrint('解析第 ${i + 1} 条行程数据失败: $e');
+          debugPrint('堆栈跟踪: $stackTrace');
+        }
+      }
+
+      debugPrint('成功解析 ${allTrips.length} 条行程数据');
+
+      // 筛选出状态为"planning"的行程
+      final plannedTrips =
+          allTrips.where((trip) => trip.status == TripStatus.planning).toList();
+
+      debugPrint('筛选出 ${plannedTrips.length} 条规划中的行程');
+      return plannedTrips;
+    } catch (e, stackTrace) {
+      debugPrint('加载规划行程失败: $e');
+      debugPrint('堆栈跟踪: $stackTrace');
       return [];
     }
-
-    // 将JSON数据转换为TripModel对象列表
-    List<TripModel> allTrips =
-        tripsJson.map<TripModel>((json) => TripModel.fromJson(json)).toList();
-
-    // 筛选出状态为"planning"的行程
-    return allTrips
-        .where((trip) => trip.status == TripStatus.planning)
-        .toList();
   }
 
   @override
   Future<TripModel> getTripById(String tripId) async {
     return getTripDetail(tripId);
   }
-  
+
   @override
   Future<List<TripModel>> getAllTrips() {
     // TODO: implement getAllTrips

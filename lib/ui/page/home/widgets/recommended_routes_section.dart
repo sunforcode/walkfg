@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
-import '../../../../model/model/route/route_model.dart';
-import '../../route/cupertino_route_list_screen.dart';
-import '../../route/cupertino_route_detail_screen.dart';
-import '../../../widgets/common/section_header.dart';
-import '../../../widgets/common/loading_indicator.dart';
-import '../../../widgets/common/error_widget.dart';
-import '../../../widgets/common/empty_content_widget.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
+import '../../../../model/route/route_model.dart';
+import '../../route/route_list_screen.dart';
+import '../../route/route_detail_screen.dart';
+import '../../common/section_header.dart';
+import '../../common/loading_indicator.dart';
+import '../../common/error_widget.dart';
+import '../../common/empty_content_widget.dart';
 
 /// 当季推荐路线部分组件
 class RecommendedRoutesSection extends StatelessWidget {
@@ -120,28 +121,26 @@ class RecommendedRoutesSection extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(12),
               ),
-              child: Image.network(
-                route.coverUrl != null
-                    ? route.coverUrl!
-                    : 'https://via.placeholder.com/280x140',
-                height: 140,
-                width: 280,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 140,
-                    width: 280,
-                    color: color.withOpacity(0.1),
-                    child: const Center(
-                      child: Icon(
-                        CupertinoIcons.photo,
-                        size: 40,
-                        color: CupertinoColors.systemGrey,
+              child: route.coverUrl != null
+                  ? NetworkImageWithFallback(
+                      url: route.coverUrl!,
+                      height: 140,
+                      width: 280,
+                      fit: BoxFit.cover,
+                      fallbackColor: color,
+                    )
+                  : Container(
+                      height: 140,
+                      width: 280,
+                      color: color.withOpacity(0.1),
+                      child: const Center(
+                        child: Icon(
+                          CupertinoIcons.photo,
+                          size: 40,
+                          color: CupertinoColors.systemGrey,
+                        ),
                       ),
                     ),
-                  );
-                },
-              ),
             ),
 
             // 路线信息

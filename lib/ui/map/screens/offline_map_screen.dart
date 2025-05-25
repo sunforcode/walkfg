@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:walk/model/model/map/map_bounds.dart';
+import 'package:walk/model/map/map_bounds.dart';
 import 'package:walk/ui/map/core/map_provider.dart';
 import 'package:walk/ui/map/providers/flutter_map/flutter_map_provider.dart';
 import 'package:walk/ui/map/providers/flutter_map/cached_tile_provider.dart';

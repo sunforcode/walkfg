@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:walk/model/model/trip/trip_model.dart';
+import 'package:walk/model/trip/trip_model.dart';
 
 /// 行程服务接口
 ///

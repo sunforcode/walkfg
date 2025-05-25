@@ -1,4 +1,4 @@
-import '../model/model/route/route_model.dart';
+import '../model/route/route_model.dart';
 import '../model/route/route_rating_model.dart';
 import '../model/route/route_comment_model.dart';
 import '../model/trip/trip_filter_model.dart';
@@ -33,6 +33,9 @@ abstract class RouteService {
 
   /// 获取周末路线
   Future<List<RouteModel>> getWeekendRoutes({int limit = 10});
+
+  /// 获取推荐路线
+  Future<List<RouteModel>> getRecommendedRoutes({int limit = 10});
 
   /// 获取路线列表
   Future<List<RouteModel>> getRoutes({String? season, int? limit});

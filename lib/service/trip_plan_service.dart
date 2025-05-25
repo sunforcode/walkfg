@@ -1,8 +1,7 @@
 import 'package:walk/model/equipment/equipment_item_model.dart';
-import 'package:walk/model/model/trip/trip_model.dart';
+import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/route/daily_itinerary_model.dart';
 import 'package:walk/model/transportation/transportation_plan_model.dart';
-import 'package:walk/ui/page/trip_plan/components/timeline_card.dart';
 
 /// 行程计划服务接口
 abstract class TripPlanService {
@@ -32,7 +31,7 @@ abstract class TripPlanService {
       String routeId, int days);
 
   /// 获取时间线数据
-  Future<TimelineData> getTimelineData(String routeId);
+  // Future<TimelineData> getTimelineData(String routeId);
 
   /// 获取交通方案
   Future<List<TransportationPlanModel>> getTransportationPlans(

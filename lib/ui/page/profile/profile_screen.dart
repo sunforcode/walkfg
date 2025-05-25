@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/service/service_manager.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import '../../../model/user/user_model.dart';
 import '../../page/home/widgets/stats_card.dart';
+import 'auth/login_screen.dart';
+import 'auth/register_screen.dart';
+import 'auth/forgot_password_screen.dart';
 
 /// 个人页面
 class ProfileScreen extends StatefulWidget {
@@ -25,6 +29,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   /// 是否正在加载
   bool _isLoading = true;
 
+  /// 是否已登录
+  bool _isLoggedIn = false;
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           _user = user;
           _isLoading = false;
+          _isLoggedIn = true;
         });
       }
     } catch (e) {
@@ -51,6 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
+          _isLoggedIn = false;
         });
       }
     }
@@ -106,6 +115,80 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// 导航到登录页面
+  void _navigateToLogin() {
+    Navigator.of(context)
+        .push(
+      CupertinoPageRoute(
+        builder: (context) => const LoginScreen(),
+      ),
+    )
+        .then((result) {
+      // 如果登录成功，刷新页面
+      if (result == true) {
+        setState(() {
+          _isLoading = true;
+          _isLoggedIn = true;
+        });
+        _loadUserData();
+      }
+    });
+  }
+
+  /// 导航到注册页面
+  void _navigateToRegister() {
+    Navigator.of(context)
+        .push(
+      CupertinoPageRoute(
+        builder: (context) => const RegisterScreen(),
+      ),
+    )
+        .then((result) {
+      // 如果注册成功，刷新页面
+      if (result == true) {
+        setState(() {
+          _isLoading = true;
+          _isLoggedIn = true;
+        });
+        _loadUserData();
+      }
+    });
+  }
+
+  /// 退出登录
+  void _logout() {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text('退出登录'),
+          content: const Text('确定要退出登录吗？'),
+          actions: [
+            CupertinoDialogAction(
+              child: const Text('取消'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              child: const Text('退出'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // TODO: 实现退出登录逻辑
+                setState(() {
+                  _user = null;
+                  _isLoggedIn = false;
+                });
+                _showToast('已退出登录');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     print('ProfileScreen - build');
@@ -120,6 +203,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Center(
             child: CupertinoActivityIndicator(),
           ),
+        ),
+      );
+    }
+
+    // 未登录状态
+    if (!_isLoggedIn) {
+      return CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          middle: Text('个人中心'),
+        ),
+        child: SafeArea(
+          child: _buildNotLoggedInView(),
         ),
       );
     }
@@ -201,8 +296,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // 关于我们
             _buildAboutSection(context),
+
+            const SizedBox(height: 20),
+
+            // 退出登录按钮
+            CupertinoButton(
+              color: CupertinoColors.systemRed,
+              child: const Text('退出登录'),
+              onPressed: _logout,
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 构建未登录视图
+  Widget _buildNotLoggedInView() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Icon(
+            Icons.hiking,
+            size: 80,
+            color: Color(0xFF4CAF50),
+          ),
+          const SizedBox(height: 40),
+          Text(
+            'Walk',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '徒步旅行助手',
+            style: Theme.of(context).textTheme.titleMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 40),
+          CupertinoButton(
+            color: CupertinoColors.activeBlue,
+            child: const Text('登录'),
+            onPressed: _navigateToLogin,
+          ),
+          const SizedBox(height: 16),
+          CupertinoButton(
+            color: CupertinoColors.systemGrey5,
+            child: const Text(
+              '注册',
+              style: TextStyle(color: CupertinoColors.activeBlue),
+            ),
+            onPressed: _navigateToRegister,
+          ),
+          const SizedBox(height: 40),
+          const Text(
+            '登录后可以使用更多功能',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: CupertinoColors.systemGrey,
+              fontSize: 14,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -237,26 +397,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             child: _user?.avatarUrl != null
-                ? ClipOval(
-                    child: Image.network(
-                      _user!.avatarUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                          child: Icon(
-                            CupertinoIcons.person_fill,
-                            size: 40,
-                            color: CupertinoColors.systemBlue,
-                          ),
-                        );
-                      },
-                    ),
+                ? NetworkImageWithFallback(
+                    url: _user!.avatarUrl!,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                    borderRadius: 50,
                   )
-                : const Center(
-                    child: Icon(
-                      CupertinoIcons.person_fill,
-                      size: 40,
-                      color: CupertinoColors.systemBlue,
+                : Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: CupertinoColors.systemBlue.withOpacity(0.1),
+                      border: Border.all(
+                        color: CupertinoColors.systemBlue.withOpacity(0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        CupertinoIcons.person_fill,
+                        size: 40,
+                        color: CupertinoColors.systemBlue,
+                      ),
                     ),
                   ),
           ),

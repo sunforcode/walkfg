@@ -34,9 +34,9 @@ class EquipmentListModel extends BaseModel {
   @JsonKey(fromJson: _seasonsFromJson, toJson: _seasonsToJson)
   final List<SeasonSuitability> seasons;
 
-  /// 装备分类列表
-  @JsonKey(fromJson: _categoriesFromJson, toJson: _categoriesToJson)
-  final List<EquipmentCategory> categories;
+  /// 装备列表
+  @JsonKey(fromJson: _equipmentsFromJson, toJson: _equipmentsToJson)
+  final List<EquipmentItemModel> equipments;
 
   /// 总重量(g)
   final double totalWeight;
@@ -73,7 +73,7 @@ class EquipmentListModel extends BaseModel {
     this.routeName,
     required this.tripDays,
     required this.seasons,
-    required this.categories,
+    required this.equipments,
     required this.totalWeight,
     required this.baseWeight,
     required this.consumableWeight,
@@ -102,46 +102,42 @@ class EquipmentListModel extends BaseModel {
     return seasons.map((e) => e.index).toList();
   }
 
-  /// 分类列表从JSON转换
-  static List<EquipmentCategory> _categoriesFromJson(List<dynamic> list) {
+  /// 装备列表从JSON转换
+  static List<EquipmentItemModel> _equipmentsFromJson(List<dynamic> list) {
     return list
-        .map((i) => EquipmentCategory.fromJson(i as Map<String, dynamic>))
+        .map((i) => EquipmentItemModel.fromJson(i as Map<String, dynamic>))
         .toList();
   }
 
-  /// 分类列表转JSON
-  static List<Map<String, dynamic>> _categoriesToJson(
-      List<EquipmentCategory> categories) {
-    return categories.map((e) => e.toJson()).toList();
+  /// 装备列表转JSON
+  static List<Map<String, dynamic>> _equipmentsToJson(
+      List<EquipmentItemModel> equipments) {
+    return equipments.map((e) => e.toJson()).toList();
   }
 
   /// 获取每人每日平均重量
   double get weightPerPersonPerDay => totalWeight / tripDays;
 
   /// 获取总装备数
-  int get totalItems =>
-      categories.fold(0, (sum, category) => sum + category.itemCount);
+  int get totalItems => equipments.length;
 
   /// 获取必需装备数
-  int get essentialItems =>
-      categories.fold(0, (sum, category) => sum + category.essentialItems);
+  int get essentialItems => equipments
+      .where((item) => item.necessity == EquipmentNecessity.essential)
+      .length;
 
   /// 获取推荐装备数
-  int get recommendedItems =>
-      categories.fold(0, (sum, category) => sum + category.recommendedItems);
+  int get recommendedItems => equipments
+      .where((item) => item.necessity == EquipmentNecessity.recommended)
+      .length;
 
   /// 获取可选装备数
-  int get optionalItems =>
-      categories.fold(0, (sum, category) => sum + category.optionalItems);
+  int get optionalItems => equipments
+      .where((item) => item.necessity == EquipmentNecessity.optional)
+      .length;
 
   /// 获取所有装备项目列表
-  List<EquipmentItemModel> get allItems {
-    final List<EquipmentItemModel> result = [];
-    for (final category in categories) {
-      result.addAll(category.items);
-    }
-    return result;
-  }
+  List<EquipmentItemModel> get allItems => List.from(equipments);
 
   /// 获取季节名称列表
   List<String> getSeasonNames() {
@@ -177,7 +173,7 @@ class EquipmentListModel extends BaseModel {
     String? routeName,
     int? tripDays,
     List<SeasonSuitability>? seasons,
-    List<EquipmentCategory>? categories,
+    List<EquipmentItemModel>? equipments,
     double? totalWeight,
     double? baseWeight,
     double? consumableWeight,
@@ -197,7 +193,7 @@ class EquipmentListModel extends BaseModel {
       routeName: routeName ?? this.routeName,
       tripDays: tripDays ?? this.tripDays,
       seasons: seasons ?? this.seasons,
-      categories: categories ?? this.categories,
+      equipments: equipments ?? this.equipments,
       totalWeight: totalWeight ?? this.totalWeight,
       baseWeight: baseWeight ?? this.baseWeight,
       consumableWeight: consumableWeight ?? this.consumableWeight,
@@ -245,7 +241,7 @@ class EquipmentCategory {
       return EquipmentItemModel(
         id: id,
         name: itemMap['name'] as String,
-        category: json['name'] as String, // 使用分类名称作为类别
+        category: itemMap['category'] as String,
         description: itemMap['description'] as String?,
         weight: (itemMap['weight']).toDouble(),
         quantity: itemMap['quantity'] as int,
@@ -273,7 +269,9 @@ class EquipmentCategory {
       'description': description,
       'items': items
           .map((item) => {
+                'id': item.id,
                 'name': item.name,
+                'category': item.category,
                 'description': item.description,
                 'weight': item.weight,
                 'quantity': item.quantity,

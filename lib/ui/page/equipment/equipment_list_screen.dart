@@ -5,12 +5,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:walk/service/service_manager.dart';
 import '../../../model/equipment/equipment_model.dart';
-import 'equipment_providers.dart';
 import 'widgets/equipment_list_card.dart';
-import '../../../common/widgets/loading_view.dart';
-import '../../../common/widgets/error_view.dart';
-import '../../../common/widgets/empty_view.dart';
+import '../common/loading_view.dart';
+import '../common/error_view.dart';
+import '../common/empty_view.dart';
 
 /// 装备列表页面
 class EquipmentListScreen extends ConsumerStatefulWidget {
@@ -18,7 +18,8 @@ class EquipmentListScreen extends ConsumerStatefulWidget {
   const EquipmentListScreen({super.key});
 
   @override
-  ConsumerState<EquipmentListScreen> createState() => _EquipmentListScreenState();
+  ConsumerState<EquipmentListScreen> createState() =>
+      _EquipmentListScreenState();
 }
 
 class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
@@ -40,10 +41,12 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
         _error = null;
       });
 
-      // 从状态管理器加载装备清单列表
-      await ref.read(equipmentListsProvider.notifier).loadEquipmentLists();
+      // 使用EquipmentService加载装备清单列表
+      final equipmentService = ServiceLocator.instance.getEquipmentService();
+      final equipmentLists = await equipmentService.getEquipmentLists();
 
       setState(() {
+        _equipmentLists = equipmentLists;
         _isLoading = false;
       });
     } catch (e) {
@@ -56,8 +59,6 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
 
   /// 打开筛选对话框
   void _openFilterDialog() {
-    final currentFilter = ref.read(equipmentFilterProvider);
-
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -88,18 +89,12 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
 
   /// 打开装备详情页面
   void _openEquipmentDetail(EquipmentListModel equipmentList) {
-    // 设置选中的装备清单
-    ref.read(selectedEquipmentListProvider.notifier).state = equipmentList;
-
     // 导航到装备详情页面
     context.go('/equipment/${equipmentList.id}');
   }
 
   @override
   Widget build(BuildContext context) {
-    // 从状态管理器获取装备清单列表
-    final equipmentLists = ref.watch(equipmentListsProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('装备清单'),
@@ -119,7 +114,7 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
           ),
         ],
       ),
-      body: _buildBody(equipmentLists),
+      body: _buildBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: 实现创建装备清单功能
@@ -133,7 +128,7 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
   }
 
   /// 构建页面主体
-  Widget _buildBody(List<EquipmentListModel> equipmentLists) {
+  Widget _buildBody() {
     if (_isLoading) {
       return const LoadingView(message: '加载装备清单...');
     }
@@ -146,7 +141,7 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
       );
     }
 
-    if (equipmentLists.isEmpty) {
+    if (_equipmentLists.isEmpty) {
       return EmptyView(
         message: '点击右下角的按钮创建装备清单',
         title: '暂无装备清单',
@@ -161,18 +156,18 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
       );
     }
 
-    return _buildEquipmentList(equipmentLists);
+    return _buildEquipmentList();
   }
 
   /// 构建装备清单列表
-  Widget _buildEquipmentList(List<EquipmentListModel> equipmentLists) {
+  Widget _buildEquipmentList() {
     return RefreshIndicator(
       onRefresh: _loadEquipmentLists,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: equipmentLists.length,
+        itemCount: _equipmentLists.length,
         itemBuilder: (context, index) {
-          final equipmentList = equipmentLists[index];
+          final equipmentList = _equipmentLists[index];
           return EquipmentListCard(
             equipmentList: equipmentList,
             onTap: () => _openEquipmentDetail(equipmentList),

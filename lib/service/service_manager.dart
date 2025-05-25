@@ -5,7 +5,6 @@ import 'package:walk/service/mock/mock_track_format_service.dart';
 import 'package:walk/service/mock/mock_trip_plan_service.dart';
 import 'package:walk/service/mock/mock_user_service.dart';
 import 'package:walk/service/mock/mock_weather_service.dart';
-import 'package:walk/service/mock/mock_gear_service.dart';
 import 'package:walk/service/mock/mock_recommendation_service.dart';
 import 'package:walk/service/mock/mock_trip_service.dart';
 import 'package:walk/service/trip_plan_service.dart';
@@ -15,10 +14,11 @@ import 'route_service.dart';
 import 'user_service.dart';
 import 'guide_service.dart';
 import 'weather_service.dart';
-import 'gear_service.dart';
 import 'recommendation_service.dart';
 import 'trip_service.dart';
 import 'map_service.dart';
+import 'equipment_service.dart';
+import 'mock/mock_equipment_service.dart';
 
 /// 服务定位器，用于管理和访问各种服务
 class ServiceLocator {
@@ -35,7 +35,7 @@ class ServiceLocator {
   late final TrackFormatService _trackFormatService;
 
   /// 路线服务 - 提供路线相关功能
-  late final RouteService _routeService;
+  late RouteService _routeService;
 
   /// 用户服务 - 提供用户相关功能
   late final UserService _userService;
@@ -49,14 +49,18 @@ class ServiceLocator {
   /// 行程计划服务 - 提供行程计划相关功能
   late final TripPlanService _tripPlanService;
 
-  /// 装备服务 - 提供装备相关功能
-  late final GearService _gearService;
-
   /// 推荐服务 - 提供推荐相关功能
   late final RecommendationService _recommendationService;
 
+  /// 装备服务
+  late EquipmentService _equipmentService;
+
   /// 私有构造函数
-  ServiceLocator._internal();
+  ServiceLocator._internal() {
+    // 初始化服务
+    _routeService = MockRouteService();
+    _equipmentService = MockEquipmentService();
+  }
 
   late final MapService _mapService;
 
@@ -84,7 +88,6 @@ class ServiceLocator {
     _guideService = MockGuideService();
     _weatherService = MockWeatherService();
     _tripPlanService = MockTripPlanService();
-    _gearService = MockGearService();
     _recommendationService = MockRecommendationService();
     _mapService = MapService.instance;
   }
@@ -99,7 +102,6 @@ class ServiceLocator {
     _guideService = MockGuideService(); // 临时使用Mock
     _weatherService = MockWeatherService(); // 临时使用Mock
     _tripPlanService = MockTripPlanService(); // 临时使用Mock
-    _gearService = MockGearService(); // 临时使用Mock
     _recommendationService = MockRecommendationService(); // 临时使用Mock
     _mapService = MapService.instance;
   }
@@ -144,11 +146,6 @@ class ServiceLocator {
     return _tripPlanService;
   }
 
-  /// 获取装备服务
-  GearService getGearService() {
-    return _gearService;
-  }
-
   /// 获取推荐服务
   RecommendationService getRecommendationService() {
     return _recommendationService;
@@ -156,5 +153,25 @@ class ServiceLocator {
 
   MapService getMapService() {
     return _mapService;
+  }
+
+  /// 获取装备服务
+  EquipmentService getEquipmentService() {
+    return _equipmentService;
+  }
+
+  /// 注册路线服务
+  void registerRouteService(RouteService service) {
+    _routeService = service;
+  }
+
+  /// 注册行程服务
+  void registerTripService(TripService service) {
+    _tripService = service;
+  }
+
+  /// 注册装备服务
+  void registerEquipmentService(EquipmentService service) {
+    _equipmentService = service;
   }
 }

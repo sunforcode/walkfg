@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:walk/ui/page/trip_plan/components/timeline_card.dart';
 import '../trip_plan_service.dart';
-import '../../model/model/trip/trip_model.dart';
+import '../../model/trip/trip_model.dart';
 import '../../model/equipment/equipment_item_model.dart';
 import '../../model/route/daily_itinerary_model.dart';
 import '../../model/transportation/transportation_plan_model.dart';
@@ -173,42 +172,42 @@ class MockTripPlanService implements TripPlanService {
     return equipment;
   }
 
-  @override
-  Future<TimelineData> getTimelineData(String routeId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 500));
+  // @override
+  // Future<TimelineData> getTimelineData(String routeId) async {
+  //   // 模拟网络延迟
+  //   await Future.delayed(const Duration(milliseconds: 500));
 
-    try {
-      // 创建模拟数据
-      return TimelineData(
-        items: [
-          TimelineItem(
-            title: '北京 → 五台山',
-            subtitle: '高铁+大巴 (约4小时)',
-            icon: CupertinoIcons.airplane,
-          ),
-          TimelineItem(
-            title: '五台山东线徒步',
-            subtitle: '显通寺→塔院寺 (12公里)',
-            icon: CupertinoIcons.map,
-          ),
-          TimelineItem(
-            title: '五台山西线徒步',
-            subtitle: '菩萨顶→南山寺 (15公里)',
-            icon: CupertinoIcons.map,
-          ),
-          TimelineItem(
-            title: '五台山 → 北京',
-            subtitle: '大巴+高铁 (约4.5小时)',
-            icon: CupertinoIcons.airplane,
-          ),
-        ],
-      );
-    } catch (e) {
-      print('获取时间线数据失败: $e');
-      return TimelineData(items: []);
-    }
-  }
+  //   try {
+  //     // 创建模拟数据
+  //     return TimelineData(
+  //       items: [
+  //         TimelineItem(
+  //           title: '北京 → 五台山',
+  //           subtitle: '高铁+大巴 (约4小时)',
+  //           icon: CupertinoIcons.airplane,
+  //         ),
+  //         TimelineItem(
+  //           title: '五台山东线徒步',
+  //           subtitle: '显通寺→塔院寺 (12公里)',
+  //           icon: CupertinoIcons.map,
+  //         ),
+  //         TimelineItem(
+  //           title: '五台山西线徒步',
+  //           subtitle: '菩萨顶→南山寺 (15公里)',
+  //           icon: CupertinoIcons.map,
+  //         ),
+  //         TimelineItem(
+  //           title: '五台山 → 北京',
+  //           subtitle: '大巴+高铁 (约4.5小时)',
+  //           icon: CupertinoIcons.airplane,
+  //         ),
+  //       ],
+  //     );
+  //   } catch (e) {
+  //     print('获取时间线数据失败: $e');
+  //     return TimelineData(items: []);
+  //   }
+  // }
 
   @override
   Future<List<TransportationPlanModel>> getTransportationPlans(

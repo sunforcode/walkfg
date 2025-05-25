@@ -10,7 +10,7 @@ class EquipmentItemModel extends BaseModel {
   /// 名称
   final String name;
 
-  /// 类别
+  /// 分类
   final String category;
 
   /// 描述
@@ -23,13 +23,11 @@ class EquipmentItemModel extends BaseModel {
   final int quantity;
 
   /// 必要性
-  @JsonKey(
-      name: 'is_essential',
-      fromJson: _necessityFromJson,
-      toJson: _necessityToJson)
+  @JsonKey(fromJson: _necessityFromJson, toJson: _necessityToJson)
   final EquipmentNecessity necessity;
 
   /// 是否已准备
+  @JsonKey(defaultValue: false)
   final bool prepared;
 
   /// 品牌
@@ -44,6 +42,7 @@ class EquipmentItemModel extends BaseModel {
   /// 备注
   final String? notes;
 
+  /// 是否拥有
   bool isOwned = true;
 
   /// 构造函数
@@ -199,7 +198,7 @@ class EquipmentItemModel extends BaseModel {
     return EquipmentItemModel(
       id: id,
       name: json['name'] as String,
-      category: 'Unknown', // 需要从外部传入
+      category: json['category'] as String? ?? 'Unknown',
       description: json['description'] as String?,
       weight: (json['weight']).toDouble(),
       quantity: json['quantity'] as int,

@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../recommendation_service.dart';
-import '../../model/model/route/route_model.dart';
-import '../../model/trip/hot_search_model.dart';
+import '../../model/route/route_model.dart';
+import '../../model/search/hot_search_model.dart';
 import '../../model/trip/recommended_route_model.dart';
 
 /// Mock推荐服务实现
@@ -59,20 +60,39 @@ class MockRecommendationService implements RecommendationService {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 400));
 
-    final recommendedRoutesJson =
-        await _loadJsonData('assets/mock_data/recommended_routes.json');
-    if (recommendedRoutesJson == null) {
+    try {
+      final recommendedRoutesJson =
+          await _loadJsonData('assets/mock_data/recommended_routes.json');
+      if (recommendedRoutesJson == null) {
+        debugPrint('推荐路线数据为空');
+        return RecommendedRouteListModel(items: []);
+      }
+
+      if (!recommendedRoutesJson.containsKey('items') ||
+          !(recommendedRoutesJson['items'] is List)) {
+        debugPrint('推荐路线数据格式不正确: 缺少items字段或格式错误');
+        return RecommendedRouteListModel(items: []);
+      }
+
+      final List<dynamic> itemsJson =
+          recommendedRoutesJson['items'] as List<dynamic>;
+
+      List<RecommendedRouteModel> items = [];
+      try {
+        items = itemsJson
+            .map<RecommendedRouteModel>(
+                (json) => RecommendedRouteModel.fromJson(json))
+            .toList();
+        debugPrint('已加载推荐路线: ${items.length}个');
+      } catch (e) {
+        debugPrint('解析推荐路线数据失败: $e');
+      }
+
+      return RecommendedRouteListModel(items: items);
+    } catch (e) {
+      debugPrint('加载推荐路线失败: $e');
       return RecommendedRouteListModel(items: []);
     }
-
-    final List<dynamic> itemsJson =
-        recommendedRoutesJson['items'] as List<dynamic>;
-    List<RecommendedRouteModel> items = itemsJson
-        .map<RecommendedRouteModel>(
-            (json) => RecommendedRouteModel.fromJson(json))
-        .toList();
-
-    return RecommendedRouteListModel(items: items);
   }
 
   @override
@@ -81,23 +101,43 @@ class MockRecommendationService implements RecommendationService {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 400));
 
-    final recommendedRoutesJson =
-        await _loadJsonData('assets/mock_data/recommended_routes.json');
-    if (recommendedRoutesJson == null) {
-      return null;
-    }
-
-    final List<dynamic> itemsJson =
-        recommendedRoutesJson['items'] as List<dynamic>;
-    List<RecommendedRouteModel> items = itemsJson
-        .map<RecommendedRouteModel>(
-            (json) => RecommendedRouteModel.fromJson(json))
-        .toList();
-
-    // 查找指定类型的推荐路线
     try {
-      return items.firstWhere((item) => item.type == type);
+      final recommendedRoutesJson =
+          await _loadJsonData('assets/mock_data/recommended_routes.json');
+      if (recommendedRoutesJson == null) {
+        debugPrint('推荐路线数据为空');
+        return null;
+      }
+
+      if (!recommendedRoutesJson.containsKey('items') ||
+          !(recommendedRoutesJson['items'] is List)) {
+        debugPrint('推荐路线数据格式不正确: 缺少items字段或格式错误');
+        return null;
+      }
+
+      final List<dynamic> itemsJson =
+          recommendedRoutesJson['items'] as List<dynamic>;
+
+      List<RecommendedRouteModel> items = [];
+      try {
+        items = itemsJson
+            .map<RecommendedRouteModel>(
+                (json) => RecommendedRouteModel.fromJson(json))
+            .toList();
+      } catch (e) {
+        debugPrint('解析推荐路线数据失败: $e');
+        return null;
+      }
+
+      // 查找指定类型的推荐路线
+      try {
+        return items.firstWhere((item) => item.type == type);
+      } catch (e) {
+        debugPrint('未找到类型为 $type 的推荐路线');
+        return null;
+      }
     } catch (e) {
+      debugPrint('加载推荐路线失败: $e');
       return null;
     }
   }
@@ -127,7 +167,6 @@ class MockRecommendationService implements RecommendationService {
 
     // 按评分排序
     routes.sort((a, b) => b.ratings.overall.compareTo(a.ratings.overall));
-
     // 限制数量
     if (routes.length > limit) {
       routes = routes.sublist(0, limit);
@@ -192,13 +231,17 @@ class MockRecommendationService implements RecommendationService {
     routes.sort((a, b) {
       // 难度相同加分
       final aDifficultyMatch =
-          a.basicInfo.difficulty == referenceRoute!.basicInfo.difficulty ? 1 : 0;
+          a.basicInfo.difficulty == referenceRoute!.basicInfo.difficulty
+              ? 1
+              : 0;
       final bDifficultyMatch =
           b.basicInfo.difficulty == referenceRoute.basicInfo.difficulty ? 1 : 0;
 
       // 距离相近加分（距离差的绝对值越小越好）
-      final aDistanceDiff = (a.basicInfo.distance - referenceRoute.basicInfo.distance).abs();
-      final bDistanceDiff = (b.basicInfo.distance - referenceRoute.basicInfo.distance).abs();
+      final aDistanceDiff =
+          (a.basicInfo.distance - referenceRoute.basicInfo.distance).abs();
+      final bDistanceDiff =
+          (b.basicInfo.distance - referenceRoute.basicInfo.distance).abs();
 
       // 综合评分（难度匹配度 - 距离差）
       final aScore = aDifficultyMatch - aDistanceDiff / 100;

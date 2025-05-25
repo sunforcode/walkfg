@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:walk/model/model/map/map_data_model.dart';
+import 'package:walk/model/map/map_data_model.dart';
 import 'package:walk/ui/map/core/map_controller.dart';
 import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/core/map_provider.dart';

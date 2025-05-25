@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../model/model/route/route_model.dart';
+import '../../../model/route/route_model.dart';
 import '../../../service/service_manager.dart';
-import '../../widgets/common/loading_indicator.dart';
-import '../../widgets/common/error_widget.dart';
-import '../../widgets/common/empty_content_widget.dart';
-import 'cupertino_route_detail_screen.dart';
+import '../common/loading_indicator.dart';
+import '../common/error_widget.dart';
+import '../common/empty_content_widget.dart';
+import 'route_detail_screen.dart';
 
 /// 我的收藏路线页面
 class MyFavoriteRoutesScreen extends StatefulWidget {

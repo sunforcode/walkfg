@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:walk/model/model/map/track_point_model.dart';
+import 'package:walk/model/map/track_point_model.dart';
 
 /// 轨迹简化工具类
 ///

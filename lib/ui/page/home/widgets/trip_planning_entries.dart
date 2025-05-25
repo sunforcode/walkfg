@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:walk/ui/page/trip_plan/trip_planning_page.dart';
+import 'package:walk/ui/page/trip/trip_detail_screen.dart';
 import '../../../../theme/theme/app_colors.dart';
 import '../../trip/my_trip_plans_screen.dart';
 import '../../../../service/service_manager.dart';
@@ -158,8 +158,8 @@ class TripPlanningEntries extends StatelessWidget {
       final route = await routeService.getPersonalizedRecommendations();
       Navigator.of(context).push(
         CupertinoPageRoute(
-          builder: (context) => TripPlanningPage2(
-            route: route.first,
+          builder: (context) => TripDetailScreen(
+            routeId: route.first.regionId,
           ),
         ),
       );

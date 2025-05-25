@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:walk/model/model/map/track_point_model.dart';
+import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/ui/map/elevation_chart_painter.dart';
 
 /// 海拔图表组件

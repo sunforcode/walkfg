@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../model/user/user_model.dart';
 import '../../../model/guide/guide_model.dart';
-import '../../../model/model/route/route_model.dart';
-import '../../../model/model/trip/trip_model.dart';
+import '../../../model/route/route_model.dart';
+import '../../../model/trip/trip_model.dart';
 import '../../../model/weather/weather_model.dart';
 import '../../../service/service_manager.dart';
 import 'widgets/welcome_weather_card.dart';
@@ -80,22 +80,6 @@ class _HomeScreenState extends State<HomeScreen>
     final guideService = ServiceLocator.instance.getGuideService();
     // 获取徒步攻略，限制4条
     return guideService.getGuides(limit: 4);
-  }
-
-  /// 显示提示信息
-  void _showToast(String message) {
-    showCupertinoDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        Future.delayed(const Duration(seconds: 1), () {
-          Navigator.of(context, rootNavigator: true).pop();
-        });
-        return CupertinoAlertDialog(
-          content: Text(message),
-        );
-      },
-    );
   }
 
   @override

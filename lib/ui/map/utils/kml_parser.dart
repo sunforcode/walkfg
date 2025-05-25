@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:xml/xml.dart';
-import 'package:walk/model/model/map/map_bounds.dart';
-import 'package:walk/model/model/map/map_data_model.dart';
-import 'package:walk/model/model/map/map_statistics.dart';
-import 'package:walk/model/model/map/track_point_model.dart';
+import 'package:walk/model/map/map_bounds.dart';
+import 'package:walk/model/map/map_data_model.dart';
+import 'package:walk/model/map/map_statistics.dart';
+import 'package:walk/model/map/track_point_model.dart';
 
 /// 解析轨迹点结果
 class ParsedTrackData {

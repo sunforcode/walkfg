@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Divider;
-import 'package:walk/model/model/food/day_meal_plan_model.dart';
-import 'package:walk/model/model/food/meal_plan_model.dart';
-import 'package:walk/model/model/food/food_item_model.dart';
+import 'package:walk/model/food/day_meal_plan_model.dart';
+import 'package:walk/model/food/meal_plan_model.dart';
+import 'package:walk/model/food/food_item_model.dart';
 
 class TripFoodWidget extends StatefulWidget {
   final MealPlanModel? mealPlan;

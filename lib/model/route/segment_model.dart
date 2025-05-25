@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import '../base/base_model.dart';
-import '../model/map/track_point_model.dart';
+import '../map/track_point_model.dart';
 import 'seasonal_closure_model.dart';
 
 part 'segment_model.g.dart';

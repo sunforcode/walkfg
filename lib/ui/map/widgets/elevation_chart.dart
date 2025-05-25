@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:walk/model/model/map/map_data_model.dart';
+import 'package:walk/model/map/map_data_model.dart';
 
 /// 高程图表组件
 class ElevationChart extends StatefulWidget {

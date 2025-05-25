@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/model/enums/route_status.dart';
-import 'package:walk/model/model/trip/trip_model.dart';
-import 'package:walk/ui/page/trip_plan/trip_planning_page.dart';
+import 'package:walk/model/trip/trip_model.dart';
+import 'package:walk/utils/date_time_utils.dart';
 import '../../../service/service_manager.dart';
 import '../../../theme/theme/app_colors.dart';
-import '../../../common/utils/date_time_utils.dart';
 
 /// 我的行程规划页面
 class MyTripPlansScreen extends StatefulWidget {
@@ -306,15 +305,6 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
   /// 继续规划
   void _continuePlanning(TripModel plan) {
     final apiService = ServiceLocator.instance.getRouteService();
-    apiService.getRouteById(plan.routeIds.first).then((route) {
-      Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (context) => TripPlanningPage2(
-            route: route,
-            tripPlan: plan,
-          ),
-        ),
-      );
-    });
+    apiService.getRouteById(plan.routeIds.first).then((route) {});
   }
 }

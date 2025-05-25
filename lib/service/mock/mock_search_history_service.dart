@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../search_history_service.dart';
-import '../../model/trip/search_history_model.dart';
+import '../../model/search/search_history_model.dart';
 
 /// Mock搜索历史服务实现
 class MockSearchHistoryService implements SearchHistoryService {

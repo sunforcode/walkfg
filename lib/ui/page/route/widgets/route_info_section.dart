@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:walk/model/model/route/route_model.dart';
+import 'package:walk/model/route/route_model.dart';
 
 /// 路线信息部分组件
 class RouteInfoSection extends StatelessWidget {

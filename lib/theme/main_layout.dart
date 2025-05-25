@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../ui/page/home/home_screen.dart';
-import '../ui/page/route/cupertino_route_list_screen.dart';
+import '../ui/page/route/route_list_screen.dart';
 import '../ui/page/equipment/cupertino_equipment_list_screen.dart';
 import '../ui/page/profile/profile_screen.dart';
-import '../ui/page/trip_plan/trip_planning_page.dart';
+import '../ui/page/search/route_search_page.dart';
 import '../service/service_manager.dart';
 import 'theme/app_colors.dart';
 
@@ -34,22 +34,13 @@ class _MainLayoutState extends State<MainLayout> {
   }
 
   /// 导航到行程规划页面
-  void _navigateToTripPlanning(BuildContext context) async {
-    // 获取默认路线
-    final routeService = ServiceLocator.instance.getRecommendationService();
-    try {
-      final route = await routeService.getPersonalizedRecommendations();
-      Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (context) => TripPlanningPage2(
-            route: route.first,
-          ),
-        ),
-      );
-    } catch (e) {
-      print('获取推荐路线失败: $e');
-      _showNoRoutesAlert(context);
-    }
+  void _navigateToTripPlanning(BuildContext context) {
+    // 直接导航到路线搜索页面
+    Navigator.of(context).push(
+      CupertinoPageRoute(
+        builder: (context) => const RouteSearchPage(),
+      ),
+    );
   }
 
   /// 显示没有路线的提示

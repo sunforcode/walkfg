@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:latlong2/latlong.dart';
 import 'package:xml/xml.dart';
-import '../../model/model/map/track_point_model.dart';
+import '../../model/map/track_point_model.dart';
 import '../track_format_service.dart';
 
 /// 轨迹格式服务实现

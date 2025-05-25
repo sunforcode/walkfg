@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import '../../../../model/guide/guide_model.dart';
 import '../../guide/cupertino_guide_detail_screen.dart';
 import '../../../../theme/theme/app_colors.dart';
-import '../../../widgets/common/loading_indicator.dart';
-import '../../../widgets/common/error_widget.dart';
-import '../../../widgets/common/empty_content_widget.dart';
-import '../../../widgets/common/section_header.dart';
+import '../../common/loading_indicator.dart';
+import '../../common/error_widget.dart';
+import '../../common/empty_content_widget.dart';
+import '../../common/section_header.dart';
 import '../../guide/cards/guide_card.dart';
 
 /// 徒步攻略部分组件

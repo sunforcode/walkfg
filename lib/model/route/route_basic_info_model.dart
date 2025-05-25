@@ -7,7 +7,7 @@ part 'route_basic_info_model.g.dart';
 ///
 /// 作为路径模型的嵌套对象，不需要独立的ID和时间戳
 @JsonSerializable()
-class RouteBasicInfoVO {
+class RouteBasicInfo {
   /// 距离(公里)
   final double distance;
 
@@ -35,7 +35,7 @@ class RouteBasicInfoVO {
   final List<String> bestSeason;
 
   /// 构造函数
-  RouteBasicInfoVO({
+  RouteBasicInfo({
     required this.distance,
     required this.elevation,
     required this.duration,
@@ -47,11 +47,11 @@ class RouteBasicInfoVO {
   });
 
   /// 从JSON创建
-  factory RouteBasicInfoVO.fromJson(Map<String, dynamic> json) =>
-      _$RouteBasicInfoVOFromJson(json);
+  factory RouteBasicInfo.fromJson(Map<String, dynamic> json) =>
+      _$RouteBasicInfoFromJson(json);
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() => _$RouteBasicInfoVOToJson(this);
+  Map<String, dynamic> toJson() => _$RouteBasicInfoToJson(this);
 
   /// 解析路线类型
   static RouteType _parseRouteType(dynamic type) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walk/model/model/map/map_data_model.dart';
+import 'package:walk/model/map/map_data_model.dart';
 
 /// 轨迹信息卡片
 class TrackInfoCard extends StatelessWidget {

@@ -4,7 +4,7 @@ import '../../../model/guide/guide_model.dart';
 import '../../../service/service_manager.dart';
 import '../../../theme/theme/app_colors.dart';
 import '../../../theme/theme/app_color_palette.dart';
-import '../../widgets/common/network_image_with_fallback.dart';
+import '../common/network_image_with_fallback.dart';
 
 /// iOS风格的徒步攻略详情页面
 class GuideDetailScreen extends StatefulWidget {

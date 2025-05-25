@@ -102,83 +102,123 @@
   "segments": [
     {
       "id": "seg_001",
-      "name": "云谷寺至迎客松",
-      "description": "从云谷寺入口沿石阶上山至迎客松景点",
-      "start_waypoint_id": "wp_001",
-      "end_waypoint_id": "wp_002",
-      "distance": 3.5,
-      "duration": "2小时",
-      "elevation_gain": 1020,
-      "elevation_loss": 0,
-      "difficulty": 2,
-      "terrain_type": "石阶",
-      "sequence_number": 1
+      "created_at": "2023-05-15T08:00:00Z",
+      "updated_at": "2023-05-15T08:00:00Z",
+      "startPoint": "wp_001",
+      "endPoint": "wp_002",
+      "distance": 2.5,
+      "elevationGain": 1020,
+      "elevationLoss": 0,
+      "estimatedTime": 2.0,
+      "difficulty": 3,
+      "terrain": "石阶",
+      "path": [
+        {
+          "latitude": 30.1234,
+          "longitude": 118.1567,
+          "elevation": 630.0,
+          "timestamp": "2023-05-15T08:00:00Z",
+          "distance_from_start": 0.0,
+          "point_type": "start",
+          "name": "云谷寺起点",
+          "description": "徒步起点",
+          "type": "start"
+        },
+        {
+          "latitude": 30.1284,
+          "longitude": 118.1617,
+          "elevation": 1140.0,
+          "timestamp": "2023-05-15T09:00:00Z",
+          "distance_from_start": 1250.0,
+          "point_type": "waypoint",
+          "name": "半山亭",
+          "description": "休息点",
+          "type": "rest"
+        },
+        {
+          "latitude": 30.1334,
+          "longitude": 118.1667,
+          "elevation": 1650.0,
+          "timestamp": "2023-05-15T10:00:00Z",
+          "distance_from_start": 2500.0,
+          "point_type": "end",
+          "name": "迎客松",
+          "description": "段落终点",
+          "type": "end"
+        }
+      ],
+      "surfaceType": "石阶",
+      "hazards": ["陡峭台阶", "湿滑路面"],
+      "seasonalClosures": [
+        {
+          "startDate": "2023-07-15T00:00:00Z",
+          "endDate": "2023-08-15T00:00:00Z",
+          "reason": "暴雨季节，山路湿滑危险"
+        }
+      ],
+      "trafficLevel": 3
     },
     {
       "id": "seg_002",
-      "name": "迎客松至光明顶",
-      "description": "从迎客松经百步云梯至光明顶",
-      "start_waypoint_id": "wp_002",
-      "end_waypoint_id": "wp_003",
-      "distance": 2.8,
-      "duration": "1.5小时",
-      "elevation_gain": 210,
-      "elevation_loss": 0,
-      "difficulty": 1,
-      "terrain_type": "石阶、山路",
-      "sequence_number": 2
-    },
-    {
-      "id": "seg_003",
-      "name": "光明顶至西海大峡谷",
-      "description": "从光明顶下行至西海大峡谷",
-      "start_waypoint_id": "wp_003",
-      "end_waypoint_id": "wp_004",
-      "distance": 4.2,
-      "duration": "2小时",
-      "elevation_gain": 0,
-      "elevation_loss": 360,
+      "created_at": "2023-05-15T08:00:00Z",
+      "updated_at": "2023-05-15T08:00:00Z",
+      "startPoint": "wp_002",
+      "endPoint": "wp_003",
+      "distance": 3.0,
+      "elevationGain": 210,
+      "elevationLoss": 0,
+      "estimatedTime": 1.5,
       "difficulty": 2,
-      "terrain_type": "山路、栈道",
-      "sequence_number": 3
-    },
-    {
-      "id": "seg_004",
-      "name": "西海大峡谷至排云亭",
-      "description": "沿西海大峡谷边缘行走至排云亭",
-      "start_waypoint_id": "wp_004",
-      "end_waypoint_id": "wp_005",
-      "distance": 2.5,
-      "duration": "1小时",
-      "elevation_gain": 130,
-      "elevation_loss": 0,
-      "difficulty": 1,
-      "terrain_type": "栈道",
-      "sequence_number": 4
-    },
-    {
-      "id": "seg_005",
-      "name": "排云亭至慈光阁",
-      "description": "从排云亭下山至慈光阁出口",
-      "start_waypoint_id": "wp_005",
-      "end_waypoint_id": "wp_006",
-      "distance": 2.5,
-      "duration": "1.5小时",
-      "elevation_gain": 0,
-      "elevation_loss": 810,
-      "difficulty": 2,
-      "terrain_type": "石阶",
-      "sequence_number": 5
+      "terrain": "石阶、平路",
+      "path": [
+        {
+          "latitude": 30.1334,
+          "longitude": 118.1667,
+          "elevation": 1650.0,
+          "timestamp": "2023-05-15T10:00:00Z",
+          "distance_from_start": 0.0,
+          "point_type": "start",
+          "name": "迎客松",
+          "description": "段落起点",
+          "type": "start"
+        },
+        {
+          "latitude": 30.1384,
+          "longitude": 118.1717,
+          "elevation": 1755.0,
+          "timestamp": "2023-05-15T11:00:00Z",
+          "distance_from_start": 1500.0,
+          "point_type": "waypoint",
+          "name": "天海",
+          "description": "黄山高山湖泊",
+          "type": "attraction"
+        },
+        {
+          "latitude": 30.1434,
+          "longitude": 118.1767,
+          "elevation": 1860.0,
+          "timestamp": "2023-05-15T11:30:00Z",
+          "distance_from_start": 3000.0,
+          "point_type": "end",
+          "name": "光明顶",
+          "description": "段落终点",
+          "type": "end"
+        }
+      ],
+      "surfaceType": "石阶、平路",
+      "hazards": [],
+      "seasonalClosures": [],
+      "trafficLevel": 2
     }
   ],
   "daily_plans": [
     {
       "id": "dp_001",
       "day_number": 1,
-      "title": "黄山东线徒步",
-      "description": "从云谷寺入口上山，游览迎客松和光明顶，在山顶住宿",
-      "distance": 6.3,
-      "duration": "3.5小时",
+      "title": "黄山东线登山",
+      "description": "从云谷寺出发，经迎客松到达光明顶，住宿山顶",
+      "distance": 5.5,
+      "duration": "4小时",
       "elevation_gain": 1230,
       "elevation_loss": 0,
       "start_waypoint_id": "wp_001",
@@ -189,12 +229,12 @@
     {
       "id": "dp_002",
       "day_number": 2,
-      "title": "黄山西线徒步",
-      "description": "从光明顶出发，游览西海大峡谷，经排云亭下山至慈光阁",
-      "distance": 9.2,
-      "duration": "4.5小时",
-      "elevation_gain": 130,
-      "elevation_loss": 1170,
+      "title": "黄山西线下山",
+      "description": "从光明顶出发，游览西海大峡谷，经排云亭到达慈光阁下山",
+      "distance": 10.0,
+      "duration": "5小时",
+      "elevation_gain": 0,
+      "elevation_loss": 1040,
       "start_waypoint_id": "wp_003",
       "end_waypoint_id": "wp_006",
       "segment_ids": ["seg_003", "seg_004", "seg_005"],
@@ -220,9 +260,112 @@
     "signal_coverage": "山顶大部分区域有手机信号，但在峡谷等地可能较弱"
   },
   "safety_info": {
-    "risks": "陡峭台阶、天气突变、高原反应",
-    "emergency_contacts": "景区救援电话：0559-12345，紧急救援：120",
-    "safety_tips": "请穿着防滑登山鞋，携带登山杖，遇大雾或雷雨天气请勿前往危险区域，注意补充水分"
+    "emergencyContacts": [
+      {
+        "name": "景区救援",
+        "phone": "0559-12345",
+        "description": "黄山景区紧急救援电话"
+      },
+      {
+        "name": "紧急救援",
+        "phone": "120",
+        "description": "医疗紧急救援"
+      }
+    ],
+    "riskAreas": [
+      {
+        "id": "risk_001",
+        "created_at": "2023-05-15T08:00:00Z",
+        "updated_at": "2023-05-15T08:00:00Z",
+        "name": "陡峭台阶区",
+        "description": "部分路段台阶陡峭，雨天湿滑",
+        "boundary": [
+          {
+            "latitude": 30.1284,
+            "longitude": 118.1617,
+            "altitude": 1140.0
+          },
+          {
+            "latitude": 30.1294,
+            "longitude": 118.1627,
+            "altitude": 1200.0
+          },
+          {
+            "latitude": 30.1304,
+            "longitude": 118.1637,
+            "altitude": 1300.0
+          },
+          {
+            "latitude": 30.1314,
+            "longitude": 118.1647,
+            "altitude": 1400.0
+          }
+        ],
+        "level": 3
+      },
+      {
+        "id": "risk_002",
+        "created_at": "2023-05-15T08:00:00Z",
+        "updated_at": "2023-05-15T08:00:00Z",
+        "name": "西海大峡谷危险区",
+        "description": "峡谷边缘有危险区域，请勿靠近",
+        "boundary": [
+          {
+            "latitude": 30.1534,
+            "longitude": 118.1467,
+            "altitude": 1500.0
+          },
+          {
+            "latitude": 30.1544,
+            "longitude": 118.1457,
+            "altitude": 1490.0
+          },
+          {
+            "latitude": 30.1554,
+            "longitude": 118.1447,
+            "altitude": 1480.0
+          },
+          {
+            "latitude": 30.1564,
+            "longitude": 118.1437,
+            "altitude": 1470.0
+          }
+        ],
+        "level": 4
+      }
+    ],
+    "cellSignal": [
+      {
+        "id": "signal_001",
+        "created_at": "2023-05-15T08:00:00Z",
+        "updated_at": "2023-05-15T08:00:00Z",
+        "name": "信号弱区",
+        "description": "西海大峡谷内信号较弱",
+        "boundary": [
+          {
+            "latitude": 30.1534,
+            "longitude": 118.1467,
+            "altitude": 1500.0
+          },
+          {
+            "latitude": 30.1544,
+            "longitude": 118.1457,
+            "altitude": 1490.0
+          },
+          {
+            "latitude": 30.1554,
+            "longitude": 118.1447,
+            "altitude": 1480.0
+          },
+          {
+            "latitude": 30.1564,
+            "longitude": 118.1437,
+            "altitude": 1470.0
+          }
+        ],
+        "level": 2
+      }
+    ]
   },
   "image_urls": [
     "https://example.com/images/huangshan1.jpg",
@@ -238,898 +381,4 @@
   "popularity": 1250,
   "related_route_ids": ["route_002", "route_003", "route_004"],
   "status": "completed"
-},
-{
-  "id": "route_002",
-  "created_at": "2023-06-10T09:15:00Z",
-  "updated_at": "2023-06-15T14:20:00Z",
-  "name": "张家界金鞭溪徒步",
-  "description": "这条路线沿着金鞭溪蜿蜒前行，穿越张家界国家森林公园的核心景区，欣赏奇峰异石和清澈溪流。",
-  "region_id": "region_002",
-  "region": "张家界国家森林公园",
-  "basic_info": {
-    "distance": 7.8,
-    "duration": "4小时",
-    "elevation_gain": 320,
-    "elevation_loss": 280.0,
-    "difficulty": 1,
-    "route_type": 0,
-    "route_direction": 0,
-    "best_season": ["春季", "夏季", "秋季"]
-  },
-  "ratings": {
-    "overall": 4.7,
-    "scenery": 4.9,
-    "difficulty": 2.5,
-    "experience": 4.8,
-    "facilities": 4.5,
-    "rating_count": 189
-  },
-  "tags": ["溪流", "森林", "峰林", "世界遗产", "摄影"],
-  "waypoints": [
-    {
-      "id": "wp_101",
-      "name": "森林公园大门",
-      "description": "张家界国家森林公园南门入口",
-      "latitude": 29.3245,
-      "longitude": 110.4156,
-      "elevation": 350.0,
-      "type": "entrance",
-      "icon_url": "https://example.com/icons/entrance.png",
-      "image_url": "https://example.com/images/zjj_entrance.jpg",
-      "sequence_number": 1
-    },
-    {
-      "id": "wp_102",
-      "name": "金鞭溪起点",
-      "description": "金鞭溪徒步路线的起点，溪水清澈",
-      "latitude": 29.3278,
-      "longitude": 110.4189,
-      "elevation": 360.0,
-      "type": "trailhead",
-      "icon_url": "https://example.com/icons/trailhead.png",
-      "image_url": "https://example.com/images/jinbian_start.jpg",
-      "sequence_number": 2
-    },
-    {
-      "id": "wp_103",
-      "name": "水绕四门",
-      "description": "溪流环绕四座山峰，形成奇特景观",
-      "latitude": 29.3312,
-      "longitude": 110.4223,
-      "elevation": 380.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/attraction.png",
-      "image_url": "https://example.com/images/water_four_gates.jpg",
-      "sequence_number": 3
-    },
-    {
-      "id": "wp_104",
-      "name": "金鞭岩",
-      "description": "形似金鞭的岩石，是金鞭溪的标志性景点",
-      "latitude": 29.3356,
-      "longitude": 110.4267,
-      "elevation": 410.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/attraction.png",
-      "image_url": "https://example.com/images/jinbian_rock.jpg",
-      "sequence_number": 4
-    },
-    {
-      "id": "wp_105",
-      "name": "千里相会",
-      "description": "两座相对而立的山峰，形似久别重逢的恋人",
-      "latitude": 29.3389,
-      "longitude": 110.4312,
-      "elevation": 430.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/attraction.png",
-      "image_url": "https://example.com/images/meeting_peaks.jpg",
-      "sequence_number": 5
-    },
-    {
-      "id": "wp_106",
-      "name": "金鞭溪终点",
-      "description": "金鞭溪徒步路线的终点，可前往其他景区",
-      "latitude": 29.3423,
-      "longitude": 110.4356,
-      "elevation": 390.0,
-      "type": "exit",
-      "icon_url": "https://example.com/icons/exit.png",
-      "image_url": "https://example.com/images/jinbian_end.jpg",
-      "sequence_number": 6
-    }
-  ],
-  "segments": [
-    {
-      "id": "seg_101",
-      "name": "入口至金鞭溪起点",
-      "description": "从公园南门步行至金鞭溪徒步路线起点",
-      "start_waypoint_id": "wp_101",
-      "end_waypoint_id": "wp_102",
-      "distance": 0.8,
-      "duration": "20分钟",
-      "elevation_gain": 10,
-      "elevation_loss": 0,
-      "difficulty": 0,
-      "terrain_type": "平整道路",
-      "sequence_number": 1
-    },
-    {
-      "id": "seg_102",
-      "name": "金鞭溪起点至水绕四门",
-      "description": "沿溪流前行，两侧是陡峭的峰林",
-      "start_waypoint_id": "wp_102",
-      "end_waypoint_id": "wp_103",
-      "distance": 1.5,
-      "duration": "45分钟",
-      "elevation_gain": 20,
-      "elevation_loss": 0,
-      "difficulty": 1,
-      "terrain_type": "石板路、栈道",
-      "sequence_number": 2
-    },
-    {
-      "id": "seg_103",
-      "name": "水绕四门至金鞭岩",
-      "description": "穿过水绕四门景区，前往金鞭岩",
-      "start_waypoint_id": "wp_103",
-      "end_waypoint_id": "wp_104",
-      "distance": 2.0,
-      "duration": "1小时",
-      "elevation_gain": 30,
-      "elevation_loss": 0,
-      "difficulty": 1,
-      "terrain_type": "栈道、石阶",
-      "sequence_number": 3
-    },
-    {
-      "id": "seg_104",
-      "name": "金鞭岩至千里相会",
-      "description": "沿溪流继续前行，欣赏两侧奇峰",
-      "start_waypoint_id": "wp_104",
-      "end_waypoint_id": "wp_105",
-      "distance": 1.8,
-      "duration": "50分钟",
-      "elevation_gain": 20,
-      "elevation_loss": 0,
-      "difficulty": 1,
-      "terrain_type": "栈道",
-      "sequence_number": 4
-    },
-    {
-      "id": "seg_105",
-      "name": "千里相会至终点",
-      "description": "路线最后一段，下行至金鞭溪终点",
-      "start_waypoint_id": "wp_105",
-      "end_waypoint_id": "wp_106",
-      "distance": 1.7,
-      "duration": "45分钟",
-      "elevation_gain": 0,
-      "elevation_loss": 40,
-      "difficulty": 1,
-      "terrain_type": "石阶、栈道",
-      "sequence_number": 5
-    }
-  ],
-  "daily_plans": [
-    {
-      "id": "dp_101",
-      "day_number": 1,
-      "title": "金鞭溪一日游",
-      "description": "一天内完成金鞭溪全程徒步，欣赏张家界标志性的峰林景观",
-      "distance": 7.8,
-      "duration": "4小时",
-      "elevation_gain": 320,
-      "elevation_loss": 280,
-      "start_waypoint_id": "wp_101",
-      "end_waypoint_id": "wp_106",
-      "segment_ids": ["seg_101", "seg_102", "seg_103", "seg_104", "seg_105"],
-      "accommodation": "武陵源镇酒店"
-    }
-  ],
-  "weather_info": {
-    "description": "张家界气候湿润，雨水充沛，四季分明",
-    "seasonal": {
-      "春季": "3-5月，气温15-25℃，雨水较多，山中云雾缭绕",
-      "夏季": "6-8月，气温25-35℃，偶有暴雨，但峰林在雨后特别壮观",
-      "秋季": "9-11月，气温15-25℃，雨水减少，天气晴朗，视野最佳",
-      "冬季": "12-2月，气温0-10℃，偶有霜雪，游客较少但景色别有风味"
-    },
-    "best_seasons": ["春季", "秋季"],
-    "precautions": "雨季请注意防滑，带好雨具；夏季注意防暑防晒"
-  },
-  "facilities": {
-    "water": "沿途有饮用水供应点，但建议自带足够饮用水",
-    "food": "路线起点和终点有小卖部，提供简单食品",
-    "accommodation": "景区内有多家酒店和客栈，武陵源镇上住宿选择更多",
-    "toilets": "沿途设有公共厕所，但间隔较远",
-    "signal_coverage": "大部分区域有手机信号，但在峡谷处可能较弱"
-  },
-  "safety_info": {
-    "risks": "湿滑路面、暴雨天气",
-    "emergency_contacts": "景区救援电话：0744-12345，紧急救援：120",
-    "safety_tips": "雨天注意防滑，不要在溪边危险区域停留，遵守景区规定"
-  },
-  "image_urls": [
-    "https://example.com/images/zhangjiajie1.jpg",
-    "https://example.com/images/zhangjiajie2.jpg",
-    "https://example.com/images/zhangjiajie3.jpg",
-    "https://example.com/images/zhangjiajie4.jpg"
-  ],
-  "cover_url": "https://example.com/images/jinbian_cover.jpg",
-  "map_data_id": "map_002",
-  "created_by": "user_002",
-  "is_favorite": false,
-  "popularity": 980,
-  "related_route_ids": ["route_001", "route_003"],
-  "status": "planning"
-},
-{
-  "id": "route_003",
-  "created_at": "2023-07-05T11:30:00Z",
-  "updated_at": "2023-07-12T16:45:00Z",
-  "name": "泰山日出登山路线",
-  "description": "这条路线从泰山红门出发，经过中天门、南天门，最终到达玉皇顶，是观赏泰山日出的经典路线。",
-  "region_id": "region_003",
-  "region": "泰山风景区",
-  "basic_info": {
-    "distance": 9.5,
-    "duration": "5小时",
-    "elevation_gain": 1400,
-    "elevation_loss": 0.0,
-    "difficulty": 2,
-    "route_type": 1,
-    "route_direction": null,
-    "best_season": ["春季", "秋季"]
-  },
-  "ratings": {
-    "overall": 4.6,
-    "scenery": 4.8,
-    "difficulty": 3.8,
-    "experience": 4.9,
-    "facilities": 4.3,
-    "rating_count": 320
-  },
-  "tags": ["山岳", "日出", "文化遗产", "世界遗产", "石阶"],
-  "waypoints": [
-    {
-      "id": "wp_201",
-      "name": "红门",
-      "description": "泰山东部入口，登山起点",
-      "latitude": 36.2612,
-      "longitude": 117.1389,
-      "elevation": 200.0,
-      "type": "entrance",
-      "icon_url": "https://example.com/icons/entrance.png",
-      "image_url": "https://example.com/images/hongmen.jpg",
-      "sequence_number": 1
-    },
-    {
-      "id": "wp_202",
-      "name": "万仙楼",
-      "description": "泰山东路上的重要景点，可稍作休息",
-      "latitude": 36.2634,
-      "longitude": 117.1356,
-      "elevation": 450.0,
-      "type": "rest",
-      "icon_url": "https://example.com/icons/rest.png",
-      "image_url": "https://example.com/images/wanxian_tower.jpg",
-      "sequence_number": 2
-    },
-    {
-      "id": "wp_203",
-      "name": "中天门",
-      "description": "泰山登山路上的重要关口，海拔约850米",
-      "latitude": 36.2656,
-      "longitude": 117.1323,
-      "elevation": 850.0,
-      "type": "checkpoint",
-      "icon_url": "https://example.com/icons/checkpoint.png",
-      "image_url": "https://example.com/images/zhongtian_gate.jpg",
-      "sequence_number": 3
-    },
-    {
-      "id": "wp_204",
-      "name": "南天门",
-      "description": "泰山主峰区域的入口，标志着登顶前的最后一段",
-      "latitude": 36.2678,
-      "longitude": 117.1290,
-      "elevation": 1460.0,
-      "type": "checkpoint",
-      "icon_url": "https://example.com/icons/checkpoint.png",
-      "image_url": "https://example.com/images/nantian_gate.jpg",
-      "sequence_number": 4
-    },
-    {
-      "id": "wp_205",
-      "name": "玉皇顶",
-      "description": "泰山最高峰，海拔1545米，是观赏日出的最佳地点",
-      "latitude": 36.2701,
-      "longitude": 117.1257,
-      "elevation": 1545.0,
-      "type": "peak",
-      "icon_url": "https://example.com/icons/peak.png",
-      "image_url": "https://example.com/images/yuhuang_peak.jpg",
-      "sequence_number": 5
-    }
-  ],
-  "segments": [
-    {
-      "id": "seg_201",
-      "name": "红门至万仙楼",
-      "description": "从红门沿石阶上行至万仙楼",
-      "start_waypoint_id": "wp_201",
-      "end_waypoint_id": "wp_202",
-      "distance": 1.8,
-      "duration": "1小时",
-      "elevation_gain": 250,
-      "elevation_loss": 0,
-      "difficulty": 2,
-      "terrain_type": "石阶",
-      "sequence_number": 1
-    },
-    {
-      "id": "seg_202",
-      "name": "万仙楼至中天门",
-      "description": "继续上行，路程较陡",
-      "start_waypoint_id": "wp_202",
-      "end_waypoint_id": "wp_203",
-      "distance": 2.5,
-      "duration": "1.5小时",
-      "elevation_gain": 400,
-      "elevation_loss": 0,
-      "difficulty": 3,
-      "terrain_type": "石阶",
-      "sequence_number": 2
-    },
-    {
-      "id": "seg_203",
-      "name": "中天门至南天门",
-      "description": "登山路线最陡峭的一段，有十八盘",
-      "start_waypoint_id": "wp_203",
-      "end_waypoint_id": "wp_204",
-      "distance": 3.2,
-      "duration": "2小时",
-      "elevation_gain": 610,
-      "elevation_loss": 0,
-      "difficulty": 3,
-      "terrain_type": "石阶",
-      "sequence_number": 3
-    },
-    {
-      "id": "seg_204",
-      "name": "南天门至玉皇顶",
-      "description": "最后一段路程，相对平缓",
-      "start_waypoint_id": "wp_204",
-      "end_waypoint_id": "wp_205",
-      "distance": 2.0,
-      "duration": "30分钟",
-      "elevation_gain": 85,
-      "elevation_loss": 0,
-      "difficulty": 1,
-      "terrain_type": "石阶、平路",
-      "sequence_number": 4
-    }
-  ],
-  "daily_plans": [
-    {
-      "id": "dp_201",
-      "day_number": 1,
-      "title": "泰山登顶",
-      "description": "下午从红门开始登山，傍晚到达山顶，住宿山顶酒店",
-      "distance": 9.5,
-      "duration": "5小时",
-      "elevation_gain": 1400,
-      "elevation_loss": 0,
-      "start_waypoint_id": "wp_201",
-      "end_waypoint_id": "wp_205",
-      "segment_ids": ["seg_201", "seg_202", "seg_203", "seg_204"],
-      "accommodation": "玉皇顶宾馆"
-    },
-    {
-      "id": "dp_202",
-      "day_number": 2,
-      "title": "观日出下山",
-      "description": "凌晨观赏日出，上午下山",
-      "distance": 9.5,
-      "duration": "3小时",
-      "elevation_gain": 0,
-      "elevation_loss": 1400,
-      "start_waypoint_id": "wp_205",
-      "end_waypoint_id": "wp_201",
-      "segment_ids": ["seg_204", "seg_203", "seg_202", "seg_201"],
-      "accommodation": "泰安市区酒店"
-    }
-  ],
-  "weather_info": {
-    "description": "泰山四季分明，春秋两季最适宜登山",
-    "seasonal": {
-      "春季": "3-5月，气温10-20℃，山花盛开，景色宜人",
-      "夏季": "6-8月，气温20-30℃，雨水较多，山顶较凉爽",
-      "秋季": "9-11月，气温10-20℃，天高气爽，视野最佳",
-      "冬季": "12-2月，气温-10-5℃，常有积雪，景色壮美但寒冷"
-    },
-    "best_seasons": ["春季", "秋季"],
-    "precautions": "夏季注意防暑防雨，冬季注意防寒，观日出需提前查询天气"
-  },
-  "facilities": {
-    "water": "沿途有饮用水供应点，但价格较高，建议自带部分饮用水",
-    "food": "沿途有小卖部，山顶有餐厅，提供简单餐食",
-    "accommodation": "山顶有多家宾馆，但价格较高且需提前预订",
-    "toilets": "沿途设有公共厕所",
-    "signal_coverage": "全程基本有手机信号"
-  },
-  "safety_info": {
-    "risks": "陡峭石阶、体力消耗大、夜间登山视线不佳",
-    "emergency_contacts": "景区救援电话：0538-12345，紧急救援：120",
-    "safety_tips": "穿着舒适防滑的鞋，带好手电筒，注意补充水分，量力而行"
-  },
-  "image_urls": [
-    "https://example.com/images/taishan1.jpg",
-    "https://example.com/images/taishan2.jpg",
-    "https://example.com/images/taishan3.jpg",
-    "https://example.com/images/taishan4.jpg"
-  ],
-  "cover_url": "https://example.com/images/taishan_sunrise.jpg",
-  "map_data_id": "map_003",
-  "created_by": "user_003",
-  "is_favorite": false,
-  "popularity": 1500,
-  "related_route_ids": ["route_001", "route_002"],
-  "status": "inProgress"
-},
-{
-  "id": "route_004",
-  "created_at": "2023-08-12T08:45:00Z",
-  "updated_at": "2023-08-18T15:30:00Z",
-  "name": "九寨沟彩林徒步",
-  "description": "这条路线带您探索九寨沟的五彩湖泊和原始森林，欣赏令人惊叹的自然景观和多彩的季节变化。",
-  "region_id": "region_004",
-  "region": "九寨沟风景区",
-  "basic_info": {
-    "distance": 12.3,
-    "duration": "6小时",
-    "elevation_gain": 450,
-    "elevation_loss": 450.0,
-    "difficulty": 1,
-    "route_type": 0,
-    "route_direction": 0,
-    "best_season": ["春季", "秋季"]
-  },
-  "ratings": {
-    "overall": 4.9,
-    "scenery": 5.0,
-    "difficulty": 2.0,
-    "experience": 4.9,
-    "facilities": 4.7,
-    "rating_count": 420
-  },
-  "tags": ["湖泊", "森林", "瀑布", "世界遗产", "摄影"],
-  "waypoints": [
-    {
-      "id": "wp_301",
-      "name": "诺日朗游客中心",
-      "description": "九寨沟游客中心，行程起点",
-      "latitude": 33.2615,
-      "longitude": 103.9165,
-      "elevation": 2400.0,
-      "type": "entrance",
-      "icon_url": "https://example.com/icons/entrance.png",
-      "image_url": "https://example.com/images/jiuzhai_entrance.jpg",
-      "sequence_number": 1
-    },
-    {
-      "id": "wp_302",
-      "name": "诺日朗瀑布",
-      "description": "九寨沟最宽的瀑布，宽320米",
-      "latitude": 33.2645,
-      "longitude": 103.9185,
-      "elevation": 2365.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/waterfall.png",
-      "image_url": "https://example.com/images/nuorilang_waterfall.jpg",
-      "sequence_number": 2
-    },
-    {
-      "id": "wp_303",
-      "name": "五彩池",
-      "description": "九寨沟最艳丽的彩池，色彩斑斓",
-      "latitude": 33.2715,
-      "longitude": 103.9245,
-      "elevation": 2472.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/lake.png",
-      "image_url": "https://example.com/images/five_color_pond.jpg",
-      "sequence_number": 3
-    },
-    {
-      "id": "wp_304",
-      "name": "珍珠滩瀑布",
-      "description": "宽310米的钙华瀑布，如珍珠散落",
-      "latitude": 33.2785,
-      "longitude": 103.9295,
-      "elevation": 2445.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/waterfall.png",
-      "image_url": "https://example.com/images/pearl_beach.jpg",
-      "sequence_number": 4
-    },
-    {
-      "id": "wp_305",
-      "name": "镜海",
-      "description": "平静如镜的海子，倒映周围山色",
-      "latitude": 33.2845,
-      "longitude": 103.9345,
-      "elevation": 2490.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/lake.png",
-      "image_url": "https://example.com/images/mirror_lake.jpg",
-      "sequence_number": 5
-    },
-    {
-      "id": "wp_306",
-      "name": "长海",
-      "description": "九寨沟最大最深的海子",
-      "latitude": 33.2915,
-      "longitude": 103.9395,
-      "elevation": 2625.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/lake.png",
-      "image_url": "https://example.com/images/long_lake.jpg",
-      "sequence_number": 6
-    }
-  ],
-  "segments": [
-    {
-      "id": "seg_301",
-      "name": "游客中心至诺日朗瀑布",
-      "description": "从游客中心步行至诺日朗瀑布",
-      "start_waypoint_id": "wp_301",
-      "end_waypoint_id": "wp_302",
-      "distance": 0.8,
-      "duration": "20分钟",
-      "elevation_gain": 0,
-      "elevation_loss": 35,
-      "difficulty": 0,
-      "terrain_type": "平整道路",
-      "sequence_number": 1
-    },
-    {
-      "id": "seg_302",
-      "name": "诺日朗瀑布至五彩池",
-      "description": "沿栈道前往五彩池",
-      "start_waypoint_id": "wp_302",
-      "end_waypoint_id": "wp_303",
-      "distance": 2.5,
-      "duration": "1小时",
-      "elevation_gain": 107,
-      "elevation_loss": 0,
-      "difficulty": 1,
-      "terrain_type": "栈道",
-      "sequence_number": 2
-    },
-    {
-      "id": "seg_303",
-      "name": "五彩池至珍珠滩瀑布",
-      "description": "穿过森林抵达珍珠滩瀑布",
-      "start_waypoint_id": "wp_303",
-      "end_waypoint_id": "wp_304",
-      "distance": 2.2,
-      "duration": "1小时",
-      "elevation_gain": 0,
-      "elevation_loss": 27,
-      "difficulty": 1,
-      "terrain_type": "栈道、森林小径",
-      "sequence_number": 3
-    },
-    {
-      "id": "seg_304",
-      "name": "珍珠滩瀑布至镜海",
-      "description": "沿湖边栈道前往镜海",
-      "start_waypoint_id": "wp_304",
-      "end_waypoint_id": "wp_305",
-      "distance": 2.8,
-      "duration": "1.5小时",
-      "elevation_gain": 45,
-      "elevation_loss": 0,
-      "difficulty": 1,
-      "terrain_type": "栈道",
-      "sequence_number": 4
-    },
-    {
-      "id": "seg_305",
-      "name": "镜海至长海",
-      "description": "上行至长海",
-      "start_waypoint_id": "wp_305",
-      "end_waypoint_id": "wp_306",
-      "distance": 4.0,
-      "duration": "2小时",
-      "elevation_gain": 135,
-      "elevation_loss": 0,
-      "difficulty": 2,
-      "terrain_type": "山路、栈道",
-      "sequence_number": 5
-    }
-  ],
-  "daily_plans": [
-    {
-      "id": "dp_301",
-      "day_number": 1,
-      "title": "九寨沟精华一日游",
-      "description": "一天内游览九寨沟的主要景点，包括诺日朗瀑布、五彩池、珍珠滩瀑布、镜海和长海",
-      "distance": 12.3,
-      "duration": "6小时",
-      "elevation_gain": 450,
-      "elevation_loss": 450,
-      "start_waypoint_id": "wp_301",
-      "end_waypoint_id": "wp_306",
-      "segment_ids": ["seg_301", "seg_302", "seg_303", "seg_304", "seg_305"],
-      "accommodation": "九寨沟口酒店"
-    }
-  ],
-  "weather_info": {
-    "description": "九寨沟气候凉爽，四季分明，春秋两季最为宜人",
-    "seasonal": {
-      "春季": "4-5月，气温5-15℃，山花盛开，水量充沛",
-      "夏季": "6-8月，气温15-25℃，雨水较多，植被茂盛",
-      "秋季": "9-11月，气温5-15℃，层林尽染，色彩最丰富",
-      "冬季": "12-3月，气温-10-5℃，银装素裹，景色壮美但寒冷"
-    },
-    "best_seasons": ["春季", "秋季"],
-    "precautions": "高原地区，注意防晒防寒，避免高原反应"
-  },
-  "facilities": {
-    "water": "景区内有饮用水供应点，但建议自带足够饮用水",
-    "food": "诺日朗游客中心有餐厅，路线上有小卖部",
-    "accommodation": "景区内无住宿，需在九寨沟口住宿",
-    "toilets": "主要景点附近有公共厕所",
-    "signal_coverage": "主要区域有手机信号，但在偏远处可能较弱"
-  },
-  "safety_info": {
-    "risks": "高原反应、天气突变",
-    "emergency_contacts": "景区救援电话：0837-12345，紧急救援：120",
-    "safety_tips": "请勿离开栈道，不要在水边危险区域停留，注意保暖"
-  },
-  "image_urls": [
-    "https://example.com/images/jiuzhaigou1.jpg",
-    "https://example.com/images/jiuzhaigou2.jpg",
-    "https://example.com/images/jiuzhaigou3.jpg",
-    "https://example.com/images/jiuzhaigou4.jpg"
-  ],
-  "cover_url": "https://example.com/images/jiuzhaigou_cover.jpg",
-  "map_data_id": "map_004",
-  "created_by": "user_004",
-  "is_favorite": false,
-  "popularity": 1850,
-  "related_route_ids": ["route_001", "route_002", "route_003"],
-  "status": "planning"
-},
-{
-  "id": "route_005",
-  "created_at": "2023-09-20T10:15:00Z",
-  "updated_at": "2023-09-25T16:40:00Z",
-  "name": "香格里拉梅里雪山徒步",
-  "description": "这条路线带您探索云南香格里拉的梅里雪山，欣赏神圣的雪山和藏区文化，体验高原徒步的壮美景色。",
-  "region_id": "region_005",
-  "region": "香格里拉梅里雪山",
-  "basic_info": {
-    "distance": 18.5,
-    "duration": "3天",
-    "elevation_gain": 1800,
-    "elevation_loss": 1800.0,
-    "difficulty": 3,
-    "route_type": 1,
-    "route_direction": 0,
-    "best_season": ["春季", "秋季"]
-  },
-  "ratings": {
-    "overall": 4.9,
-    "scenery": 5.0,
-    "difficulty": 4.2,
-    "experience": 4.8,
-    "facilities": 3.5,
-    "rating_count": 156
-  },
-  "tags": ["雪山", "高原", "藏区", "文化", "摄影"],
-  "waypoints": [
-    {
-      "id": "wp_401",
-      "name": "飞来寺",
-      "description": "观赏梅里雪山日照金山的最佳地点",
-      "latitude": 28.4356,
-      "longitude": 98.7689,
-      "elevation": 3380.0,
-      "type": "entrance",
-      "icon_url": "https://example.com/icons/temple.png",
-      "image_url": "https://example.com/images/feilai_temple.jpg",
-      "sequence_number": 1
-    },
-    {
-      "id": "wp_402",
-      "name": "雾浓顶",
-      "description": "徒步路线的第一个营地",
-      "latitude": 28.4512,
-      "longitude": 98.7823,
-      "elevation": 3800.0,
-      "type": "camp",
-      "icon_url": "https://example.com/icons/camp.png",
-      "image_url": "https://example.com/images/wunong_peak.jpg",
-      "sequence_number": 2
-    },
-    {
-      "id": "wp_403",
-      "name": "雪山垭口",
-      "description": "徒步路线的最高点，可俯瞰梅里雪山全景",
-      "latitude": 28.4678,
-      "longitude": 98.7956,
-      "elevation": 4500.0,
-      "type": "pass",
-      "icon_url": "https://example.com/icons/pass.png",
-      "image_url": "https://example.com/images/snow_pass.jpg",
-      "sequence_number": 3
-    },
-    {
-      "id": "wp_404",
-      "name": "明永冰川",
-      "description": "梅里雪山最大的冰川，距离主峰最近",
-      "latitude": 28.4845,
-      "longitude": 98.8089,
-      "elevation": 4100.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/glacier.png",
-      "image_url": "https://example.com/images/mingyong_glacier.jpg",
-      "sequence_number": 4
-    },
-    {
-      "id": "wp_405",
-      "name": "雨崩村",
-      "description": "藏族村落，徒步终点",
-      "latitude": 28.5012,
-      "longitude": 98.8223,
-      "elevation": 3200.0,
-      "type": "village",
-      "icon_url": "https://example.com/icons/village.png",
-      "image_url": "https://example.com/images/yubeng_village.jpg",
-      "sequence_number": 5
-    }
-  ],
-  "segments": [
-    {
-      "id": "seg_401",
-      "name": "飞来寺至雾浓顶",
-      "description": "从飞来寺出发，沿山路上行至雾浓顶营地",
-      "start_waypoint_id": "wp_401",
-      "end_waypoint_id": "wp_402",
-      "distance": 4.5,
-      "duration": "3小时",
-      "elevation_gain": 420,
-      "elevation_loss": 0,
-      "difficulty": 2,
-      "terrain_type": "山路",
-      "sequence_number": 1
-    },
-    {
-      "id": "seg_402",
-      "name": "雾浓顶至雪山垭口",
-      "description": "从营地上行至垭口，路程陡峭",
-      "start_waypoint_id": "wp_402",
-      "end_waypoint_id": "wp_403",
-      "distance": 5.2,
-      "duration": "4小时",
-      "elevation_gain": 700,
-      "elevation_loss": 0,
-      "difficulty": 3,
-      "terrain_type": "高山碎石路",
-      "sequence_number": 2
-    },
-    {
-      "id": "seg_403",
-      "name": "雪山垭口至明永冰川",
-      "description": "从垭口下行至冰川观景台",
-      "start_waypoint_id": "wp_403",
-      "end_waypoint_id": "wp_404",
-      "distance": 3.8,
-      "duration": "2.5小时",
-      "elevation_gain": 0,
-      "elevation_loss": 400,
-      "difficulty": 2,
-      "terrain_type": "山路、草甸",
-      "sequence_number": 3
-    },
-    {
-      "id": "seg_404",
-      "name": "明永冰川至雨崩村",
-      "description": "从冰川沿山谷下行至雨崩村",
-      "start_waypoint_id": "wp_404",
-      "end_waypoint_id": "wp_405",
-      "distance": 5.0,
-      "duration": "3小时",
-      "elevation_gain": 0,
-      "elevation_loss": 900,
-      "difficulty": 2,
-      "terrain_type": "山路、森林小径",
-      "sequence_number": 4
-    }
-  ],
-  "daily_plans": [
-    {
-      "id": "dp_401",
-      "day_number": 1,
-      "title": "飞来寺至雾浓顶",
-      "description": "从飞来寺出发，徒步至雾浓顶营地，适应高原环境",
-      "distance": 4.5,
-      "duration": "3小时",
-      "elevation_gain": 420,
-      "elevation_loss": 0,
-      "start_waypoint_id": "wp_401",
-      "end_waypoint_id": "wp_402",
-      "segment_ids": ["seg_401"],
-      "accommodation": "雾浓顶营地"
-    },
-    {
-      "id": "dp_402",
-      "day_number": 2,
-      "title": "雾浓顶至明永冰川",
-      "description": "早晨出发，翻越雪山垭口，下午抵达明永冰川",
-      "distance": 9.0,
-      "duration": "6.5小时",
-      "elevation_gain": 700,
-      "elevation_loss": 400,
-      "start_waypoint_id": "wp_402",
-      "end_waypoint_id": "wp_404",
-      "segment_ids": ["seg_402", "seg_403"],
-      "accommodation": "冰川营地"
-    },
-    {
-      "id": "dp_403",
-      "day_number": 3,
-      "title": "明永冰川至雨崩村",
-      "description": "从冰川下行至雨崩村，结束徒步行程",
-      "distance": 5.0,
-      "duration": "3小时",
-      "elevation_gain": 0,
-      "elevation_loss": 900,
-      "start_waypoint_id": "wp_404",
-      "end_waypoint_id": "wp_405",
-      "segment_ids": ["seg_404"],
-      "accommodation": "雨崩村客栈"
-    }
-  ],
-  "weather_info": {
-    "description": "梅里雪山气候多变，高山地区天气瞬息万变",
-    "seasonal": {
-      "春季": "4-5月，气温0-15℃，山花盛开，能见度较好",
-      "夏季": "6-8月，气温5-20℃，雨季，多云雾，不适合徒步",
-      "秋季": "9-11月，气温0-15℃，晴天多，能见度最佳",
-      "冬季": "12-3月，气温-15-5℃，大雪封山，不适合徒步"
-    },
-    "best_seasons": ["春季", "秋季"],
-    "precautions": "高海拔地区，昼夜温差大，需防寒保暖，注意高原反应"
-  },
-  "facilities": {
-    "water": "沿途有山泉水，但需净化处理，建议携带净水器",
-    "food": "需自带干粮，雨崩村有简单餐饮",
-    "accommodation": "雾浓顶有营地，雨崩村有藏族家庭旅馆",
-    "toilets": "沿途无公共厕所，需野外如厕",
-    "signal_coverage": "大部分地区无手机信号，建议携带卫星电话"
-  },
-  "safety_info": {
-    "risks": "高原反应、天气突变、道路湿滑",
-    "emergency_contacts": "当地向导电话：13912345678，紧急救援：120",
-    "safety_tips": "必须有向导陪同，携带高原药品，不要单独行动"
-  },
-  "image_urls": [
-    "https://example.com/images/meili1.jpg",
-    "https://example.com/images/meili2.jpg",
-    "https://example.com/images/meili3.jpg",
-    "https://example.com/images/meili4.jpg"
-  ],
-  "cover_url": "https://example.com/images/meili_cover.jpg",
-  "map_data_id": "map_005",
-  "created_by": "user_005",
-  "is_favorite": false,
-  "popularity": 950,
-  "related_route_ids": ["route_003", "route_004"],
-  "status": "planning"
 }]

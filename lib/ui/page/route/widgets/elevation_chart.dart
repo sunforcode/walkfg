@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../model/model/map/track_point_model.dart';
+import '../../../../model/map/track_point_model.dart';
 
 /// 高程图组件
 class ElevationChart extends StatelessWidget {

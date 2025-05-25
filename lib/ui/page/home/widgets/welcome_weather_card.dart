@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:walk/utils/date_time_utils.dart';
 import '../../../../model/user/user_model.dart';
 import '../../../../model/weather/weather_model.dart';
-import '../../../../common/utils/date_time_utils.dart';
 
 /// 欢迎和天气卡片组件
 class WelcomeWeatherCard extends StatelessWidget {

@@ -1,4 +1,4 @@
-import '../model/trip/search_history_model.dart';
+import '../model/search/search_history_model.dart';
 
 /// 搜索历史服务抽象类
 abstract class SearchHistoryService {

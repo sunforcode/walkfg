@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:walk/model/model/map/track_point_model.dart';
+import 'package:walk/model/map/track_point_model.dart';
 
 /// 颜色渐变工具类
 class ColorGradient {

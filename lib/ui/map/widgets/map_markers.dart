@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:walk/model/model/map/track_point_model.dart';
+import 'package:walk/model/map/track_point_model.dart';
 
 /// 公里标记工具类
 class KilometerMarkers {

@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:walk/model/model/trip/trip_model.dart';
-import 'package:walk/ui/page/trip/cupertino_trip_detail_screen.dart';
-import '../../trip/cupertino_trip_list_screen.dart';
-import '../../../widgets/common/section_header.dart';
-import '../../../widgets/common/loading_indicator.dart';
-import '../../../widgets/common/error_widget.dart';
-import '../../../widgets/common/empty_content_widget.dart';
+import 'package:walk/model/trip/trip_model.dart';
+import 'package:walk/ui/page/trip/trip_detail_screen.dart';
+import '../../trip/trip_list_screen.dart';
+import '../../common/section_header.dart';
+import '../../common/loading_indicator.dart';
+import '../../common/error_widget.dart';
+import '../../common/empty_content_widget.dart';
 
 /// 规划行程部分组件
 class PlannedTripsSection extends StatelessWidget {
@@ -56,7 +56,7 @@ class PlannedTripsSection extends StatelessWidget {
                 subtitle: '开始规划你的第一个行程吧',
               );
             }
-
+            print('plannedTrips: $plannedTrips');
             return _buildPlannedTripsList(context, plannedTrips);
           },
         ),

@@ -1,4 +1,4 @@
-import '../model/model/map/track_point_model.dart';
+import '../model/map/track_point_model.dart';
 
 /// 轨迹格式类型
 enum TrackFormatType {

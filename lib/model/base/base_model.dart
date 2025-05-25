@@ -1,5 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
 /// 基础模型类
 abstract class BaseModel {
   /// ID

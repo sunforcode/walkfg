@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:walk/model/model/trip/trip_model.dart';
+import 'package:walk/model/trip/trip_model.dart';
+import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 
 class TripCoverWidget extends StatelessWidget {
   final TripModel trip;
@@ -21,19 +23,21 @@ class TripCoverWidget extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // 封面图片
-            Image.network(
-              trip.coverUrl!,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: CupertinoColors.systemGrey5,
-                child: const Icon(
-                  CupertinoIcons.photo,
-                  color: CupertinoColors.systemGrey,
-                  size: 48,
-                ),
-              ),
-            ),
-            
+            trip.coverUrl != null
+                ? NetworkImageWithFallback(
+                    url: trip.coverUrl!,
+                    fit: BoxFit.cover,
+                    fallbackColor: AppColors.primary,
+                  )
+                : Container(
+                    color: CupertinoColors.systemGrey5,
+                    child: const Icon(
+                      CupertinoIcons.photo,
+                      color: CupertinoColors.systemGrey,
+                      size: 48,
+                    ),
+                  ),
+
             // 渐变遮罩
             Container(
               decoration: BoxDecoration(
@@ -48,7 +52,7 @@ class TripCoverWidget extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // 行程名称
             Positioned(
               left: 16,
@@ -132,7 +136,7 @@ class TripCoverWidget extends StatelessWidget {
   Widget _buildStatusChip(TripStatus status) {
     Color color;
     String label = '';
-    
+
     switch (status) {
       case TripStatus.planning:
         color = CupertinoColors.activeOrange;
@@ -151,7 +155,7 @@ class TripCoverWidget extends StatelessWidget {
         label = '已取消';
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../model/route/route_model.dart';
+import '../route/route_model.dart';
 
 part 'recommended_route_model.g.dart';
 

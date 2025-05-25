@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Divider;
-import 'package:walk/model/model/water/water_plan_model.dart';
-import 'package:walk/model/model/water/water_source_model.dart';
-import 'package:walk/model/model/water/day_water_plan_model.dart';
-import 'package:walk/model/model/water/water_types.dart';
+import 'package:walk/model/water/water_plan_model.dart';
+import 'package:walk/model/water/water_source_model.dart';
+import 'package:walk/model/water/day_water_plan_model.dart';
+import 'package:walk/model/water/water_types.dart';
 
 class TripWaterWidget extends StatefulWidget {
   final WaterPlanModel? waterPlan;

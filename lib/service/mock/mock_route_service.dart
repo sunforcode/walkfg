@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../route_service.dart';
-import '../../model/model/route/route_model.dart';
+import '../../model/route/route_model.dart';
 import '../../model/route/route_rating_model.dart';
 import '../../model/route/route_comment_model.dart';
 import '../../model/enums/route_status.dart';
