@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:walk/ui/page/trip_plan/trip_planning_page.dart';
 import '../../../../theme/theme/app_colors.dart';
 import '../../trip/my_trip_plans_screen.dart';
-import '../../trip/trip_planning_home_screen.dart';
+import '../../../../service/service_manager.dart';
 
 /// 行程规划入口组件
 class TripPlanningEntries extends StatelessWidget {
@@ -151,10 +151,37 @@ class TripPlanningEntries extends StatelessWidget {
   }
 
   /// 导航到行程规划页面
-  void _navigateToTripPlanning(BuildContext context) {
-    Navigator.of(context).push(
-      CupertinoPageRoute(
-        builder: (context) => const TripPlanningHomeScreen(),
+  void _navigateToTripPlanning(BuildContext context) async {
+    // 获取默认路线
+    final routeService = ServiceLocator.instance.getRecommendationService();
+    try {
+      final route = await routeService.getPersonalizedRecommendations();
+      Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (context) => TripPlanningPage2(
+            route: route.first,
+          ),
+        ),
+      );
+    } catch (e) {
+      print('获取推荐路线失败: $e');
+      _showNoRoutesAlert(context);
+    }
+  }
+
+  /// 显示没有路线的提示
+  void _showNoRoutesAlert(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('无法加载路线'),
+        content: const Text('暂时无法获取推荐路线，请稍后再试。'),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('确定'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
       ),
     );
   }

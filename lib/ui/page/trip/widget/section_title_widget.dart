@@ -4,10 +4,10 @@ import 'package:flutter/cupertino.dart';
 class SectionTitleWidget extends StatelessWidget {
   /// 标题文本
   final String title;
-  
+
   /// 标题样式
   final TextStyle? style;
-  
+
   /// 底部间距
   final double bottomSpacing;
 
@@ -26,10 +26,11 @@ class SectionTitleWidget extends StatelessWidget {
       children: [
         Text(
           title,
-          style: style ?? const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: style ??
+              const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
         ),
         SizedBox(height: bottomSpacing),
       ],

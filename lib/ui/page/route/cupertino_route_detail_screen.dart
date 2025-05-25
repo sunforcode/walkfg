@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:walk/ui/page/trip_plan/trip_planning_page.dart';
 import '../../../model/model/route/route_model.dart';
+import '../../../model/model/map/map_bounds.dart';
+import '../../../model/model/map/track_point_model.dart';
 import '../../../service/service_manager.dart';
-import '../trip/trip_planning_detail_screen.dart';
-import '../map/route_map_widget.dart';
+import '../../../service/map_service.dart';
+import '../../../ui/map/unified_map_widget.dart';
+import '../../../ui/map/utils/kml_parser.dart';
 import 'widgets/common_views.dart';
 import 'widgets/route_detail_content.dart';
 import 'my_favorite_routes_screen.dart';
@@ -29,13 +33,21 @@ class RouteDetailScreen extends StatefulWidget {
 
 class _RouteDetailScreenState extends State<RouteDetailScreen> {
   late Future<RouteModel> _routeFuture;
-  MapType _currentMapType = MapType.standard;
+  late MapService _mapService;
   bool _isFavorite = false;
+
+  /// KML轨迹点
+  List<TrackPointVO> _kmlTrackPoints = [];
+
+  /// KML路标点
+  List<TrackPointVO> _kmlWaypoints = [];
 
   @override
   void initState() {
     super.initState();
+    _mapService = ServiceLocator.instance.getMapService();
     _loadRouteDetail();
+    _loadKmlData(); // 加载KML数据
   }
 
   /// 加载路线详情
@@ -51,6 +63,83 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     _checkIfFavorite();
   }
 
+  /// 从KML文件加载轨迹数据
+  Future<void> _loadKmlData() async {
+    try {
+      print('开始加载KML文件: assets/maps/wutai.kml');
+
+      // 解析KML文件
+      final mapData = await KmlParser.parseFromAsset('assets/maps/wutai.kml');
+
+      print(
+          'KML解析成功，轨迹点数量: ${mapData.trackPoints.length}，路标点数量: ${mapData.waypoints.length}');
+      if (mapData.trackPoints.isNotEmpty) {
+        print('第一个轨迹点: ${mapData.trackPoints.first}');
+        print('最后一个轨迹点: ${mapData.trackPoints.last}');
+      }
+
+      if (mapData.waypoints.isNotEmpty) {
+        print('第一个路标点: ${mapData.waypoints.first}');
+      }
+
+      // 设置KML轨迹点和路标点
+      setState(() {
+        _kmlTrackPoints = mapData.trackPoints;
+        _kmlWaypoints = mapData.waypoints;
+      });
+
+      print('设置KML轨迹点，数量: ${_kmlTrackPoints.length}');
+      print('设置KML路标点，数量: ${_kmlWaypoints.length}');
+    } catch (e) {
+      print('KML解析失败: $e');
+      print('错误堆栈: ${StackTrace.current}');
+
+      // 尝试创建一些测试轨迹点
+      setState(() {
+        _kmlTrackPoints = [
+          TrackPointVO(
+            latitude: 39.9042,
+            longitude: 116.4074,
+            elevation: 100,
+            name: '测试点1',
+          ),
+          TrackPointVO(
+            latitude: 39.9142,
+            longitude: 116.4174,
+            elevation: 110,
+            name: '测试点2',
+          ),
+          TrackPointVO(
+            latitude: 39.9242,
+            longitude: 116.4274,
+            elevation: 120,
+            name: '测试点3',
+          ),
+        ];
+
+        _kmlWaypoints = [
+          TrackPointVO(
+            latitude: 39.9042,
+            longitude: 116.4074,
+            elevation: 100,
+            name: '起点',
+            type: '起点',
+          ),
+          TrackPointVO(
+            latitude: 39.9242,
+            longitude: 116.4274,
+            elevation: 120,
+            name: '终点',
+            type: '终点',
+          ),
+        ];
+      });
+
+      print('创建测试轨迹点，数量: ${_kmlTrackPoints.length}');
+      print('创建测试路标点，数量: ${_kmlWaypoints.length}');
+    }
+  }
+
   /// 检查路线是否已收藏
   void _checkIfFavorite() {
     final apiService = ServiceLocator.instance.getRouteService();
@@ -61,18 +150,11 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     });
   }
 
-  /// 处理地图类型变更
-  void _handleMapTypeChanged(MapType mapType) {
-    setState(() {
-      _currentMapType = mapType;
-    });
-  }
-
   /// 开始规划行程
   void _startPlanning(RouteModel route) {
     Navigator.of(context).push(
       CupertinoPageRoute(
-        builder: (context) => TripPlanningDetailScreen(route: route),
+        builder: (context) => TripPlanningPage2(route: route),
       ),
     );
   }
@@ -105,6 +187,18 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
         );
       });
     }
+  }
+
+  /// 处理离线地图下载
+  void _handleDownloadOfflineMap(
+      MapBoundsVO bounds, MapType mapType, MapProvider mapProvider) {
+    // _mapService.downloadOfflineMap(
+    //   bounds,
+    //   mapType,
+    //   mapProvider,
+    //   (message) => _showToast(message),
+    //   (error) => _showToast(error),
+    // );
   }
 
   /// 显示提示信息
@@ -159,40 +253,44 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('路线详情'),
-      ),
-      child: SafeArea(
-        child: FutureBuilder<RouteModel>(
-          future: _routeFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const LoadingView();
-            }
+    return ChangeNotifierProvider.value(
+      value: _mapService,
+      child: CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          middle: Text('路线详情'),
+        ),
+        child: SafeArea(
+          child: FutureBuilder<RouteModel>(
+            future: _routeFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const LoadingView();
+              }
 
-            if (snapshot.hasError) {
-              return ErrorView(
-                error: snapshot.error,
-                onRetry: () {
-                  setState(() {
-                    _loadRouteDetail();
-                  });
-                },
+              if (snapshot.hasError) {
+                return ErrorView(
+                  error: snapshot.error,
+                  onRetry: () {
+                    setState(() {
+                      _loadRouteDetail();
+                    });
+                  },
+                );
+              }
+
+              final route = snapshot.data!;
+              return RouteDetailContent(
+                route: route,
+                trackPoints: _kmlTrackPoints, // 传递KML轨迹点
+                waypoints: _kmlWaypoints, // 传递KML路标点
+                isFavorite: _isFavorite,
+                onViewMap: _showFeatureInDevelopmentDialog,
+                onPlanTrip: () => _startPlanning(route),
+                onFavorite: _handleFavorite,
+                onDownloadOfflineMap: _handleDownloadOfflineMap,
               );
-            }
-
-            final route = snapshot.data!;
-            return RouteDetailContent(
-              route: route,
-              currentMapType: _currentMapType,
-              onMapTypeChanged: _handleMapTypeChanged,
-              onViewMap: _showFeatureInDevelopmentDialog,
-              onPlanTrip: () => _startPlanning(route),
-              onFavorite: _handleFavorite,
-              isFavorite: _isFavorite,
-            );
-          },
+            },
+          ),
         ),
       ),
     );

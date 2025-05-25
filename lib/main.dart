@@ -5,12 +5,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'ui/app.dart';
 import 'service/service_manager.dart';
 
 void main() async {
   // 确保Flutter绑定初始化
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化日期格式化
+  await initializeDateFormatting('zh_CN', null);
+  await initializeDateFormatting('en_US', null);
 
   // 初始化服务定位器
   ServiceLocator.instance.initialize(useMock: true);

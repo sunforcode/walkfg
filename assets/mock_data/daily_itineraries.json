@@ -1,27 +1,64 @@
 [
   {
-    "route_id": "route1",
-    "itineraries": [
+    "start_point": "显通寺",
+    "end_point": "塔院寺",
+    "date": "2023-08-16T00:00:00.000",
+    "distance": 12.0,
+    "elevation_gain": 450,
+    "elevation_loss": 0,
+    "estimated_time": 5.5,
+    "duration": 5.5,
+    "accommodation": "五台山塔院寺招待所",
+    "meals": "素斋",
+    "waypoints": [
       {
-        "start_point": "黄山北门",
-        "end_point": "光明顶",
-        "distance": 8.5,
-        "elevation_gain": 1200,
-        "elevation_loss": 300,
-        "estimated_time": 5.5,
-        "waypoints": [
-          {
-            "name": "始信峰",
-            "description": "黄山著名景点，可观云海",
-            "latitude": 30.1325,
-            "longitude": 118.1742,
-            "elevation": 1600,
-            "distance_from_start": 3.2,
-            "estimated_time_from_start": 2.0,
-            "type": "景点"
-          }
-        ]
+        "id": "waypoint_1",
+        "name": "菩萨顶",
+        "latitude": 39.0,
+        "longitude": 113.5,
+        "elevation": 2500.0,
+        "distance_from_start": 6.0,
+        "estimated_time_from_start": 2.5,
+        "type": "scenic"
       }
-    ]
+    ],
+    "recommended_campsite": null,
+    "alternate_campsites": []
+  },
+  {
+    "start_point": "菩萨顶",
+    "end_point": "南山寺",
+    "date": "2023-08-17T00:00:00.000",
+    "distance": 15.0,
+    "elevation_gain": 550,
+    "elevation_loss": 100,
+    "estimated_time": 6.5,
+    "duration": 6.5,
+    "accommodation": "南山寺招待所",
+    "meals": "素斋",
+    "waypoints": [
+      {
+        "id": "waypoint_2",
+        "name": "龙泉寺",
+        "latitude": 39.1,
+        "longitude": 113.4,
+        "elevation": 2300.0,
+        "distance_from_start": 5.0,
+        "estimated_time_from_start": 2.0,
+        "type": "scenic"
+      },
+      {
+        "id": "waypoint_3",
+        "name": "普化寺",
+        "latitude": 39.2,
+        "longitude": 113.3,
+        "elevation": 2400.0,
+        "distance_from_start": 10.0,
+        "estimated_time_from_start": 4.0,
+        "type": "scenic"
+      }
+    ],
+    "recommended_campsite": null,
+    "alternate_campsites": []
   }
 ]

@@ -8,20 +8,19 @@ import 'package:walk/service/mock/mock_weather_service.dart';
 import 'package:walk/service/mock/mock_gear_service.dart';
 import 'package:walk/service/mock/mock_recommendation_service.dart';
 import 'package:walk/service/mock/mock_trip_service.dart';
+import 'package:walk/service/trip_plan_service.dart';
 import 'search_history_service.dart';
 import 'track_format_service.dart';
 import 'route_service.dart';
 import 'user_service.dart';
 import 'guide_service.dart';
 import 'weather_service.dart';
-import 'trip_plan_service.dart';
 import 'gear_service.dart';
 import 'recommendation_service.dart';
 import 'trip_service.dart';
+import 'map_service.dart';
 
-/// 服务定位器
-///
-/// 提供统一的服务访问点，支持依赖注入和服务替换
+/// 服务定位器，用于管理和访问各种服务
 class ServiceLocator {
   /// 单例实例
   static final ServiceLocator instance = ServiceLocator._internal();
@@ -59,6 +58,8 @@ class ServiceLocator {
   /// 私有构造函数
   ServiceLocator._internal();
 
+  late final MapService _mapService;
+
   /// 初始化服务
   void initialize({bool useMock = true}) {
     if (useMock) {
@@ -85,6 +86,7 @@ class ServiceLocator {
     _tripPlanService = MockTripPlanService();
     _gearService = MockGearService();
     _recommendationService = MockRecommendationService();
+    _mapService = MapService.instance;
   }
 
   /// 注册真实服务
@@ -99,6 +101,7 @@ class ServiceLocator {
     _tripPlanService = MockTripPlanService(); // 临时使用Mock
     _gearService = MockGearService(); // 临时使用Mock
     _recommendationService = MockRecommendationService(); // 临时使用Mock
+    _mapService = MapService.instance;
   }
 
   /// 获取行程服务
@@ -149,5 +152,9 @@ class ServiceLocator {
   /// 获取推荐服务
   RecommendationService getRecommendationService() {
     return _recommendationService;
+  }
+
+  MapService getMapService() {
+    return _mapService;
   }
 }

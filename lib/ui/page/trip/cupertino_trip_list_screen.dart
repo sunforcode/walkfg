@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/model/trip/trip_model.dart';
 import 'package:walk/ui/page/trip/cupertino_trip_detail_screen.dart';
 import 'package:walk/ui/widgets/common/empty_content_widget.dart';
@@ -108,7 +107,8 @@ class _TripListScreenState extends State<TripListScreen> {
             // 封面图片
             if (trip.coverUrl != null)
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(12)),
                 child: Image.network(
                   trip.coverUrl!,
                   height: 120,
@@ -124,7 +124,7 @@ class _TripListScreenState extends State<TripListScreen> {
                   ),
                 ),
               ),
-            
+
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -138,9 +138,9 @@ class _TripListScreenState extends State<TripListScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // 行程描述
                   Text(
                     trip.description,
@@ -151,9 +151,9 @@ class _TripListScreenState extends State<TripListScreen> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // 行程信息
                   Row(
                     children: [
@@ -212,7 +212,7 @@ class _TripListScreenState extends State<TripListScreen> {
   Widget _buildStatusChip(TripStatus status) {
     Color color;
     String label = '';
-    
+
     switch (status) {
       case TripStatus.planning:
         color = CupertinoColors.activeOrange;
@@ -231,7 +231,7 @@ class _TripListScreenState extends State<TripListScreen> {
         label = '已取消';
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(

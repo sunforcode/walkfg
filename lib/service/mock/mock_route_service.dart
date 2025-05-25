@@ -68,6 +68,7 @@ class MockRouteService implements RouteService {
       orElse: () => throw Exception('Route not found: $routeId'),
     );
 
+    // JSON 文件已经符合 RouteModel 的格式，直接返回
     return RouteModel.fromJson(routeJson);
   }
 
@@ -169,7 +170,6 @@ class MockRouteService implements RouteService {
 
     // 按人气排序
     routes.sort((a, b) => b.popularity.compareTo(a.popularity));
-
     // 限制数量
     if (routes.length > limit) {
       routes = routes.sublist(0, limit);

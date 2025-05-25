@@ -5,7 +5,7 @@ import 'equipment_necessity.dart';
 part 'equipment_item_model.g.dart';
 
 /// 装备项目模型 - 统一的装备项目表示
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class EquipmentItemModel extends BaseModel {
   /// 名称
   final String name;
@@ -43,6 +43,8 @@ class EquipmentItemModel extends BaseModel {
 
   /// 备注
   final String? notes;
+
+  bool isOwned = true;
 
   /// 构造函数
   EquipmentItemModel({

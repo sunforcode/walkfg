@@ -5,13 +5,15 @@ import 'campsite_model.dart';
 part 'daily_itinerary_model.g.dart';
 
 /// 每日行程模型 - 用于API服务
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class DailyItinerary {
   /// 起点
   final String startPoint;
 
   /// 终点
   final String endPoint;
+
+  final DateTime date;
 
   /// 距离(公里)
   final double distance;
@@ -34,11 +36,20 @@ class DailyItinerary {
   /// 备选营地
   final List<CampsiteModel> alternateCampsites;
 
+  final double duration;
+
+  String accommodation;
+
+  String meals = '';
+
   /// 构造函数
   DailyItinerary({
     required this.startPoint,
     required this.endPoint,
+    required this.date,
+    required this.accommodation,
     required this.distance,
+    required this.duration,
     required this.elevationGain,
     required this.elevationLoss,
     required this.estimatedTime,

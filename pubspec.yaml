@@ -20,7 +20,7 @@ dependencies:
   go_router: ^13.0.1
 
   # 网络请求
-  dio: ^5.3.3
+  dio: ^5.4.0
   http: ^1.1.0
 
   # 本地存储
@@ -38,6 +38,7 @@ dependencies:
   shimmer: ^3.0.0
   lottie: ^2.7.0
   flutter_map: ^6.2.1
+  flutter_map_cancellable_tile_provider: ^1.0.0
   latlong2: ^0.9.1
   fl_chart: ^1.0.0
   intl: ^0.19.0
@@ -87,24 +88,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/icons/
-    - assets/animations/
-    - assets/mock_data/
-    - assets/mock_data_new/
     - assets/maps/
-    - assets/mock_data/search_history.json
-    - assets/mock_data/gear_details.json
-    - assets/mock_data/gear_recommendations.json
-    - assets/mock_data/route_ratings.json
-    - assets/mock_data/route_tags.json
-    - assets/mock_data/route_daily_plans.json
-    - assets/mock_data/route_waypoints.json
-    - assets/mock_data/user_gear.json
-    - assets/mock_data/gear_categories.json
-    - assets/mock_data/gear_by_category.json
-    - assets/mock_data/gear_purchase_options.json
-    - assets/mock_data/gear_rental_options.json
-    - assets/mock_data/routes.json
+    - assets/mock_data/
 
   fonts:
     - family: NotoSansSC

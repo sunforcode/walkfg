@@ -1,32 +1,1381 @@
-[
-  {
-    "id": "trip1",
-    "user_id": "user1",
-    "route_id": "route1",
-    "name": "黄山主峰徒步行程",
-    "description": "黄山主峰徒步行程，包括光明顶、莲花峰、天都峰等主要景点",
-    "route_name": "黄山主峰徒步行程",
-    "start_date": "2023-10-01T00:00:00.000Z",
-    "end_date": "2023-10-03T00:00:00.000Z",
-    "participant_count": 3,
-    "departure_city": "上海",
-    "status": 0,
-    "created_at": "2023-05-01T00:00:00.000Z",
-    "updated_at": "2023-05-01T00:00:00.000Z"
+[{
+  "id": "trip001",
+  "name": "三日高山徒步",
+  "description": "三日高山徒步行程，包含湖泊和山脊露营",
+  "start_date": "2023-07-01T00:00:00.000Z",
+  "end_date": "2023-07-03T00:00:00.000Z",
+  "status": 0,
+  "route_ids": ["route001"],
+  "primary_route_id": "route001",
+  "dayMealPlans": [
+    {
+      "dayNumber": 1,
+      "breakfast": [
+        {
+          "id": "fi001",
+          "name": "即食燕麦片",
+          "description": "即食燕麦片，加水即可食用",
+          "weight": 100.0,
+          "quantity": 1,
+          "calories": 380.0,
+          "protein": 12.0,
+          "fat": 7.0,
+          "carbs": 65.0,
+          "price": 5.0,
+          "prepared": true,
+          "notes": "含坚果和干果，能量充足"
+        },
+        {
+          "id": "fi008",
+          "name": "速溶咖啡",
+          "description": "单包装速溶咖啡",
+          "weight": 10.0,
+          "quantity": 1,
+          "calories": 40.0,
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 10.0,
+          "price": 2.0,
+          "prepared": true,
+          "notes": "提神醒脑，早晨必备"
+        }
+      ],
+      "lunch": [
+        {
+          "id": "fi002",
+          "name": "能量棒",
+          "description": "高能量密度的能量棒",
+          "weight": 50.0,
+          "quantity": 2,
+          "calories": 450.0,
+          "protein": 10.0,
+          "fat": 20.0,
+          "carbs": 55.0,
+          "price": 8.0,
+          "prepared": true,
+          "notes": "含坚果和巧克力，适合快速补充能量"
+        },
+        {
+          "id": "fi005",
+          "name": "坚果混合包",
+          "description": "混合坚果包，含杏仁、核桃、腰果",
+          "weight": 50.0,
+          "quantity": 1,
+          "calories": 580.0,
+          "protein": 15.0,
+          "fat": 45.0,
+          "carbs": 20.0,
+          "price": 12.0,
+          "prepared": true,
+          "notes": "高能量密度，适合徒步中补充能量"
+        }
+      ],
+      "dinner": [
+        {
+          "id": "fi003",
+          "name": "冻干牛肉饭",
+          "description": "冻干技术处理的牛肉饭，加热水复原",
+          "weight": 120.0,
+          "quantity": 1,
+          "calories": 420.0,
+          "protein": 25.0,
+          "fat": 12.0,
+          "carbs": 50.0,
+          "price": 35.0,
+          "prepared": true,
+          "notes": "口感好，复原快，高蛋白质"
+        },
+        {
+          "id": "fi010",
+          "name": "冻干蔬菜包",
+          "description": "混合冻干蔬菜",
+          "weight": 30.0,
+          "quantity": 1,
+          "calories": 100.0,
+          "protein": 5.0,
+          "fat": 1.0,
+          "carbs": 20.0,
+          "price": 15.0,
+          "prepared": true,
+          "notes": "添加到主食中增加营养和口感"
+        }
+      ],
+      "snacks": [
+        {
+          "id": "fi006",
+          "name": "巧克力",
+          "description": "70%黑巧克力",
+          "weight": 30.0,
+          "quantity": 1,
+          "calories": 550.0,
+          "protein": 5.0,
+          "fat": 40.0,
+          "carbs": 35.0,
+          "price": 15.0,
+          "prepared": true,
+          "notes": "高能量，适合快速补充能量"
+        },
+        {
+          "id": "fi012",
+          "name": "干果混合包",
+          "description": "混合干果包，含葡萄干、蔓越莓、芒果干",
+          "weight": 50.0,
+          "quantity": 1,
+          "calories": 350.0,
+          "protein": 3.0,
+          "fat": 1.0,
+          "carbs": 80.0,
+          "price": 10.0,
+          "prepared": true,
+          "notes": "天然糖分，快速补充能量"
+        }
+      ],
+      "drinks": [
+        {
+          "id": "fi009",
+          "name": "运动饮料粉",
+          "description": "电解质运动饮料粉",
+          "weight": 20.0,
+          "quantity": 2,
+          "calories": 80.0,
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 20.0,
+          "price": 3.0,
+          "prepared": true,
+          "notes": "补充电解质，预防脱水"
+        }
+      ]
+    },
+    {
+      "dayNumber": 2,
+      "breakfast": [
+        {
+          "id": "fi001",
+          "name": "即食燕麦片",
+          "description": "即食燕麦片，加水即可食用",
+          "weight": 100.0,
+          "quantity": 1,
+          "calories": 380.0,
+          "protein": 12.0,
+          "fat": 7.0,
+          "carbs": 65.0,
+          "price": 5.0,
+          "prepared": true,
+          "notes": "含坚果和干果，能量充足"
+        },
+        {
+          "id": "fi008",
+          "name": "速溶咖啡",
+          "description": "单包装速溶咖啡",
+          "weight": 10.0,
+          "quantity": 1,
+          "calories": 40.0,
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 10.0,
+          "price": 2.0,
+          "prepared": true,
+          "notes": "提神醒脑，早晨必备"
+        }
+      ],
+      "lunch": [
+        {
+          "id": "fi011",
+          "name": "牛肉干",
+          "description": "高蛋白质牛肉干",
+          "weight": 50.0,
+          "quantity": 1,
+          "calories": 300.0,
+          "protein": 30.0,
+          "fat": 15.0,
+          "carbs": 10.0,
+          "price": 25.0,
+          "prepared": true,
+          "notes": "高蛋白质，耐保存"
+        },
+        {
+          "id": "fi013",
+          "name": "压缩饼干",
+          "description": "高能量压缩饼干",
+          "weight": 100.0,
+          "quantity": 1,
+          "calories": 450.0,
+          "protein": 10.0,
+          "fat": 15.0,
+          "carbs": 70.0,
+          "price": 8.0,
+          "prepared": true,
+          "notes": "体积小，能量高，应急食品"
+        }
+      ],
+      "dinner": [
+        {
+          "id": "fi004",
+          "name": "冻干意面",
+          "description": "冻干技术处理的肉酱意面，加热水复原",
+          "weight": 130.0,
+          "quantity": 1,
+          "calories": 450.0,
+          "protein": 18.0,
+          "fat": 15.0,
+          "carbs": 60.0,
+          "price": 32.0,
+          "prepared": true,
+          "notes": "含番茄肉酱，口感丰富"
+        },
+        {
+          "id": "fi010",
+          "name": "冻干蔬菜包",
+          "description": "混合冻干蔬菜",
+          "weight": 30.0,
+          "quantity": 1,
+          "calories": 100.0,
+          "protein": 5.0,
+          "fat": 1.0,
+          "carbs": 20.0,
+          "price": 15.0,
+          "prepared": true,
+          "notes": "添加到主食中增加营养和口感"
+        }
+      ],
+      "snacks": [
+        {
+          "id": "fi007",
+          "name": "蛋白棒",
+          "description": "高蛋白质能量棒",
+          "weight": 60.0,
+          "quantity": 2,
+          "calories": 380.0,
+          "protein": 20.0,
+          "fat": 15.0,
+          "carbs": 40.0,
+          "price": 10.0,
+          "prepared": true,
+          "notes": "高蛋白质，适合肌肉恢复"
+        },
+        {
+          "id": "fi015",
+          "name": "能量胶",
+          "description": "运动能量胶",
+          "weight": 30.0,
+          "quantity": 2,
+          "calories": 100.0,
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 25.0,
+          "price": 8.0,
+          "prepared": true,
+          "notes": "快速补充碳水化合物，适合高强度活动"
+        }
+      ],
+      "drinks": [
+        {
+          "id": "fi009",
+          "name": "运动饮料粉",
+          "description": "电解质运动饮料粉",
+          "weight": 20.0,
+          "quantity": 2,
+          "calories": 80.0,
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 20.0,
+          "price": 3.0,
+          "prepared": true,
+          "notes": "补充电解质，预防脱水"
+        }
+      ]
+    },
+    {
+      "dayNumber": 3,
+      "breakfast": [
+        {
+          "id": "fi001",
+          "name": "即食燕麦片",
+          "description": "即食燕麦片，加水即可食用",
+          "weight": 100.0,
+          "quantity": 1,
+          "calories": 380.0,
+          "protein": 12.0,
+          "fat": 7.0,
+          "carbs": 65.0,
+          "price": 5.0,
+          "prepared": true,
+          "notes": "含坚果和干果，能量充足"
+        },
+        {
+          "id": "fi008",
+          "name": "速溶咖啡",
+          "description": "单包装速溶咖啡",
+          "weight": 10.0,
+          "quantity": 1,
+          "calories": 40.0,
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 10.0,
+          "price": 2.0,
+          "prepared": true,
+          "notes": "提神醒脑，早晨必备"
+        }
+      ],
+      "lunch": [
+        {
+          "id": "fi014",
+          "name": "即食米饭",
+          "description": "真空包装即食米饭",
+          "weight": 200.0,
+          "quantity": 1,
+          "calories": 300.0,
+          "protein": 5.0,
+          "fat": 2.0,
+          "carbs": 65.0,
+          "price": 6.0,
+          "prepared": true,
+          "notes": "无需加热，即开即食"
+        },
+        {
+          "id": "fi011",
+          "name": "牛肉干",
+          "description": "高蛋白质牛肉干",
+          "weight": 50.0,
+          "quantity": 1,
+          "calories": 300.0,
+          "protein": 30.0,
+          "fat": 15.0,
+          "carbs": 10.0,
+          "price": 25.0,
+          "prepared": true,
+          "notes": "高蛋白质，耐保存"
+        }
+      ],
+      "dinner": [
+        {
+          "id": "fi003",
+          "name": "冻干牛肉饭",
+          "description": "冻干技术处理的牛肉饭，加热水复原",
+          "weight": 120.0,
+          "quantity": 1,
+          "calories": 420.0,
+          "protein": 25.0,
+          "fat": 12.0,
+          "carbs": 50.0,
+          "price": 35.0,
+          "prepared": true,
+          "notes": "口感好，复原快，高蛋白质"
+        },
+        {
+          "id": "fi010",
+          "name": "冻干蔬菜包",
+          "description": "混合冻干蔬菜",
+          "weight": 30.0,
+          "quantity": 1,
+          "calories": 100.0,
+          "protein": 5.0,
+          "fat": 1.0,
+          "carbs": 20.0,
+          "price": 15.0,
+          "prepared": true,
+          "notes": "添加到主食中增加营养和口感"
+        }
+      ],
+      "snacks": [
+        {
+          "id": "fi002",
+          "name": "能量棒",
+          "description": "高能量密度的能量棒",
+          "weight": 50.0,
+          "quantity": 2,
+          "calories": 450.0,
+          "protein": 10.0,
+          "fat": 20.0,
+          "carbs": 55.0,
+          "price": 8.0,
+          "prepared": true,
+          "notes": "含坚果和巧克力，适合快速补充能量"
+        },
+        {
+          "id": "fi006",
+          "name": "巧克力",
+          "description": "70%黑巧克力",
+          "weight": 30.0,
+          "quantity": 1,
+          "calories": 550.0,
+          "protein": 5.0,
+          "fat": 40.0,
+          "carbs": 35.0,
+          "price": 15.0,
+          "prepared": true,
+          "notes": "高能量，适合快速补充能量"
+        }
+      ],
+      "drinks": [
+        {
+          "id": "fi009",
+          "name": "运动饮料粉",
+          "description": "电解质运动饮料粉",
+          "weight": 20.0,
+          "quantity": 2,
+          "calories": 80.0,
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 20.0,
+          "price": 3.0,
+          "prepared": true,
+          "notes": "补充电解质，预防脱水"
+        }
+      ]
+    }
+  ],
+  "meal_plan_id": "mp001",
+  "meal_plan": {
+    "id": "mp001",
+    "name": "三日高山徒步膳食计划",
+    "description": "适合三日高山徒步的膳食计划，注重高能量和便携性",
+    "tripDays": 3,
+    "personCount": 2,
+    "dayMealPlans": [
+      {
+        "dayNumber": 1,
+        "breakfast": [
+          {
+            "id": "fi001",
+            "name": "即食燕麦片",
+            "description": "即食燕麦片，加水即可食用",
+            "weight": 100.0,
+            "quantity": 1,
+            "calories": 380.0,
+            "protein": 12.0,
+            "fat": 7.0,
+            "carbs": 65.0,
+            "price": 5.0,
+            "prepared": true,
+            "notes": "含坚果和干果，能量充足"
+          },
+          {
+            "id": "fi008",
+            "name": "速溶咖啡",
+            "description": "单包装速溶咖啡",
+            "weight": 10.0,
+            "quantity": 1,
+            "calories": 40.0,
+            "protein": 0.0,
+            "fat": 0.0,
+            "carbs": 10.0,
+            "price": 2.0,
+            "prepared": true,
+            "notes": "提神醒脑，早晨必备"
+          }
+        ],
+        "lunch": [
+          {
+            "id": "fi002",
+            "name": "能量棒",
+            "description": "高能量密度的能量棒",
+            "weight": 50.0,
+            "quantity": 2,
+            "calories": 450.0,
+            "protein": 10.0,
+            "fat": 20.0,
+            "carbs": 55.0,
+            "price": 8.0,
+            "prepared": true,
+            "notes": "含坚果和巧克力，适合快速补充能量"
+          },
+          {
+            "id": "fi005",
+            "name": "坚果混合包",
+            "description": "混合坚果包，含杏仁、核桃、腰果",
+            "weight": 50.0,
+            "quantity": 1,
+            "calories": 580.0,
+            "protein": 15.0,
+            "fat": 45.0,
+            "carbs": 20.0,
+            "price": 12.0,
+            "prepared": true,
+            "notes": "高能量密度，适合徒步中补充能量"
+          }
+        ],
+        "dinner": [
+          {
+            "id": "fi003",
+            "name": "冻干牛肉饭",
+            "description": "冻干技术处理的牛肉饭，加热水复原",
+            "weight": 120.0,
+            "quantity": 1,
+            "calories": 420.0,
+            "protein": 25.0,
+            "fat": 12.0,
+            "carbs": 50.0,
+            "price": 35.0,
+            "prepared": true,
+            "notes": "口感好，复原快，高蛋白质"
+          },
+          {
+            "id": "fi010",
+            "name": "冻干蔬菜包",
+            "description": "混合冻干蔬菜",
+            "weight": 30.0,
+            "quantity": 1,
+            "calories": 100.0,
+            "protein": 5.0,
+            "fat": 1.0,
+            "carbs": 20.0,
+            "price": 15.0,
+            "prepared": true,
+            "notes": "添加到主食中增加营养和口感"
+          }
+        ],
+        "snacks": [
+          {
+            "id": "fi006",
+            "name": "巧克力",
+            "description": "70%黑巧克力",
+            "weight": 30.0,
+            "quantity": 1,
+            "calories": 550.0,
+            "protein": 5.0,
+            "fat": 40.0,
+            "carbs": 35.0,
+            "price": 15.0,
+            "prepared": true,
+            "notes": "高能量，适合快速补充能量"
+          },
+          {
+            "id": "fi012",
+            "name": "干果混合包",
+            "description": "混合干果包，含葡萄干、蔓越莓、芒果干",
+            "weight": 50.0,
+            "quantity": 1,
+            "calories": 350.0,
+            "protein": 3.0,
+            "fat": 1.0,
+            "carbs": 80.0,
+            "price": 10.0,
+            "prepared": true,
+            "notes": "天然糖分，快速补充能量"
+          }
+        ],
+        "drinks": [
+          {
+            "id": "fi009",
+            "name": "运动饮料粉",
+            "description": "电解质运动饮料粉",
+            "weight": 20.0,
+            "quantity": 2,
+            "calories": 80.0,
+            "protein": 0.0,
+            "fat": 0.0,
+            "carbs": 20.0,
+            "price": 3.0,
+            "prepared": true,
+            "notes": "补充电解质，预防脱水"
+          }
+        ]
+      },
+      {
+        "dayNumber": 2,
+        "breakfast": [
+          {
+            "id": "fi001",
+            "name": "即食燕麦片",
+            "description": "即食燕麦片，加水即可食用",
+            "weight": 100.0,
+            "quantity": 1,
+            "calories": 380.0,
+            "protein": 12.0,
+            "fat": 7.0,
+            "carbs": 65.0,
+            "price": 5.0,
+            "prepared": true,
+            "notes": "含坚果和干果，能量充足"
+          },
+          {
+            "id": "fi008",
+            "name": "速溶咖啡",
+            "description": "单包装速溶咖啡",
+            "weight": 10.0,
+            "quantity": 1,
+            "calories": 40.0,
+            "protein": 0.0,
+            "fat": 0.0,
+            "carbs": 10.0,
+            "price": 2.0,
+            "prepared": true,
+            "notes": "提神醒脑，早晨必备"
+          }
+        ],
+        "lunch": [
+          {
+            "id": "fi011",
+            "name": "牛肉干",
+            "description": "高蛋白质牛肉干",
+            "weight": 50.0,
+            "quantity": 1,
+            "calories": 300.0,
+            "protein": 30.0,
+            "fat": 15.0,
+            "carbs": 10.0,
+            "price": 25.0,
+            "prepared": true,
+            "notes": "高蛋白质，耐保存"
+          },
+          {
+            "id": "fi013",
+            "name": "压缩饼干",
+            "description": "高能量压缩饼干",
+            "weight": 100.0,
+            "quantity": 1,
+            "calories": 450.0,
+            "protein": 10.0,
+            "fat": 15.0,
+            "carbs": 70.0,
+            "price": 8.0,
+            "prepared": true,
+            "notes": "体积小，能量高，应急食品"
+          }
+        ],
+        "dinner": [
+          {
+            "id": "fi004",
+            "name": "冻干意面",
+            "description": "冻干技术处理的肉酱意面，加热水复原",
+            "weight": 130.0,
+            "quantity": 1,
+            "calories": 450.0,
+            "protein": 18.0,
+            "fat": 15.0,
+            "carbs": 60.0,
+            "price": 32.0,
+            "prepared": true,
+            "notes": "含番茄肉酱，口感丰富"
+          },
+          {
+            "id": "fi010",
+            "name": "冻干蔬菜包",
+            "description": "混合冻干蔬菜",
+            "weight": 30.0,
+            "quantity": 1,
+            "calories": 100.0,
+            "protein": 5.0,
+            "fat": 1.0,
+            "carbs": 20.0,
+            "price": 15.0,
+            "prepared": true,
+            "notes": "添加到主食中增加营养和口感"
+          }
+        ],
+        "snacks": [
+          {
+            "id": "fi007",
+            "name": "蛋白棒",
+            "description": "高蛋白质能量棒",
+            "weight": 60.0,
+            "quantity": 2,
+            "calories": 380.0,
+            "protein": 20.0,
+            "fat": 15.0,
+            "carbs": 40.0,
+            "price": 10.0,
+            "prepared": true,
+            "notes": "高蛋白质，适合肌肉恢复"
+          },
+          {
+            "id": "fi015",
+            "name": "能量胶",
+            "description": "运动能量胶",
+            "weight": 30.0,
+            "quantity": 2,
+            "calories": 100.0,
+            "protein": 0.0,
+            "fat": 0.0,
+            "carbs": 25.0,
+            "price": 8.0,
+            "prepared": true,
+            "notes": "快速补充碳水化合物，适合高强度活动"
+          }
+        ],
+        "drinks": [
+          {
+            "id": "fi009",
+            "name": "运动饮料粉",
+            "description": "电解质运动饮料粉",
+            "weight": 20.0,
+            "quantity": 2,
+            "calories": 80.0,
+            "protein": 0.0,
+            "fat": 0.0,
+            "carbs": 20.0,
+            "price": 3.0,
+            "prepared": true,
+            "notes": "补充电解质，预防脱水"
+          }
+        ]
+      },
+      {
+        "dayNumber": 3,
+        "breakfast": [
+          {
+            "id": "fi001",
+            "name": "即食燕麦片",
+            "description": "即食燕麦片，加水即可食用",
+            "weight": 100.0,
+            "quantity": 1,
+            "calories": 380.0,
+            "protein": 12.0,
+            "fat": 7.0,
+            "carbs": 65.0,
+            "price": 5.0,
+            "prepared": true,
+            "notes": "含坚果和干果，能量充足"
+          },
+          {
+            "id": "fi008",
+            "name": "速溶咖啡",
+            "description": "单包装速溶咖啡",
+            "weight": 10.0,
+            "quantity": 1,
+            "calories": 40.0,
+            "protein": 0.0,
+            "fat": 0.0,
+            "carbs": 10.0,
+            "price": 2.0,
+            "prepared": true,
+            "notes": "提神醒脑，早晨必备"
+          }
+        ],
+        "lunch": [
+          {
+            "id": "fi014",
+            "name": "即食米饭",
+            "description": "真空包装即食米饭",
+            "weight": 200.0,
+            "quantity": 1,
+            "calories": 300.0,
+            "protein": 5.0,
+            "fat": 2.0,
+            "carbs": 65.0,
+            "price": 6.0,
+            "prepared": true,
+            "notes": "无需加热，即开即食"
+          },
+          {
+            "id": "fi011",
+            "name": "牛肉干",
+            "description": "高蛋白质牛肉干",
+            "weight": 50.0,
+            "quantity": 1,
+            "calories": 300.0,
+            "protein": 30.0,
+            "fat": 15.0,
+            "carbs": 10.0,
+            "price": 25.0,
+            "prepared": true,
+            "notes": "高蛋白质，耐保存"
+          }
+        ],
+        "dinner": [
+          {
+            "id": "fi003",
+            "name": "冻干牛肉饭",
+            "description": "冻干技术处理的牛肉饭，加热水复原",
+            "weight": 120.0,
+            "quantity": 1,
+            "calories": 420.0,
+            "protein": 25.0,
+            "fat": 12.0,
+            "carbs": 50.0,
+            "price": 35.0,
+            "prepared": true,
+            "notes": "口感好，复原快，高蛋白质"
+          },
+          {
+            "id": "fi010",
+            "name": "冻干蔬菜包",
+            "description": "混合冻干蔬菜",
+            "weight": 30.0,
+            "quantity": 1,
+            "calories": 100.0,
+            "protein": 5.0,
+            "fat": 1.0,
+            "carbs": 20.0,
+            "price": 15.0,
+            "prepared": true,
+            "notes": "添加到主食中增加营养和口感"
+          }
+        ],
+        "snacks": [
+          {
+            "id": "fi002",
+            "name": "能量棒",
+            "description": "高能量密度的能量棒",
+            "weight": 50.0,
+            "quantity": 2,
+            "calories": 450.0,
+            "protein": 10.0,
+            "fat": 20.0,
+            "carbs": 55.0,
+            "price": 8.0,
+            "prepared": true,
+            "notes": "含坚果和巧克力，适合快速补充能量"
+          },
+          {
+            "id": "fi006",
+            "name": "巧克力",
+            "description": "70%黑巧克力",
+            "weight": 30.0,
+            "quantity": 1,
+            "calories": 550.0,
+            "protein": 5.0,
+            "fat": 40.0,
+            "carbs": 35.0,
+            "price": 15.0,
+            "prepared": true,
+            "notes": "高能量，适合快速补充能量"
+          }
+        ],
+        "drinks": [
+          {
+            "id": "fi009",
+            "name": "运动饮料粉",
+            "description": "电解质运动饮料粉",
+            "weight": 20.0,
+            "quantity": 2,
+            "calories": 80.0,
+            "protein": 0.0,
+            "fat": 0.0,
+            "carbs": 20.0,
+            "price": 3.0,
+            "prepared": true,
+            "notes": "补充电解质，预防脱水"
+          }
+        ]
+      }
+    ],
+    "tags": ["高山", "夏季", "徒步"],
+    "creatorId": "user001",
+    "creatorName": "户外爱好者",
+    "createdAt": "2023-05-01T08:00:00.000Z",
+    "updatedAt": "2023-05-01T08:00:00.000Z"
   },
-  {
-    "id": "trip2",
-    "user_id": "user1",
-    "route_id": "route2",
-    "name": "莫干山周末徒步",
-    "description": "莫干山周末徒步，穿越竹海和茶园，欣赏江南山水风光",
-    "route_name": "莫干山周末徒步",
-    "start_date": "2023-09-15T00:00:00.000Z",
-    "end_date": "2023-09-16T00:00:00.000Z",
-    "participant_count": 2,
-    "departure_city": "杭州",
-    "status": 3,
-    "created_at": "2023-04-15T00:00:00.000Z",
-    "updated_at": "2023-04-15T00:00:00.000Z"
-  }
-]
+  "water_plan_id": "wp001",
+  "water_plan": {
+    "id": "wp001",
+    "name": "三日徒步饮水计划",
+    "description": "适合三日高山徒步的饮水计划，包含水源规划和饮水建议",
+    "tripDays": 3,
+    "personCount": 2,
+    "dayWaterPlans": [
+      {
+        "dayNumber": 1,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 3000,
+        "temperature": 28.5,
+        "activityIntensity": "high",
+        "availableSources": [
+          {
+            "id": "ws001",
+            "name": "山涧溪流",
+            "description": "位于营地西北方向500米处的小溪流，水质清澈",
+            "type": "stream",
+            "location": "营地西北方向500米",
+            "distanceFromTrail": 50.0,
+            "quality": "excellent",
+            "reliability": 4,
+            "estimatedVolume": 5000,
+            "needsTreatment": true,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "dayNumber": 2,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 3500,
+        "temperature": 30.0,
+        "activityIntensity": "veryHigh",
+        "availableSources": [
+          {
+            "id": "ws002",
+            "name": "高山湖泊",
+            "description": "海拔2000米的高山湖泊，水质良好但需要处理",
+            "type": "lake",
+            "location": "路线中点附近的高山湖泊",
+            "distanceFromTrail": 200.0,
+            "quality": "good",
+            "reliability": 5,
+            "estimatedVolume": 10000,
+            "needsTreatment": true,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          },
+          {
+            "id": "ws003",
+            "name": "山间泉水",
+            "description": "从岩石中流出的泉水，水质优良",
+            "type": "spring",
+            "location": "第二天路线3公里处",
+            "distanceFromTrail": 10.0,
+            "quality": "excellent",
+            "reliability": 3,
+            "estimatedVolume": 2000,
+            "needsTreatment": false,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "dayNumber": 3,
+        "baseWaterIntake": 2000,
+        "activityWaterIntake": 2500,
+        "temperature": 25.0,
+        "activityIntensity": "low",
+        "availableSources": [
+          {
+            "id": "ws004",
+            "name": "山庄水龙头",
+            "description": "山庄提供的自来水，可直接饮用",
+            "type": "tap",
+            "location": "第三天住宿的山庄",
+            "distanceFromTrail": 0.0,
+            "quality": "excellent",
+            "reliability": 5,
+            "estimatedVolume": 20000,
+            "needsTreatment": false,
+            "createdAt": "2023-05-01T08:00:00.000Z",
+            "updatedAt": "2023-05-01T08:00:00.000Z"
+          }
+        ]
+      }
+    ],
+    "waterSources": [
+      {
+        "id": "ws001",
+        "name": "山涧溪流",
+        "description": "位于营地西北方向500米处的小溪流，水质清澈",
+        "type": "stream",
+        "location": "营地西北方向500米",
+        "distanceFromTrail": 50.0,
+        "quality": "excellent",
+        "reliability": 4,
+        "estimatedVolume": 5000,
+        "needsTreatment": true,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws002",
+        "name": "高山湖泊",
+        "description": "海拔2000米的高山湖泊，水质良好但需要处理",
+        "type": "lake",
+        "location": "路线中点附近的高山湖泊",
+        "distanceFromTrail": 200.0,
+        "quality": "good",
+        "reliability": 5,
+        "estimatedVolume": 10000,
+        "needsTreatment": true,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws003",
+        "name": "山间泉水",
+        "description": "从岩石中流出的泉水，水质优良",
+        "type": "spring",
+        "location": "第二天路线3公里处",
+        "distanceFromTrail": 10.0,
+        "quality": "excellent",
+        "reliability": 3,
+        "estimatedVolume": 2000,
+        "needsTreatment": false,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      },
+      {
+        "id": "ws004",
+        "name": "山庄水龙头",
+        "description": "山庄提供的自来水，可直接饮用",
+        "type": "tap",
+        "location": "第三天住宿的山庄",
+        "distanceFromTrail": 0.0,
+        "quality": "excellent",
+        "reliability": 5,
+        "estimatedVolume": 20000,
+        "needsTreatment": false,
+        "createdAt": "2023-05-01T08:00:00.000Z",
+        "updatedAt": "2023-05-01T08:00:00.000Z"
+      }
+    ],
+    "tags": ["高山", "夏季", "徒步"],
+    "creatorId": "user001",
+    "creatorName": "户外爱好者",
+    "createdAt": "2023-05-01T08:00:00.000Z",
+    "updatedAt": "2023-05-01T08:00:00.000Z"
+  },
+  "participants": [
+    {
+      "id": "p001",
+      "user_id": "user001",
+      "name": "张三",
+      "role": "组织者",
+      "status": "已确认",
+      "contact": "13800138000",
+      "notes": "负责路线规划和安全"
+    },
+    {
+      "id": "p002",
+      "user_id": "user002",
+      "name": "李四",
+      "role": "参与者",
+      "status": "已确认",
+      "contact": "13900139000",
+      "notes": "负责食物和炊具"
+    },
+    {
+      "id": "p003",
+      "user_id": "user003",
+      "name": "王五",
+      "role": "参与者",
+      "status": "待确认",
+      "contact": "13700137000",
+      "notes": "摄影师"
+    }
+  ],
+  "participant_count": 3,
+  "organizer_id": "user001",
+  "equipment_list_id": "el001",
+  "equipment_list": {
+    "id": "el001",
+    "name": "三日高山徒步装备清单",
+    "description": "适合三日高山徒步的基础装备清单，包含住宿、穿着、工具等必要装备",
+    "route_id": "route001",
+    "routeName": "某某山三日穿越路线",
+    "tripDays": 3,
+    "seasons": [1, 2],
+    "categories": [
+      {
+        "name": "住宿装备",
+        "icon": "tent",
+        "description": "帐篷、睡袋等住宿相关装备",
+        "items": [
+          {
+            "name": "三季帐篷",
+            "description": "轻量化三季帐篷，适合春夏秋季使用",
+            "weight": 1800.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "牧高笛",
+            "model": "冷山2",
+            "price": 699.0,
+            "notes": "防水性能良好，内帐透气"
+          },
+          {
+            "name": "睡袋",
+            "description": "三季睡袋，舒适温度5°C",
+            "weight": 1200.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "探路者",
+            "model": "羽绒睡袋",
+            "price": 499.0,
+            "notes": "压缩后体积小，保暖性好"
+          },
+          {
+            "name": "防潮垫",
+            "description": "可折叠防潮垫，隔热保暖",
+            "weight": 350.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "迪卡侬",
+            "model": "充气防潮垫",
+            "price": 199.0,
+            "notes": "厚度2.5cm，R值3.2"
+          }
+        ]
+      },
+      {
+        "name": "背包装备",
+        "icon": "backpack",
+        "description": "背包及相关收纳装备",
+        "items": [
+          {
+            "name": "登山包",
+            "description": "50L登山包，适合2-4天徒步",
+            "weight": 1500.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "始祖鸟",
+            "model": "Bora 50",
+            "price": 2499.0,
+            "notes": "背负系统舒适，多功能口袋"
+          },
+          {
+            "name": "防水袋",
+            "description": "用于保护电子设备和衣物的防水袋",
+            "weight": 80.0,
+            "quantity": 2,
+            "necessity": 1,
+            "brand": "迪卡侬",
+            "model": "防水袋5L",
+            "price": 39.0,
+            "notes": "完全防水，可装手机和钱包"
+          }
+        ]
+      },
+      {
+        "name": "穿着装备",
+        "icon": "clothes",
+        "description": "衣物、鞋子等穿着装备",
+        "items": [
+          {
+            "name": "登山鞋",
+            "description": "中帮登山鞋，防水透气",
+            "weight": 850.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "SCARPA",
+            "model": "Zodiac Plus GTX",
+            "price": 1899.0,
+            "notes": "抓地力强，适合复杂地形"
+          },
+          {
+            "name": "速干T恤",
+            "description": "速干透气T恤",
+            "weight": 120.0,
+            "quantity": 2,
+            "necessity": 0,
+            "brand": "Columbia",
+            "model": "速干T恤",
+            "price": 199.0,
+            "notes": "排汗快，防晒UPF40+"
+          },
+          {
+            "name": "冲锋衣",
+            "description": "三层压胶冲锋衣，防风防水",
+            "weight": 450.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "始祖鸟",
+            "model": "Beta AR",
+            "price": 3999.0,
+            "notes": "GORE-TEX面料，耐用防水"
+          }
+        ]
+      },
+      {
+        "name": "工具装备",
+        "icon": "tools",
+        "description": "头灯、登山杖等工具装备",
+        "items": [
+          {
+            "name": "头灯",
+            "description": "LED头灯，多档亮度调节",
+            "weight": 85.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "黑钻",
+            "model": "Storm 400",
+            "price": 399.0,
+            "notes": "最高400流明，防水IPX4"
+          },
+          {
+            "name": "登山杖",
+            "description": "可伸缩碳纤维登山杖",
+            "weight": 220.0,
+            "quantity": 2,
+            "necessity": 1,
+            "brand": "黑钻",
+            "model": "Distance Carbon Z",
+            "price": 899.0,
+            "notes": "轻量化设计，可折叠收纳"
+          },
+          {
+            "name": "指南针",
+            "description": "专业户外指南针",
+            "weight": 40.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "Silva",
+            "model": "Ranger",
+            "price": 299.0,
+            "notes": "带夜光功能，精准度高"
+          }
+        ]
+      },
+      {
+        "name": "安全装备",
+        "icon": "safety",
+        "description": "急救包等安全装备",
+        "items": [
+          {
+            "name": "急救包",
+            "description": "户外急救包，含基本医疗用品",
+            "weight": 250.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "探路者",
+            "model": "户外急救包",
+            "price": 159.0,
+            "notes": "包含绷带、消毒药水、创可贴等"
+          }
+        ]
+      },
+      {
+        "name": "个人护理",
+        "icon": "personal",
+        "description": "防晒霜、洗漱用品等个人护理装备",
+        "items": [
+          {
+            "name": "防晒霜",
+            "description": "SPF50+防晒霜",
+            "weight": 60.0,
+            "quantity": 1,
+            "necessity": 1,
+            "brand": "安耐晒",
+            "model": "金瓶防晒霜",
+            "price": 199.0,
+            "notes": "防水配方，适合户外活动"
+          },
+          {
+            "name": "洗漱套装",
+            "description": "旅行装洗漱套装",
+            "weight": 150.0,
+            "quantity": 1,
+            "necessity": 1,
+            "brand": "无印良品",
+            "model": "旅行装",
+            "price": 99.0,
+            "notes": "含牙刷、牙膏、洗面奶等"
+          }
+        ]
+      },
+      {
+        "name": "炊具装备",
+        "icon": "cooking",
+        "description": "炉具、炊具等烹饪装备",
+        "items": [
+          {
+            "name": "便携炉具",
+            "description": "户外便携气炉",
+            "weight": 100.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "火枫",
+            "model": "FMS-300T",
+            "price": 299.0,
+            "notes": "火力强，节能省气"
+          },
+          {
+            "name": "炊具套装",
+            "description": "户外炊具套装，含锅、碗、勺",
+            "weight": 350.0,
+            "quantity": 1,
+            "necessity": 0,
+            "brand": "TOAKS",
+            "model": "钛合金套装",
+            "price": 599.0,
+            "notes": "轻量化设计，耐用耐腐蚀"
+          }
+        ]
+      }
+    ],
+    "totalWeight": 7605.0,
+    "baseWeight": 5605.0,
+    "consumableWeight": 1000.0,
+    "wornWeight": 1000.0,
+    "creatorId": "user001",
+    "creatorName": "户外爱好者",
+    "tags": ["高山", "夏季", "徒步"],
+    "isOfficial": true,
+    "created_at": "2023-05-01T08:00:00.000Z",
+    "updated——at": "2023-05-01T08:00:00.000Z"
+  },
+
+  "itinerary": [
+    {
+      "id": "day001",
+      "day_number": 1,
+      "date": "2023-07-01T00:00:00.000Z",
+      "title": "第一天：起始营地到高山湖泊",
+      "description": "从起始营地出发，经过森林小径，到达高山湖泊营地",
+      "route_id": "route001",
+      "daily_plan_id": "dp001",
+      "accommodation": "湖畔营地",
+      "transportation": "徒步",
+      "meals": "自带干粮，晚餐在营地做饭",
+      "activities": ["徒步", "摄影", "野营"],
+      "notes": "路线有一段较陡，注意安全"
+    },
+    {
+      "id": "day002",
+      "day_number": 2,
+      "date": "2023-07-02T00:00:00.000Z",
+      "title": "第二天：高山湖泊到山脊",
+      "description": "从湖泊营地出发，穿越高山草甸，到达山脊",
+      "route_id": "route001",
+      "daily_plan_id": "dp002",
+      "accommodation": "山脊营地",
+      "transportation": "徒步",
+      "meals": "早餐在营地，午餐干粮，晚餐在营地做饭",
+      "activities": ["徒步", "摄影", "观星"],
+      "notes": "山脊风大，注意保暖"
+    },
+    {
+      "id": "day003",
+      "day_number": 3,
+      "date": "2023-07-03T00:00:00.000Z",
+      "title": "第三天：山脊到山庄",
+      "description": "从山脊下撤，经过森林小径，到达山庄",
+      "route_id": "route001",
+      "daily_plan_id": "dp003",
+      "accommodation": "山庄",
+      "transportation": "徒步，返程大巴",
+      "meals": "早餐在营地，午餐干粮，晚餐在山庄",
+      "activities": ["徒步", "摄影", "温泉"],
+      "notes": "下撤路线较陡，注意膝盖保护"
+    }
+  ],
+  "log_entries": [
+    {
+      "id": "log001",
+      "timestamp": "2023-07-01T08:30:00.000Z",
+      "title": "出发",
+      "content": "早上8:30从起始点出发，天气晴朗，气温22°C",
+      "type": "日记",
+      "location": "起始营地",
+      "image_urls": ["https://example.com/images/start.jpg"]
+    },
+    {
+      "id": "log002",
+      "timestamp": "2023-07-01T12:00:00.000Z",
+      "title": "午餐休息",
+      "content": "在森林小溪旁午餐休息，补充水源",
+      "type": "日记",
+      "location": "森林小溪",
+      "image_urls": ["https://example.com/images/lunch.jpg"]
+    },
+    {
+      "id": "log003",
+      "timestamp": "2023-07-01T16:00:00.000Z",
+      "title": "到达湖泊营地",
+      "content": "下午4点到达湖泊营地，开始搭建帐篷",
+      "type": "日记",
+      "location": "湖泊营地",
+      "image_urls": ["https://example.com/images/lake_camp.jpg"]
+    }
+  ],
+  "cover_url": "https://example.com/images/trip_cover.jpg",
+  "image_urls": [
+    "https://example.com/images/trip1.jpg",
+    "https://example.com/images/trip2.jpg",
+    "https://example.com/images/trip3.jpg"
+  ],
+  "budget": 1500.0,
+  "actual_cost": 0.0,
+  "notes": "需要准备防雨装备，山区天气多变",
+  "privacy_setting": "public",
+  "created_at": "2023-06-15T10:00:00.000Z",
+  "updated_at": "2023-06-15T10:00:00.000Z"
+}]
