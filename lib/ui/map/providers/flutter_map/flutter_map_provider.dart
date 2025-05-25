@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:walk/model/model/map/map_bounds.dart';
 import 'package:walk/model/model/map/map_data_model.dart';
 import 'package:walk/ui/map/core/map_controller.dart' as app;
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/core/map_provider.dart';
 import 'flutter_map_controller.dart';
 import 'cached_tile_provider.dart';

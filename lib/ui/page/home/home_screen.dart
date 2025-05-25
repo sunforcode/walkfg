@@ -6,13 +6,10 @@ import '../../../model/model/route/route_model.dart';
 import '../../../model/model/trip/trip_model.dart';
 import '../../../model/weather/weather_model.dart';
 import '../../../service/service_manager.dart';
-import '../../map/screens/map_demo_screen.dart';
 import 'widgets/welcome_weather_card.dart';
-import 'widgets/stats_card.dart';
 import 'widgets/planned_trips_section.dart';
 import 'widgets/recommended_routes_section.dart';
 import 'widgets/hiking_guides_section.dart';
-import 'widgets/trip_planning_entries.dart';
 
 /// 首页
 class HomeScreen extends StatefulWidget {
@@ -28,9 +25,6 @@ class _HomeScreenState extends State<HomeScreen>
   /// 用户和天气数据Future
   late Future<Map<String, dynamic>> _userWeatherFuture;
 
-  /// 用户统计数据Future
-  late Future<UserModel> _userStatsFuture;
-
   /// 规划行程列表Future
   late Future<List<TripModel>> _plannedTripsFuture;
 
@@ -40,9 +34,6 @@ class _HomeScreenState extends State<HomeScreen>
   /// 徒步攻略列表Future
   late Future<List<GuideModel>> _hikingGuidesFuture;
 
-  /// 未完成行程计划数量
-  late int _unfinishedPlansCount;
-
   @override
   bool get wantKeepAlive => true;
 
@@ -50,11 +41,9 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
     _userWeatherFuture = _loadUserWeatherData();
-    _userStatsFuture = _loadUserStatsData();
     _plannedTripsFuture = _loadPlannedTripsData();
     _recommendedRoutesFuture = _loadRecommendedRoutesData();
     _hikingGuidesFuture = _loadHikingGuidesData();
-    _loadUnfinishedPlansCount();
   }
 
   /// 加载用户和天气数据
@@ -72,12 +61,6 @@ class _HomeScreenState extends State<HomeScreen>
       'user': results[0] as UserModel,
       'weather': results[1] as WeatherModel,
     };
-  }
-
-  /// 加载用户统计数据
-  Future<UserModel> _loadUserStatsData() async {
-    final userService = ServiceLocator.instance.getUserService();
-    return userService.getUserStats();
   }
 
   /// 加载规划行程数据
@@ -99,13 +82,6 @@ class _HomeScreenState extends State<HomeScreen>
     return guideService.getGuides(limit: 4);
   }
 
-  /// 加载未完成行程计划数量
-  void _loadUnfinishedPlansCount() {
-    final tripPlanService = ServiceLocator.instance.getTripPlanService();
-    _unfinishedPlansCount = 5;
-    //tripPlanService.getUnfinishedTripPlansCount();
-  }
-
   /// 显示提示信息
   void _showToast(String message) {
     showCupertinoDialog(
@@ -120,34 +96,6 @@ class _HomeScreenState extends State<HomeScreen>
         );
       },
     );
-  }
-
-  /// 导航到已完成路线页面
-  void _navigateToCompletedRoutes() {
-    // TODO: 实现导航到已完成路线页面
-    _showToast('导航到已完成路线页面');
-  }
-
-  /// 导航到装备列表页面
-  void _navigateToEquipmentList() {
-    // TODO: 实现导航到装备列表页面
-    _showToast('导航到装备列表页面');
-  }
-
-  /// 导航到收藏路线页面
-  void _navigateToFavoriteRoutes() {
-    // TODO: 实现导航到收藏路线页面
-    _showToast('导航到收藏路线页面');
-  }
-
-  /// 刷新用户统计数据
-  void _refreshUserStats() {
-    setState(() {
-      _userStatsFuture = _loadUserStatsData();
-    });
-
-    // 显示刷新提示
-    _showToast('统计数据已更新');
   }
 
   @override
@@ -168,41 +116,6 @@ class _HomeScreenState extends State<HomeScreen>
                 padding: const EdgeInsets.all(16),
                 child: WelcomeWeatherCard.fromFuture(
                   future: _userWeatherFuture,
-                ),
-              ),
-
-              // 行程规划入口
-              TripPlanningEntries(
-                unfinishedPlansCount: _unfinishedPlansCount,
-              ),
-
-              // 用户统计卡片
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: StatsCard(
-                  userStatsFuture: _userStatsFuture,
-                  onCompletedRoutesPressed: _navigateToCompletedRoutes,
-                  onEquipmentListPressed: _navigateToEquipmentList,
-                  onFavoriteRoutesPressed: _navigateToFavoriteRoutes,
-                  onRefreshPressed: _refreshUserStats,
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // 地图演示按钮
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: CupertinoButton(
-                  color: CupertinoColors.activeBlue,
-                  child: const Text('地图演示'),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const MapDemoScreen(),
-                      ),
-                    );
-                  },
                 ),
               ),
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:walk/model/model/map/track_point_model.dart';
 import 'package:walk/model/model/route/route_model.dart';
 import 'package:walk/model/model/map/map_bounds.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/unified_map_widget.dart';
 
 /// 增强版地图组件
@@ -30,7 +31,7 @@ class EnhancedMapWidget extends StatelessWidget {
   final MapType mapType;
 
   /// 地图提供商
-  final MapProvider mapProvider;
+  final MapProviderType mapProvider;
 
   /// 轨迹渲染模式
   final TrackRenderMode trackRenderMode;
@@ -51,7 +52,7 @@ class EnhancedMapWidget extends StatelessWidget {
   final ValueChanged<MapType>? onMapTypeChanged;
 
   /// 地图提供商变更回调
-  final ValueChanged<MapProvider>? onMapProviderChanged;
+  final ValueChanged<MapProviderType>? onMapProviderChanged;
 
   /// 轨迹渲染模式变更回调
   final ValueChanged<TrackRenderMode>? onTrackRenderModeChanged;
@@ -66,7 +67,8 @@ class EnhancedMapWidget extends StatelessWidget {
   final ValueChanged<bool>? onElevationChartVisibilityChanged;
 
   /// 离线地图下载回调
-  final Function(MapBoundsVO bounds, MapType mapType, MapProvider mapProvider)?
+  final Function(
+          MapBoundsVO bounds, MapType mapType, MapProviderType mapProvider)?
       onDownloadOfflineMap;
 
   /// 构造函数
@@ -79,7 +81,7 @@ class EnhancedMapWidget extends StatelessWidget {
     this.showMapTypeToolbar = true,
     this.showEnhancedToolbar = true,
     this.mapType = MapType.standard,
-    this.mapProvider = MapProvider.apple,
+    this.mapProvider = MapProviderType.apple,
     this.trackRenderMode = TrackRenderMode.normal,
     this.showKilometerMarkers = false,
     this.showPointsOfInterest = true,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walk/model/model/map/map_data_model.dart';
 import 'package:walk/ui/map/core/map_controller.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/core/map_provider.dart';
 import 'package:walk/ui/map/providers/flutter_map/flutter_map_provider.dart';
 import 'package:walk/ui/map/widgets/map_container.dart';

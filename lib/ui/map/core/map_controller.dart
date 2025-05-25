@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:walk/model/model/map/map_data_model.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'map_provider.dart';
 
 /// 地图控制器接口

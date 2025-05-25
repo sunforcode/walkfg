@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/service/service_manager.dart';
 import '../../../model/user/user_model.dart';
+import '../../page/home/widgets/stats_card.dart';
 
 /// 个人页面
 class ProfileScreen extends StatefulWidget {
@@ -18,6 +19,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   /// 用户数据
   UserModel? _user;
 
+  /// 用户统计数据Future
+  late Future<UserModel> _userStatsFuture;
+
   /// 是否正在加载
   bool _isLoading = true;
 
@@ -26,6 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     print('ProfileScreen - initState');
     _loadUserData();
+    _userStatsFuture = _loadUserStatsData();
   }
 
   /// 加载用户数据
@@ -49,6 +54,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
       }
     }
+  }
+
+  /// 加载用户统计数据
+  Future<UserModel> _loadUserStatsData() async {
+    final userService = ServiceLocator.instance.getUserService();
+    return userService.getUserStats();
+  }
+
+  /// 导航到已完成路线页面
+  void _navigateToCompletedRoutes() {
+    // TODO: 实现导航到已完成路线页面
+    _showToast('导航到已完成路线页面');
+  }
+
+  /// 导航到装备列表页面
+  void _navigateToEquipmentList() {
+    // TODO: 实现导航到装备列表页面
+    _showToast('导航到装备列表页面');
+  }
+
+  /// 导航到收藏路线页面
+  void _navigateToFavoriteRoutes() {
+    // TODO: 实现导航到收藏路线页面
+    _showToast('导航到收藏路线页面');
+  }
+
+  /// 刷新用户统计数据
+  void _refreshUserStats() {
+    setState(() {
+      _userStatsFuture = _loadUserStatsData();
+    });
+
+    // 显示刷新提示
+    _showToast('统计数据已更新');
+  }
+
+  /// 显示提示信息
+  void _showToast(String message) {
+    showCupertinoDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        Future.delayed(const Duration(seconds: 1), () {
+          Navigator.of(context, rootNavigator: true).pop();
+        });
+        return CupertinoAlertDialog(
+          content: Text(message),
+        );
+      },
+    );
   }
 
   @override
@@ -117,6 +172,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             // 用户信息卡片
             _buildUserInfoCard(context),
+
+            const SizedBox(height: 20),
+
+            // 我的统计
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              child: StatsCard(
+                userStatsFuture: _userStatsFuture,
+                onCompletedRoutesPressed: _navigateToCompletedRoutes,
+                onEquipmentListPressed: _navigateToEquipmentList,
+                onFavoriteRoutesPressed: _navigateToFavoriteRoutes,
+                onRefreshPressed: _refreshUserStats,
+              ),
+            ),
 
             const SizedBox(height: 20),
 
@@ -214,14 +283,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: CupertinoColors.systemGrey,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    _buildStatItem('${_user?.completedRoutes ?? 0}', '已完成路线'),
-                    const SizedBox(width: 16),
-                    _buildStatItem('${_user?.favoriteRoutes ?? 0}', '收藏路线'),
-                  ],
-                ),
               ],
             ),
           ),
@@ -258,29 +319,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         );
       },
-    );
-  }
-
-  /// 构建统计项
-  Widget _buildStatItem(String value, String label) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: CupertinoColors.systemBlue,
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: CupertinoColors.systemGrey,
-          ),
-        ),
-      ],
     );
   }
 

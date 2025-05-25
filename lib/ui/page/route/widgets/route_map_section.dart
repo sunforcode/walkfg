@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/unified_map_widget.dart';
 import '../../../../model/model/route/route_model.dart';
 
@@ -7,15 +8,15 @@ import '../../../../model/model/route/route_model.dart';
 class RouteMapSection extends StatelessWidget {
   final RouteModel route;
   final MapType currentMapType;
-  final MapProvider currentMapProvider;
+  final MapProviderType currentMapProvider;
   final ValueChanged<MapType> onMapTypeChanged;
-  final ValueChanged<MapProvider>? onMapProviderChanged;
+  final ValueChanged<MapProviderType>? onMapProviderChanged;
 
   const RouteMapSection({
     super.key,
     required this.route,
     required this.currentMapType,
-    this.currentMapProvider = MapProvider.apple,
+    this.currentMapProvider = MapProviderType.apple,
     required this.onMapTypeChanged,
     this.onMapProviderChanged,
   });

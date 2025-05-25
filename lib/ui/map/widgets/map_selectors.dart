@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import '../unified_map_widget.dart';
 
 /// 轨迹渲染模式选择器

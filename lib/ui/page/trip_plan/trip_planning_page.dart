@@ -4,6 +4,7 @@ import 'package:walk/model/model/route/route_model.dart';
 import 'package:walk/model/model/trip/trip_model.dart';
 import 'package:walk/service/service_manager.dart';
 import 'package:walk/service/trip_plan_service.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/unified_map_widget.dart';
 import 'package:walk/ui/map/utils/kml_parser.dart';
 import 'package:walk/model/model/map/track_point_model.dart';
@@ -52,7 +53,7 @@ class _TripPlanningPage2State extends State<TripPlanningPage2> {
   MapType _currentMapType = MapType.standard;
 
   /// 当前地图提供商
-  MapProvider _currentMapProvider = MapProvider.apple;
+  MapProviderType _currentMapProvider = MapProviderType.apple;
 
   /// KML轨迹点
   List<TrackPointVO> _kmlTrackPoints = [];

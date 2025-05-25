@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/page/trip_plan/trip_planning_page.dart';
 import '../../../model/model/route/route_model.dart';
 import '../../../model/model/map/map_bounds.dart';
@@ -191,7 +192,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   /// 处理离线地图下载
   void _handleDownloadOfflineMap(
-      MapBoundsVO bounds, MapType mapType, MapProvider mapProvider) {
+      MapBoundsVO bounds, MapType mapType, MapProviderType mapProvider) {
     // _mapService.downloadOfflineMap(
     //   bounds,
     //   mapType,

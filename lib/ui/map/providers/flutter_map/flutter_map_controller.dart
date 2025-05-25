@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:walk/model/model/map/map_data_model.dart';
 import 'package:walk/model/model/map/track_point_model.dart';
 import 'package:walk/ui/map/core/map_controller.dart' as app;
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/core/map_provider.dart';
 import 'package:walk/ui/map/utils/color_gradient.dart';
 import 'package:walk/ui/map/utils/track_simplifier.dart';

@@ -9,96 +9,13 @@ import 'package:walk/model/model/map/map_bounds.dart';
 import 'package:walk/model/model/map/track_point_model.dart';
 import 'package:walk/model/model/route/route_model.dart';
 import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/elevation_chart_painter.dart';
 import 'package:walk/ui/map/widgets/map_toolbars.dart';
 import 'package:walk/ui/map/widgets/map_selectors.dart';
 import 'package:walk/ui/map/widgets/map_markers.dart';
 import 'package:walk/ui/map/widgets/elevation_chart_widget.dart';
 import 'package:walk/ui/map/widgets/offline_map_dialog.dart';
-
-/// 地图类型
-enum MapType {
-  /// 标准地图
-  standard,
-
-  /// 卫星地图
-  satellite,
-
-  /// 混合地图
-  hybrid,
-
-  /// 地形图
-  terrain,
-
-  /// 高德标准地图
-  amapStandard,
-
-  /// 高德卫星地图
-  amapSatellite,
-
-  /// 高德夜间地图
-  amapNight,
-
-  /// 天地图矢量
-  tiandituVector,
-
-  /// 天地图卫星
-  tiandituSatellite,
-
-  /// 天地图地形
-  tiandituTerrain,
-
-  /// OpenStreetMap标准
-  osmStandard,
-
-  /// OpenStreetMap人道主义
-  osmHumanitarian,
-
-  /// 谷歌标准地图
-  googleStandard,
-
-  /// 谷歌卫星地图
-  googleSatellite,
-
-  /// 谷歌地形图
-  googleTerrain,
-
-  /// 3D地图
-  threeD,
-}
-
-/// 地图提供商
-enum MapProvider {
-  /// 苹果地图
-  apple,
-
-  /// 高德地图
-  amap,
-
-  /// 天地图
-  tianditu,
-
-  /// OpenStreetMap
-  osm,
-
-  /// 谷歌地图
-  google,
-}
-
-/// 轨迹渲染模式
-enum TrackRenderMode {
-  /// 普通模式（单色）
-  normal,
-
-  /// 速度模式（根据速度渲染颜色）
-  speed,
-
-  /// 海拔模式（根据海拔渲染颜色）
-  elevation,
-
-  /// 坡度模式（根据坡度渲染颜色）
-  gradient,
-}
 
 /// 统一地图组件
 class UnifiedMapWidget extends StatefulWidget {
@@ -127,7 +44,7 @@ class UnifiedMapWidget extends StatefulWidget {
   final MapType mapType;
 
   /// 地图提供商
-  final MapProvider mapProvider;
+  final MapProviderType mapProvider;
 
   /// 轨迹渲染模式
   final TrackRenderMode trackRenderMode;
@@ -148,7 +65,7 @@ class UnifiedMapWidget extends StatefulWidget {
   final ValueChanged<MapType>? onMapTypeChanged;
 
   /// 地图提供商变更回调
-  final ValueChanged<MapProvider>? onMapProviderChanged;
+  final ValueChanged<MapProviderType>? onMapProviderChanged;
 
   /// 轨迹渲染模式变更回调
   final ValueChanged<TrackRenderMode>? onTrackRenderModeChanged;
@@ -163,7 +80,8 @@ class UnifiedMapWidget extends StatefulWidget {
   final ValueChanged<bool>? onElevationChartVisibilityChanged;
 
   /// 离线地图下载回调
-  final Function(MapBoundsVO bounds, MapType mapType, MapProvider mapProvider)?
+  final Function(
+          MapBoundsVO bounds, MapType mapType, MapProviderType mapProvider)?
       onDownloadOfflineMap;
 
   /// 构造函数
@@ -177,7 +95,7 @@ class UnifiedMapWidget extends StatefulWidget {
     this.showMapTypeToolbar = true,
     this.showEnhancedToolbar = true,
     this.mapType = MapType.standard,
-    this.mapProvider = MapProvider.apple,
+    this.mapProvider = MapProviderType.apple,
     this.trackRenderMode = TrackRenderMode.normal,
     this.showKilometerMarkers = false,
     this.showPointsOfInterest = true,
@@ -355,13 +273,13 @@ class _UnifiedMapWidgetState extends State<UnifiedMapWidget> {
   }
 
   /// 获取地图瓦片URL
-  String _getTileUrl(MapType mapType, MapProvider mapProvider) {
+  String _getTileUrl(MapType mapType, MapProviderType mapProvider) {
     switch (mapProvider) {
-      case MapProvider.apple:
+      case MapProviderType.apple:
         // 使用 OpenStreetMap 作为备用
         return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
-      case MapProvider.amap:
+      case MapProviderType.amap:
         switch (mapType) {
           case MapType.amapSatellite:
             return 'https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}';
@@ -372,7 +290,7 @@ class _UnifiedMapWidgetState extends State<UnifiedMapWidget> {
             return 'https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}';
         }
 
-      case MapProvider.tianditu:
+      case MapProviderType.tianditu:
         // 需要添加天地图密钥
         const tiandituKey = 'your_tianditu_key';
         switch (mapType) {
@@ -385,7 +303,7 @@ class _UnifiedMapWidgetState extends State<UnifiedMapWidget> {
             return 'https://t0.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=$tiandituKey';
         }
 
-      case MapProvider.osm:
+      case MapProviderType.osm:
         switch (mapType) {
           case MapType.osmHumanitarian:
             return 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png';
@@ -394,7 +312,7 @@ class _UnifiedMapWidgetState extends State<UnifiedMapWidget> {
             return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
         }
 
-      case MapProvider.google:
+      case MapProviderType.google:
         switch (mapType) {
           case MapType.googleSatellite:
             return 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
@@ -890,13 +808,13 @@ class _UnifiedMapWidgetState extends State<UnifiedMapWidget> {
                       ),
                     ),
                   ),
-                  _buildMapProviderOption(MapProvider.apple, '苹果地图'),
-                  _buildMapProviderOption(MapProvider.amap, '高德地图'),
-                  _buildMapProviderOption(MapProvider.tianditu, '天地图'),
-                  _buildMapProviderOption(MapProvider.osm, 'OpenStreetMap'),
-                  _buildMapProviderOption(MapProvider.google, '谷歌地图'),
+                  _buildMapProviderOption(MapProviderType.apple, '苹果地图'),
+                  _buildMapProviderOption(MapProviderType.amap, '高德地图'),
+                  _buildMapProviderOption(MapProviderType.tianditu, '天地图'),
+                  _buildMapProviderOption(MapProviderType.osm, 'OpenStreetMap'),
+                  _buildMapProviderOption(MapProviderType.google, '谷歌地图'),
                   const Divider(),
-                  if (widget.mapProvider == MapProvider.amap)
+                  if (widget.mapProvider == MapProviderType.amap)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -915,7 +833,7 @@ class _UnifiedMapWidgetState extends State<UnifiedMapWidget> {
                         _buildMapTypeOption(MapType.amapNight, '夜间'),
                       ],
                     ),
-                  if (widget.mapProvider == MapProvider.tianditu)
+                  if (widget.mapProvider == MapProviderType.tianditu)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -934,7 +852,7 @@ class _UnifiedMapWidgetState extends State<UnifiedMapWidget> {
                         _buildMapTypeOption(MapType.tiandituTerrain, '地形'),
                       ],
                     ),
-                  if (widget.mapProvider == MapProvider.osm)
+                  if (widget.mapProvider == MapProviderType.osm)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -952,7 +870,7 @@ class _UnifiedMapWidgetState extends State<UnifiedMapWidget> {
                         _buildMapTypeOption(MapType.osmHumanitarian, '人道主义'),
                       ],
                     ),
-                  if (widget.mapProvider == MapProvider.google)
+                  if (widget.mapProvider == MapProviderType.google)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -1020,7 +938,7 @@ class _UnifiedMapWidgetState extends State<UnifiedMapWidget> {
   }
 
   /// 构建地图提供商选项
-  Widget _buildMapProviderOption(MapProvider provider, String label) {
+  Widget _buildMapProviderOption(MapProviderType provider, String label) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       child: Row(

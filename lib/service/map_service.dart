@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:walk/model/model/map/map_bounds.dart';
 import 'package:walk/model/model/map/track_point_model.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/unified_map_widget.dart';
 
 /// 地图服务类，负责管理地图相关的状态和操作
@@ -20,7 +21,7 @@ class MapService extends ChangeNotifier {
   MapType _currentMapType = MapType.standard;
 
   /// 当前地图提供商
-  MapProvider _currentMapProvider = MapProvider.apple;
+  MapProviderType _currentMapProvider = MapProviderType.apple;
 
   /// 当前轨迹渲染模式
   TrackRenderMode _currentTrackRenderMode = TrackRenderMode.normal;
@@ -50,7 +51,7 @@ class MapService extends ChangeNotifier {
   MapType get currentMapType => _currentMapType;
 
   /// 获取当前地图提供商
-  MapProvider get currentMapProvider => _currentMapProvider;
+  MapProviderType get currentMapProvider => _currentMapProvider;
 
   /// 获取当前轨迹渲染模式
   TrackRenderMode get currentTrackRenderMode => _currentTrackRenderMode;
@@ -80,7 +81,7 @@ class MapService extends ChangeNotifier {
   }
 
   /// 设置当前地图提供商
-  void setMapProvider(MapProvider provider) {
+  void setMapProvider(MapProviderType provider) {
     _currentMapProvider = provider;
     notifyListeners();
   }
@@ -119,7 +120,7 @@ class MapService extends ChangeNotifier {
   Future<void> downloadOfflineMap(
     MapBoundsVO bounds,
     MapType mapType,
-    MapProvider mapProvider,
+    MapProviderType mapProvider,
     Function(String)? onSuccess,
     Function(String)? onError,
   ) async {
@@ -134,7 +135,8 @@ class MapService extends ChangeNotifier {
 
     try {
       // 模拟下载进度
-      _downloadTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      _downloadTimer =
+          Timer.periodic(const Duration(milliseconds: 500), (timer) {
         _offlineMapDownloadProgress += 0.1;
         if (_offlineMapDownloadProgress >= 1.0) {
           _isDownloadingOfflineMap = false;
@@ -167,7 +169,8 @@ class MapService extends ChangeNotifier {
   }
 
   /// 计算轨迹统计信息
-  Map<String, dynamic> calculateTrackStatistics(List<TrackPointVO> trackPoints) {
+  Map<String, dynamic> calculateTrackStatistics(
+      List<TrackPointVO> trackPoints) {
     if (trackPoints.isEmpty) {
       return {
         'totalDistance': 0.0,
@@ -190,8 +193,10 @@ class MapService extends ChangeNotifier {
 
       // 计算距离
       final distance = _calculateDistance(
-        prevPoint.latitude, prevPoint.longitude,
-        currentPoint.latitude, currentPoint.longitude,
+        prevPoint.latitude,
+        prevPoint.longitude,
+        currentPoint.latitude,
+        currentPoint.longitude,
       );
       totalDistance += distance;
 
@@ -222,7 +227,8 @@ class MapService extends ChangeNotifier {
   }
 
   /// 计算两点之间的距离（米）
-  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+  double _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
     const R = 6371000.0; // 地球半径（米）
     final phi1 = lat1 * (3.141592653589793 / 180);
     final phi2 = lat2 * (3.141592653589793 / 180);

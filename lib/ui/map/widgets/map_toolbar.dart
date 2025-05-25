@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/core/map_provider.dart';
 import 'package:walk/ui/map/core/map_state.dart';
 

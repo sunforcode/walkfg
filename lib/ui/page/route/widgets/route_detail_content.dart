@@ -4,6 +4,7 @@ import 'package:walk/model/model/map/map_bounds.dart';
 import 'package:walk/model/model/map/track_point_model.dart';
 import 'package:walk/model/model/route/route_model.dart';
 import 'package:walk/service/map_service.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/unified_map_widget.dart';
 import 'package:walk/ui/page/route/widgets/route_info_section.dart';
 import 'package:walk/ui/page/route/widgets/route_action_buttons.dart';
@@ -32,7 +33,7 @@ class RouteDetailContent extends StatelessWidget {
   final VoidCallback? onFavorite;
 
   /// 离线地图下载回调
-  final Function(MapBoundsVO bounds, MapType mapType, MapProvider mapProvider)?
+  final Function(MapBoundsVO bounds, MapType mapType, MapProviderType mapProvider)?
       onDownloadOfflineMap;
 
   /// 构造函数

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:walk/model/model/map/map_data_model.dart';
 import 'package:walk/ui/map/core/map_controller.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/core/map_provider.dart';
 import 'package:walk/ui/map/core/map_state.dart';
 import 'map_toolbar.dart';

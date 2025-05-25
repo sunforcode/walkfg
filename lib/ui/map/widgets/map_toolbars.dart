@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/ui/map/core/map_enum.dart';
+import 'package:walk/ui/map/core/map_provider.dart';
 import '../unified_map_widget.dart';
 
 /// 地图类型工具栏
@@ -9,7 +11,7 @@ class MapTypeToolbar extends StatelessWidget {
   final MapType mapType;
 
   /// 地图提供商
-  final MapProvider mapProvider;
+  final MapProviderType mapProvider;
 
   /// 是否显示地图类型选择器
   final bool showMapTypeSelector;
@@ -21,7 +23,7 @@ class MapTypeToolbar extends StatelessWidget {
   final ValueChanged<MapType>? onMapTypeChanged;
 
   /// 地图提供商变更回调
-  final ValueChanged<MapProvider>? onMapProviderChanged;
+  final ValueChanged<MapProviderType>? onMapProviderChanged;
 
   /// 地图类型选择器切换回调
   final VoidCallback? onMapTypeSelectorToggle;
@@ -164,13 +166,13 @@ class MapTypeToolbar extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _buildMapProviderOption(MapProvider.apple, '苹果地图'),
-                  _buildMapProviderOption(MapProvider.amap, '高德地图'),
-                  _buildMapProviderOption(MapProvider.tianditu, '天地图'),
-                  _buildMapProviderOption(MapProvider.osm, 'OpenStreetMap'),
-                  _buildMapProviderOption(MapProvider.google, '谷歌地图'),
+                  _buildMapProviderOption(MapProviderType.apple, '苹果地图'),
+                  _buildMapProviderOption(MapProviderType.amap, '高德地图'),
+                  _buildMapProviderOption(MapProviderType.tianditu, '天地图'),
+                  _buildMapProviderOption(MapProviderType.osm, 'OpenStreetMap'),
+                  _buildMapProviderOption(MapProviderType.google, '谷歌地图'),
                   const Divider(),
-                  if (mapProvider == MapProvider.amap)
+                  if (mapProvider == MapProviderType.amap)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -189,7 +191,7 @@ class MapTypeToolbar extends StatelessWidget {
                         _buildMapTypeOption(MapType.amapNight, '夜间'),
                       ],
                     ),
-                  if (mapProvider == MapProvider.tianditu)
+                  if (mapProvider == MapProviderType.tianditu)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -208,7 +210,7 @@ class MapTypeToolbar extends StatelessWidget {
                         _buildMapTypeOption(MapType.tiandituTerrain, '地形'),
                       ],
                     ),
-                  if (mapProvider == MapProvider.osm)
+                  if (mapProvider == MapProviderType.osm)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -226,7 +228,7 @@ class MapTypeToolbar extends StatelessWidget {
                         _buildMapTypeOption(MapType.osmHumanitarian, '人道主义'),
                       ],
                     ),
-                  if (mapProvider == MapProvider.google)
+                  if (mapProvider == MapProviderType.google)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -290,7 +292,7 @@ class MapTypeToolbar extends StatelessWidget {
   }
 
   /// 构建地图提供商选项
-  Widget _buildMapProviderOption(MapProvider provider, String label) {
+  Widget _buildMapProviderOption(MapProviderType provider, String label) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       child: Row(
