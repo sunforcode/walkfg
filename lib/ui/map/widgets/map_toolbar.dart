@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:walk/ui/map/core/map_enum.dart';
-import 'package:walk/ui/map/core/map_provider.dart';
 import 'package:walk/ui/map/core/map_state.dart';
 
 /// 地图工具栏
 class MapToolbar extends StatelessWidget {
   final MapState mapState;
   final bool showMapTypeSelector;
-  
+
   const MapToolbar({
     Key? key,
     required this.mapState,
     this.showMapTypeSelector = true,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -39,7 +38,7 @@ class MapToolbar extends StatelessWidget {
               onPressed: () => mapState.zoomOut(),
             ),
             const SizedBox(height: 8),
-            
+
             // 定位按钮
             _buildToolbarButton(
               icon: Icons.my_location,
@@ -47,14 +46,14 @@ class MapToolbar extends StatelessWidget {
               onPressed: () => mapState.showUserLocation(),
             ),
             const SizedBox(height: 8),
-            
+
             // 显示整个轨迹
             _buildToolbarButton(
               icon: Icons.route,
               tooltip: '显示整个轨迹',
               onPressed: () => mapState.showEntireTrack(),
             ),
-            
+
             // 地图类型选择器
             if (showMapTypeSelector) ...[
               const SizedBox(height: 8),
@@ -67,7 +66,7 @@ class MapToolbar extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildToolbarButton({
     required IconData icon,
     required String tooltip,
@@ -90,7 +89,7 @@ class MapToolbar extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildMapTypeSelector() {
     return Column(
       children: [
@@ -114,14 +113,14 @@ class MapToolbar extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildMapTypeButton({
     required IconData icon,
     required String label,
     required MapType mapType,
   }) {
     final isSelected = mapState.currentMapType == mapType;
-    
+
     return Tooltip(
       message: label,
       child: InkWell(
@@ -133,9 +132,8 @@ class MapToolbar extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected ? Colors.blue.withOpacity(0.2) : Colors.white,
             shape: BoxShape.circle,
-            border: isSelected
-                ? Border.all(color: Colors.blue, width: 2)
-                : null,
+            border:
+                isSelected ? Border.all(color: Colors.blue, width: 2) : null,
           ),
           child: Icon(
             icon,

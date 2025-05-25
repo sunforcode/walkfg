@@ -1,4 +1,6 @@
-import '../model/equipment/equipment_model.dart';
+import 'package:walk/model/equipment/equipment_category.dart';
+
+import '../model/equipment/equipment_list_model.dart';
 import '../model/equipment/equipment_item_model.dart';
 
 /// 装备服务接口
@@ -52,11 +54,9 @@ abstract class EquipmentService {
   Future<EquipmentItemModel> getEquipmentItemById(String equipmentListId, String itemId);
 
   /// 获取装备分类列表
-  Future<List<String>> getEquipmentCategories();
+  Future<List<EquipmentCategory>> getEquipmentCategories();
 
   /// 复制装备清单
   Future<EquipmentListModel> cloneEquipmentList(String equipmentListId, {String? newName});
 
-  /// 获取装备清单的统计信息
-  Future<Map<String, dynamic>> getEquipmentListStats(String equipmentListId);
 }

@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import '../ui/page/home/home_screen.dart';
 import '../ui/page/route/route_list_screen.dart';
 import '../ui/page/equipment/cupertino_equipment_list_screen.dart';
 import '../ui/page/profile/profile_screen.dart';
 import '../ui/page/search/route_search_page.dart';
-import '../service/service_manager.dart';
 import 'theme/app_colors.dart';
 
 /// 主布局页面，包含底部导航栏和内容区域
@@ -39,23 +37,6 @@ class _MainLayoutState extends State<MainLayout> {
     Navigator.of(context).push(
       CupertinoPageRoute(
         builder: (context) => const RouteSearchPage(),
-      ),
-    );
-  }
-
-  /// 显示没有路线的提示
-  void _showNoRoutesAlert(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('无法加载路线'),
-        content: const Text('暂时无法获取推荐路线，请稍后再试。'),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('确定'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
       ),
     );
   }

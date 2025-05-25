@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:walk/service/service_manager.dart';
-import '../../../model/equipment/equipment_model.dart';
+import '../../../model/equipment/equipment_list_model.dart';
 import 'widgets/equipment_list_card.dart';
 import '../common/loading_view.dart';
 import '../common/error_view.dart';

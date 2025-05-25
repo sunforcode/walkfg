@@ -192,19 +192,6 @@ class MockRouteService implements RouteService {
         .map<RouteModel>((json) => RouteModel.fromJson(json))
         .toList();
 
-    // 获取当前季节
-    final now = DateTime.now();
-    String currentSeason;
-    if (now.month >= 3 && now.month <= 5) {
-      currentSeason = '春';
-    } else if (now.month >= 6 && now.month <= 8) {
-      currentSeason = '夏';
-    } else if (now.month >= 9 && now.month <= 11) {
-      currentSeason = '秋';
-    } else {
-      currentSeason = '冬';
-    }
-
     // 随机排序
     routes.shuffle();
 

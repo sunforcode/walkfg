@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../trip_plan_service.dart';
 import '../../model/trip/trip_model.dart';

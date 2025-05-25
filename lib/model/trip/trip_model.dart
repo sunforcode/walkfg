@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:walk/model/equipment/equipment_model.dart';
+import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/model/food/meal_plan_model.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/water/water_plan_model.dart';

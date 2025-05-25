@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:walk/model/equipment/equipment_model.dart';
+import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/trip/trip_day_plan_model.dart';
 import 'package:walk/model/user/user_model.dart';

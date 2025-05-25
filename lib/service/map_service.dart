@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:walk/model/map/map_bounds.dart';
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/ui/map/core/map_enum.dart';
-import 'package:walk/ui/map/unified_map_widget.dart';
 
 /// 地图服务类，负责管理地图相关的状态和操作
 class MapService extends ChangeNotifier {

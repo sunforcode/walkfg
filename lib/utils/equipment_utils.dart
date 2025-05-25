@@ -91,22 +91,6 @@ class EquipmentUtils {
     }
   }
 
-  /// 按类别分组装备
-  static Map<String, List<EquipmentItemModel>> groupByCategory(
-      List<EquipmentItemModel> items) {
-    final Map<String, List<EquipmentItemModel>> grouped = {};
-
-    for (var item in items) {
-      final category = item.category;
-      if (!grouped.containsKey(category)) {
-        grouped[category] = [];
-      }
-      grouped[category]!.add(item);
-    }
-
-    return grouped;
-  }
-
   /// 获取装备推荐建议
   static String getRecommendation(EquipmentItemModel item) {
     switch (item.name.toLowerCase()) {

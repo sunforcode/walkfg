@@ -60,10 +60,10 @@ class TrackInfoCard extends StatelessWidget {
                 '${mapData.statistics.totalDescent.toStringAsFixed(0)} 米'),
             const SizedBox(height: 8),
             _buildInfoRow('最高点',
-                '${mapData.highestPoint?.elevation.toStringAsFixed(0) ?? "未知"} 米'),
+                '${mapData.highestPoint.elevation.toStringAsFixed(0)} 米'),
             const SizedBox(height: 8),
-            _buildInfoRow('最低点',
-                '${mapData.lowestPoint?.elevation.toStringAsFixed(0) ?? "未知"} 米'),
+            _buildInfoRow(
+                '最低点', '${mapData.lowestPoint.elevation.toStringAsFixed(0)} 米'),
             const SizedBox(height: 8),
             _buildInfoRow('轨迹点数', '${mapData.pointCount}'),
           ],

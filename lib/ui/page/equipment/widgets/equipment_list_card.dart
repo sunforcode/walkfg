@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../model/equipment/equipment_model.dart';
+import '../../../../model/equipment/equipment_list_model.dart';
 
 /// 装备列表卡片组件
 class EquipmentListCard extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../model/equipment/equipment_model.dart';
+import '../../../../model/equipment/equipment_list_model.dart';
 import '../../../../model/equipment/equipment_necessity.dart';
 
 /// 装备摘要卡片组件

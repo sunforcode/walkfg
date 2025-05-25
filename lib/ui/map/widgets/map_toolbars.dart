@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/theme/theme/app_colors.dart';
 import 'package:walk/ui/map/core/map_enum.dart';
-import 'package:walk/ui/map/core/map_provider.dart';
-import '../unified_map_widget.dart';
 
 /// 地图类型工具栏
 class MapTypeToolbar extends StatelessWidget {
@@ -275,9 +273,8 @@ class MapTypeToolbar extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: mapType == type
-                  ? AppColors.primary
-                  : CupertinoColors.label,
+              color:
+                  mapType == type ? AppColors.primary : CupertinoColors.label,
               fontSize: 14,
             ),
           ),

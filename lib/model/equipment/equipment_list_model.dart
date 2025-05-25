@@ -7,7 +7,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'equipment_item_model.dart';
 import 'equipment_necessity.dart';
 
-part 'equipment_model.g.dart';
+part 'equipment_list_model.g.dart';
 
 /// 装备季节适用性
 enum SeasonSuitability { spring, summer, autumn, winter, allSeasons }
@@ -206,104 +206,4 @@ class EquipmentListModel extends BaseModel {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
-}
-
-/// 装备分类
-class EquipmentCategory {
-  /// 分类名称
-  final String name;
-
-  /// 分类图标
-  final String? icon;
-
-  /// 分类描述
-  final String? description;
-
-  /// 装备项目列表
-  final List<EquipmentItemModel> items;
-
-  /// 构造函数
-  EquipmentCategory({
-    required this.name,
-    this.icon,
-    this.description,
-    required this.items,
-  });
-
-  /// 从JSON创建
-  factory EquipmentCategory.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> itemsJson = json['items'] as List<dynamic>;
-    final items = itemsJson.map((item) {
-      final itemMap = item as Map<String, dynamic>;
-      // 生成一个唯一ID，如果没有的话
-      final id = itemMap['id'] as String? ??
-          DateTime.now().millisecondsSinceEpoch.toString();
-      return EquipmentItemModel(
-        id: id,
-        name: itemMap['name'] as String,
-        category: itemMap['category'] as String,
-        description: itemMap['description'] as String?,
-        weight: (itemMap['weight']).toDouble(),
-        quantity: itemMap['quantity'] as int,
-        necessity: EquipmentNecessity.values[itemMap['necessity'] as int],
-        brand: itemMap['brand'] as String?,
-        model: itemMap['model'] as String?,
-        price: itemMap['price'] != null ? (itemMap['price']).toDouble() : null,
-        notes: itemMap['notes'] as String?,
-      );
-    }).toList();
-
-    return EquipmentCategory(
-      name: json['name'] as String,
-      icon: json['icon'] as String?,
-      description: json['description'] as String?,
-      items: items,
-    );
-  }
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'icon': icon,
-      'description': description,
-      'items': items
-          .map((item) => {
-                'id': item.id,
-                'name': item.name,
-                'category': item.category,
-                'description': item.description,
-                'weight': item.weight,
-                'quantity': item.quantity,
-                'necessity': item.necessity.index,
-                'brand': item.brand,
-                'model': item.model,
-                'price': item.price,
-                'notes': item.notes,
-              })
-          .toList(),
-    };
-  }
-
-  /// 获取装备项目数量
-  int get itemCount => items.length;
-
-  /// 获取总重量
-  double get totalWeight =>
-      items.fold(0.0, (sum, item) => sum + item.totalWeight);
-
-  /// 获取必需装备数
-  int get essentialItems => items
-      .where((item) => item.necessity == EquipmentNecessity.essential)
-      .length;
-
-  /// 获取推荐装备数
-  int get recommendedItems => items
-      .where((item) => item.necessity == EquipmentNecessity.recommended)
-      .length;
-
-  /// 获取可选装备数
-  int get optionalItems => items
-      .where((item) => item.necessity == EquipmentNecessity.optional)
-      .length;
 }

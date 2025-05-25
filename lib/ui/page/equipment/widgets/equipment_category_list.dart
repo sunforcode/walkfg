@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../model/equipment/equipment_model.dart';
+import '../../../../model/equipment/equipment_list_model.dart';
 import '../../../../model/equipment/equipment_item_model.dart';
+import '../../../../model/equipment/equipment_category.dart';
 import 'equipment_item_tile.dart';
 
 /// 装备列表组件
@@ -19,15 +20,16 @@ class EquipmentCategoryList extends StatelessWidget {
     // 按分类对装备进行分组
     final Map<String, List<EquipmentItemModel>> categoryMap = {};
     for (final item in equipments) {
-      if (!categoryMap.containsKey(item.category)) {
-        categoryMap[item.category] = [];
+      final categoryName = getCategoryName(item.category);
+      if (!categoryMap.containsKey(categoryName)) {
+        categoryMap[categoryName] = [];
       }
-      categoryMap[item.category]!.add(item);
+      categoryMap[categoryName]!.add(item);
     }
 
     // 将分组后的装备转换为列表
     final categories = categoryMap.entries.map((entry) {
-      return EquipmentCategory(
+      return EquipmentCategoryGroup(
         name: entry.key,
         items: entry.value,
       );
@@ -47,10 +49,25 @@ class EquipmentCategoryList extends StatelessWidget {
   }
 }
 
+/// 装备分类组
+class EquipmentCategoryGroup {
+  /// 分类名称
+  final String name;
+
+  /// 分类中的装备项目
+  final List<EquipmentItemModel> items;
+
+  /// 构造函数
+  EquipmentCategoryGroup({
+    required this.name,
+    required this.items,
+  });
+}
+
 /// 装备分类卡片组件
 class EquipmentCategoryCard extends StatefulWidget {
   /// 装备分类
-  final EquipmentCategory category;
+  final EquipmentCategoryGroup category;
 
   /// 构造函数
   const EquipmentCategoryCard({

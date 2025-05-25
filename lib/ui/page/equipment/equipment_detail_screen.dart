@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../model/equipment/equipment_model.dart';
+import '../../../model/equipment/equipment_list_model.dart';
 import '../../../service/service_manager.dart';
 import 'widgets/equipment_category_list.dart';
 import 'widgets/equipment_summary_card.dart';

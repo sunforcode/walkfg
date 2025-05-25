@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import '../base/base_model.dart';
 import 'equipment_necessity.dart';
-
+import 'equipment_category.dart';
 part 'equipment_item_model.g.dart';
 
 /// 装备项目模型 - 统一的装备项目表示
@@ -11,7 +11,8 @@ class EquipmentItemModel extends BaseModel {
   final String name;
 
   /// 分类
-  final String category;
+  @JsonKey(fromJson: _categoryFromJson, toJson: _categoryToJson)
+  final EquipmentCategory category;
 
   /// 描述
   final String? description;
@@ -70,6 +71,23 @@ class EquipmentItemModel extends BaseModel {
   /// 转换为JSON
   @override
   Map<String, dynamic> toJson() => _$EquipmentItemModelToJson(this);
+
+  /// 解析分类
+  static EquipmentCategory _categoryFromJson(dynamic category) {
+    if (category is String) {
+      return parseCategoryFromString(category);
+    } else if (category is int &&
+        category >= 0 &&
+        category < EquipmentCategory.values.length) {
+      return EquipmentCategory.values[category];
+    }
+    return EquipmentCategory.other;
+  }
+
+  /// 分类转JSON
+  static String _categoryToJson(EquipmentCategory category) {
+    return getCategoryName(category);
+  }
 
   /// 解析必要性
   static EquipmentNecessity _necessityFromJson(dynamic necessity) {
@@ -137,13 +155,18 @@ class EquipmentItemModel extends BaseModel {
     return getNecessityName(necessity);
   }
 
+  /// 获取分类名称
+  String getCategoryText() {
+    return getCategoryName(category);
+  }
+
   /// 创建副本并更新部分属性
   EquipmentItemModel copyWith({
     String? id,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? name,
-    String? category,
+    EquipmentCategory? category,
     String? description,
     double? weight,
     int? quantity,
@@ -183,7 +206,7 @@ class EquipmentItemModel extends BaseModel {
           ? DateTime.parse(json['updatedAt'] as String)
           : null,
       name: json['name'] as String,
-      category: json['category'] as String,
+      category: _categoryFromJson(json['category'] as String? ?? 'other'),
       quantity: json['quantity'] as int? ?? 1,
       weight: (json['weight'] as int? ?? 0).toDouble(),
       prepared: json['prepared'] as bool? ?? false,
@@ -198,7 +221,7 @@ class EquipmentItemModel extends BaseModel {
     return EquipmentItemModel(
       id: id,
       name: json['name'] as String,
-      category: json['category'] as String? ?? 'Unknown',
+      category: _categoryFromJson(json['category'] as String? ?? 'other'),
       description: json['description'] as String?,
       weight: (json['weight']).toDouble(),
       quantity: json['quantity'] as int,

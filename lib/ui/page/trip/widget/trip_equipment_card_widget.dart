@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/model/equipment/equipment_item_model.dart';
-import 'package:walk/model/equipment/equipment_model.dart';
+import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/model/equipment/equipment_necessity.dart';
 import 'package:walk/theme/theme/app_colors.dart';
 import 'package:walk/ui/page/trip/widget/trip_card_template.dart';
