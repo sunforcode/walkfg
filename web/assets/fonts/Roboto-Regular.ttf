@@ -84,22 +84,22 @@
   <meta name="route-pattern" content="/:user_id/:repository/raw/*name(/*path)" data-turbo-transient>
   <meta name="route-controller" content="blob" data-turbo-transient>
   <meta name="route-action" content="raw" data-turbo-transient>
-  <meta name="fetch-nonce" content="v2:abc07c2b-5ca8-9e44-a15a-5f2f36a67c47">
+  <meta name="fetch-nonce" content="v2:23eb6322-5c6e-6041-273d-9d57b7ec3231">
 
     
   <meta name="current-catalog-service-hash" content="f3abb0cc802f3d7b95fc8762b94bdcb13bf39634c40c357301c4aa1d67a256fb">
 
 
-  <meta name="request-id" content="162D:12055C:43A115:4DCB34:68348AAA" data-turbo-transient="true" /><meta name="html-safe-nonce" content="1fb7d93d9e90aafe4facb18c817e6f8688d75d782ee5e4809032e475b5858798" data-turbo-transient="true" /><meta name="visitor-payload" content="eyJyZWZlcnJlciI6bnVsbCwicmVxdWVzdF9pZCI6IjE2MkQ6MTIwNTVDOjQzQTExNTo0RENCMzQ6NjgzNDhBQUEiLCJ2aXNpdG9yX2lkIjoiNDEwNDg2MjM5NzI4NTM2MjM0IiwicmVnaW9uX2VkZ2UiOiJzb3V0aGVhc3Rhc2lhIiwicmVnaW9uX3JlbmRlciI6ImlhZCJ9" data-turbo-transient="true" /><meta name="visitor-hmac" content="8403c59ba99677ba581584c11fc9bf401179596e026aa4e09d607a5c88631d29" data-turbo-transient="true" />
+  <meta name="request-id" content="15A5:5ED59:460A53:509E19:68348DB7" data-turbo-transient="true" /><meta name="html-safe-nonce" content="0a5cda04a1a22eab0fbf2cdc87c25100df3bc21b3fdfdd188fe976cdb392c232" data-turbo-transient="true" /><meta name="visitor-payload" content="eyJyZWZlcnJlciI6bnVsbCwicmVxdWVzdF9pZCI6IjE1QTU6NUVENTk6NDYwQTUzOjUwOUUxOTo2ODM0OERCNyIsInZpc2l0b3JfaWQiOiI3MTI3NjQ1OTE2MjA1NzE0ODcxIiwicmVnaW9uX2VkZ2UiOiJzb3V0aGVhc3Rhc2lhIiwicmVnaW9uX3JlbmRlciI6ImlhZCJ9" data-turbo-transient="true" /><meta name="visitor-hmac" content="bbdf21754032ccd87e2b675dac33d3f716a6188fde875d7616d161786dc17496" data-turbo-transient="true" />
 
 
-    <meta name="hovercard-subject-tag" content="repository:36903607" data-turbo-transient>
+    <meta name="hovercard-subject-tag" content="repository:30675533" data-turbo-transient>
 
 
   <meta name="github-keyboard-shortcuts" content="copilot" data-turbo-transient="true" />
   
 
-  <meta name="selected-link" value="/notofonts/noto-cjk/raw/main/Sans/OTF/Chinese_Simplified/NotoSansSC-Light.otf" data-turbo-transient>
+  <meta name="selected-link" value="/google/fonts/raw/main/apache/roboto/Roboto-Regular.ttf" data-turbo-transient>
   <link rel="assets" href="https://github.githubassets.com/">
 
     <meta name="google-site-verification" content="Apib7-x98H0j5cPqHWwSMm6dNU4GmODRoqxLiDzdx9I">
@@ -127,7 +127,7 @@
 
     <link rel="fluid-icon" href="https://github.com/fluidicon.png" title="GitHub">
     <meta property="fb:app_id" content="1401488693436528">
-    <meta name="apple-itunes-app" content="app-id=1477376905, app-argument=https://github.com/notofonts/noto-cjk/raw/main/Sans/OTF/Chinese_Simplified/NotoSansSC-Light.otf" />
+    <meta name="apple-itunes-app" content="app-id=1477376905, app-argument=https://github.com/google/fonts/raw/main/apache/roboto/Roboto-Regular.ttf" />
 
       <meta property="og:url" content="https://github.com">
   <meta property="og:site_name" content="GitHub">
@@ -182,7 +182,7 @@
 
 
 
-      <link rel="canonical" href="https://github.com/notofonts/noto-cjk/raw/main/Sans/OTF/Chinese_Simplified/NotoSansSC-Light.otf" data-turbo-transient>
+      <link rel="canonical" href="https://github.com/google/fonts/raw/main/apache/roboto/Roboto-Regular.ttf" data-turbo-transient>
 
 
     <meta name="turbo-body-classes" content="logged-out env-production page-responsive min-height-full d-flex flex-column">
@@ -192,7 +192,7 @@
 
   <meta name="browser-errors-url" content="https://api.github.com/_private/browser/errors">
 
-  <meta name="release" content="498021ee258ee864168df1c9fb6d200091bfa6de">
+  <meta name="release" content="381e6ed6033a2e6998977c58864fc5b6ae610a9e">
 
   <link rel="mask-icon" href="https://github.githubassets.com/assets/pinned-octocat-093da3e6fa40.svg" color="#000000">
   <link rel="alternate icon" class="js-site-favicon" type="image/png" href="https://github.githubassets.com/favicons/favicon.png">
@@ -279,19 +279,19 @@
 
       <div class="d-flex flex-1 flex-order-2 text-right d-lg-none gap-2 flex-justify-end">
           <a
-            href="/login?return_to=https%3A%2F%2Fgithub.com%2Fnotofonts%2Fnoto-cjk%2Fraw%2Fmain%2FSans%2FOTF%2FChinese_Simplified%2FNotoSansSC-Light.otf"
+            href="/login?return_to=https%3A%2F%2Fgithub.com%2Fgoogle%2Ffonts%2Fraw%2Fmain%2Fapache%2Froboto%2FRoboto-Regular.ttf"
             class="HeaderMenu-link HeaderMenu-button d-inline-flex f5 no-underline border color-border-default rounded-2 px-2 py-1 color-fg-inherit js-prevent-focus-on-mobile-nav"
-            data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/notofonts/noto-cjk/raw/main/Sans/OTF/Chinese_Simplified/NotoSansSC-Light.otf&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="cb1477d96dcadfd30e6d2d0d69c28a8311670b645f9df396dcb7bdeeb98ed8eb"
+            data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/google/fonts/raw/main/apache/roboto/Roboto-Regular.ttf&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="4f86f1f9467f580608e0c48c7f58179f462959b24df7e9c9f0e88cba718b5334"
             data-analytics-event="{&quot;category&quot;:&quot;Marketing nav&quot;,&quot;action&quot;:&quot;click to Sign in&quot;,&quot;label&quot;:&quot;ref_page:Marketing;ref_cta:Sign in;ref_loc:Header&quot;}"
           >
             Sign in
           </a>
               <div class="AppHeader-appearanceSettings">
     <react-partial-anchor>
-      <button data-target="react-partial-anchor.anchor" id="icon-button-9d812a9e-702b-440e-8dc0-b914ee9f216a" aria-labelledby="tooltip-3c364eca-25f9-44b6-acd6-e267cb189734" type="button" disabled="disabled" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium AppHeader-button HeaderMenu-link border cursor-wait">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-sliders Button-visual">
+      <button data-target="react-partial-anchor.anchor" id="icon-button-502a81d3-889c-4a51-81d1-b4974f373a51" aria-labelledby="tooltip-fe5e7e2d-dbd4-43f7-883d-89c53c6fff1e" type="button" disabled="disabled" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium AppHeader-button HeaderMenu-link border cursor-wait">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-sliders Button-visual">
     <path d="M15 2.75a.75.75 0 0 1-.75.75h-4a.75.75 0 0 1 0-1.5h4a.75.75 0 0 1 .75.75Zm-8.5.75v1.25a.75.75 0 0 0 1.5 0v-4a.75.75 0 0 0-1.5 0V2H1.75a.75.75 0 0 0 0 1.5H6.5Zm1.25 5.25a.75.75 0 0 0 0-1.5h-6a.75.75 0 0 0 0 1.5h6ZM15 8a.75.75 0 0 1-.75.75H11.5V10a.75.75 0 1 1-1.5 0V6a.75.75 0 0 1 1.5 0v1.25h2.75A.75.75 0 0 1 15 8Zm-9 5.25v-2a.75.75 0 0 0-1.5 0v1.25H1.75a.75.75 0 0 0 0 1.5H4.5v1.25a.75.75 0 0 0 1.5 0v-2Zm9 0a.75.75 0 0 1-.75.75h-6a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75Z"></path>
 </svg>
-</button><tool-tip id="tooltip-3c364eca-25f9-44b6-acd6-e267cb189734" for="icon-button-9d812a9e-702b-440e-8dc0-b914ee9f216a" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Appearance settings</tool-tip>
+</button><tool-tip id="tooltip-fe5e7e2d-dbd4-43f7-883d-89c53c6fff1e" for="icon-button-502a81d3-889c-4a51-81d1-b4974f373a51" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Appearance settings</tool-tip>
 
       <template data-target="react-partial-anchor.template">
         <script crossorigin="anonymous" defer="defer" type="application/javascript" src="https://github.githubassets.com/assets/ui_packages_document-metadata_document-metadata_ts-ui_packages_promise-with-resolvers-polyfil-40d47c-83bb4d2a9499.js"></script>
@@ -962,7 +962,7 @@
                 
 
 
-<qbsearch-input class="search-input" data-scope="" data-custom-scopes-path="/search/custom_scopes" data-delete-custom-scopes-csrf="bRUneI_c6ytQnXQxVGJ-0pOqENa2aQe84cPqE2XwO6C7zWsHhxJfo1Gk_7fHaDmu8Ie-r51MVtAaRv0HKaqEwQ" data-max-custom-scopes="10" data-header-redesign-enabled="false" data-initial-value="" data-blackbird-suggestions-path="/search/suggestions" data-jump-to-suggestions-path="/_graphql/GetSuggestedNavigationDestinations" data-current-repository="" data-current-org="" data-current-owner="" data-logged-in="false" data-copilot-chat-enabled="false" data-nl-search-enabled="false" data-retain-scroll-position="true">
+<qbsearch-input class="search-input" data-scope="" data-custom-scopes-path="/search/custom_scopes" data-delete-custom-scopes-csrf="jARx6gOlf43fGP9bpnNMPMK7dTrHdrsCf693Iys6Vcb2I2PK6l9RggscC4IQfOZdFlvvWJcj--YKAGX6ozc89A" data-max-custom-scopes="10" data-header-redesign-enabled="false" data-initial-value="" data-blackbird-suggestions-path="/search/suggestions" data-jump-to-suggestions-path="/_graphql/GetSuggestedNavigationDestinations" data-current-repository="" data-current-org="" data-current-owner="" data-logged-in="false" data-copilot-chat-enabled="false" data-nl-search-enabled="false" data-retain-scroll-position="true">
   <div
     class="search-input-container search-with-dialog position-relative d-flex flex-row flex-items-center mr-4 rounded"
     data-action="click:qbsearch-input#searchInputContainerClicked"
@@ -1027,7 +1027,7 @@
           ></div>
           <div class="QueryBuilder-InputWrapper">
             <div aria-hidden="true" class="QueryBuilder-Sizer" data-target="query-builder.sizer"></div>
-            <input id="query-builder-test" name="query-builder-test" value="" autocomplete="off" type="text" role="combobox" spellcheck="false" aria-expanded="false" aria-describedby="validation-84faf674-ba1e-4897-ac00-0abed7ecf368" data-target="query-builder.input" data-action="
+            <input id="query-builder-test" name="query-builder-test" value="" autocomplete="off" type="text" role="combobox" spellcheck="false" aria-expanded="false" aria-describedby="validation-cb03ba02-52ba-4e30-8eb2-14490ac99eb9" data-target="query-builder.input" data-action="
           input:query-builder#inputChange
           blur:query-builder#inputBlur
           keydown:query-builder#inputKeydown
@@ -1264,7 +1264,7 @@
                   id="query-builder-test-results"
                 ></ul>
         </div>
-      <div class="FormControl-inlineValidation" id="validation-84faf674-ba1e-4897-ac00-0abed7ecf368" hidden="hidden">
+      <div class="FormControl-inlineValidation" id="validation-cb03ba02-52ba-4e30-8eb2-14490ac99eb9" hidden="hidden">
         <span class="FormControl-inlineValidation--visual">
           <svg aria-hidden="true" height="12" viewBox="0 0 12 12" version="1.1" width="12" data-view-component="true" class="octicon octicon-alert-fill">
     <path d="M4.855.708c.5-.896 1.79-.896 2.29 0l4.675 8.351a1.312 1.312 0 0 1-1.146 1.954H1.33A1.313 1.313 0 0 1 .183 9.058ZM7 7V3H5v4Zm-1 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"></path>
@@ -1305,7 +1305,7 @@
   
 </div>
       <scrollable-region data-labelled-by="feedback-dialog-title">
-        <div data-view-component="true" class="Overlay-body">        <!-- '"` --><!-- </textarea></xmp> --></option></form><form id="code-search-feedback-form" data-turbo="false" action="/search/feedback" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="yh00KiIaq4ELv0O0W5zvxeIda5gEDsVN2QDlu5qXTyjDGshGnL1NIfDyxR-XsIrf-ypqM6q3CO6EHEUVfZJCQQ" />
+        <div data-view-component="true" class="Overlay-body">        <!-- '"` --><!-- </textarea></xmp> --></option></form><form id="code-search-feedback-form" data-turbo="false" action="/search/feedback" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="XAFkbYq3R27KgFwT9JjWOtse0z-PBkH4u4J9oJYTh4_d61ayGCLzDl0vwoxHp_w0OfPMBbiukBMP2himSF2z9A" />
           <p>We read every piece of feedback, and take your input very seriously.</p>
           <textarea name="feedback" class="form-control width-full mb-2" style="height: 120px" id="feedback"></textarea>
           <input name="include_email" id="include_email" aria-label="Include my email address so I can be contacted" class="form-control mr-2" type="checkbox">
@@ -1343,7 +1343,7 @@
         <div data-view-component="true" class="Overlay-body">        <div data-target="custom-scopes.customScopesModalDialogFlash"></div>
 
         <div hidden class="create-custom-scope-form" data-target="custom-scopes.createCustomScopeForm">
-        <!-- '"` --><!-- </textarea></xmp> --></option></form><form id="custom-scopes-dialog-form" data-turbo="false" action="/search/custom_scopes" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="3IWfKQI5-WPn-EMnEe7eyvLspfi6dhvZq6VIrH_6RoNTzcekBFKIPXhsh0l6icw84jmHi2cOR8Yi1zAncr-98w" />
+        <!-- '"` --><!-- </textarea></xmp> --></option></form><form id="custom-scopes-dialog-form" data-turbo="false" action="/search/custom_scopes" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="X085Eya-r75Vc8ZHAfMMFf4Y5O-0-KLnXsy-nz8f7brXbr5FIkAeuW_gR9XrVsE_Y1dXzoojgBBtn4K80CKNgg" />
           <div data-target="custom-scopes.customScopesModalDialogFlash"></div>
 
           <input type="hidden" id="custom_scope_id" name="custom_scope_id" data-target="custom-scopes.customScopesIdField">
@@ -1361,7 +1361,7 @@
                 placeholder="github-ruby"
                 required
                 maxlength="50">
-              <input type="hidden" value="UjckVzwcAp5b8rsaUXeptfZdre_qAYM28GHSd6zVWkA4iB86Of9RnA4N6-CY8YxblaaCPAKK8qMlH0aKC1-isg" data-csrf="true" />
+              <input type="hidden" value="BsTsdcIjGpOFOFyJtls3UEOnVFiLQW--NmbHG1wL86vtCMJHpPDvpFrRQGQr43DeDA0CZf7F7_nbs0JXshluHw" data-csrf="true" />
             </auto-check>
           </div>
 
@@ -1403,10 +1403,10 @@
 
             <div class="position-relative HeaderMenu-link-wrap d-lg-inline-block">
               <a
-                href="/login?return_to=https%3A%2F%2Fgithub.com%2Fnotofonts%2Fnoto-cjk%2Fraw%2Fmain%2FSans%2FOTF%2FChinese_Simplified%2FNotoSansSC-Light.otf"
+                href="/login?return_to=https%3A%2F%2Fgithub.com%2Fgoogle%2Ffonts%2Fraw%2Fmain%2Fapache%2Froboto%2FRoboto-Regular.ttf"
                 class="HeaderMenu-link HeaderMenu-link--sign-in HeaderMenu-button flex-shrink-0 no-underline d-none d-lg-inline-flex border border-lg-0 rounded rounded-lg-0 px-2 py-1"
                 style="margin-left: 12px;"
-                data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/notofonts/noto-cjk/raw/main/Sans/OTF/Chinese_Simplified/NotoSansSC-Light.otf&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="cb1477d96dcadfd30e6d2d0d69c28a8311670b645f9df396dcb7bdeeb98ed8eb"
+                data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/google/fonts/raw/main/apache/roboto/Roboto-Regular.ttf&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="4f86f1f9467f580608e0c48c7f58179f462959b24df7e9c9f0e88cba718b5334"
                 data-analytics-event="{&quot;category&quot;:&quot;Marketing nav&quot;,&quot;action&quot;:&quot;click to go to homepage&quot;,&quot;label&quot;:&quot;ref_page:Marketing;ref_cta:Sign in;ref_loc:Header&quot;}"
               >
                 Sign in
@@ -1416,7 +1416,7 @@
     <h4 data-view-component="true" class="color-fg-default mb-2">                    Sign in to GitHub
 </h4>
                         
-<!-- '"` --><!-- </textarea></xmp> --></option></form><form data-turbo="false" action="/session" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="gIl1zy_mVeQkNWAIbvggVTtdhM61KJsSZ3YP5RrfAY4kFvSU5TEBF96tyPb6NgaJ6UQmdxFSXckCl7KYGoagZA" />  <input type="hidden" name="add_account" id="add_account" autocomplete="off" class="form-control" />
+<!-- '"` --><!-- </textarea></xmp> --></option></form><form data-turbo="false" action="/session" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="0dDkMtRqlYLT8lUWpJfhYHa9E_eqkVgYT9jQDd5KTKeAbS9T5yly_jMnpZfOzqgnm01AJfa6B1Vp449gPvj0Iw" />  <input type="hidden" name="add_account" id="add_account" autocomplete="off" class="form-control" />
 
     <label for="login_field">
       Username or email address
@@ -1434,17 +1434,17 @@
 <input type="hidden" class="js-support" name="javascript-support" value="unknown">
 <input type="hidden" class="js-webauthn-support" name="webauthn-support" value="unknown">
 <input type="hidden" class="js-webauthn-iuvpaa-support" name="webauthn-iuvpaa-support" value="unknown">
-<input type="hidden" name="return_to" id="return_to" value="https://github.com/notofonts/noto-cjk/raw/main/Sans/OTF/Chinese_Simplified/NotoSansSC-Light.otf" autocomplete="off" class="form-control" />
+<input type="hidden" name="return_to" id="return_to" value="https://github.com/google/fonts/raw/main/apache/roboto/Roboto-Regular.ttf" autocomplete="off" class="form-control" />
 <input type="hidden" name="allow_signup" id="allow_signup" autocomplete="off" class="form-control" />
 <input type="hidden" name="client_id" id="client_id" autocomplete="off" class="form-control" />
 <input type="hidden" name="integration" id="integration" autocomplete="off" class="form-control" />
-<input type="text" name="required_field_b984" hidden="hidden" class="form-control" /><input type="hidden" name="timestamp" value="1748273834726" autocomplete="off" class="form-control" /><input type="hidden" name="timestamp_secret" value="4e012d964b90374cd0739bd567080e58ac24094e5e8f7e9bb8653283f4d1aab5" autocomplete="off" class="form-control" />
+<input type="text" name="required_field_3e21" hidden="hidden" class="form-control" /><input type="hidden" name="timestamp" value="1748274615513" autocomplete="off" class="form-control" /><input type="hidden" name="timestamp_secret" value="27977fa26ed3b6f20b20cb72e61c64d9ab6c849ece66b0295d82c24d35fff19e" autocomplete="off" class="form-control" />
 
     <input type="submit" name="commit" value="Sign in" class="btn btn-primary btn-block js-sign-in-button" data-disable-with="Signing in…" data-signin-label="Sign in" data-sso-label="Sign in with your identity provider" development="false" disable-emu-sso="false" />
   </div>
 </form>  <webauthn-status class="js-webauthn-login-emu-control">
         <div data-target="webauthn-status.partial" class="d-flex flex-justify-between flex-column mt-3 mb-0" hidden>
-          <a href="/login?passkey=true&amp;return_to=https%3A%2F%2Fgithub.com%2Fnotofonts%2Fnoto-cjk%2Fraw%2Fmain%2FSans%2FOTF%2FChinese_Simplified%2FNotoSansSC-Light.otf" data-analytics-event="{&quot;category&quot;:&quot;passkey_404_login&quot;,&quot;action&quot;:&quot;clicked&quot;,&quot;label&quot;:null}" data-view-component="true" class="Button--link Button--medium Button">  <span class="Button-content">
+          <a href="/login?passkey=true&amp;return_to=https%3A%2F%2Fgithub.com%2Fgoogle%2Ffonts%2Fraw%2Fmain%2Fapache%2Froboto%2FRoboto-Regular.ttf" data-analytics-event="{&quot;category&quot;:&quot;passkey_404_login&quot;,&quot;action&quot;:&quot;clicked&quot;,&quot;label&quot;:null}" data-view-component="true" class="Button--link Button--medium Button">  <span class="Button-content">
     <span class="Button-label">or sign in with a passkey</span>
   </span>
 </a>
@@ -1454,20 +1454,20 @@
 
 </div></div>            </div>
 
-              <a href="/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2Fnotofonts%2Fnoto-cjk%2Fraw%2Fmain%2FSans%2FOTF%2FChinese_Simplified%2FNotoSansSC-Light.otf&amp;source=header"
+              <a href="/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2Fgoogle%2Ffonts%2Fraw%2Fmain%2Fapache%2Froboto%2FRoboto-Regular.ttf&amp;source=header"
                 class="HeaderMenu-link HeaderMenu-link--sign-up HeaderMenu-button flex-shrink-0 d-flex d-lg-inline-flex no-underline border color-border-default rounded px-2 py-1"
-                data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/notofonts/noto-cjk/raw/main/Sans/OTF/Chinese_Simplified/NotoSansSC-Light.otf&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="cb1477d96dcadfd30e6d2d0d69c28a8311670b645f9df396dcb7bdeeb98ed8eb"
-                data-analytics-event="{&quot;category&quot;:&quot;Sign up&quot;,&quot;action&quot;:&quot;click to sign up for account&quot;,&quot;label&quot;:&quot;ref_page:/notofonts/noto-cjk/raw/main/Sans/OTF/Chinese_Simplified/NotoSansSC-Light.otf;ref_cta:Sign up;ref_loc:header logged out&quot;}"
+                data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site header menu&quot;,&quot;repository_id&quot;:null,&quot;auth_type&quot;:&quot;SIGN_UP&quot;,&quot;originating_url&quot;:&quot;https://github.com/google/fonts/raw/main/apache/roboto/Roboto-Regular.ttf&quot;,&quot;user_id&quot;:null}}" data-hydro-click-hmac="4f86f1f9467f580608e0c48c7f58179f462959b24df7e9c9f0e88cba718b5334"
+                data-analytics-event="{&quot;category&quot;:&quot;Sign up&quot;,&quot;action&quot;:&quot;click to sign up for account&quot;,&quot;label&quot;:&quot;ref_page:/google/fonts/raw/main/apache/roboto/Roboto-Regular.ttf;ref_cta:Sign up;ref_loc:header logged out&quot;}"
               >
                 Sign up
               </a>
 
                 <div class="AppHeader-appearanceSettings">
     <react-partial-anchor>
-      <button data-target="react-partial-anchor.anchor" id="icon-button-2805d84f-ac2c-41fc-b48b-24c3952186bc" aria-labelledby="tooltip-6f762b7e-b70b-4fd3-9785-93360aa71843" type="button" disabled="disabled" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium AppHeader-button HeaderMenu-link border cursor-wait">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-sliders Button-visual">
+      <button data-target="react-partial-anchor.anchor" id="icon-button-892eeb60-d3f8-45dc-873a-2c390537a650" aria-labelledby="tooltip-f6957f84-cfcc-4396-8c04-a76b0985c796" type="button" disabled="disabled" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium AppHeader-button HeaderMenu-link border cursor-wait">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-sliders Button-visual">
     <path d="M15 2.75a.75.75 0 0 1-.75.75h-4a.75.75 0 0 1 0-1.5h4a.75.75 0 0 1 .75.75Zm-8.5.75v1.25a.75.75 0 0 0 1.5 0v-4a.75.75 0 0 0-1.5 0V2H1.75a.75.75 0 0 0 0 1.5H6.5Zm1.25 5.25a.75.75 0 0 0 0-1.5h-6a.75.75 0 0 0 0 1.5h6ZM15 8a.75.75 0 0 1-.75.75H11.5V10a.75.75 0 1 1-1.5 0V6a.75.75 0 0 1 1.5 0v1.25h2.75A.75.75 0 0 1 15 8Zm-9 5.25v-2a.75.75 0 0 0-1.5 0v1.25H1.75a.75.75 0 0 0 0 1.5H4.5v1.25a.75.75 0 0 0 1.5 0v-2Zm9 0a.75.75 0 0 1-.75.75h-6a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75Z"></path>
 </svg>
-</button><tool-tip id="tooltip-6f762b7e-b70b-4fd3-9785-93360aa71843" for="icon-button-2805d84f-ac2c-41fc-b48b-24c3952186bc" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Appearance settings</tool-tip>
+</button><tool-tip id="tooltip-f6957f84-cfcc-4396-8c04-a76b0985c796" for="icon-button-892eeb60-d3f8-45dc-873a-2c390537a650" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Appearance settings</tool-tip>
 
       <template data-target="react-partial-anchor.template">
         <link crossorigin="anonymous" media="all" rel="stylesheet" href="https://github.githubassets.com/assets/primer-react.19291721a114332ad118.module.css" />
@@ -1503,10 +1503,10 @@
         <span class="js-stale-session-flash-signed-out" hidden>You signed out in another tab or window. <a class="Link--inTextBlock" href="">Reload</a> to refresh your session.</span>
         <span class="js-stale-session-flash-switched" hidden>You switched accounts on another tab or window. <a class="Link--inTextBlock" href="">Reload</a> to refresh your session.</span>
 
-    <button id="icon-button-1216bed9-52c4-494e-bc6a-2d9c2ee1d9d7" aria-labelledby="tooltip-b9b67042-df8a-4a24-9ff9-ae1df6e1ba1b" type="button" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium flash-close js-flash-close">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x Button-visual">
+    <button id="icon-button-e539f119-8537-4a7a-9f52-3983855f1b16" aria-labelledby="tooltip-c195d2c0-7588-406b-afd7-1e64ff180789" type="button" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium flash-close js-flash-close">  <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x Button-visual">
     <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
 </svg>
-</button><tool-tip id="tooltip-b9b67042-df8a-4a24-9ff9-ae1df6e1ba1b" for="icon-button-1216bed9-52c4-494e-bc6a-2d9c2ee1d9d7" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Dismiss alert</tool-tip>
+</button><tool-tip id="tooltip-c195d2c0-7588-406b-afd7-1e64ff180789" for="icon-button-e539f119-8537-4a7a-9f52-3983855f1b16" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute">Dismiss alert</tool-tip>
 
 
   

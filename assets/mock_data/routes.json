@@ -368,13 +368,12 @@
     ]
   },
   "image_urls": [
-    "https://example.com/images/huangshan1.jpg",
-    "https://example.com/images/huangshan2.jpg",
-    "https://example.com/images/huangshan3.jpg",
-    "https://example.com/images/huangshan4.jpg",
-    "https://example.com/images/huangshan5.jpg"
+    "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+    "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+    "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+    "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
   ],
-  "cover_url": "https://example.com/images/huangshan_cover.jpg",
+  "cover_url": "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
   "map_data_id": "map_001",
   "created_by": "user_001",
   "is_favorite": false,

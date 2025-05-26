@@ -21,15 +21,15 @@ class App extends StatelessWidget {
       home: const MainLayout(),
       routes: {
         '/settings': (context) => const CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-            middle: Text('设置'),
-          ),
-          child: SafeArea(
-            child: Center(
-              child: Text('设置页面'),
+              navigationBar: CupertinoNavigationBar(
+                middle: Text('设置'),
+              ),
+              child: SafeArea(
+                child: Center(
+                  child: Text('设置页面'),
+                ),
+              ),
             ),
-          ),
-        ),
       },
     );
   }

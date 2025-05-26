@@ -2,6 +2,9 @@ import 'package:json_annotation/json_annotation.dart';
 import '../base/base_model.dart';
 import 'equipment_necessity.dart';
 import 'equipment_category.dart';
+import 'equipment_condition.dart';
+import 'weight_unit.dart';
+
 part 'equipment_item_model.g.dart';
 
 /// 装备项目模型 - 统一的装备项目表示
@@ -20,6 +23,10 @@ class EquipmentItemModel extends BaseModel {
   /// 重量(g)
   final double weight;
 
+  /// 重量单位
+  @JsonKey(fromJson: _weightUnitFromJson, toJson: _weightUnitToJson)
+  final WeightUnit weightUnit;
+
   /// 数量
   final int quantity;
 
@@ -28,7 +35,6 @@ class EquipmentItemModel extends BaseModel {
   final EquipmentNecessity necessity;
 
   /// 是否已准备
-  @JsonKey(defaultValue: false)
   final bool prepared;
 
   /// 品牌
@@ -44,7 +50,32 @@ class EquipmentItemModel extends BaseModel {
   final String? notes;
 
   /// 是否拥有
-  bool isOwned = true;
+  final bool isOwned;
+
+  /// 是否共享装备
+  final bool isShared;
+
+  /// 共享人数
+  final int? sharedPersonCount;
+
+  /// 购买链接
+  final String? purchaseLink;
+
+  /// 购买日期
+  final DateTime? purchaseDate;
+
+  /// 使用次数
+  final int usageCount;
+
+  /// 使用状态
+  @JsonKey(fromJson: _conditionFromJson, toJson: _conditionToJson)
+  final EquipmentCondition condition;
+
+  /// 替代品列表（可替代此装备的其他装备ID）
+  final List<String> alternativeIds;
+
+  /// 装备图片URL
+  final String? imageUrl;
 
   /// 构造函数
   EquipmentItemModel({
@@ -55,6 +86,7 @@ class EquipmentItemModel extends BaseModel {
     required this.category,
     this.description,
     this.weight = 0,
+    this.weightUnit = WeightUnit.gram,
     this.quantity = 1,
     this.necessity = EquipmentNecessity.recommended,
     this.prepared = false,
@@ -62,6 +94,15 @@ class EquipmentItemModel extends BaseModel {
     this.model,
     this.price,
     this.notes,
+    this.isOwned = true,
+    this.isShared = false,
+    this.sharedPersonCount,
+    this.purchaseLink,
+    this.purchaseDate,
+    this.usageCount = 0,
+    this.condition = EquipmentCondition.good,
+    this.alternativeIds = const [],
+    this.imageUrl,
   });
 
   /// 从JSON创建
@@ -109,8 +150,45 @@ class EquipmentItemModel extends BaseModel {
     return necessity.index;
   }
 
+  /// 解析重量单位
+  static WeightUnit _weightUnitFromJson(dynamic unit) {
+    if (unit is String) {
+      return parseWeightUnitFromString(unit);
+    } else if (unit is int && unit >= 0 && unit < WeightUnit.values.length) {
+      return WeightUnit.values[unit];
+    }
+    return WeightUnit.gram;
+  }
+
+  /// 重量单位转JSON
+  static String _weightUnitToJson(WeightUnit unit) {
+    return getWeightUnitName(unit);
+  }
+
+  /// 解析使用状态
+  static EquipmentCondition _conditionFromJson(dynamic condition) {
+    if (condition is String) {
+      return parseConditionFromString(condition);
+    } else if (condition is int &&
+        condition >= 0 &&
+        condition < EquipmentCondition.values.length) {
+      return EquipmentCondition.values[condition];
+    }
+    return EquipmentCondition.good;
+  }
+
+  /// 使用状态转JSON
+  static String _conditionToJson(EquipmentCondition condition) {
+    return getConditionName(condition);
+  }
+
   /// 获取总重量
   double get totalWeight => weight * quantity;
+
+  /// 获取每人分摊重量
+  double get weightPerPerson => isShared && (sharedPersonCount ?? 0) > 0
+      ? totalWeight / sharedPersonCount!
+      : totalWeight;
 
   /// 获取重量文本
   String getWeightText() {
@@ -160,6 +238,16 @@ class EquipmentItemModel extends BaseModel {
     return getCategoryName(category);
   }
 
+  /// 获取使用状态文本
+  String getConditionText() {
+    return getConditionName(condition);
+  }
+
+  /// 获取装备是否需要更换
+  bool get needsReplacement =>
+      condition == EquipmentCondition.poor ||
+      condition == EquipmentCondition.damaged;
+
   /// 创建副本并更新部分属性
   EquipmentItemModel copyWith({
     String? id,
@@ -169,6 +257,7 @@ class EquipmentItemModel extends BaseModel {
     EquipmentCategory? category,
     String? description,
     double? weight,
+    WeightUnit? weightUnit,
     int? quantity,
     EquipmentNecessity? necessity,
     bool? prepared,
@@ -176,6 +265,15 @@ class EquipmentItemModel extends BaseModel {
     String? model,
     double? price,
     String? notes,
+    bool? isOwned,
+    bool? isShared,
+    int? sharedPersonCount,
+    String? purchaseLink,
+    DateTime? purchaseDate,
+    int? usageCount,
+    EquipmentCondition? condition,
+    List<String>? alternativeIds,
+    String? imageUrl,
   }) {
     return EquipmentItemModel(
       id: id ?? this.id,
@@ -185,6 +283,7 @@ class EquipmentItemModel extends BaseModel {
       category: category ?? this.category,
       description: description ?? this.description,
       weight: weight ?? this.weight,
+      weightUnit: weightUnit ?? this.weightUnit,
       quantity: quantity ?? this.quantity,
       necessity: necessity ?? this.necessity,
       prepared: prepared ?? this.prepared,
@@ -192,6 +291,15 @@ class EquipmentItemModel extends BaseModel {
       model: model ?? this.model,
       price: price ?? this.price,
       notes: notes ?? this.notes,
+      isOwned: isOwned ?? this.isOwned,
+      isShared: isShared ?? this.isShared,
+      sharedPersonCount: sharedPersonCount ?? this.sharedPersonCount,
+      purchaseLink: purchaseLink ?? this.purchaseLink,
+      purchaseDate: purchaseDate ?? this.purchaseDate,
+      usageCount: usageCount ?? this.usageCount,
+      condition: condition ?? this.condition,
+      alternativeIds: alternativeIds ?? this.alternativeIds,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 
@@ -208,7 +316,7 @@ class EquipmentItemModel extends BaseModel {
       name: json['name'] as String,
       category: _categoryFromJson(json['category'] as String? ?? 'other'),
       quantity: json['quantity'] as int? ?? 1,
-      weight: (json['weight'] as int? ?? 0).toDouble(),
+      weight: (json['weight'] as num? ?? 0).toDouble(),
       prepared: json['prepared'] as bool? ?? false,
       notes: json['notes'] as String?,
       necessity: EquipmentNecessity.recommended,
@@ -223,12 +331,12 @@ class EquipmentItemModel extends BaseModel {
       name: json['name'] as String,
       category: _categoryFromJson(json['category'] as String? ?? 'other'),
       description: json['description'] as String?,
-      weight: (json['weight']).toDouble(),
+      weight: (json['weight'] as num).toDouble(),
       quantity: json['quantity'] as int,
       necessity: EquipmentNecessity.values[json['necessity'] as int],
       brand: json['brand'] as String?,
       model: json['model'] as String?,
-      price: json['price'] != null ? (json['price']).toDouble() : null,
+      price: json['price'] != null ? (json['price'] as num).toDouble() : null,
       notes: json['notes'] as String?,
       prepared: false,
     );

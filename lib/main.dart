@@ -32,9 +32,6 @@ Future<void> _preloadJsonData() async {
     'assets/mock_data/guides.json',
     'assets/mock_data/routes.json',
     'assets/mock_data/users.json',
-    'assets/mock_data/weather.json',
-    'assets/mock_data/hot_searches.json',
-    'assets/mock_data/recommended_routes.json',
   ];
 
   // 预加载所有JSON文件

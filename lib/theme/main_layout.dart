@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import '../ui/page/home/home_screen.dart';
 import '../ui/page/route/route_list_screen.dart';
-import '../ui/page/equipment/cupertino_equipment_list_screen.dart';
+import '../ui/page/equipment/equipment_screen.dart';
 import '../ui/page/profile/profile_screen.dart';
 import '../ui/page/search/route_search_page.dart';
 import 'theme/app_colors.dart';
@@ -102,7 +102,7 @@ class _MainLayoutState extends State<MainLayout> {
                 );
               case 2:
                 return CupertinoTabView(
-                  builder: (context) => const EquipmentListScreen(),
+                  builder: (context) => const EquipmentScreen(),
                 );
               case 3:
                 return CupertinoTabView(
