@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
 
 /// 忘记密码屏幕
 class ForgotPasswordScreen extends StatefulWidget {

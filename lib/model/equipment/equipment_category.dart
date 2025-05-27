@@ -1,5 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
 /// 用于表示户外装备的分类
 enum EquipmentCategory {
   /// 住宿装备（帐篷、睡袋、睡垫等）

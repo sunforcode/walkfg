@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../model/equipment/equipment_list_model.dart';
 import '../../../../model/equipment/equipment_item_model.dart';
 import '../../../../model/equipment/equipment_category.dart';
 import 'equipment_item_tile.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show FloatingActionButton;
 import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/model/equipment/equipment_list_type.dart';
 import 'package:walk/model/equipment/equipment_list_status.dart';
@@ -31,6 +32,19 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
   EquipmentListStatus? _selectedStatus;
   String _searchQuery = '';
 
+  // 视图模式
+  bool _isListView = true;
+
+  // 快速筛选标签选择
+  int _selectedQuickFilterIndex = 0;
+  final List<String> _quickFilters = ['全部', '进行中', '已完成', '已归档'];
+  final List<EquipmentListStatus?> _quickFilterStatuses = [
+    null, // 全部
+    EquipmentListStatus.preparing, // 进行中
+    EquipmentListStatus.completed, // 已完成
+    EquipmentListStatus.archived, // 已归档
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -48,17 +62,34 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
     try {
       List<EquipmentListModel> lists;
 
-      // // 根据筛选条件加载数据
-      // if (_searchQuery.isNotEmpty) {
-      //   lists = await _equipmentService.searchEquipmentLists(_searchQuery);
-      // } else if (_selectedType != null) {
-      //   lists = await _equipmentService.getEquipmentListsByType(_selectedType!);
-      // } else if (_selectedStatus != null) {
-      //   lists =
-      //       await _equipmentService.getEquipmentListsByStatus(_selectedStatus!);
-      // } else {
-      // }
-      lists = await _equipmentService.getEquipmentLists();
+      // 根据筛选条件加载数据
+      if (_searchQuery.isNotEmpty) {
+        lists = await _equipmentService.searchEquipmentLists(_searchQuery);
+      } else if (_selectedType != null) {
+        lists = await _equipmentService.getEquipmentListsByType(_selectedType!);
+      } else if (_selectedStatus != null) {
+        lists =
+            await _equipmentService.getEquipmentListsByStatus(_selectedStatus!);
+      } else {
+        lists = await _equipmentService.getEquipmentLists();
+      }
+
+      // 应用快速筛选
+      if (_selectedQuickFilterIndex > 0) {
+        final status = _quickFilterStatuses[_selectedQuickFilterIndex];
+        if (status == EquipmentListStatus.preparing) {
+          // "进行中"包括：计划中、准备中、准备就绪、使用中
+          lists = lists
+              .where((list) =>
+                  list.status == EquipmentListStatus.planning ||
+                  list.status == EquipmentListStatus.preparing ||
+                  list.status == EquipmentListStatus.ready ||
+                  list.status == EquipmentListStatus.inUse)
+              .toList();
+        } else if (status != null) {
+          lists = lists.where((list) => list.status == status).toList();
+        }
+      }
 
       if (mounted) {
         setState(() {
@@ -80,6 +111,10 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
   Future<void> _searchEquipmentLists(String query) async {
     setState(() {
       _searchQuery = query;
+      // 重置其他筛选条件
+      _selectedType = null;
+      _selectedStatus = null;
+      _selectedQuickFilterIndex = 0;
     });
     await _loadEquipmentLists();
   }
@@ -129,58 +164,237 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
     );
   }
 
+  /// 切换视图模式
+  void _toggleViewMode() {
+    setState(() {
+      _isListView = !_isListView;
+    });
+  }
+
+  /// 应用快速筛选
+  void _applyQuickFilter(int index) {
+    if (_selectedQuickFilterIndex == index) return;
+
+    setState(() {
+      _selectedQuickFilterIndex = index;
+      // 重置其他筛选条件
+      _selectedType = null;
+      _selectedStatus = null;
+      _searchQuery = '';
+    });
+
+    _loadEquipmentLists();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text('装备清单'),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: const Icon(CupertinoIcons.search),
-              onPressed: () {
-                _showSearchDialog();
-              },
-            ),
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: const Icon(CupertinoIcons.slider_horizontal_3),
-              onPressed: () {
-                _showFilterDialog();
-              },
-            ),
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: const Icon(CupertinoIcons.ellipsis),
-              onPressed: () {
-                _showMoreOptions();
-              },
-            ),
-          ],
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.ellipsis_vertical),
+          onPressed: _showMoreOptions,
         ),
       ),
-      child: SafeArea(
-        child: Stack(
-          children: [
-            _buildBody(),
-            Positioned(
-              right: 16,
-              bottom: 16,
-              child: CupertinoButton(
-                padding: const EdgeInsets.all(16),
-                color: CupertinoColors.activeBlue,
-                borderRadius: BorderRadius.circular(30),
-                child: const Icon(
-                  CupertinoIcons.add,
-                  color: CupertinoColors.white,
+      child: Stack(
+        children: [
+          SafeArea(
+            child: Column(
+              children: [
+                // 搜索栏和快捷操作区域
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: Column(
+                    children: [
+                      // 搜索栏
+                      CupertinoSearchTextField(
+                        placeholder: '搜索装备清单',
+                        onSubmitted: _searchEquipmentLists,
+                        onSuffixTap: () {
+                          if (_searchQuery.isNotEmpty) {
+                            setState(() {
+                              _searchQuery = '';
+                            });
+                            _loadEquipmentLists();
+                          }
+                        },
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // 快速筛选标签
+                      SizedBox(
+                        height: 32,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _quickFilters.length,
+                          itemBuilder: (context, index) {
+                            final isSelected =
+                                _selectedQuickFilterIndex == index;
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: CupertinoButton(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                color: isSelected
+                                    ? CupertinoColors.systemBlue
+                                    : CupertinoColors.systemGrey6,
+                                borderRadius: BorderRadius.circular(16),
+                                minSize: 0,
+                                child: Text(
+                                  _quickFilters[index],
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: isSelected
+                                        ? CupertinoColors.white
+                                        : CupertinoColors.systemGrey,
+                                  ),
+                                ),
+                                onPressed: () => _applyQuickFilter(index),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // 快捷操作按钮
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // 我的装备库
+                          _buildQuickActionButton(
+                            icon: CupertinoIcons.cube_box,
+                            label: '我的装备库',
+                            onPressed: _viewInventory,
+                          ),
+
+                          // 饮食偏好
+                          _buildQuickActionButton(
+                            icon: CupertinoIcons.flame,
+                            label: '饮食偏好',
+                            onPressed: () {
+                              // 占位功能
+                              _showPlaceholderDialog('饮食偏好功能尚未实现');
+                            },
+                          ),
+
+                          // 行程规划
+                          _buildQuickActionButton(
+                            icon: CupertinoIcons.map,
+                            label: '行程规划',
+                            onPressed: () {
+                              // 占位功能
+                              _showPlaceholderDialog('行程规划功能尚未实现');
+                            },
+                          ),
+
+                          // 筛选
+                          _buildQuickActionButton(
+                            icon: CupertinoIcons.slider_horizontal_3,
+                            label: '筛选',
+                            onPressed: _showFilterDialog,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                onPressed: _createEquipmentList,
-              ),
+
+                // 列表信息和视图切换
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // 显示装备清单数量
+                      Text(
+                        '共 ${_equipmentLists.length} 个清单',
+                        style: const TextStyle(
+                          color: CupertinoColors.systemGrey,
+                          fontSize: 14,
+                        ),
+                      ),
+
+                      // 视图切换按钮
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: Row(
+                          children: [
+                            Icon(
+                              _isListView
+                                  ? CupertinoIcons.square_grid_2x2
+                                  : CupertinoIcons.list_bullet,
+                              color: CupertinoColors.systemBlue,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              _isListView ? '网格视图' : '列表视图',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: CupertinoColors.systemBlue,
+                              ),
+                            ),
+                          ],
+                        ),
+                        onPressed: _toggleViewMode,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 主体内容
+                Expanded(
+                  child: _buildBody(),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // 浮动创建按钮
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: FloatingActionButton(
+              backgroundColor: CupertinoColors.activeBlue,
+              child: const Icon(CupertinoIcons.add),
+              onPressed: _showCreateOptions,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: onPressed,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: CupertinoColors.systemBlue,
+            size: 24,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: CupertinoColors.systemBlue,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
@@ -203,18 +417,239 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
       return EmptyView(
         icon: CupertinoIcons.bag,
         title: '暂无装备清单',
-        message: '点击右下角的按钮创建装备清单',
+        message: '点击右下角的"+"按钮创建装备清单',
         buttonText: '创建装备清单',
         onButtonPressed: _createEquipmentList,
       );
     }
 
+    // 根据视图模式选择不同的展示方式
+    return _isListView ? _buildListView() : _buildGridView();
+  }
+
+  /// 构建列表视图
+  Widget _buildListView() {
     return ListView.builder(
+      padding: const EdgeInsets.only(bottom: 80), // 为浮动按钮留出空间
       itemCount: _equipmentLists.length,
       itemBuilder: (context, index) {
         final equipmentList = _equipmentLists[index];
         return _buildEquipmentListCard(equipmentList);
       },
+    );
+  }
+
+  /// 构建网格视图
+  Widget _buildGridView() {
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 80), // 为浮动按钮留出空间
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.8,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      itemCount: _equipmentLists.length,
+      itemBuilder: (context, index) {
+        return _buildEquipmentGridCard(_equipmentLists[index]);
+      },
+    );
+  }
+
+  /// 构建网格卡片
+  Widget _buildEquipmentGridCard(EquipmentListModel equipmentList) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => EquipmentDetailScreen(
+              equipmentListId: equipmentList.id,
+            ),
+          ),
+        );
+      },
+      onLongPress: () => _showItemActions(equipmentList),
+      child: Container(
+        decoration: BoxDecoration(
+          color: CupertinoColors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: CupertinoColors.systemGrey.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 状态指示器和分享按钮
+            Stack(
+              children: [
+                Container(
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(equipmentList.status),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minSize: 0,
+                    child: Icon(
+                      CupertinoIcons.share,
+                      color: CupertinoColors.systemBlue,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      _showPlaceholderDialog('分享功能尚未实现');
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 标题
+                  Text(
+                    equipmentList.name,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // 描述
+                  Text(
+                    equipmentList.description,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: CupertinoColors.systemGrey,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // 进度指示器
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '准备进度',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                          ),
+                          Text(
+                            '${equipmentList.preparationPercentage.toStringAsFixed(0)}%',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: _getProgressColor(
+                                  equipmentList.preparationPercentage),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        height: 4,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey6,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                        child: FractionallySizedBox(
+                          alignment: Alignment.centerLeft,
+                          widthFactor:
+                              equipmentList.preparationPercentage / 100,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: _getProgressColor(
+                                  equipmentList.preparationPercentage),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // 物品数量和重量
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildMiniInfoChip(
+                        CupertinoIcons.list_bullet,
+                        '${equipmentList.totalItems}项',
+                      ),
+                      _buildMiniInfoChip(
+                        CupertinoIcons.arrow_up_bin,
+                        '${(equipmentList.totalWeight / 1000).toStringAsFixed(1)}kg',
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // 状态标签
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(equipmentList.status)
+                          .withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _getStatusIcon(equipmentList.status),
+                          size: 10,
+                          color: _getStatusColor(equipmentList.status),
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          equipmentList.getStatusText(),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: _getStatusColor(equipmentList.status),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -245,6 +680,7 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
             ),
           );
         },
+        onLongPress: () => _showItemActions(equipmentList),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -267,17 +703,31 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemBlue.withOpacity(0.1),
+                      color: _getTypeColor(equipmentList.type).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       equipmentList.getTypeText(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: CupertinoColors.systemBlue,
+                        color: _getTypeColor(equipmentList.type),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  // 分享按钮
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minSize: 0,
+                    child: Icon(
+                      CupertinoIcons.share,
+                      color: CupertinoColors.systemBlue,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      _showPlaceholderDialog('分享功能尚未实现');
+                    },
                   ),
                 ],
               ),
@@ -297,6 +747,56 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
 
               const SizedBox(height: 12),
 
+              // 进度条
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '准备进度: ${equipmentList.preparedItems}/${equipmentList.totalItems}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: CupertinoColors.systemGrey,
+                        ),
+                      ),
+                      Text(
+                        '${equipmentList.preparationPercentage.toStringAsFixed(0)}%',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: _getProgressColor(
+                              equipmentList.preparationPercentage),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    height: 4,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.systemGrey6,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: equipmentList.preparationPercentage / 100,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: _getProgressColor(
+                              equipmentList.preparationPercentage),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
               // 底部信息
               Row(
                 children: [
@@ -308,10 +808,10 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
 
                   const SizedBox(width: 16),
 
-                  // 创建时间
+                  // 总重量
                   _buildInfoChip(
-                    CupertinoIcons.time,
-                    _getTimeAgo(equipmentList.createdAt ?? DateTime.now()),
+                    CupertinoIcons.arrow_up_bin,
+                    '${(equipmentList.totalWeight / 1000).toStringAsFixed(1)}kg',
                   ),
 
                   const Spacer(),
@@ -372,21 +872,24 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
     );
   }
 
-  String _getTimeAgo(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inDays > 30) {
-      return '${difference.inDays ~/ 30}个月前';
-    } else if (difference.inDays > 0) {
-      return '${difference.inDays}天前';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}小时前';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}分钟前';
-    } else {
-      return '刚刚';
-    }
+  Widget _buildMiniInfoChip(IconData icon, String label) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 12,
+          color: CupertinoColors.systemGrey,
+        ),
+        const SizedBox(width: 2),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11,
+            color: CupertinoColors.systemGrey,
+          ),
+        ),
+      ],
+    );
   }
 
   Color _getStatusColor(EquipmentListStatus status) {
@@ -403,6 +906,37 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
         return CupertinoColors.systemGrey;
       case EquipmentListStatus.archived:
         return CupertinoColors.systemGrey2;
+    }
+  }
+
+  Color _getTypeColor(EquipmentListType type) {
+    switch (type) {
+      case EquipmentListType.mountaineering:
+        return CupertinoColors.systemIndigo;
+      case EquipmentListType.longHike:
+        return CupertinoColors.systemGreen;
+      case EquipmentListType.trekking:
+        return CupertinoColors.systemOrange;
+      case EquipmentListType.camping:
+        return CupertinoColors.systemYellow;
+      case EquipmentListType.shortHike:
+        return CupertinoColors.activeGreen;
+      case EquipmentListType.custom:
+        return CupertinoColors.systemGrey;
+    }
+  }
+
+  Color _getProgressColor(double percentage) {
+    if (percentage >= 100) {
+      return CupertinoColors.systemGreen;
+    } else if (percentage >= 75) {
+      return CupertinoColors.activeBlue;
+    } else if (percentage >= 50) {
+      return CupertinoColors.systemOrange;
+    } else if (percentage >= 25) {
+      return CupertinoColors.systemYellow;
+    } else {
+      return CupertinoColors.systemRed;
     }
   }
 
@@ -423,31 +957,88 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
     }
   }
 
-  void _showSearchDialog() {
+  void _showCreateOptions() {
     showCupertinoModalPopup(
       context: context,
       builder: (context) => CupertinoActionSheet(
-        title: const Text('搜索装备清单'),
-        message: Column(
-          children: [
-            CupertinoSearchTextField(
-              placeholder: '输入关键词搜索',
-              onSubmitted: (value) {
-                Navigator.pop(context);
-                _searchEquipmentLists(value);
-              },
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
+        title: const Text('创建装备清单'),
+        message: const Text('选择创建方式'),
         actions: [
           CupertinoActionSheetAction(
-            child: const Text('取消'),
+            child: const Text('创建新清单'),
             onPressed: () {
               Navigator.pop(context);
+              _createEquipmentList();
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('从模板创建'),
+            onPressed: () {
+              Navigator.pop(context);
+              _createFromTemplate();
             },
           ),
         ],
+        cancelButton: CupertinoActionSheetAction(
+          child: const Text('取消'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showItemActions(EquipmentListModel equipmentList) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(equipmentList.name),
+        message: const Text('选择操作'),
+        actions: [
+          CupertinoActionSheetAction(
+            child: const Text('查看详情'),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => EquipmentDetailScreen(
+                    equipmentListId: equipmentList.id,
+                  ),
+                ),
+              );
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('复制清单'),
+            onPressed: () {
+              Navigator.pop(context);
+              _showPlaceholderDialog('复制清单功能尚未实现');
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('分享清单'),
+            onPressed: () {
+              Navigator.pop(context);
+              _showPlaceholderDialog('分享清单功能尚未实现');
+            },
+          ),
+          CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            child: const Text('删除清单'),
+            onPressed: () {
+              Navigator.pop(context);
+              _showPlaceholderDialog('删除清单功能尚未实现');
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: const Text('取消'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
     );
   }
@@ -482,6 +1073,7 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
                 _selectedType = null;
                 _selectedStatus = null;
                 _searchQuery = '';
+                _selectedQuickFilterIndex = 0;
               });
               _loadEquipmentLists();
             },
@@ -511,6 +1103,7 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
               setState(() {
                 _selectedType = type;
                 _selectedStatus = null;
+                _selectedQuickFilterIndex = 0;
               });
               _filterEquipmentLists();
             },
@@ -540,6 +1133,7 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
               setState(() {
                 _selectedStatus = status;
                 _selectedType = null;
+                _selectedQuickFilterIndex = 0;
               });
               _filterEquipmentLists();
             },
@@ -563,10 +1157,10 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
         message: const Text('选择操作'),
         actions: [
           CupertinoActionSheetAction(
-            child: const Text('从模板创建'),
+            child: const Text('刷新列表'),
             onPressed: () {
               Navigator.pop(context);
-              _createFromTemplate();
+              _loadEquipmentLists();
             },
           ),
           CupertinoActionSheetAction(
@@ -577,10 +1171,17 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('刷新列表'),
+            child: const Text('装备商城'),
             onPressed: () {
               Navigator.pop(context);
-              _loadEquipmentLists();
+              _showPlaceholderDialog('装备商城功能尚未实现');
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('天气预报'),
+            onPressed: () {
+              Navigator.pop(context);
+              _showPlaceholderDialog('天气预报功能尚未实现');
             },
           ),
         ],
@@ -590,6 +1191,24 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
             Navigator.pop(context);
           },
         ),
+      ),
+    );
+  }
+
+  void _showPlaceholderDialog(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('功能开发中'),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('确定'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
     );
   }

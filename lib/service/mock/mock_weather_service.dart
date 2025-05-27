@@ -78,7 +78,7 @@ class MockWeatherService implements WeatherService {
       final itemWithCity = Map<String, dynamic>.from(item);
       itemWithCity['city'] = '黄山'; // 默认城市
 
-      final forecast = WeatherModel.forecastFromJson(itemWithCity);
+      final forecast = WeatherModel.fromJson(itemWithCity);
       forecasts.add(forecast);
     }
 

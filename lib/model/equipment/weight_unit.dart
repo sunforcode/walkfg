@@ -1,5 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
 /// 重量单位
 enum WeightUnit {
   /// 克

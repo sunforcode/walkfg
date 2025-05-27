@@ -124,45 +124,31 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       _isLoadingRoutes = true;
     });
 
-    try {
-      final route = await _routeService.getRouteById(widget.routeId!);
-      if (route != null) {
-        final now = DateTime.now();
-        final endDate = now.add(const Duration(days: 7));
+    final route = await _routeService.getRouteById(widget.routeId!);
+    final now = DateTime.now();
+    final endDate = now.add(const Duration(days: 7));
 
-        final newTrip = TripModel(
-          id: 'new_trip_${DateTime.now().millisecondsSinceEpoch}',
-          name: route.name,
-          description: route.description,
-          startDate: now,
-          endDate: endDate,
-          status: TripStatus.planning,
-          routeIds: [route.id],
-          primaryRouteId: route.id,
-          participantCount: 1,
-          organizerId: 'current_user',
-          privacySetting: 'private',
-        );
+    final newTrip = TripModel(
+      id: 'new_trip_${DateTime.now().millisecondsSinceEpoch}',
+      name: route.name,
+      description: route.description,
+      startDate: now,
+      endDate: endDate,
+      status: TripStatus.planning,
+      routeIds: [route.id],
+      primaryRouteId: route.id,
+      participantCount: 1,
+      organizerId: 'current_user',
+      privacySetting: 'private',
+    );
 
-        setState(() {
-          _tripFuture = Future.value(newTrip);
-          _isEditMode = true;
-          _editingTrip = newTrip;
-          _relatedRoutes = [route];
-          _isLoadingRoutes = false;
-        });
-      } else {
-        _createEmptyTrip();
-        setState(() {
-          _isLoadingRoutes = false;
-        });
-      }
-    } catch (e) {
-      _createEmptyTrip();
-      setState(() {
-        _isLoadingRoutes = false;
-      });
-    }
+    setState(() {
+      _tripFuture = Future.value(newTrip);
+      _isEditMode = true;
+      _editingTrip = newTrip;
+      _relatedRoutes = [route];
+      _isLoadingRoutes = false;
+    });
   }
 
   /// 加载行程详情
@@ -201,9 +187,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       final routes = <RouteModel>[];
       for (final routeId in trip.routeIds) {
         final route = await _routeService.getRouteById(routeId);
-        if (route != null) {
-          routes.add(route);
-        }
+        routes.add(route);
       }
 
       setState(() {

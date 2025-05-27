@@ -224,8 +224,12 @@ class WeatherModel {
   }) : this.weatherIcon =
             weatherIcon ?? _getWeatherIconFromCondition(condition);
 
-  /// 从API响应创建当前天气模型
-  factory WeatherModel.fromJson(Map<String, dynamic> json) {
+  /// 从JSON创建模型
+  factory WeatherModel.fromJson(Map<String, dynamic> json) =>
+      _$WeatherModelFromJson(json);
+
+  /// 自定义从API响应创建当前天气模型
+  factory WeatherModel.fromApiResponse(Map<String, dynamic> json) {
     return WeatherModel(
       city: json['city'] as String? ?? '',
       temperature: json['temperature']?.toDouble() ?? 0.0,
@@ -236,8 +240,8 @@ class WeatherModel {
     );
   }
 
-  /// 从API响应创建天气预报模型
-  factory WeatherModel.forecastFromJson(Map<String, dynamic> json) {
+  /// 自定义从API响应创建天气预报模型
+  factory WeatherModel.forecastFromApiResponse(Map<String, dynamic> json) {
     final date = json['forecast_date'] is String
         ? DateTime.parse(json['forecast_date'] as String)
         : (json['forecast_date'] as DateTime? ?? DateTime.now());
@@ -296,25 +300,7 @@ class WeatherModel {
   }
 
   /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{
-      'city': city,
-      'temperature': temperature,
-      'condition': condition,
-      'is_suitable_for_hiking': isSuitableForHiking,
-      'humidity': humidityValue,
-      'wind_speed': windSpeed,
-    };
-
-    if (isForecast) {
-      json['forecast_date'] = forecastDate?.toIso8601String();
-      json['max_temperature'] = maxTemperature;
-      json['min_temperature'] = minTemperature;
-      json['precipitation_probability'] = precipitationProbability;
-    }
-
-    return json;
-  }
+  Map<String, dynamic> toJson() => _$WeatherModelToJson(this);
 
   /// 创建副本并更新部分属性
   WeatherModel copyWith({
@@ -358,7 +344,7 @@ class AltitudeModel {
     required this.unit,
   });
 
-  /// 从API响应创建模型
+  /// 从JSON创建模型
   factory AltitudeModel.fromJson(Map<String, dynamic> json) =>
       _$AltitudeModelFromJson(json);
 

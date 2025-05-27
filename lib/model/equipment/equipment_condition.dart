@@ -1,5 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
 /// 装备使用状态
 enum EquipmentCondition {
   /// 全新

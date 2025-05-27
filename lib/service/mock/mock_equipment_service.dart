@@ -8,7 +8,6 @@ import 'package:walk/model/equipment/user_equipment_inventory_model.dart';
 import '../equipment_service.dart';
 import '../../model/equipment/equipment_list_model.dart';
 import '../../model/equipment/equipment_item_model.dart';
-import '../../model/equipment/equipment_necessity.dart';
 
 /// Mock装备服务实现
 class MockEquipmentService implements EquipmentService {

@@ -92,7 +92,7 @@ class TripDetailsContentWidget extends StatelessWidget {
               title: day.title,
               description: day.description,
               startPoint: day.accommodation ?? '起点',
-              endPoint: day.startWaypointId ?? '终点',
+              endPoint: day.startWaypointId,
               distance: 5.0, // 模拟数据
               elevationGain: 200, // 模拟数据
               elevationLoss: 150, // 模拟数据

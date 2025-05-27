@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
 import '../model/route/route_model.dart';
 import '../model/map/track_point_model.dart';
 
@@ -54,7 +53,7 @@ class RouteUtils {
     double totalGain = 0;
     for (int i = 0; i < trackPoints.length - 1; i++) {
       final double elevationDiff =
-          trackPoints[i + 1].elevation! - trackPoints[i].elevation!;
+          trackPoints[i + 1].elevation - trackPoints[i].elevation;
       if (elevationDiff > 0) {
         totalGain += elevationDiff;
       }
@@ -72,7 +71,7 @@ class RouteUtils {
     double totalLoss = 0;
     for (int i = 0; i < trackPoints.length - 1; i++) {
       final double elevationDiff =
-          trackPoints[i].elevation! - trackPoints[i + 1].elevation!;
+          trackPoints[i].elevation - trackPoints[i + 1].elevation;
       if (elevationDiff > 0) {
         totalLoss += elevationDiff;
       }
