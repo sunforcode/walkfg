@@ -302,43 +302,4 @@ class EquipmentItemModel extends BaseModel {
       imageUrl: imageUrl ?? this.imageUrl,
     );
   }
-
-  /// 从TripGearItemModel创建（用于兼容旧代码）
-  factory EquipmentItemModel.fromTripGearItem(Map<String, dynamic> json) {
-    return EquipmentItemModel(
-      id: json['id'] as String,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
-          : null,
-      name: json['name'] as String,
-      category: _categoryFromJson(json['category'] as String? ?? 'other'),
-      quantity: json['quantity'] as int? ?? 1,
-      weight: (json['weight'] as num? ?? 0).toDouble(),
-      prepared: json['prepared'] as bool? ?? false,
-      notes: json['notes'] as String?,
-      necessity: EquipmentNecessity.recommended,
-    );
-  }
-
-  /// 从EquipmentItem创建（用于兼容旧代码）
-  factory EquipmentItemModel.fromEquipmentItem(
-      Map<String, dynamic> json, String id) {
-    return EquipmentItemModel(
-      id: id,
-      name: json['name'] as String,
-      category: _categoryFromJson(json['category'] as String? ?? 'other'),
-      description: json['description'] as String?,
-      weight: (json['weight'] as num).toDouble(),
-      quantity: json['quantity'] as int,
-      necessity: EquipmentNecessity.values[json['necessity'] as int],
-      brand: json['brand'] as String?,
-      model: json['model'] as String?,
-      price: json['price'] != null ? (json['price'] as num).toDouble() : null,
-      notes: json['notes'] as String?,
-      prepared: false,
-    );
-  }
 }
