@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import '../../../../model/route/route_model.dart';
-import '../../route/route_list_screen.dart';
+import '../../route/route_discovery_screen.dart';
 import '../../route/route_detail_screen.dart';
 import '../../common/section_header.dart';
 import '../../common/loading_indicator.dart';
@@ -209,7 +209,7 @@ class RecommendedRoutesSection extends StatelessWidget {
   void _navigateToAllRoutes(BuildContext context) {
     Navigator.of(context, rootNavigator: true).push(
       CupertinoPageRoute(
-        builder: (context) => const RouteListScreen(),
+        builder: (context) => const RouteDiscoveryScreen(),
       ),
     );
   }

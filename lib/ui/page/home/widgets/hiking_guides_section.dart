@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../../../../model/guide/guide_model.dart';
-import '../../guide/cupertino_guide_detail_screen.dart';
+import '../../guide/guide_detail_screen.dart';
 import '../../../../theme/theme/app_colors.dart';
 import '../../common/loading_indicator.dart';
 import '../../common/error_widget.dart';

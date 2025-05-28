@@ -8,6 +8,9 @@ abstract class GuideService {
   /// 获取攻略详情
   Future<GuideModel> getGuideById(String guideId);
 
+  /// 获取包含完整关联数据的攻略详情
+  Future<GuideModel> getGuideWithDetails(String guideId);
+
   /// 获取热门攻略
   Future<List<GuideModel>> getPopularGuides({int? limit});
 

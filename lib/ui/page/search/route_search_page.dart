@@ -6,7 +6,7 @@ import 'package:walk/service/service_manager.dart';
 import 'package:walk/theme/theme/app_colors.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import 'package:walk/ui/page/search/search_section.dart';
-import 'package:walk/ui/page/route/route_list_screen.dart';
+import 'package:walk/ui/page/route/route_discovery_screen.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 
@@ -89,15 +89,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
   }
 
   /// 导航到路线详情
-  void _navigateToRouteDetail(RouteModel route) {
-    Navigator.of(context).push(
-      CupertinoPageRoute(
-        builder: (context) => RouteListScreen(
-          title: '搜索: $_currentKeyword',
-        ),
-      ),
-    );
-  }
+  void _navigateToRouteDetail(RouteModel route) {}
 
   @override
   Widget build(BuildContext context) {

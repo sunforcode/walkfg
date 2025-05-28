@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../ui/page/home/home_screen.dart';
-import '../ui/page/route/route_list_screen.dart';
+import '../ui/page/route/route_discovery_screen.dart';
 import '../ui/page/equipment/equipment_screen.dart';
 import '../ui/page/profile/profile_screen.dart';
 import '../ui/page/search/route_search_page.dart';
@@ -98,7 +98,7 @@ class _MainLayoutState extends State<MainLayout> {
                 );
               case 1:
                 return CupertinoTabView(
-                  builder: (context) => const RouteListScreen(),
+                  builder: (context) => const RouteDiscoveryScreen(),
                 );
               case 2:
                 return CupertinoTabView(

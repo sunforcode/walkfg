@@ -1,7 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../guide_service.dart';
+import '../service_manager.dart';
 import '../../model/guide/guide_model.dart';
+import '../../model/route/route_model.dart';
+import '../../model/trip/trip_model.dart';
+import '../../model/equipment/equipment_list_model.dart';
+import '../../model/user/user_model.dart';
 
 /// Mock攻略服务实现
 class MockGuideService implements GuideService {
@@ -70,6 +75,99 @@ class MockGuideService implements GuideService {
     );
 
     return GuideModel.fromJson(guideJson);
+  }
+
+  @override
+  Future<GuideModel> getGuideWithDetails(String guideId) async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    // 1. 获取基础攻略数据
+    final guide = await getGuideById(guideId);
+
+    // 2. 并行加载关联数据
+    final futures = await Future.wait([
+      _loadBaseRoute(guide.baseRouteId),
+      _loadBaseTrip(guide.baseTripId),
+      _loadEquipmentList(guide.equipmentListId),
+      _loadAuthorProfile(guide.authorId),
+      _loadRelatedGuides(guide.relatedGuideIds),
+    ]);
+
+    // 3. 组装完整数据
+    return guide.copyWith(
+      baseRoute: futures[0] as RouteModel?,
+      baseTrip: futures[1] as TripModel?,
+      equipmentList: futures[2] as EquipmentListModel?,
+      authorProfile: futures[3] as UserModel?,
+      relatedGuides: futures[4] as List<GuideModel>?,
+    );
+  }
+
+  /// 加载基础路线数据
+  Future<RouteModel?> _loadBaseRoute(String? routeId) async {
+    if (routeId == null || routeId.isEmpty) return null;
+
+    try {
+      final routeService = ServiceLocator.instance.getRouteService();
+      return await routeService.getRouteById(routeId);
+    } catch (e) {
+      print('加载路线数据失败: $e');
+      return null;
+    }
+  }
+
+  /// 加载基础行程数据
+  Future<TripModel?> _loadBaseTrip(String? tripId) async {
+    if (tripId == null || tripId.isEmpty) return null;
+
+    try {
+      final tripService = ServiceLocator.instance.getTripService();
+      return await tripService.getTripById(tripId);
+    } catch (e) {
+      print('加载行程数据失败: $e');
+      return null;
+    }
+  }
+
+  /// 加载装备清单数据
+  Future<EquipmentListModel?> _loadEquipmentList(
+      String? equipmentListId) async {
+    if (equipmentListId == null || equipmentListId.isEmpty) return null;
+
+    try {
+      final equipmentService = ServiceLocator.instance.getEquipmentService();
+      return await equipmentService.getEquipmentListById(equipmentListId);
+    } catch (e) {
+      print('加载装备清单数据失败: $e');
+      return null;
+    }
+  }
+
+  /// 加载作者详细信息
+  Future<UserModel?> _loadAuthorProfile(String authorId) async {
+    try {
+      final userService = ServiceLocator.instance.getUserService();
+      return await userService.getCurrentUser();
+    } catch (e) {
+      print('加载作者信息失败: $e');
+      return null;
+    }
+  }
+
+  /// 加载相关攻略列表
+  Future<List<GuideModel>?> _loadRelatedGuides(
+      List<String> relatedGuideIds) async {
+    if (relatedGuideIds.isEmpty) return null;
+
+    try {
+      final futures = relatedGuideIds.map((id) => getGuideById(id));
+      final guides = await Future.wait(futures);
+      return guides;
+    } catch (e) {
+      print('加载相关攻略失败: $e');
+      return null;
+    }
   }
 
   @override
@@ -194,6 +292,7 @@ class MockGuideService implements GuideService {
     return GuideModel(
       id: 'guide_${now.millisecondsSinceEpoch}',
       title: guide.title,
+      location: "1",
       content: guide.content,
       author: guide.author,
       authorId: guide.authorId,
@@ -222,6 +321,7 @@ class MockGuideService implements GuideService {
       id: guide.id,
       title: guide.title,
       content: guide.content,
+      location: "1",
       author: guide.author,
       authorId: guide.authorId,
       authorAvatarUrl: guide.authorAvatarUrl,

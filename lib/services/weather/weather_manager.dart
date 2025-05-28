@@ -8,8 +8,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 /// 和风天气API配置
-const String heWeatherApiBaseUrl = 'https://devapi.qweather.com';
-const String heWeatherApiKey = 'YOUR_HEWEATHER_API_KEY'; // 替换为您的和风天气API密钥
+const String heWeatherApiBaseUrl = 'https://n42k5mjnnd.re.qweatherapi.com';
+const String heWeatherApiKey =
+    '4b2389c9c5bf47df91dcbb2671bc75c5'; // 替换为您的和风天气API密钥
 
 /// 天气管理器 - 负责获取和管理关键点的天气预报
 class WeatherManager {
@@ -337,8 +338,9 @@ class WeatherManager {
 
       // 获取实时天气数据
       final now = data['now'];
+      debugPrint('和风天气API返回数据格式错误: 缺少now字段${data}');
       if (now == null) {
-        debugPrint('和风天气API返回数据格式错误: 缺少now字段');
+        debugPrint('和风天气API返回数据格式错误: 缺少now字段${data}');
         return null;
       }
 
@@ -347,10 +349,10 @@ class WeatherManager {
       final cityName = location['name'] ?? '未知位置';
 
       // 解析天气状况
-      final weatherText = now['text'] ?? '';
-      final temp = double.tryParse(now['temp'] ?? '0') ?? 0.0;
-      final windSpeed = now['windSpeed'] ?? '0';
-      final humidity = now['humidity'] ?? '0';
+      String weatherText = now['text'] ?? '';
+      String temp = now['temp'];
+      String windSpeed = now['windSpeed'] ?? '0';
+      String humidity = now['humidity'] ?? '0';
 
       // 判断是否适合徒步（简单判断：晴天、多云、小雨且风速小于6级为适合）
       final isSuitable = _isWeatherSuitableForHiking(weatherText, windSpeed);
@@ -359,9 +361,9 @@ class WeatherManager {
         city: cityName,
         condition: weatherText,
         suitability: isSuitable,
-        temperature: temp,
-        windLevel: windSpeed,
-        humidity: humidity,
+        temperature: double.parse(temp),
+        windLevel: double.parse(windSpeed),
+        humidity: double.parse(humidity),
       );
     } catch (e) {
       debugPrint('解析和风天气API响应失败: $e');

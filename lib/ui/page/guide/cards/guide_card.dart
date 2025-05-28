@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../model/guide/guide_model.dart';
 import '../../../../theme/theme/app_colors.dart';
 import '../../common/network_image_with_fallback.dart';
-import '../cupertino_guide_detail_screen.dart';
+import '../guide_detail_screen.dart';
 
 /// 攻略卡片组件
 class GuideCard extends StatelessWidget {
