@@ -1,85 +1,78 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'campsite_model.dart';
 
 part 'daily_plan_model.g.dart';
 
 /// 每日计划模型
 @JsonSerializable()
 class DailyPlanModel {
-  /// 第几天
-  final int day;
-  
+  /// ID
+  final String id;
+
+  /// 天数
+  @JsonKey(name: 'day_number')
+  final int dayNumber;
+
   /// 标题
   final String title;
-  
+
   /// 描述
   final String description;
-  
-  /// 起始点
-  final String startPoint;
-  
-  /// 终点
-  final String endPoint;
-  
-  /// 距离(km)
+
+  /// 距离（公里）
   final double distance;
-  
-  /// 爬升(m)
+
+  /// 预计时长
+  final String duration;
+
+  /// 爬升（米）
+  @JsonKey(name: 'elevation_gain')
   final int elevationGain;
-  
-  /// 下降(m)
-  final int elevationLoss;
-  
-  /// 预计时间(小时)
-  final double estimatedTime;
-  
-  /// 难度(1-5)
-  final int difficulty;
-  
-  /// 经过的关键点ID
-  final List<String> waypoints;
-  
-  /// 包含的路段ID
-  final List<String> segments;
-  
-  /// 亮点
-  final List<String> highlights;
-  
-  /// 营地信息
-  final CampsiteModel? campsite;
-  
-  /// 典型天气模式
-  final Map<String, dynamic>? weatherPattern;
-  
-  /// 每日提示
-  final String? tips;
-  
+
+  /// 下降（米）
+  @JsonKey(name: 'elevation_loss')
+  final double? elevationLoss;
+
+  /// 起点ID
+  @JsonKey(name: 'start_waypoint_id')
+  final String startWaypointId;
+
+  /// 终点ID
+  @JsonKey(name: 'end_waypoint_id')
+  final String endWaypointId;
+
+  /// 包含的分段ID列表
+  @JsonKey(name: 'segment_ids')
+  final List<String> segmentIds;
+
+  /// 住宿信息
+  final String? accommodation;
+
   /// 构造函数
   DailyPlanModel({
-    required this.day,
+    required this.id,
+    required this.dayNumber,
     required this.title,
     required this.description,
-    required this.startPoint,
-    required this.endPoint,
     required this.distance,
+    required this.duration,
     required this.elevationGain,
-    required this.elevationLoss,
-    required this.estimatedTime,
-    required this.difficulty,
-    List<String>? waypoints,
-    List<String>? segments,
-    List<String>? highlights,
-    this.campsite,
-    this.weatherPattern,
-    this.tips,
-  })  : this.waypoints = waypoints ?? const [],
-        this.segments = segments ?? const [],
-        this.highlights = highlights ?? const [];
-  
+    this.elevationLoss,
+    required this.startWaypointId,
+    required this.endWaypointId,
+    required this.segmentIds,
+    this.accommodation,
+  });
+
   /// 从JSON创建
   factory DailyPlanModel.fromJson(Map<String, dynamic> json) =>
       _$DailyPlanModelFromJson(json);
-      
+
   /// 转换为JSON
   Map<String, dynamic> toJson() => _$DailyPlanModelToJson(this);
+  
+  /// 获取交通方式
+  String? get transportation => null;
+
+  /// 获取日期
+  DateTime? get date => null;
 }

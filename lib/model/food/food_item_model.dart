@@ -51,6 +51,10 @@ class FoodItemModel extends BaseModel {
   /// 是否已准备
   final bool prepared;
 
+  /// 是否已拥有
+  @JsonKey(name: 'is_owned')
+  final bool isOwned;
+
   /// 备注
   final String? notes;
 
@@ -69,6 +73,7 @@ class FoodItemModel extends BaseModel {
     required this.carbs,
     required this.price,
     this.prepared = false,
+    this.isOwned = false,
     this.notes,
   });
 
@@ -128,6 +133,7 @@ class FoodItemModel extends BaseModel {
     double? carbs,
     double? price,
     bool? prepared,
+    bool? isOwned,
     String? notes,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -144,6 +150,7 @@ class FoodItemModel extends BaseModel {
       carbs: carbs ?? this.carbs,
       price: price ?? this.price,
       prepared: prepared ?? this.prepared,
+      isOwned: isOwned ?? this.isOwned,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

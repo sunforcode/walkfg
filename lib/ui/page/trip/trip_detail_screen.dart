@@ -518,7 +518,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        '${route.basicInfo.distance}km | ${route.basicInfo.elevationGain}m爬升',
+                                        '${route.distance}km | ${route.elevationGain}m爬升',
                                         style: const TextStyle(
                                           color: CupertinoColors.systemGrey,
                                           fontSize: 14,

@@ -15,7 +15,7 @@ part 'equipment_list_model.g.dart';
 enum SeasonSuitability { spring, summer, autumn, winter, allSeasons }
 
 /// 装备清单模型
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable()
 class EquipmentListModel extends BaseModel {
   /// 清单名称
   final String name;
@@ -28,18 +28,23 @@ class EquipmentListModel extends BaseModel {
   final EquipmentListType type;
 
   /// 路线ID
+  @JsonKey(name: 'route_id')
   final String? routeId;
 
   /// 路线名称
+  @JsonKey(name: 'route_name')
   final String? routeName;
 
   /// 行程ID
+  @JsonKey(name: 'trip_id')
   final String? tripId;
 
   /// 行程天数
+  @JsonKey(name: 'trip_days')
   final int tripDays;
 
   /// 适用人数
+  @JsonKey(name: 'person_count')
   final int personCount;
 
   /// 季节
@@ -51,33 +56,42 @@ class EquipmentListModel extends BaseModel {
   final List<EquipmentItemModel> equipments;
 
   /// 总重量(g)
+  @JsonKey(name: 'total_weight')
   final double totalWeight;
 
   /// 基础重量(g)
+  @JsonKey(name: 'base_weight')
   final double baseWeight;
 
   /// 消耗品重量(g)
+  @JsonKey(name: 'consumable_weight')
   final double consumableWeight;
 
   /// 穿着重量(g)
+  @JsonKey(name: 'worn_weight')
   final double wornWeight;
 
   /// 创建者ID
+  @JsonKey(name: 'creator_id')
   final String creatorId;
 
   /// 创建者名称
+  @JsonKey(name: 'creator_name')
   final String creatorName;
 
   /// 标签
   final List<String> tags;
 
   /// 是否官方推荐
+  @JsonKey(name: 'is_official')
   final bool isOfficial;
 
   /// 是否为模板
+  @JsonKey(name: 'is_template')
   final bool isTemplate;
 
   /// 模板ID (如果是从模板创建)
+  @JsonKey(name: 'template_id')
   final String? templateId;
 
   /// 状态
@@ -85,6 +99,7 @@ class EquipmentListModel extends BaseModel {
   final EquipmentListStatus status;
 
   /// 最后使用时间
+  @JsonKey(name: 'last_used_at')
   final DateTime? lastUsedAt;
 
   /// 构造函数

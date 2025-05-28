@@ -174,7 +174,7 @@ class RecommendedRoutesSection extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        route.region,
+                        route.regionId,
                         style: const TextStyle(
                           fontSize: 12,
                           color: CupertinoColors.systemGrey,
@@ -188,7 +188,7 @@ class RecommendedRoutesSection extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${route.basicInfo.distance} km',
+                        '${route.distance} km',
                         style: const TextStyle(
                           fontSize: 12,
                           color: CupertinoColors.systemGrey,

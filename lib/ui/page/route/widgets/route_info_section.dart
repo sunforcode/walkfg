@@ -39,12 +39,10 @@ class RouteInfoSection extends StatelessWidget {
         const SizedBox(height: 16),
 
         // 路线基本信息
-        _buildInfoRow(
-            '距离', '${route.basicInfo.distance.toStringAsFixed(1)} 公里'),
-        _buildInfoRow(
-            '海拔增益', '${route.basicInfo.elevationGain.toStringAsFixed(0)} 米'),
-        _buildInfoRow('预计时间', '${route.basicInfo.duration} 小时'),
-        _buildInfoRow('难度', route.basicInfo.difficulty.getName()),
+        _buildInfoRow('距离', '${route.distance.toStringAsFixed(1)} 公里'),
+        _buildInfoRow('海拔增益', '${route.elevationGain.toStringAsFixed(0)} 米'),
+        _buildInfoRow('预计时间', '${route.duration} 小时'),
+        _buildInfoRow('难度', route.difficulty.getName()),
 
         // 路线标签
         if (route.tags != null && route.tags!.isNotEmpty)

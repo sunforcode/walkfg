@@ -1,7 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/model/food/meal_plan_model.dart';
-import 'package:walk/model/route/route_model.dart';
+import 'package:walk/model/route/daily_plan_model.dart';
+import 'package:walk/model/user/user_model.dart';
 import 'package:walk/model/water/water_plan_model.dart';
 import '../base/base_model.dart';
 
@@ -20,50 +21,6 @@ enum TripStatus {
 
   /// 已取消
   cancelled,
-}
-
-/// 参与者模型
-@JsonSerializable()
-class ParticipantModel {
-  /// ID
-  final String id;
-
-  /// 用户ID
-  @JsonKey(name: 'user_id')
-  final String userId;
-
-  /// 姓名
-  final String name;
-
-  /// 角色（组织者、参与者等）
-  final String role;
-
-  /// 状态（已确认、待确认等）
-  final String status;
-
-  /// 联系方式
-  final String? contact;
-
-  /// 备注
-  final String? notes;
-
-  /// 构造函数
-  ParticipantModel({
-    required this.id,
-    required this.userId,
-    required this.name,
-    required this.role,
-    required this.status,
-    this.contact,
-    this.notes,
-  });
-
-  /// 从JSON创建
-  factory ParticipantModel.fromJson(Map<String, dynamic> json) =>
-      _$ParticipantModelFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$ParticipantModelToJson(this);
 }
 
 /// 行程模型 - 具体行程的规划和执行实体
@@ -96,7 +53,7 @@ class TripModel extends BaseModel {
   final String? primaryRouteId;
 
   /// 参与者列表
-  final List<ParticipantModel> participants;
+  final List<UserModel> participants;
 
   /// 参与者数量
   @JsonKey(name: 'participant_count')
@@ -167,7 +124,7 @@ class TripModel extends BaseModel {
     required this.status,
     List<String>? routeIds,
     this.primaryRouteId,
-    List<ParticipantModel>? participants,
+    List<UserModel>? participants,
     required this.participantCount,
     required this.organizerId,
     this.equipmentListId,
@@ -248,7 +205,7 @@ class TripModel extends BaseModel {
     TripStatus? status,
     List<String>? routeIds,
     String? primaryRouteId,
-    List<ParticipantModel>? participants,
+    List<UserModel>? participants,
     int? participantCount,
     String? organizerId,
     String? equipmentListId,

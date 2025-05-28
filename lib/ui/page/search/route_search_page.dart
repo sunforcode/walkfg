@@ -312,17 +312,17 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
                   Row(
                     children: [
                       _buildInfoTag(
-                        '${route.basicInfo.distance}km',
+                        '${route.distance}km',
                         CupertinoIcons.arrow_right,
                       ),
                       const SizedBox(width: 8),
                       _buildInfoTag(
-                        '${route.basicInfo.elevationGain}m爬升',
+                        '${route.elevationGain}m爬升',
                         CupertinoIcons.arrow_up,
                       ),
                       const SizedBox(width: 8),
                       _buildInfoTag(
-                        route.getDifficultyName(),
+                        route.difficulty.name,
                         CupertinoIcons.flag,
                       ),
                     ],

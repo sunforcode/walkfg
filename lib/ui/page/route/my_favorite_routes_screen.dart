@@ -154,12 +154,12 @@ class _MyFavoriteRoutesScreenState extends State<MyFavoriteRoutesScreen> {
                         const SizedBox(width: 12),
                         _buildInfoChip(
                           CupertinoIcons.arrow_right_arrow_left,
-                          '${route.basicInfo.distance} km',
+                          '${route.distance} km',
                         ),
                         const SizedBox(width: 12),
                         _buildInfoChip(
                           CupertinoIcons.time,
-                          route.basicInfo.duration,
+                          route.duration,
                         ),
                       ],
                     ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../model/route/route_model.dart';
+import 'package:walk/model/route/route_enums.dart';
 
 /// 行程工具类
 class TripUtils {

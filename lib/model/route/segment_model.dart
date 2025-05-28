@@ -1,78 +1,63 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../base/base_model.dart';
-import '../map/track_point_model.dart';
-import 'seasonal_closure_model.dart';
 
 part 'segment_model.g.dart';
 
-/// 路径段模型
+/// 路线分段模型
 @JsonSerializable()
-class SegmentModel extends BaseModel {
-  /// 起始点ID
-  final String startPoint;
+class SegmentModel {
+  /// ID
+  final String id;
 
-  /// 终点ID
-  final String endPoint;
+  /// 名称
+  final String name;
 
-  /// 距离(km)
+  /// 描述
+  final String description;
+
+  /// 距离（公里）
   final double distance;
 
-  /// 爬升(m)
+  /// 预计时长
+  final String duration;
+
+  /// 爬升（米）
+  @JsonKey(name: 'elevation_gain')
   final int elevationGain;
 
-  /// 下降(m)
-  final int elevationLoss;
+  /// 下降（米）
+  @JsonKey(name: 'elevation_loss')
+  final double? elevationLoss;
 
-  /// 预计时间(小时)
-  final double estimatedTime;
+  /// 起点ID
+  @JsonKey(name: 'start_waypoint_id')
+  final String startWaypointId;
 
-  /// 难度(1-5)
-  final int difficulty;
+  /// 终点ID
+  @JsonKey(name: 'end_waypoint_id')
+  final String endWaypointId;
 
-  /// 地形类型
-  final String terrain;
-
-  /// 路径坐标点集
-  final List<TrackPointVO> path;
-
-  /// 路面类型
-  final String surfaceType;
-
-  /// 危险因素
-  final List<String> hazards;
-
-  /// 季节性关闭信息
-  final List<SeasonalClosureVO> seasonalClosures;
-
-  /// 人流量等级(1-5)
-  final int trafficLevel;
+  /// 路径点列表
+  @JsonKey(name: 'path_points')
+  final List<List<double>> pathPoints;
 
   /// 构造函数
   SegmentModel({
-    required super.id,
-    super.createdAt,
-    super.updatedAt,
-    required this.startPoint,
-    required this.endPoint,
+    required this.id,
+    required this.name,
+    required this.description,
     required this.distance,
+    required this.duration,
     required this.elevationGain,
-    required this.elevationLoss,
-    required this.estimatedTime,
-    required this.difficulty,
-    required this.terrain,
-    required this.path,
-    required this.surfaceType,
-    List<String>? hazards,
-    List<SeasonalClosureVO>? seasonalClosures,
-    this.trafficLevel = 1,
-  })  : this.hazards = hazards ?? const [],
-        this.seasonalClosures = seasonalClosures ?? const [];
+    this.elevationLoss,
+    required this.startWaypointId,
+    required this.endWaypointId,
+    required this.pathPoints,
+  });
 
   /// 从JSON创建
   factory SegmentModel.fromJson(Map<String, dynamic> json) =>
       _$SegmentModelFromJson(json);
 
   /// 转换为JSON
-  @override
   Map<String, dynamic> toJson() => _$SegmentModelToJson(this);
 }

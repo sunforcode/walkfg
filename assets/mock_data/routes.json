@@ -6,16 +6,9 @@
   "description": "这条路线带您游览黄山最著名的景点，包括迎客松、光明顶和西海大峡谷。沿途可欣赏壮丽的云海和奇特的松树。",
   "region_id": "region_001",
   "region": "黄山风景区",
-  "basic_info": {
-    "distance": 15.5,
-    "duration": "8小时",
-    "elevation_gain": 1200,
-    "elevation_loss": 800.5,
-    "difficulty": 2,
-    "route_type": 2,
-    "route_direction": 0,
-    "best_season": ["春季", "秋季"]
-  },
+  "best_season": ["春季", "秋季"],
+  "related_map_ids": ["map_001", "map_002"],
+  "default_map_id": "map_001",
   "ratings": {
     "overall": 4.8,
     "scenery": 5.0,
@@ -25,6 +18,7 @@
     "rating_count": 256
   },
   "tags": ["山岳", "森林", "观景", "摄影", "世界遗产"],
+  "difficulty": 0,
   "waypoints": [
     {
       "id": "wp_001",
@@ -102,113 +96,83 @@
   "segments": [
     {
       "id": "seg_001",
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-15T08:00:00Z",
-      "startPoint": "wp_001",
-      "endPoint": "wp_002",
+      "name": "云谷寺至迎客松",
+      "description": "从云谷寺出发，沿石阶上山到迎客松",
       "distance": 2.5,
-      "elevationGain": 1020,
-      "elevationLoss": 0,
-      "estimatedTime": 2.0,
-      "difficulty": 3,
-      "terrain": "石阶",
-      "path": [
-        {
-          "latitude": 30.1234,
-          "longitude": 118.1567,
-          "elevation": 630.0,
-          "timestamp": "2023-05-15T08:00:00Z",
-          "distance_from_start": 0.0,
-          "point_type": "start",
-          "name": "云谷寺起点",
-          "description": "徒步起点",
-          "type": "start"
-        },
-        {
-          "latitude": 30.1284,
-          "longitude": 118.1617,
-          "elevation": 1140.0,
-          "timestamp": "2023-05-15T09:00:00Z",
-          "distance_from_start": 1250.0,
-          "point_type": "waypoint",
-          "name": "半山亭",
-          "description": "休息点",
-          "type": "rest"
-        },
-        {
-          "latitude": 30.1334,
-          "longitude": 118.1667,
-          "elevation": 1650.0,
-          "timestamp": "2023-05-15T10:00:00Z",
-          "distance_from_start": 2500.0,
-          "point_type": "end",
-          "name": "迎客松",
-          "description": "段落终点",
-          "type": "end"
-        }
-      ],
-      "surfaceType": "石阶",
-      "hazards": ["陡峭台阶", "湿滑路面"],
-      "seasonalClosures": [
-        {
-          "startDate": "2023-07-15T00:00:00Z",
-          "endDate": "2023-08-15T00:00:00Z",
-          "reason": "暴雨季节，山路湿滑危险"
-        }
-      ],
-      "trafficLevel": 3
+      "duration": "2:00",
+      "elevation_gain": 1020,
+      "elevation_loss": 0.0,
+      "start_waypoint_id": "wp_001",
+      "end_waypoint_id": "wp_002",
+      "path_points": [
+        [30.1234, 118.1567],
+        [30.1284, 118.1617],
+        [30.1334, 118.1667]
+      ]
     },
     {
       "id": "seg_002",
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-15T08:00:00Z",
-      "startPoint": "wp_002",
-      "endPoint": "wp_003",
+      "name": "迎客松至光明顶",
+      "description": "从迎客松经天海到达光明顶",
       "distance": 3.0,
-      "elevationGain": 210,
-      "elevationLoss": 0,
-      "estimatedTime": 1.5,
-      "difficulty": 2,
-      "terrain": "石阶、平路",
-      "path": [
-        {
-          "latitude": 30.1334,
-          "longitude": 118.1667,
-          "elevation": 1650.0,
-          "timestamp": "2023-05-15T10:00:00Z",
-          "distance_from_start": 0.0,
-          "point_type": "start",
-          "name": "迎客松",
-          "description": "段落起点",
-          "type": "start"
-        },
-        {
-          "latitude": 30.1384,
-          "longitude": 118.1717,
-          "elevation": 1755.0,
-          "timestamp": "2023-05-15T11:00:00Z",
-          "distance_from_start": 1500.0,
-          "point_type": "waypoint",
-          "name": "天海",
-          "description": "黄山高山湖泊",
-          "type": "attraction"
-        },
-        {
-          "latitude": 30.1434,
-          "longitude": 118.1767,
-          "elevation": 1860.0,
-          "timestamp": "2023-05-15T11:30:00Z",
-          "distance_from_start": 3000.0,
-          "point_type": "end",
-          "name": "光明顶",
-          "description": "段落终点",
-          "type": "end"
-        }
-      ],
-      "surfaceType": "石阶、平路",
-      "hazards": [],
-      "seasonalClosures": [],
-      "trafficLevel": 2
+      "duration": "1:30",
+      "elevation_gain": 210,
+      "elevation_loss": 0.0,
+      "start_waypoint_id": "wp_002",
+      "end_waypoint_id": "wp_003",
+      "path_points": [
+        [30.1334, 118.1667],
+        [30.1384, 118.1717],
+        [30.1434, 118.1767]
+      ]
+    },
+    {
+      "id": "seg_003",
+      "name": "光明顶至西海大峡谷",
+      "description": "从光明顶下行到西海大峡谷",
+      "distance": 4.0,
+      "duration": "2:00",
+      "elevation_gain": 0,
+      "elevation_loss": 360.0,
+      "start_waypoint_id": "wp_003",
+      "end_waypoint_id": "wp_004",
+      "path_points": [
+        [30.1434, 118.1767],
+        [30.1484, 118.1617],
+        [30.1534, 118.1467]
+      ]
+    },
+    {
+      "id": "seg_004",
+      "name": "西海大峡谷至排云亭",
+      "description": "从西海大峡谷到排云亭",
+      "distance": 3.0,
+      "duration": "1:30",
+      "elevation_gain": 130,
+      "elevation_loss": 0.0,
+      "start_waypoint_id": "wp_004",
+      "end_waypoint_id": "wp_005",
+      "path_points": [
+        [30.1534, 118.1467],
+        [30.1584, 118.1417],
+        [30.1634, 118.1367]
+      ]
+    },
+    {
+      "id": "seg_005",
+      "name": "排云亭至慈光阁",
+      "description": "从排云亭下山到慈光阁",
+      "distance": 3.0,
+      "duration": "1:30",
+      "elevation_gain": 0,
+      "elevation_loss": 810.0,
+      "start_waypoint_id": "wp_005",
+      "end_waypoint_id": "wp_006",
+      "path_points": [
+        [30.1634, 118.1367],
+        [30.1684, 118.1317],
+        [30.1734, 118.1267]
+      ]
     }
   ],
   "daily_plans": [
@@ -218,9 +182,9 @@
       "title": "黄山东线登山",
       "description": "从云谷寺出发，经迎客松到达光明顶，住宿山顶",
       "distance": 5.5,
-      "duration": "4小时",
+      "duration": "4:00",
       "elevation_gain": 1230,
-      "elevation_loss": 0,
+      "elevation_loss": 0.0,
       "start_waypoint_id": "wp_001",
       "end_waypoint_id": "wp_003",
       "segment_ids": ["seg_001", "seg_002"],
@@ -232,9 +196,9 @@
       "title": "黄山西线下山",
       "description": "从光明顶出发，游览西海大峡谷，经排云亭到达慈光阁下山",
       "distance": 10.0,
-      "duration": "5小时",
-      "elevation_gain": 0,
-      "elevation_loss": 1040,
+      "duration": "5:00",
+      "elevation_gain": 130,
+      "elevation_loss": 1170.0,
       "start_waypoint_id": "wp_003",
       "end_waypoint_id": "wp_006",
       "segment_ids": ["seg_003", "seg_004", "seg_005"],
@@ -258,114 +222,6 @@
     "accommodation": "山顶有北海宾馆、白云宾馆等住宿点，需提前预订",
     "toilets": "主要景点和住宿区附近有公共厕所",
     "signal_coverage": "山顶大部分区域有手机信号，但在峡谷等地可能较弱"
-  },
-  "safety_info": {
-    "emergencyContacts": [
-      {
-        "name": "景区救援",
-        "phone": "0559-12345",
-        "description": "黄山景区紧急救援电话"
-      },
-      {
-        "name": "紧急救援",
-        "phone": "120",
-        "description": "医疗紧急救援"
-      }
-    ],
-    "riskAreas": [
-      {
-        "id": "risk_001",
-        "created_at": "2023-05-15T08:00:00Z",
-        "updated_at": "2023-05-15T08:00:00Z",
-        "name": "陡峭台阶区",
-        "description": "部分路段台阶陡峭，雨天湿滑",
-        "boundary": [
-          {
-            "latitude": 30.1284,
-            "longitude": 118.1617,
-            "altitude": 1140.0
-          },
-          {
-            "latitude": 30.1294,
-            "longitude": 118.1627,
-            "altitude": 1200.0
-          },
-          {
-            "latitude": 30.1304,
-            "longitude": 118.1637,
-            "altitude": 1300.0
-          },
-          {
-            "latitude": 30.1314,
-            "longitude": 118.1647,
-            "altitude": 1400.0
-          }
-        ],
-        "level": 3
-      },
-      {
-        "id": "risk_002",
-        "created_at": "2023-05-15T08:00:00Z",
-        "updated_at": "2023-05-15T08:00:00Z",
-        "name": "西海大峡谷危险区",
-        "description": "峡谷边缘有危险区域，请勿靠近",
-        "boundary": [
-          {
-            "latitude": 30.1534,
-            "longitude": 118.1467,
-            "altitude": 1500.0
-          },
-          {
-            "latitude": 30.1544,
-            "longitude": 118.1457,
-            "altitude": 1490.0
-          },
-          {
-            "latitude": 30.1554,
-            "longitude": 118.1447,
-            "altitude": 1480.0
-          },
-          {
-            "latitude": 30.1564,
-            "longitude": 118.1437,
-            "altitude": 1470.0
-          }
-        ],
-        "level": 4
-      }
-    ],
-    "cellSignal": [
-      {
-        "id": "signal_001",
-        "created_at": "2023-05-15T08:00:00Z",
-        "updated_at": "2023-05-15T08:00:00Z",
-        "name": "信号弱区",
-        "description": "西海大峡谷内信号较弱",
-        "boundary": [
-          {
-            "latitude": 30.1534,
-            "longitude": 118.1467,
-            "altitude": 1500.0
-          },
-          {
-            "latitude": 30.1544,
-            "longitude": 118.1457,
-            "altitude": 1490.0
-          },
-          {
-            "latitude": 30.1554,
-            "longitude": 118.1447,
-            "altitude": 1480.0
-          },
-          {
-            "latitude": 30.1564,
-            "longitude": 118.1437,
-            "altitude": 1470.0
-          }
-        ],
-        "level": 2
-      }
-    ]
   },
   "image_urls": [
     "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",

@@ -160,11 +160,6 @@ class MockRecommendationService implements RecommendationService {
     // 获取当前季节
     final currentSeason = season ?? _getCurrentSeason();
 
-    // 筛选当前季节适合的路线
-    routes = routes
-        .where((route) => route.basicInfo.bestSeason.contains(currentSeason))
-        .toList();
-
     // 按评分排序
     routes.sort((a, b) => b.ratings.overall.compareTo(a.ratings.overall));
     // 限制数量
@@ -226,35 +221,6 @@ class MockRecommendationService implements RecommendationService {
         .where((json) => json['id'] != routeId) // 排除参考路线自身
         .map<RouteModel>((json) => RouteModel.fromJson(json))
         .toList();
-
-    // 计算相似度并排序（这里简化为相同难度和相近距离）
-    routes.sort((a, b) {
-      // 难度相同加分
-      final aDifficultyMatch =
-          a.basicInfo.difficulty == referenceRoute!.basicInfo.difficulty
-              ? 1
-              : 0;
-      final bDifficultyMatch =
-          b.basicInfo.difficulty == referenceRoute.basicInfo.difficulty ? 1 : 0;
-
-      // 距离相近加分（距离差的绝对值越小越好）
-      final aDistanceDiff =
-          (a.basicInfo.distance - referenceRoute.basicInfo.distance).abs();
-      final bDistanceDiff =
-          (b.basicInfo.distance - referenceRoute.basicInfo.distance).abs();
-
-      // 综合评分（难度匹配度 - 距离差）
-      final aScore = aDifficultyMatch - aDistanceDiff / 100;
-      final bScore = bDifficultyMatch - bDistanceDiff / 100;
-
-      return bScore.compareTo(aScore);
-    });
-
-    // 限制数量
-    if (routes.length > limit) {
-      routes = routes.sublist(0, limit);
-    }
-
     return routes;
   }
 

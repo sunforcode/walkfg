@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../model/user/user_model.dart';
 import '../../../model/guide/guide_model.dart';
 import '../../../model/route/route_model.dart';
 import '../../../model/trip/trip_model.dart';
 import '../../../model/weather/weather_model.dart';
 import '../../../service/service_manager.dart';
+import '../../../services/weather/weather_manager.dart';
 import 'widgets/welcome_weather_card.dart';
 import 'widgets/planned_trips_section.dart';
 import 'widgets/recommended_routes_section.dart';
@@ -34,6 +36,12 @@ class _HomeScreenState extends State<HomeScreen>
   /// 徒步攻略列表Future
   late Future<List<GuideModel>> _hikingGuidesFuture;
 
+  /// 天气管理器
+  final WeatherManager _weatherManager = WeatherManager();
+
+  /// 是否正在请求位置权限
+  bool _isRequestingPermission = false;
+
   @override
   bool get wantKeepAlive => true;
 
@@ -46,21 +54,63 @@ class _HomeScreenState extends State<HomeScreen>
     _hikingGuidesFuture = _loadHikingGuidesData();
   }
 
+  @override
+  void dispose() {
+    _weatherManager.dispose();
+    super.dispose();
+  }
+
   /// 加载用户和天气数据
   Future<Map<String, dynamic>> _loadUserWeatherData() async {
     final userService = ServiceLocator.instance.getUserService();
-    final weatherService = ServiceLocator.instance.getWeatherService();
 
-    // 并行加载用户和天气数据
-    final results = await Future.wait([
-      userService.getCurrentUser(),
-      weatherService.getWeather(30.2741, 120.1551), // 杭州的经纬度
-    ]);
+    // 先获取用户数据
+    final user = await userService.getCurrentUser();
+
+    // 尝试获取当前位置的天气
+    WeatherModel? weather;
+    try {
+      // 检查位置权限
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied && !_isRequestingPermission) {
+        // 直接请求位置权限
+        setState(() {
+          _isRequestingPermission = true;
+        });
+
+        permission = await Geolocator.requestPermission();
+
+        setState(() {
+          _isRequestingPermission = false;
+        });
+      }
+
+      // 如果有位置权限，获取当前位置的天气
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        weather = await _weatherManager.getCurrentLocationWeather();
+      }
+    } catch (e) {
+      debugPrint('获取位置或天气失败: $e');
+    }
+
+    // 如果无法获取当前位置的天气，使用默认位置（杭州）
+    if (weather == null) {
+      final weatherService = ServiceLocator.instance.getWeatherService();
+      weather = await weatherService.getWeather(30.2741, 120.1551); // 杭州的经纬度
+    }
 
     return {
-      'user': results[0] as UserModel,
-      'weather': results[1] as WeatherModel,
+      'user': user,
+      'weather': weather,
     };
+  }
+
+  /// 刷新天气数据
+  Future<void> _refreshWeatherData() async {
+    setState(() {
+      _userWeatherFuture = _loadUserWeatherData();
+    });
   }
 
   /// 加载规划行程数据
@@ -100,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen>
                 padding: const EdgeInsets.all(16),
                 child: WelcomeWeatherCard.fromFuture(
                   future: _userWeatherFuture,
+                  onRefresh: _refreshWeatherData,
                 ),
               ),
 

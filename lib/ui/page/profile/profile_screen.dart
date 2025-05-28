@@ -4,7 +4,7 @@ import 'package:walk/service/service_manager.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import '../../../model/user/user_model.dart';
 import '../../page/home/widgets/stats_card.dart';
-import 'auth/login_screen.dart';
+import 'login_screen.dart';
 import 'auth/register_screen.dart';
 
 /// 个人页面

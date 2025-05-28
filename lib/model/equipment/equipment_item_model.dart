@@ -8,7 +8,7 @@ import 'weight_unit.dart';
 part 'equipment_item_model.g.dart';
 
 /// 装备项目模型 - 统一的装备项目表示
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable()
 class EquipmentItemModel extends BaseModel {
   /// 名称
   final String name;
@@ -24,7 +24,10 @@ class EquipmentItemModel extends BaseModel {
   final double weight;
 
   /// 重量单位
-  @JsonKey(fromJson: _weightUnitFromJson, toJson: _weightUnitToJson)
+  @JsonKey(
+      name: 'weight_unit',
+      fromJson: _weightUnitFromJson,
+      toJson: _weightUnitToJson)
   final WeightUnit weightUnit;
 
   /// 数量
@@ -50,21 +53,27 @@ class EquipmentItemModel extends BaseModel {
   final String? notes;
 
   /// 是否拥有
+  @JsonKey(name: 'is_owned')
   final bool isOwned;
 
   /// 是否共享装备
+  @JsonKey(name: 'is_shared')
   final bool isShared;
 
   /// 共享人数
+  @JsonKey(name: 'shared_person_count')
   final int? sharedPersonCount;
 
   /// 购买链接
+  @JsonKey(name: 'purchase_link')
   final String? purchaseLink;
 
   /// 购买日期
+  @JsonKey(name: 'purchase_date')
   final DateTime? purchaseDate;
 
   /// 使用次数
+  @JsonKey(name: 'usage_count')
   final int usageCount;
 
   /// 使用状态
@@ -72,9 +81,11 @@ class EquipmentItemModel extends BaseModel {
   final EquipmentCondition condition;
 
   /// 替代品列表（可替代此装备的其他装备ID）
+  @JsonKey(name: 'alternative_ids')
   final List<String> alternativeIds;
 
   /// 装备图片URL
+  @JsonKey(name: 'image_url')
   final String? imageUrl;
 
   /// 构造函数

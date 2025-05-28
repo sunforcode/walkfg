@@ -1,456 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:walk/model/route/safety_info_model.dart';
+import 'package:walk/model/map/map_data_model.dart';
+import 'package:walk/model/route/route_enums.dart';
+
 import 'package:walk/model/route/segment_model.dart';
+import 'package:walk/model/route/route_ratings.dart';
+import 'package:walk/model/route/waypoint_model.dart';
+import 'package:walk/model/route/daily_plan_model.dart';
+import 'package:walk/model/route/weather_info.dart';
+import 'package:walk/model/route/facilities.dart';
 import '../base/base_model.dart';
-import '../enums/route_status.dart';
+import 'route_status.dart';
 
 part 'route_model.g.dart';
-
-/// 路线类型枚举
-enum RouteType {
-  /// 环线
-  circular,
-
-  /// 单向
-  oneWay,
-
-  /// 往返
-  roundTrip,
-}
-
-/// 路线方向枚举
-enum RouteDirection {
-  /// 顺时针
-  clockwise,
-
-  /// 逆时针
-  counterClockwise,
-}
-
-/// 路线难度枚举
-enum RouteDifficulty {
-  /// 简单
-  easy,
-
-  /// 中等
-  medium,
-
-  /// 困难
-  hard,
-
-  /// 极限
-  extreme;
-
-  /// 获取难度名称
-  String getName() {
-    switch (this) {
-      case RouteDifficulty.easy:
-        return '初级';
-      case RouteDifficulty.medium:
-        return '中级';
-      case RouteDifficulty.hard:
-        return '高级';
-      case RouteDifficulty.extreme:
-        return '专业级';
-    }
-  }
-
-  /// 获取难度颜色
-  Color getColor() {
-    switch (this) {
-      case RouteDifficulty.easy:
-        return Colors.green;
-      case RouteDifficulty.medium:
-        return Colors.orange;
-      case RouteDifficulty.hard:
-        return Colors.red;
-      case RouteDifficulty.extreme:
-        return Colors.purple;
-    }
-  }
-}
-
-/// 路线基本信息值对象
-@JsonSerializable()
-class RouteBasicInfo {
-  /// 距离（公里）
-  final double distance;
-
-  /// 预计时长
-  final String duration;
-
-  /// 爬升（米）
-  @JsonKey(name: 'elevation_gain')
-  final int elevationGain;
-
-  /// 下降（米）
-  @JsonKey(name: 'elevation_loss')
-  final double? elevationLoss;
-
-  /// 难度
-  @JsonKey(fromJson: _parseDifficulty, toJson: _difficultyToJson)
-  final RouteDifficulty difficulty;
-
-  /// 路线类型
-  @JsonKey(
-      name: 'route_type', fromJson: _parseRouteType, toJson: _routeTypeToJson)
-  final RouteType routeType;
-
-  /// 路线方向
-  @JsonKey(
-      name: 'route_direction',
-      fromJson: _parseRouteDirection,
-      toJson: _routeDirectionToJson)
-  final RouteDirection? routeDirection;
-
-  /// 最佳季节
-  @JsonKey(name: 'best_season')
-  final List<String> bestSeason;
-
-  /// 构造函数
-  RouteBasicInfo({
-    required this.distance,
-    required this.duration,
-    required this.elevationGain,
-    this.elevationLoss,
-    required this.difficulty,
-    required this.routeType,
-    this.routeDirection,
-    required this.bestSeason,
-  });
-
-  /// 从JSON创建
-  factory RouteBasicInfo.fromJson(Map<String, dynamic> json) =>
-      _$RouteBasicInfoFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$RouteBasicInfoToJson(this);
-
-  /// 解析难度
-  static RouteDifficulty _parseDifficulty(dynamic value) {
-    if (value is int && value >= 0 && value < RouteDifficulty.values.length) {
-      return RouteDifficulty.values[value];
-    }
-
-    if (value is String) {
-      switch (value.toLowerCase()) {
-        case 'easy':
-          return RouteDifficulty.easy;
-        case 'medium':
-          return RouteDifficulty.medium;
-        case 'hard':
-          return RouteDifficulty.hard;
-        case 'extreme':
-          return RouteDifficulty.extreme;
-        default:
-          return RouteDifficulty.medium;
-      }
-    }
-
-    return RouteDifficulty.medium;
-  }
-
-  /// 难度转JSON
-  static int _difficultyToJson(RouteDifficulty difficulty) {
-    return difficulty.index;
-  }
-
-  /// 解析路线类型
-  static RouteType _parseRouteType(dynamic value) {
-    if (value is int && value >= 0 && value < RouteType.values.length) {
-      return RouteType.values[value];
-    }
-
-    if (value is String) {
-      switch (value.toLowerCase()) {
-        case 'circular':
-          return RouteType.circular;
-        case 'oneway':
-          return RouteType.oneWay;
-        case 'roundtrip':
-          return RouteType.roundTrip;
-        default:
-          return RouteType.circular;
-      }
-    }
-
-    return RouteType.circular;
-  }
-
-  /// 路线类型转JSON
-  static int _routeTypeToJson(RouteType routeType) {
-    return routeType.index;
-  }
-
-  /// 解析路线方向
-  static RouteDirection? _parseRouteDirection(dynamic value) {
-    if (value == null) {
-      return null;
-    }
-
-    if (value is int && value >= 0 && value < RouteDirection.values.length) {
-      return RouteDirection.values[value];
-    }
-
-    if (value is String) {
-      switch (value.toLowerCase()) {
-        case 'clockwise':
-          return RouteDirection.clockwise;
-        case 'counterclockwise':
-          return RouteDirection.counterClockwise;
-        default:
-          return RouteDirection.clockwise;
-      }
-    }
-
-    return RouteDirection.clockwise;
-  }
-
-  /// 路线方向转JSON
-  static int? _routeDirectionToJson(RouteDirection? routeDirection) {
-    return routeDirection?.index;
-  }
-}
-
-/// 路线评分值对象
-@JsonSerializable()
-class RouteRatingsVO {
-  /// 总体评分
-  final double overall;
-
-  /// 风景评分
-  final double scenery;
-
-  /// 难度评分
-  final double difficulty;
-
-  /// 体验评分
-  final double experience;
-
-  /// 设施评分
-  final double facilities;
-
-  /// 评分人数
-  @JsonKey(name: 'rating_count')
-  final int ratingCount;
-
-  /// 构造函数
-  RouteRatingsVO({
-    required this.overall,
-    required this.scenery,
-    required this.difficulty,
-    required this.experience,
-    required this.facilities,
-    required this.ratingCount,
-  });
-
-  /// 从JSON创建
-  factory RouteRatingsVO.fromJson(Map<String, dynamic> json) =>
-      _$RouteRatingsVOFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$RouteRatingsVOToJson(this);
-}
-
-/// 路线关键点模型
-@JsonSerializable()
-class WaypointModel {
-  /// ID
-  final String id;
-
-  /// 名称
-  final String name;
-
-  /// 描述
-  final String description;
-
-  /// 纬度
-  final double latitude;
-
-  /// 经度
-  final double longitude;
-
-  /// 海拔
-  final double? elevation;
-
-  /// 类型
-  final String type;
-
-  /// 图标URL
-  @JsonKey(name: 'icon_url')
-  final String? iconUrl;
-
-  /// 图片URL
-  @JsonKey(name: 'image_url')
-  final String? imageUrl;
-
-  /// 序号
-  @JsonKey(name: 'sequence_number')
-  final int sequenceNumber;
-
-  /// 构造函数
-  WaypointModel({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.latitude,
-    required this.longitude,
-    this.elevation,
-    required this.type,
-    this.iconUrl,
-    this.imageUrl,
-    required this.sequenceNumber,
-  });
-
-  /// 从JSON创建
-  factory WaypointModel.fromJson(Map<String, dynamic> json) =>
-      _$WaypointModelFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$WaypointModelToJson(this);
-}
-
-/// 每日计划模型
-@JsonSerializable()
-class DailyPlanModel {
-  /// ID
-  final String id;
-
-  /// 天数
-  @JsonKey(name: 'day_number')
-  final int dayNumber;
-
-  /// 标题
-  final String title;
-
-  /// 描述
-  final String description;
-
-  /// 距离（公里）
-  final double distance;
-
-  /// 预计时长
-  final String duration;
-
-  /// 爬升（米）
-  @JsonKey(name: 'elevation_gain')
-  final int elevationGain;
-
-  /// 下降（米）
-  @JsonKey(name: 'elevation_loss')
-  final double? elevationLoss;
-
-  /// 起点ID
-  @JsonKey(name: 'start_waypoint_id')
-  final String startWaypointId;
-
-  /// 终点ID
-  @JsonKey(name: 'end_waypoint_id')
-  final String endWaypointId;
-
-  /// 包含的分段ID列表
-  @JsonKey(name: 'segment_ids')
-  final List<String> segmentIds;
-
-  /// 住宿信息
-  final String? accommodation;
-
-  /// 构造函数
-  DailyPlanModel({
-    required this.id,
-    required this.dayNumber,
-    required this.title,
-    required this.description,
-    required this.distance,
-    required this.duration,
-    required this.elevationGain,
-    this.elevationLoss,
-    required this.startWaypointId,
-    required this.endWaypointId,
-    required this.segmentIds,
-    this.accommodation,
-  });
-
-  /// 从JSON创建
-  factory DailyPlanModel.fromJson(Map<String, dynamic> json) =>
-      _$DailyPlanModelFromJson(json);
-
-  get transportation => null;
-
-  get date => null;
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$DailyPlanModelToJson(this);
-}
-
-/// 气候信息值对象
-@JsonSerializable()
-class WeatherInfoVO {
-  /// 气候描述
-  final String description;
-
-  /// 季节性信息
-  final Map<String, String> seasonal;
-
-  /// 最佳季节
-  @JsonKey(name: 'best_seasons')
-  final List<String> bestSeasons;
-
-  /// 注意事项
-  final String? precautions;
-
-  /// 构造函数
-  WeatherInfoVO({
-    required this.description,
-    required this.seasonal,
-    required this.bestSeasons,
-    this.precautions,
-  });
-
-  /// 从JSON创建
-  factory WeatherInfoVO.fromJson(Map<String, dynamic> json) =>
-      _$WeatherInfoVOFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$WeatherInfoVOToJson(this);
-}
-
-/// 设施信息值对象
-@JsonSerializable()
-class FacilitiesVO {
-  /// 水源
-  final String water;
-
-  /// 食物
-  final String food;
-
-  /// 住宿
-  final String accommodation;
-
-  /// 厕所
-  final String toilets;
-
-  /// 信号覆盖
-  @JsonKey(name: 'signal_coverage')
-  final String signalCoverage;
-
-  /// 构造函数
-  FacilitiesVO({
-    required this.water,
-    required this.food,
-    required this.accommodation,
-    required this.toilets,
-    required this.signalCoverage,
-  });
-
-  /// 从JSON创建
-  factory FacilitiesVO.fromJson(Map<String, dynamic> json) =>
-      _$FacilitiesVOFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$FacilitiesVOToJson(this);
-}
 
 /// 路线模型 - 户外路线的业务实体
 @JsonSerializable()
@@ -465,19 +27,35 @@ class RouteModel extends BaseModel {
   @JsonKey(name: 'region_id')
   final String regionId;
 
-  /// 区域ID
+  @JsonKey(name: 'best_season')
+  final List<String> bestSeason;
+
+  /// 相关地图ID列表
+  @JsonKey(name: 'related_map_ids')
+  final List<String> relatedMapIds;
+
+  /// 默认地图ID
+  @JsonKey(name: 'default_map_id')
+  final String defaultMapId;
+
+  /// 当前地图数据模型（运行时设置，不从JSON获取）
+  @JsonKey(ignore: true)
+  final MapDataModel? defaultMap;
+
+  /// 区域名称
   @JsonKey(name: 'region')
   final String region;
-
-  /// 基本信息
-  @JsonKey(name: 'basic_info')
-  final RouteBasicInfo basicInfo;
 
   /// 评分信息
   final RouteRatingsVO ratings;
 
   /// 标签列表
   final List<String> tags;
+
+  /// 难度
+  @JsonKey(
+      name: 'difficulty', fromJson: _parseDifficulty, toJson: _difficultyToJson)
+  final RouteDifficulty difficulty;
 
   /// 路径关键点
   final List<WaypointModel> waypoints;
@@ -495,10 +73,6 @@ class RouteModel extends BaseModel {
 
   /// 设施信息
   final FacilitiesVO? facilities;
-
-  /// 安全信息
-  @JsonKey(name: 'safety_info')
-  final SafetyInfoVO? safetyInfo;
 
   /// 图片URL列表
   @JsonKey(name: 'image_urls')
@@ -539,15 +113,18 @@ class RouteModel extends BaseModel {
     required this.name,
     required this.description,
     required this.regionId,
-    required this.basicInfo,
+    List<String>? bestSeason,
+    List<String>? relatedMapIds,
+    String? defaultMapId,
+    this.defaultMap,
     required this.ratings,
     List<String>? tags,
+    required this.difficulty,
     List<WaypointModel>? waypoints,
     List<SegmentModel>? segments,
     List<DailyPlanModel>? dailyPlans,
     this.weatherInfo,
     this.facilities,
-    this.safetyInfo,
     required this.imageUrls,
     this.coverUrl,
     required this.mapDataId,
@@ -555,9 +132,13 @@ class RouteModel extends BaseModel {
     this.isFavorite = false,
     required this.popularity,
     this.relatedRouteIds,
-    this.region = "未知区域",
+    String? region,
     RouteStatus? status,
-  })  : this.tags = tags ?? const [],
+  })  : this.bestSeason = bestSeason ?? const [],
+        this.relatedMapIds = relatedMapIds ?? const [],
+        this.defaultMapId = defaultMapId ?? "",
+        this.region = region ?? "未知区域",
+        this.tags = tags ?? const [],
         this.waypoints = waypoints ?? const [],
         this.segments = segments ?? const [],
         this.dailyPlans = dailyPlans ?? const [],
@@ -570,6 +151,26 @@ class RouteModel extends BaseModel {
   /// 转换为JSON
   @override
   Map<String, dynamic> toJson() => _$RouteModelToJson(this);
+
+  /// 创建带有地图数据的路线模型
+  factory RouteModel.withMap(RouteModel route, MapDataModel map) {
+    return route.copyWith(defaultMap: map);
+  }
+
+  /// 解析难度
+  static RouteDifficulty _parseDifficulty(dynamic difficulty) {
+    if (difficulty is int &&
+        difficulty >= 0 &&
+        difficulty < RouteDifficulty.values.length) {
+      return RouteDifficulty.values[difficulty];
+    }
+    return RouteDifficulty.medium; // 默认返回中等难度
+  }
+
+  /// 难度转JSON
+  static int _difficultyToJson(RouteDifficulty difficulty) {
+    return difficulty.index;
+  }
 
   /// 解析状态
   static RouteStatus _parseStatus(dynamic status) {
@@ -607,14 +208,60 @@ class RouteModel extends BaseModel {
     }
   }
 
-  /// 获取难度名称
-  String getDifficultyName() {
-    return basicInfo.difficulty.getName();
+  /// 获取路线距离（公里）
+  double get distance {
+    if (defaultMap != null) {
+      return defaultMap!.distance;
+    }
+    // 如果没有地图数据，则从分段计算
+    return segments.fold(0.0, (sum, segment) => sum + segment.distance);
   }
 
-  /// 获取难度颜色
-  Color getDifficultyColor() {
-    return basicInfo.difficulty.getColor();
+  /// 获取路线爬升（米）
+  int get elevationGain {
+    if (defaultMap != null) {
+      return defaultMap!.elevationGain;
+    }
+    // 如果没有地图数据，则从分段计算
+    return segments.fold(0, (sum, segment) => sum + segment.elevationGain);
+  }
+
+  /// 获取路线下降（米）
+  double get elevationLoss {
+    if (defaultMap != null) {
+      return defaultMap!.elevationLoss;
+    }
+    // 如果没有地图数据，则从分段计算
+    return segments.fold(
+        0.0, (sum, segment) => sum + (segment.elevationLoss ?? 0));
+  }
+
+  /// 获取预计时长
+  String get duration {
+    // 从每日计划计算总时长
+    if (dailyPlans.isNotEmpty) {
+      final totalHours = dailyPlans.fold(0.0, (sum, plan) {
+        final parts = plan.duration.split(':');
+        if (parts.length == 2) {
+          return sum +
+              (int.tryParse(parts[0]) ?? 0) +
+              (int.tryParse(parts[1]) ?? 0) / 60;
+        }
+        return sum;
+      });
+
+      final hours = totalHours.floor();
+      final minutes = ((totalHours - hours) * 60).round();
+
+      return '$hours:${minutes.toString().padLeft(2, '0')}';
+    }
+
+    // 如果没有每日计划，则估算时长（假设平均步行速度为3km/h）
+    final estimatedHours = distance / 3;
+    final hours = estimatedHours.floor();
+    final minutes = ((estimatedHours - hours) * 60).round();
+
+    return '$hours:${minutes.toString().padLeft(2, '0')}';
   }
 
   /// 创建副本并更新部分属性
@@ -625,15 +272,18 @@ class RouteModel extends BaseModel {
     String? name,
     String? description,
     String? regionId,
-    RouteBasicInfo? basicInfo,
+    List<String>? bestSeason,
+    List<String>? relatedMapIds,
+    String? defaultMapId,
+    MapDataModel? defaultMap,
     RouteRatingsVO? ratings,
     List<String>? tags,
+    RouteDifficulty? difficulty,
     List<WaypointModel>? waypoints,
     List<SegmentModel>? segments,
     List<DailyPlanModel>? dailyPlans,
     WeatherInfoVO? weatherInfo,
     FacilitiesVO? facilities,
-    SafetyInfoVO? safetyInfo,
     List<String>? imageUrls,
     String? coverUrl,
     String? mapDataId,
@@ -641,6 +291,7 @@ class RouteModel extends BaseModel {
     bool? isFavorite,
     int? popularity,
     List<String>? relatedRouteIds,
+    String? region,
     RouteStatus? status,
   }) {
     return RouteModel(
@@ -650,15 +301,18 @@ class RouteModel extends BaseModel {
       name: name ?? this.name,
       description: description ?? this.description,
       regionId: regionId ?? this.regionId,
-      basicInfo: basicInfo ?? this.basicInfo,
+      bestSeason: bestSeason ?? this.bestSeason,
+      relatedMapIds: relatedMapIds ?? this.relatedMapIds,
+      defaultMapId: defaultMapId ?? this.defaultMapId,
+      defaultMap: defaultMap ?? this.defaultMap,
       ratings: ratings ?? this.ratings,
       tags: tags ?? this.tags,
+      difficulty: difficulty ?? this.difficulty,
       waypoints: waypoints ?? this.waypoints,
       segments: segments ?? this.segments,
       dailyPlans: dailyPlans ?? this.dailyPlans,
       weatherInfo: weatherInfo ?? this.weatherInfo,
       facilities: facilities ?? this.facilities,
-      safetyInfo: safetyInfo ?? this.safetyInfo,
       imageUrls: imageUrls ?? this.imageUrls,
       coverUrl: coverUrl ?? this.coverUrl,
       mapDataId: mapDataId ?? this.mapDataId,
@@ -666,6 +320,7 @@ class RouteModel extends BaseModel {
       isFavorite: isFavorite ?? this.isFavorite,
       popularity: popularity ?? this.popularity,
       relatedRouteIds: relatedRouteIds ?? this.relatedRouteIds,
+      region: region ?? this.region,
       status: status ?? this.status,
     );
   }

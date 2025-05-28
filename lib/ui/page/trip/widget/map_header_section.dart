@@ -102,7 +102,7 @@ class MapHeaderSection extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${route.basicInfo.distance}km | ${route.basicInfo.elevationGain}m爬升 | ${route.basicInfo.difficulty.getName()}',
+                          '${route.distance}km | ${route.elevationGain}m爬升 | ${route.difficulty.getName()}',
                           style: const TextStyle(
                             color: CupertinoColors.systemGrey,
                             fontSize: 12,

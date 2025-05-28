@@ -454,7 +454,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
-              _getWaterSourceIcon(source.type),
+              _getWaterSourceIcon(source.getSourceType()),
               color: CupertinoColors.activeBlue,
             ),
           ),
@@ -475,7 +475,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${source.getTypeText()} · ${source.getQualityText()} · ${_formatVolume(source.estimatedVolume)}',
+                  '${source.getSourceTypeText()} · ${source.getQualityText()} · ${_formatVolume(source.estimatedVolume)}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.systemGrey,
@@ -553,7 +553,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
 
   IconData _getWaterSourceIcon(WaterSourceType type) {
     switch (type) {
-      case WaterSourceType.river:
+      case WaterSourceType.rain:
         return CupertinoIcons.arrow_2_circlepath;
       case WaterSourceType.stream:
         return CupertinoIcons.arrow_swap;
@@ -562,6 +562,10 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
       case WaterSourceType.spring:
         return CupertinoIcons.drop;
       case WaterSourceType.tap:
+        return CupertinoIcons.house_fill;
+      case WaterSourceType.well:
+        return CupertinoIcons.house_fill;
+      case WaterSourceType.snow:
         return CupertinoIcons.house_fill;
     }
   }

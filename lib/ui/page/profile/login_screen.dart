@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'register_screen.dart';
-import 'forgot_password_screen.dart';
+import 'auth/register_screen.dart';
+import 'auth/forgot_password_screen.dart';
 
 /// 登录屏幕
 class LoginScreen extends StatefulWidget {

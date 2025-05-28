@@ -50,14 +50,14 @@ class TrackInfoCard extends StatelessWidget {
             const Divider(),
 
             // 轨迹信息
-            _buildInfoRow('距离',
-                '${mapData.statistics.totalDistance.toStringAsFixed(1)} 公里'),
+            _buildInfoRow(
+                '距离', '${mapData.totalDistance.toStringAsFixed(1)} 公里'),
             const SizedBox(height: 8),
-            _buildInfoRow('累计上升',
-                '${mapData.statistics.totalAscent.toStringAsFixed(0)} 米'),
+            _buildInfoRow(
+                '累计上升', '${mapData.totalAscent.toStringAsFixed(0)} 米'),
             const SizedBox(height: 8),
-            _buildInfoRow('累计下降',
-                '${mapData.statistics.totalDescent.toStringAsFixed(0)} 米'),
+            _buildInfoRow(
+                '累计下降', '${mapData.totalDescent.toStringAsFixed(0)} 米'),
             const SizedBox(height: 8),
             _buildInfoRow('最高点',
                 '${mapData.highestPoint.elevation.toStringAsFixed(0)} 米'),

@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'map_bounds.dart';
-import 'map_statistics.dart';
 import 'track_point_model.dart';
 
 part 'map_data_model.g.dart';
@@ -38,8 +37,33 @@ class MapDataModel {
   /// 边界
   final MapBoundsVO bounds;
 
-  /// 统计信息
-  final MapStatisticsVO statistics;
+  /// 总距离（米）
+  @JsonKey(name: 'total_distance')
+  final double totalDistance;
+
+  /// 总时长（秒）
+  @JsonKey(name: 'total_duration')
+  final int? totalDuration;
+
+  /// 累计上升（米）
+  @JsonKey(name: 'total_ascent')
+  final double totalAscent;
+
+  /// 累计下降（米）
+  @JsonKey(name: 'total_descent')
+  final double totalDescent;
+
+  /// 最高海拔（米）
+  @JsonKey(name: 'max_elevation')
+  final double maxElevation;
+
+  /// 最低海拔（米）
+  @JsonKey(name: 'min_elevation')
+  final double minElevation;
+
+  /// 平均速度（米/秒）
+  @JsonKey(name: 'average_speed')
+  final double? averageSpeed;
 
   /// 轨迹点
   final List<TrackPointVO> trackPoints;
@@ -78,7 +102,13 @@ class MapDataModel {
     this.sourceUrl,
     this.rawContent,
     required this.bounds,
-    required this.statistics,
+    required this.totalDistance,
+    this.totalDuration,
+    required this.totalAscent,
+    required this.totalDescent,
+    required this.maxElevation,
+    required this.minElevation,
+    this.averageSpeed,
     required this.trackPoints,
     required this.waypoints,
     required this.highestPoint,
@@ -97,4 +127,13 @@ class MapDataModel {
 
   /// 转换为JSON
   Map<String, dynamic> toJson() => _$MapDataModelToJson(this);
+
+  /// 获取距离（公里）
+  double get distance => totalDistance / 1000;
+
+  /// 获取累计爬升（米）
+  int get elevationGain => totalAscent.round();
+
+  /// 获取累计下降（米）
+  double get elevationLoss => totalDescent;
 }

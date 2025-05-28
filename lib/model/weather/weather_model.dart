@@ -6,6 +6,7 @@ part 'weather_model.g.dart';
 /// 天气数据模型
 @JsonSerializable()
 class WeatherModel {
+  //region 基础属性
   /// 城市名称
   final String city;
 
@@ -13,18 +14,18 @@ class WeatherModel {
   final String condition;
 
   /// 适宜性描述
-  @JsonKey(name: 'is_suitable_for_hiking')
-  final String suitability;
+  @JsonKey(name: 'suitability')
+  final bool suitability;
 
   /// 温度（摄氏度）
   final double temperature;
 
   /// 风级
   @JsonKey(name: 'wind_speed')
-  final String windLevel;
+  final double windLevel;
 
   /// 湿度
-  final String humidity;
+  final double humidity;
 
   /// 天气图标
   @JsonKey(ignore: true)
@@ -45,49 +46,63 @@ class WeatherModel {
   /// 降水概率（如果是天气预报）
   @JsonKey(name: 'precipitation_probability')
   final int? precipitationProbability;
+  //endregion
 
+  //region 构造函数
+  /// 构造函数
+  WeatherModel({
+    required this.city,
+    required this.condition,
+    required this.suitability,
+    required this.temperature,
+    required this.windLevel,
+    required this.humidity,
+    IconData? weatherIcon,
+    this.forecastDate,
+    this.maxTemperature,
+    this.minTemperature,
+    this.precipitationProbability,
+  }) : this.weatherIcon =
+            weatherIcon ?? _getWeatherIconFromCondition(condition);
+  //endregion
+
+  //region 工厂方法
+  /// 从JSON创建模型
+  factory WeatherModel.fromJson(Map<String, dynamic> json) =>
+      _$WeatherModelFromJson(json);
+
+  //endregion
+
+  //region 基础 Getter
   /// 是否是天气预报
   bool get isForecast => forecastDate != null;
 
-  /// 天气建议
-  String get advice {
-    if (condition.toLowerCase() == '晴' || condition.toLowerCase() == '晴朗') {
-      return '今天是个徒步的好日子！';
-    } else if (condition.toLowerCase() == '多云' ||
-        condition.toLowerCase() == '局部多云') {
-      return '今天天气不错，适合徒步活动。';
-    } else if (condition.toLowerCase() == '雨') {
-      return '今天有雨，不适合徒步，建议改期。';
-    } else if (condition.toLowerCase() == '雷雨') {
-      return '今天有雷雨，不适合户外活动，注意安全。';
-    } else {
-      return '请根据天气情况决定是否适合徒步。';
-    }
-  }
-
-  /// 是否适合徒步
-  bool get isSuitableForHiking => suitability.contains('适合');
-
   /// 风速（km/h）
   double get windSpeed {
-    // 从风级提取数字
-    final regex = RegExp(r'(\d+)');
-    final match = regex.firstMatch(windLevel);
-    if (match != null) {
-      return double.tryParse(match.group(1) ?? '0') ?? 0.0;
-    }
-    return 0.0;
+    return windLevel;
   }
 
   /// 湿度百分比
   int get humidityValue {
-    // 从湿度字符串提取数字
-    final regex = RegExp(r'(\d+)');
-    final match = regex.firstMatch(humidity);
-    if (match != null) {
-      return int.tryParse(match.group(1) ?? '0') ?? 0;
+    return humidity.toInt();
+  }
+  //endregion
+
+  //region 天气描述相关方法
+  /// 天气建议
+  String get advice {
+    final conditionLower = condition.toLowerCase();
+    if (conditionLower == '晴' || conditionLower == '晴朗') {
+      return '今天是个徒步的好日子！';
+    } else if (conditionLower == '多云' || conditionLower == '局部多云') {
+      return '今天天气不错，适合徒步活动。';
+    } else if (conditionLower == '雨') {
+      return '今天有雨，不适合徒步，建议改期。';
+    } else if (conditionLower == '雷雨') {
+      return '今天有雷雨，不适合户外活动，注意安全。';
+    } else {
+      return '请根据天气情况决定是否适合徒步。';
     }
-    return 0;
   }
 
   /// 获取天气描述
@@ -188,7 +203,9 @@ class WeatherModel {
         return Colors.blue;
     }
   }
+  //endregion
 
+  //region 天气预报相关方法
   /// 获取日期字符串（如果是天气预报）
   String? getDateString() {
     if (forecastDate == null) return null;
@@ -207,65 +224,9 @@ class WeatherModel {
     if (minTemperature == null || maxTemperature == null) return null;
     return '${minTemperature!.toInt()}°~${maxTemperature!.toInt()}°';
   }
+  //endregion
 
-  /// 构造函数
-  WeatherModel({
-    required this.city,
-    required this.condition,
-    required this.suitability,
-    required this.temperature,
-    required this.windLevel,
-    required this.humidity,
-    IconData? weatherIcon,
-    this.forecastDate,
-    this.maxTemperature,
-    this.minTemperature,
-    this.precipitationProbability,
-  }) : this.weatherIcon =
-            weatherIcon ?? _getWeatherIconFromCondition(condition);
-
-  /// 从JSON创建模型
-  factory WeatherModel.fromJson(Map<String, dynamic> json) =>
-      _$WeatherModelFromJson(json);
-
-  /// 自定义从API响应创建当前天气模型
-  factory WeatherModel.fromApiResponse(Map<String, dynamic> json) {
-    return WeatherModel(
-      city: json['city'] as String? ?? '',
-      temperature: json['temperature']?.toDouble() ?? 0.0,
-      condition: json['condition'] as String? ?? '',
-      suitability: json['is_suitable_for_hiking'] == true ? '适合徒步' : '不适合徒步',
-      humidity: '湿度${json['humidity'] ?? 0}%',
-      windLevel: '${json['wind_speed'] ?? 0}级风',
-    );
-  }
-
-  /// 自定义从API响应创建天气预报模型
-  factory WeatherModel.forecastFromApiResponse(Map<String, dynamic> json) {
-    final date = json['forecast_date'] is String
-        ? DateTime.parse(json['forecast_date'] as String)
-        : (json['forecast_date'] as DateTime? ?? DateTime.now());
-
-    final maxTemp = (json['max_temperature'])?.toDouble() ?? 0.0;
-    final minTemp = (json['min_temperature'])?.toDouble() ?? 0.0;
-    final avgTemp = (maxTemp + minTemp) / 2;
-
-    return WeatherModel(
-      city: json['city'] as String? ?? '',
-      temperature: avgTemp,
-      condition: json['condition'] as String? ?? '',
-      suitability: (json['precipitation_probability'] as int? ?? 0) < 50
-          ? '适合徒步'
-          : '不适合徒步',
-      humidity: '湿度${json['humidity'] ?? 0}%',
-      windLevel: '${json['wind_speed'] ?? 0}级风',
-      forecastDate: date,
-      maxTemperature: maxTemp,
-      minTemperature: minTemp,
-      precipitationProbability: json['precipitation_probability'] as int? ?? 0,
-    );
-  }
-
+  //region 工具方法
   /// 获取天气对应的图标
   static IconData _getWeatherIconFromCondition(String? condition) {
     switch (condition?.toLowerCase()) {
@@ -298,7 +259,9 @@ class WeatherModel {
         return Icons.sunny;
     }
   }
+  //endregion
 
+  //region 序列化与拷贝
   /// 转换为JSON
   Map<String, dynamic> toJson() => _$WeatherModelToJson(this);
 
@@ -306,10 +269,10 @@ class WeatherModel {
   WeatherModel copyWith({
     String? city,
     String? condition,
-    String? suitability,
+    bool? suitability,
     double? temperature,
-    String? windLevel,
-    String? humidity,
+    double? windLevel,
+    double? humidity,
     IconData? weatherIcon,
     DateTime? forecastDate,
     double? maxTemperature,
@@ -331,6 +294,7 @@ class WeatherModel {
           precipitationProbability ?? this.precipitationProbability,
     );
   }
+  //endregion
 }
 
 /// 海拔数据模型
@@ -350,14 +314,6 @@ class AltitudeModel {
 
   /// 转换为JSON
   Map<String, dynamic> toJson() => _$AltitudeModelToJson(this);
-
-  /// 创建模拟数据
-  static AltitudeModel mock() {
-    return AltitudeModel(
-      altitude: 43.0,
-      unit: '米',
-    );
-  }
 
   /// 格式化显示
   String get display => '${altitude.toInt()} $unit';

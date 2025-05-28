@@ -23,24 +23,30 @@ class WaterPlanModel extends BaseModel {
   final String description;
 
   /// 行程天数
+  @JsonKey(name: 'trip_days')
   final int tripDays;
 
   /// 人数
+  @JsonKey(name: 'person_count')
   final int personCount;
 
   /// 每日饮水计划
+  @JsonKey(name: 'day_water_plans')
   final List<DayWaterPlanModel> dayWaterPlans;
 
   /// 水源补给点
+  @JsonKey(name: 'water_sources')
   final List<WaterSourceModel> waterSources;
 
   /// 标签
   final List<String> tags;
 
   /// 创建者ID
+  @JsonKey(name: 'creator_id')
   final String creatorId;
 
   /// 创建者名称
+  @JsonKey(name: 'creator_name')
   final String creatorName;
 
   /// 构造函数

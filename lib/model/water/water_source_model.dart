@@ -1,9 +1,14 @@
 /// 水源模型
 ///
-/// 用于表示户外活动中的水源点
+/// 用于表示户外活动中的水源信息
 ///
-/// WaterSourceModel记录了行程中可用的水源信息，包括位置、类型和水质等，
-/// 帮助用户规划水源补给。
+/// WaterSourceModel是饮水模块的基础单元，代表一个具体的水源，如"山涧溪流"、"水井"等。
+/// 它记录了水源的位置、水质、可靠性和预估水量等关键信息，用于：
+///
+/// 1. 记录水源的详细属性，帮助用户找到和评估水源
+/// 2. 标记水源是否需要处理，提醒用户携带净水设备
+/// 3. 计算可用水量，帮助规划饮水策略
+/// 4. 评估水源的可靠性，减少饮水风险
 
 import '../base/base_model.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -14,33 +19,34 @@ part 'water_source_model.g.dart';
 /// 水源模型
 @JsonSerializable()
 class WaterSourceModel extends BaseModel {
-  /// 水源名称
+  /// 名称
   final String name;
 
-  /// 水源描述
+  /// 描述
   final String description;
 
-  /// 水源类型
-  @JsonKey(fromJson: _typeFromJson, toJson: _typeToJson)
-  final WaterSourceType type;
+  /// 类型
+  final String type;
 
   /// 位置描述
   final String location;
 
-  /// 距离路线的偏移距离(米)
+  /// 距离路线的距离(m)
+  @JsonKey(name: 'distance_from_trail')
   final double distanceFromTrail;
 
-  /// 预计水质
-  @JsonKey(fromJson: _qualityFromJson, toJson: _qualityToJson)
-  final WaterQuality quality;
+  /// 水质
+  final String quality;
 
-  /// 可靠性评级(1-5)
+  /// 可靠性(1-5)
   final int reliability;
 
-  /// 预计可用水量(ml)
+  /// 预估水量(ml)
+  @JsonKey(name: 'estimated_volume')
   final int estimatedVolume;
 
   /// 是否需要处理
+  @JsonKey(name: 'needs_treatment')
   final bool needsTreatment;
 
   /// 构造函数
@@ -52,7 +58,7 @@ class WaterSourceModel extends BaseModel {
     required this.description,
     required this.type,
     required this.location,
-    this.distanceFromTrail = 0,
+    required this.distanceFromTrail,
     required this.quality,
     required this.reliability,
     required this.estimatedVolume,
@@ -67,99 +73,67 @@ class WaterSourceModel extends BaseModel {
   @override
   Map<String, dynamic> toJson() => _$WaterSourceModelToJson(this);
 
-  /// 从字符串转换为水源类型枚举
-  static WaterSourceType _typeFromJson(dynamic value) {
-    if (value is int) {
-      return WaterSourceType.values[value];
-    } else if (value is String) {
-      switch (value) {
-        case 'river':
-          return WaterSourceType.river;
-        case 'stream':
-          return WaterSourceType.stream;
-        case 'lake':
-          return WaterSourceType.lake;
-        case 'spring':
-          return WaterSourceType.spring;
-        case 'tap':
-          return WaterSourceType.tap;
-        default:
-          throw ArgumentError('$value is not a valid WaterSourceType');
-      }
-    }
-    throw ArgumentError('Cannot convert $value to WaterSourceType');
-  }
-
-  /// 将水源类型枚举转换为字符串
-  static String _typeToJson(WaterSourceType type) {
-    switch (type) {
-      case WaterSourceType.river:
-        return 'river';
-      case WaterSourceType.stream:
-        return 'stream';
-      case WaterSourceType.lake:
-        return 'lake';
-      case WaterSourceType.spring:
-        return 'spring';
-      case WaterSourceType.tap:
-        return 'tap';
+  /// 获取水源类型枚举
+  WaterSourceType getSourceType() {
+    switch (type.toLowerCase()) {
+      case 'stream':
+        return WaterSourceType.stream;
+      case 'lake':
+        return WaterSourceType.lake;
+      case 'spring':
+        return WaterSourceType.spring;
+      case 'well':
+        return WaterSourceType.well;
+      case 'tap':
+        return WaterSourceType.tap;
+      case 'snow':
+        return WaterSourceType.snow;
+      case 'rain':
+        return WaterSourceType.rain;
+      default:
+        return WaterSourceType.stream;
     }
   }
 
-  /// 从字符串转换为水质枚举
-  static WaterQuality _qualityFromJson(dynamic value) {
-    if (value is int) {
-      return WaterQuality.values[value];
-    } else if (value is String) {
-      switch (value) {
-        case 'excellent':
-          return WaterQuality.excellent;
-        case 'good':
-          return WaterQuality.good;
-        case 'fair':
-          return WaterQuality.fair;
-        case 'poor':
-          return WaterQuality.poor;
-        default:
-          throw ArgumentError('$value is not a valid WaterQuality');
-      }
-    }
-    throw ArgumentError('Cannot convert $value to WaterQuality');
-  }
-
-  /// 将水质枚举转换为字符串
-  static String _qualityToJson(WaterQuality quality) {
-    switch (quality) {
-      case WaterQuality.excellent:
-        return 'excellent';
-      case WaterQuality.good:
-        return 'good';
-      case WaterQuality.fair:
-        return 'fair';
-      case WaterQuality.poor:
-        return 'poor';
+  /// 获取水质枚举
+  WaterQuality getWaterQuality() {
+    switch (quality.toLowerCase()) {
+      case 'excellent':
+        return WaterQuality.excellent;
+      case 'good':
+        return WaterQuality.good;
+      case 'fair':
+        return WaterQuality.fair;
+      case 'poor':
+        return WaterQuality.poor;
+      default:
+        return WaterQuality.unknown;
     }
   }
 
-  /// 获取水源类型名称
-  String getTypeText() {
-    switch (type) {
-      case WaterSourceType.river:
-        return '河流';
+  /// 获取水源类型文本
+  String getSourceTypeText() {
+    switch (getSourceType()) {
       case WaterSourceType.stream:
         return '溪流';
       case WaterSourceType.lake:
         return '湖泊';
       case WaterSourceType.spring:
         return '泉水';
+      case WaterSourceType.well:
+        return '水井';
       case WaterSourceType.tap:
-        return '水龙头';
+        return '自来水';
+      case WaterSourceType.snow:
+        return '积雪';
+      case WaterSourceType.rain:
+        return '雨水';
     }
   }
 
-  /// 获取水质描述
+  /// 获取水质文本
   String getQualityText() {
-    switch (quality) {
+    switch (getWaterQuality()) {
       case WaterQuality.excellent:
         return '优质';
       case WaterQuality.good:
@@ -168,22 +142,24 @@ class WaterSourceModel extends BaseModel {
         return '一般';
       case WaterQuality.poor:
         return '较差';
+      case WaterQuality.unknown:
+        return '未知';
     }
   }
 
-  /// 获取可靠性描述
+  /// 获取可靠性文本
   String getReliabilityText() {
     switch (reliability) {
       case 5:
-        return '非常可靠';
+        return '极高';
       case 4:
-        return '可靠';
+        return '高';
       case 3:
-        return '一般';
+        return '中等';
       case 2:
-        return '不太可靠';
+        return '低';
       case 1:
-        return '不可靠';
+        return '极低';
       default:
         return '未知';
     }
@@ -194,10 +170,10 @@ class WaterSourceModel extends BaseModel {
     String? id,
     String? name,
     String? description,
-    WaterSourceType? type,
+    String? type,
     String? location,
     double? distanceFromTrail,
-    WaterQuality? quality,
+    String? quality,
     int? reliability,
     int? estimatedVolume,
     bool? needsTreatment,

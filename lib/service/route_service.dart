@@ -1,5 +1,6 @@
+import 'package:walk/model/route/route_enums.dart';
+
 import '../model/route/route_model.dart';
-import '../model/route/route_rating_model.dart';
 import '../model/route/route_comment_model.dart';
 import '../model/trip/trip_filter_model.dart';
 
@@ -88,9 +89,6 @@ abstract class RouteService {
   /// 添加路线评论
   Future<RouteCommentModel> addRouteComment(
       String routeId, String content, double rating);
-
-  /// 评分路线
-  Future<RouteRatingModel> rateRoute(String routeId, double rating);
 
   /// 创建路线
   Future<RouteModel> createRoute(RouteModel route);

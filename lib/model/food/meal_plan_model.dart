@@ -31,21 +31,26 @@ class MealPlanModel extends BaseModel {
   final String description;
 
   /// 行程天数
+  @JsonKey(name: 'trip_days')
   final int tripDays;
 
   /// 人数
+  @JsonKey(name: 'person_count')
   final int personCount;
 
   /// 每日膳食计划
+  @JsonKey(name: 'day_meal_plans')
   final List<DayMealPlanModel> dayMealPlans;
 
   /// 标签
   final List<String> tags;
 
   /// 创建者ID
+  @JsonKey(name: 'creator_id')
   final String creatorId;
 
   /// 创建者名称
+  @JsonKey(name: 'creator_name')
   final String creatorName;
 
   /// 构造函数

@@ -447,6 +447,8 @@ class _TripEquipmentCardWidgetState extends State<TripEquipmentCardWidget> {
   /// 根据分类筛选装备
   List<EquipmentItemModel> _filterEquipmentByCategory(
       List<EquipmentItemModel> equipment) {
+    print("object");
+    print(equipment.length);
     if (_currentCategory == 0) {
       return equipment;
     }

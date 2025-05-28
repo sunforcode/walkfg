@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:walk/model/route/route_enums.dart';
 import '../route_service.dart';
 import '../../model/route/route_model.dart';
-import '../../model/route/route_rating_model.dart';
 import '../../model/route/route_comment_model.dart';
-import '../../model/enums/route_status.dart';
+import '../../model/route/route_status.dart';
 import '../../model/trip/trip_filter_model.dart';
 
 /// Mock路线服务实现
@@ -19,9 +19,6 @@ class MockRouteService implements RouteService {
 
   /// 私有构造函数
   MockRouteService._internal();
-
-  /// 路线评分缓存
-  List<RouteRatingModel>? _routeRatingsCache;
 
   /// 从JSON文件加载数据
   Future<dynamic> _loadJsonData(String path) async {
@@ -70,64 +67,6 @@ class MockRouteService implements RouteService {
 
     // JSON 文件已经符合 RouteModel 的格式，直接返回
     return RouteModel.fromJson(routeJson);
-  }
-
-  @override
-  Future<Map<String, dynamic>> getRouteRatings(String routeId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 如果有缓存，直接返回
-    if (_routeRatingsCache != null) {
-      final ratings = _routeRatingsCache!
-          .where((rating) => rating.routeId == routeId)
-          .toList();
-
-      // 计算平均评分
-      double averageRating = 0;
-      if (ratings.isNotEmpty) {
-        averageRating = ratings.map((r) => r.rating).reduce((a, b) => a + b) /
-            ratings.length;
-      }
-
-      return {
-        'average': averageRating,
-        'count': ratings.length,
-        'ratings': ratings.map((r) => r.toJson()).toList(),
-      };
-    }
-
-    final ratingsJson =
-        await _loadJsonData('assets/mock_data/route_ratings.json');
-    if (ratingsJson == null || !(ratingsJson is List)) {
-      _routeRatingsCache = [];
-      return {
-        'average': 0.0,
-        'count': 0,
-        'ratings': [],
-      };
-    }
-
-    _routeRatingsCache = ratingsJson
-        .map<RouteRatingModel>((json) => RouteRatingModel.fromJson(json))
-        .toList();
-
-    final ratings = _routeRatingsCache!
-        .where((rating) => rating.routeId == routeId)
-        .toList();
-
-    // 计算平均评分
-    double averageRating = 0;
-    if (ratings.isNotEmpty) {
-      averageRating =
-          ratings.map((r) => r.rating).reduce((a, b) => a + b) / ratings.length;
-    }
-
-    return {
-      'average': averageRating,
-      'count': ratings.length,
-      'ratings': ratings.map((r) => r.toJson()).toList(),
-    };
   }
 
   @override
@@ -229,38 +168,6 @@ class MockRouteService implements RouteService {
   }
 
   @override
-  Future<List<RouteModel>> getWeekendRoutes({int limit = 10}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    final routesJson = await _loadJsonData('assets/mock_data/routes.json');
-    if (routesJson == null || !(routesJson is List)) {
-      return [];
-    }
-
-    List<RouteModel> routes = routesJson
-        .map<RouteModel>((json) => RouteModel.fromJson(json))
-        .toList();
-
-    // 筛选适合周末的路线（1-2天的路线）
-    routes = routes
-        .where((route) =>
-            route.basicInfo.duration.contains('1') ||
-            route.basicInfo.duration.contains('2'))
-        .toList();
-
-    // 随机排序
-    routes.shuffle();
-
-    // 限制数量
-    if (routes.length > limit) {
-      routes = routes.sublist(0, limit);
-    }
-
-    return routes;
-  }
-
-  @override
   Future<List<RouteModel>> getRoutes({String? season, int? limit}) async {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 400));
@@ -276,9 +183,8 @@ class MockRouteService implements RouteService {
 
     // 季节过滤
     if (season != null && season.isNotEmpty) {
-      routes = routes
-          .where((route) => route.basicInfo.bestSeason.contains(season))
-          .toList();
+      routes =
+          routes.where((route) => route.bestSeason.contains(season)).toList();
     }
 
     // 限制数量
@@ -348,9 +254,8 @@ class MockRouteService implements RouteService {
     }
 
     // 按难度筛选
-    routes = routes
-        .where((route) => route.basicInfo.difficulty == difficultyStr)
-        .toList();
+    routes =
+        routes.where((route) => route.difficulty == difficultyStr).toList();
 
     // 限制数量
     if (routes.length > limit) {
@@ -378,7 +283,7 @@ class MockRouteService implements RouteService {
     // 按天数筛选（简单实现，实际应该解析duration字段）
     routes = routes.where((route) {
       // 解析天数，例如 "2-3天" 或 "1天"
-      final durationStr = route.basicInfo.duration;
+      final durationStr = route.duration;
       if (durationStr.contains('-')) {
         final parts = durationStr.split('-');
         final minRouteDays = int.tryParse(parts[0]) ?? 0;
@@ -556,9 +461,8 @@ class MockRouteService implements RouteService {
 
     // 季节过滤
     if (season != null && season.isNotEmpty) {
-      routes = routes
-          .where((route) => route.basicInfo.bestSeason.contains(season))
-          .toList();
+      routes =
+          routes.where((route) => route.bestSeason.contains(season)).toList();
     }
 
     // 按评分排序
@@ -614,33 +518,6 @@ class MockRouteService implements RouteService {
     );
 
     return comment;
-  }
-
-  @override
-  Future<RouteRatingModel> rateRoute(String routeId, double rating) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 创建新评分
-    final now = DateTime.now();
-    final ratingModel = RouteRatingModel(
-      id: 'rating_${now.millisecondsSinceEpoch}',
-      routeId: routeId,
-      userId: 'current_user',
-      rating: rating,
-      createdAt: now,
-    );
-
-    // 更新缓存
-    if (_routeRatingsCache != null) {
-      // 移除旧评分
-      _routeRatingsCache!.removeWhere(
-          (r) => r.routeId == routeId && r.userId == 'current_user');
-      // 添加新评分
-      _routeRatingsCache!.add(ratingModel);
-    }
-
-    return ratingModel;
   }
 
   @override
@@ -708,47 +585,44 @@ class MockRouteService implements RouteService {
     // 难度过滤
     if (filter.difficulty != null && filter.difficulty!.isNotEmpty) {
       routes = routes
-          .where((route) => route.basicInfo.difficulty == filter.difficulty)
+          .where((route) => route.difficulty == filter.difficulty)
           .toList();
     }
 
     // 季节过滤
     if (filter.season != null && filter.season!.isNotEmpty) {
       routes = routes
-          .where((route) => route.basicInfo.bestSeason.contains(filter.season))
+          .where((route) => route.bestSeason.contains(filter.season))
           .toList();
     }
 
     // 时长过滤
     if (filter.duration != null && filter.duration!.isNotEmpty) {
-      routes = routes
-          .where((route) => route.basicInfo.duration == filter.duration)
-          .toList();
+      routes =
+          routes.where((route) => route.duration == filter.duration).toList();
     }
 
     // 距离过滤
     if (filter.minDistance != null) {
       routes = routes
-          .where((route) => route.basicInfo.distance >= filter.minDistance!)
+          .where((route) => route.distance >= filter.minDistance!)
           .toList();
     }
     if (filter.maxDistance != null) {
       routes = routes
-          .where((route) => route.basicInfo.distance <= filter.maxDistance!)
+          .where((route) => route.distance <= filter.maxDistance!)
           .toList();
     }
 
     // 海拔过滤
     if (filter.minElevation != null) {
       routes = routes
-          .where(
-              (route) => route.basicInfo.elevationGain >= filter.minElevation!)
+          .where((route) => route.elevationGain >= filter.minElevation!)
           .toList();
     }
     if (filter.maxElevation != null) {
       routes = routes
-          .where(
-              (route) => route.basicInfo.elevationGain <= filter.maxElevation!)
+          .where((route) => route.elevationGain <= filter.maxElevation!)
           .toList();
     }
 
@@ -758,13 +632,13 @@ class MockRouteService implements RouteService {
       switch (filter.sortBy) {
         case 'distance':
           routes.sort((a, b) => asc
-              ? a.basicInfo.distance.compareTo(b.basicInfo.distance)
-              : b.basicInfo.distance.compareTo(a.basicInfo.distance));
+              ? a.distance.compareTo(b.distance)
+              : b.distance.compareTo(a.distance));
           break;
         case 'elevation':
           routes.sort((a, b) => asc
-              ? a.basicInfo.elevationGain.compareTo(b.basicInfo.elevationGain)
-              : b.basicInfo.elevationGain.compareTo(a.basicInfo.elevationGain));
+              ? a.elevationGain.compareTo(b.elevationGain)
+              : b.elevationGain.compareTo(a.elevationGain));
           break;
         case 'rating':
           routes.sort((a, b) => asc
@@ -790,5 +664,17 @@ class MockRouteService implements RouteService {
     }
 
     return routes;
+  }
+
+  @override
+  Future<Map<String, dynamic>> getRouteRatings(String routeId) {
+    // TODO: implement getRouteRatings
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<RouteModel>> getWeekendRoutes({int limit = 10}) {
+    // TODO: implement getWeekendRoutes
+    throw UnimplementedError();
   }
 }

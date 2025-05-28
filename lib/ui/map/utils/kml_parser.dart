@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:xml/xml.dart';
 import 'package:walk/model/map/map_bounds.dart';
 import 'package:walk/model/map/map_data_model.dart';
-import 'package:walk/model/map/map_statistics.dart';
 import 'package:walk/model/map/track_point_model.dart';
 
 /// 解析轨迹点结果
@@ -65,7 +64,13 @@ class KmlParser {
         sourceUrl: sourceUrl,
         rawContent: kmlContent,
         bounds: bounds,
-        statistics: statistics,
+        totalDistance: statistics['totalDistance'],
+        totalDuration: statistics['totalDuration'],
+        totalAscent: statistics['totalAscent'],
+        totalDescent: statistics['totalDescent'],
+        maxElevation: statistics['maxElevation'],
+        minElevation: statistics['minElevation'],
+        averageSpeed: statistics['averageSpeed'],
         trackPoints: trackPoints,
         waypoints: waypoints,
         highestPoint: highestPoint,
@@ -337,7 +342,8 @@ class KmlParser {
   }
 
   /// 计算统计信息
-  static MapStatisticsVO _calculateStatistics(List<TrackPointVO> trackPoints) {
+  static Map<String, dynamic> _calculateStatistics(
+      List<TrackPointVO> trackPoints) {
     double totalDistance = 0;
     double elevationGain = 0;
     double elevationLoss = 0;
@@ -377,19 +383,20 @@ class KmlParser {
       minElevation = trackPoints[0].elevation;
     }
 
-    return MapStatisticsVO(
-      totalDistance: totalDistance / 1000, // 转换为公里
-      totalDuration: _estimateDuration(totalDistance).toInt(), // 估算徒步时间（小时）转为整数
-      totalAscent: elevationGain,
-      totalDescent: elevationLoss,
-      maxElevation: maxElevation,
-      minElevation: minElevation,
-      averageSpeed: totalDistance > 0
+    return {
+      "totalDistance": totalDistance / 1000, // 转换为公里
+      "totalDuration":
+          _estimateDuration(totalDistance).toInt(), // 估算徒步时间（小时）转为整数
+      "totalAscent": elevationGain,
+      "totalDescent": elevationLoss,
+      "maxElevation": maxElevation,
+      "minElevation": minElevation,
+      "averageSpeed": totalDistance > 0
           ? _estimateDuration(totalDistance) > 0
               ? totalDistance / (_estimateDuration(totalDistance) * 1000)
               : 0
           : 0, // 平均速度（米/秒）
-    );
+    };
   }
 
   /// 估算徒步时间（小时）

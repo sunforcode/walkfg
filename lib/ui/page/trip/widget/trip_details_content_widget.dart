@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/trip/trip_day_plan_model.dart';
-import 'package:walk/model/user/user_model.dart';
 import 'package:walk/theme/theme/app_colors.dart';
 import 'package:walk/ui/page/trip/widget/trip_basic_info_card_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_card_template.dart';
@@ -72,17 +70,7 @@ class TripDetailsContentWidget extends StatelessWidget {
     final tripDays = trip.endDate.difference(trip.startDate).inDays + 1;
 
     // 将 ParticipantModel 转换为 UserModel
-    final participants = trip.participants
-        .map((p) => UserModel(
-              id: p.userId,
-              username: p.userId,
-              nickname: p.name,
-              avatarUrl: null,
-              completedRoutes: 0,
-              equipmentLists: 0,
-              favoriteRoutes: 0,
-            ))
-        .toList();
+    final participants = trip.participants;
 
     // 将 ItineraryDayModel 转换为 TripDayPlanModel
     final itinerary = trip.itinerary
@@ -102,27 +90,7 @@ class TripDetailsContentWidget extends StatelessWidget {
         .toList();
 
     // 创建装备清单模型
-    final equipmentList =
-        trip.equipmentList != null && trip.equipmentList!.totalItems > 0
-            ? EquipmentListModel(
-                id: 'equipment-list-${trip.id}',
-                name: '${trip.name}装备清单',
-                description: '行程装备清单',
-                tripDays: tripDays,
-                seasons: [SeasonSuitability.allSeasons],
-                equipments: [],
-                totalWeight: 19,
-                baseWeight: 0.0,
-                consumableWeight: 0.0,
-                wornWeight: 0.0,
-                creatorId: trip.organizerId,
-                creatorName: trip.participants
-                    .firstWhere((p) => p.userId == trip.organizerId,
-                        orElse: () => trip.participants.first)
-                    .name,
-                tags: [],
-              )
-            : null;
+    final equipmentList = trip.equipmentList;
 
     // 创建交通信息列表
     final transportations = _createTransportationList(trip);
@@ -518,7 +486,7 @@ class TripDetailsContentWidget extends StatelessWidget {
             from: '出发地',
             to: firstDay.accommodation ?? firstDay.title,
             method: firstDay.transportation!,
-            time: '${firstDay.date.month}月${firstDay.date.day}日',
+            time: '${firstDay.date?.month}月${firstDay.date?.day}日',
             isBooked: true,
           ),
         );
@@ -536,7 +504,7 @@ class TripDetailsContentWidget extends StatelessWidget {
               from: prevDay.accommodation ?? prevDay.title,
               to: currentDay.accommodation ?? currentDay.title,
               method: currentDay.transportation!,
-              time: '${currentDay.date.month}月${currentDay.date.day}日',
+              time: '${currentDay.date?.month}月${currentDay.date?.day}日',
               isBooked: i < trip.itinerary.length - 1, // 假设除了最后一天，其他都已预订
             ),
           );
@@ -552,7 +520,7 @@ class TripDetailsContentWidget extends StatelessWidget {
             from: lastDay.accommodation ?? lastDay.title,
             to: '目的地',
             method: lastDay.transportation!,
-            time: '${lastDay.date.month}月${lastDay.date.day}日',
+            time: '${lastDay.date?.month}月${lastDay.date?.day}日',
             isBooked: false,
           ),
         );

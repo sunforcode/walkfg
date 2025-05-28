@@ -24,6 +24,7 @@ part 'day_meal_plan_model.g.dart';
 @JsonSerializable()
 class DayMealPlanModel {
   /// 天数序号(从1开始)
+  @JsonKey(name: 'day_number')
   final int dayNumber;
 
   /// 早餐

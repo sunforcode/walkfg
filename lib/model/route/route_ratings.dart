@@ -1,38 +1,37 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'route_ratings_model.g.dart';
+part 'route_ratings.g.dart';
 
-/// 路线评分值对象模型
-///
-/// 作为路径模型的嵌套对象，不需要独立的ID和时间戳
+/// 路线评分值对象
 @JsonSerializable()
 class RouteRatingsVO {
   /// 总体评分
   final double overall;
 
-  /// 景色评分
+  /// 风景评分
   final double scenery;
 
   /// 难度评分
   final double difficulty;
 
+  /// 体验评分
+  final double experience;
+
   /// 设施评分
   final double facilities;
 
-  /// 完成率
-  final double completionRate;
-
-  /// 评论数量
-  final int reviewCount;
+  /// 评分人数
+  @JsonKey(name: 'rating_count')
+  final int ratingCount;
 
   /// 构造函数
   RouteRatingsVO({
     required this.overall,
     required this.scenery,
     required this.difficulty,
+    required this.experience,
     required this.facilities,
-    required this.completionRate,
-    required this.reviewCount,
+    required this.ratingCount,
   });
 
   /// 从JSON创建

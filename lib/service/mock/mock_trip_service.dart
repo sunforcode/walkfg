@@ -69,8 +69,10 @@ class MockTripService implements TripService {
       (trip) => trip['id'] == tripId,
       orElse: () => throw Exception('Trip not found: $tripId'),
     );
-
-    return TripModel.fromJson(tripJson);
+    final model = TripModel.fromJson(tripJson);
+    print(" equipmentList - object");
+    print(model.equipmentList?.equipments.length);
+    return model;
   }
 
   @override
