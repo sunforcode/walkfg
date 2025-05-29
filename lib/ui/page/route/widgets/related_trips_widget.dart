@@ -1,15 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/model/trip/trip_model.dart';
 
 /// 相关规划组件 - 展示该路线别人的规划行程
 class RelatedTripsWidget extends StatelessWidget {
   /// 路线ID
   final String routeId;
-  
+
   /// 相关行程列表
-  final List<Map<String, dynamic>> relatedTrips;
-  
+  final List<TripModel> relatedTrips;
+
   /// 点击行程的回调
-  final Function(Map<String, dynamic> trip)? onTripTap;
+  final Function(TripModel trip)? onTripTap;
 
   const RelatedTripsWidget({
     super.key,
@@ -56,15 +57,16 @@ class RelatedTripsWidget extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 行程列表
           ...relatedTrips.asMap().entries.map((entry) {
             final index = entry.key;
             final trip = entry.value;
             return Padding(
-              padding: EdgeInsets.only(bottom: index < relatedTrips.length - 1 ? 12 : 0),
+              padding: EdgeInsets.only(
+                  bottom: index < relatedTrips.length - 1 ? 12 : 0),
               child: _buildTripCard(trip),
             );
           }).toList(),
@@ -74,7 +76,7 @@ class RelatedTripsWidget extends StatelessWidget {
   }
 
   /// 构建行程卡片
-  Widget _buildTripCard(Map<String, dynamic> trip) {
+  Widget _buildTripCard(TripModel trip) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       onPressed: () => onTripTap?.call(trip),
@@ -96,7 +98,7 @@ class RelatedTripsWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    trip['title'] ?? '未命名行程',
+                    trip.name,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -116,7 +118,7 @@ class RelatedTripsWidget extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          (trip['authorName'] ?? '用户')[0],
+                          trip.organizerId[0].toUpperCase(),
                           style: const TextStyle(
                             color: CupertinoColors.white,
                             fontSize: 12,
@@ -127,7 +129,7 @@ class RelatedTripsWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      trip['authorName'] ?? '匿名用户',
+                      trip.organizerId,
                       style: const TextStyle(
                         fontSize: 12,
                         color: CupertinoColors.systemGrey,
@@ -137,9 +139,9 @@ class RelatedTripsWidget extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // 行程时间和天数
             Row(
               children: [
@@ -150,7 +152,7 @@ class RelatedTripsWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  trip['startDate'] ?? '待定',
+                  '${trip.startDate.month}/${trip.startDate.day}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.systemGrey,
@@ -164,7 +166,7 @@ class RelatedTripsWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '${trip['days'] ?? 0}天',
+                  '${trip.endDate.difference(trip.startDate).inDays + 1}天',
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.systemGrey,
@@ -172,41 +174,15 @@ class RelatedTripsWidget extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
-            // 行程亮点
-            if (trip['highlights'] != null && (trip['highlights'] as List).isNotEmpty) ...[
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: (trip['highlights'] as List).take(3).map((highlight) => 
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.systemIndigo.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      highlight.toString(),
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: CupertinoColors.systemIndigo,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ).toList(),
-              ),
-              const SizedBox(height: 8),
-            ],
-            
+
             // 行程描述
-            if (trip['description'] != null) ...[
+            if (trip.description.isNotEmpty) ...[
               Text(
-                trip['description'].toString().length > 80 
-                    ? '${trip['description'].toString().substring(0, 80)}...'
-                    : trip['description'].toString(),
+                trip.description.length > 80
+                    ? '${trip.description.substring(0, 80)}...'
+                    : trip.description,
                 style: const TextStyle(
                   fontSize: 13,
                   color: CupertinoColors.secondaryLabel,
@@ -215,39 +191,36 @@ class RelatedTripsWidget extends StatelessWidget {
               ),
               const SizedBox(height: 12),
             ],
-            
+
             // 行程统计信息
             Row(
               children: [
                 // 参与人数
-                if (trip['participantCount'] != null) ...[
-                  _buildTripStat(
-                    icon: CupertinoIcons.person_2,
-                    value: '${trip['participantCount']}人',
-                    color: CupertinoColors.systemBlue,
-                  ),
-                  const SizedBox(width: 16),
-                ],
-                
+                _buildTripStat(
+                  icon: CupertinoIcons.person_2,
+                  value: '${trip.participantCount}人',
+                  color: CupertinoColors.systemBlue,
+                ),
+                const SizedBox(width: 16),
                 // 预算
-                if (trip['budget'] != null) ...[
+                if (trip.budget != null) ...[
                   _buildTripStat(
                     icon: CupertinoIcons.money_yen_circle,
-                    value: '¥${trip['budget']}',
+                    value: '¥${trip.budget!.toInt()}',
                     color: CupertinoColors.systemGreen,
                   ),
                   const SizedBox(width: 16),
                 ],
-                
+
                 // 状态
                 _buildTripStat(
-                  icon: _getTripStatusIcon(trip['status']),
-                  value: _getTripStatusText(trip['status']),
-                  color: _getTripStatusColor(trip['status']),
+                  icon: _getTripStatusIcon(trip.status),
+                  value: trip.getStatusName(),
+                  color: _getTripStatusColor(trip.status),
                 ),
-                
+
                 const Spacer(),
-                
+
                 // 查看详情
                 Icon(
                   CupertinoIcons.chevron_right,
@@ -290,53 +263,31 @@ class RelatedTripsWidget extends StatelessWidget {
   }
 
   /// 获取行程状态图标
-  IconData _getTripStatusIcon(String? status) {
+  IconData _getTripStatusIcon(TripStatus status) {
     switch (status) {
-      case 'planning':
+      case TripStatus.planning:
         return CupertinoIcons.clock;
-      case 'recruiting':
-        return CupertinoIcons.person_add;
-      case 'confirmed':
-        return CupertinoIcons.checkmark_circle;
-      case 'completed':
+      case TripStatus.inProgress:
+        return CupertinoIcons.play_circle;
+      case TripStatus.completed:
         return CupertinoIcons.checkmark_circle_fill;
-      case 'cancelled':
+      case TripStatus.cancelled:
         return CupertinoIcons.xmark_circle;
       default:
         return CupertinoIcons.clock;
     }
   }
 
-  /// 获取行程状态文本
-  String _getTripStatusText(String? status) {
-    switch (status) {
-      case 'planning':
-        return '规划中';
-      case 'recruiting':
-        return '招募中';
-      case 'confirmed':
-        return '已确认';
-      case 'completed':
-        return '已完成';
-      case 'cancelled':
-        return '已取消';
-      default:
-        return '未知';
-    }
-  }
-
   /// 获取行程状态颜色
-  Color _getTripStatusColor(String? status) {
+  Color _getTripStatusColor(TripStatus status) {
     switch (status) {
-      case 'planning':
+      case TripStatus.planning:
         return CupertinoColors.systemOrange;
-      case 'recruiting':
+      case TripStatus.inProgress:
         return CupertinoColors.systemBlue;
-      case 'confirmed':
+      case TripStatus.completed:
         return CupertinoColors.systemGreen;
-      case 'completed':
-        return CupertinoColors.systemPurple;
-      case 'cancelled':
+      case TripStatus.cancelled:
         return CupertinoColors.systemRed;
       default:
         return CupertinoColors.systemGrey;

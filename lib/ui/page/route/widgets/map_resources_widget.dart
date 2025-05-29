@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/model/route/water_source_model.dart';
+import 'package:walk/model/route/supply_point_model.dart';
 
 /// 地图水源补给点详解组件
 class MapResourcesWidget extends StatelessWidget {
   /// 水源点列表
-  final List<Map<String, dynamic>> waterSources;
-  
+  final List<WaterSourceModel> waterSources;
+
   /// 补给点列表
-  final List<Map<String, dynamic>> supplyPoints;
+  final List<SupplyPointModel> supplyPoints;
 
   const MapResourcesWidget({
     super.key,
@@ -40,44 +42,26 @@ class MapResourcesWidget extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 水源点详解
           if (waterSources.isNotEmpty) ...[
-            _buildResourceSection(
-              title: '水源点详解',
-              icon: CupertinoIcons.drop_fill,
-              color: CupertinoColors.systemTeal,
-              resources: waterSources,
-              resourceType: 'water',
-            ),
+            _buildWaterSourceSection(),
             const SizedBox(height: 16),
           ],
-          
+
           // 补给点详解
           if (supplyPoints.isNotEmpty) ...[
-            _buildResourceSection(
-              title: '补给点详解',
-              icon: CupertinoIcons.bag_fill,
-              color: CupertinoColors.systemOrange,
-              resources: supplyPoints,
-              resourceType: 'supply',
-            ),
+            _buildSupplyPointSection(),
           ],
         ],
       ),
     );
   }
 
-  /// 构建资源区域
-  Widget _buildResourceSection({
-    required String title,
-    required IconData icon,
-    required Color color,
-    required List<Map<String, dynamic>> resources,
-    required String resourceType,
-  }) {
+  /// 构建水源点区域
+  Widget _buildWaterSourceSection() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -91,14 +75,14 @@ class MapResourcesWidget extends StatelessWidget {
           Row(
             children: [
               Icon(
-                icon,
+                CupertinoIcons.drop_fill,
                 size: 18,
-                color: color,
+                color: CupertinoColors.systemTeal,
               ),
               const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
+              const Text(
+                '水源点详解',
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: CupertinoColors.label,
@@ -108,30 +92,31 @@ class MapResourcesWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: CupertinoColors.systemTeal.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  '${resources.length}个',
-                  style: TextStyle(
+                  '${waterSources.length}个',
+                  style: const TextStyle(
                     fontSize: 12,
-                    color: color,
+                    color: CupertinoColors.systemTeal,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
-          // 资源列表
-          ...resources.asMap().entries.map((entry) {
+
+          // 水源列表
+          ...waterSources.asMap().entries.map((entry) {
             final index = entry.key;
-            final resource = entry.value;
+            final waterSource = entry.value;
             return Padding(
-              padding: EdgeInsets.only(bottom: index < resources.length - 1 ? 12 : 0),
-              child: _buildResourceItem(resource, resourceType, color),
+              padding: EdgeInsets.only(
+                  bottom: index < waterSources.length - 1 ? 12 : 0),
+              child: _buildWaterSourceItem(waterSource),
             );
           }).toList(),
         ],
@@ -139,8 +124,72 @@ class MapResourcesWidget extends StatelessWidget {
     );
   }
 
-  /// 构建资源项
-  Widget _buildResourceItem(Map<String, dynamic> resource, String resourceType, Color color) {
+  /// 构建补给点区域
+  Widget _buildSupplyPointSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: CupertinoColors.systemGrey6,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 区域标题
+          Row(
+            children: [
+              Icon(
+                CupertinoIcons.bag_fill,
+                size: 18,
+                color: CupertinoColors.systemOrange,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                '补给点详解',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: CupertinoColors.label,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemOrange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '${supplyPoints.length}个',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: CupertinoColors.systemOrange,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // 补给点列表
+          ...supplyPoints.asMap().entries.map((entry) {
+            final index = entry.key;
+            final supplyPoint = entry.value;
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: index < supplyPoints.length - 1 ? 12 : 0),
+              child: _buildSupplyPointItem(supplyPoint),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+
+  /// 构建水源点项
+  Widget _buildWaterSourceItem(WaterSourceModel waterSource) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -159,7 +208,7 @@ class MapResourcesWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  resource['name'] ?? '未知资源点',
+                  waterSource.name ?? '未知资源点',
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -167,18 +216,19 @@ class MapResourcesWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              if (resource['distance'] != null) ...[
+              if (waterSource.distance != null) ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: CupertinoColors.systemTeal.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    '${resource['distance']}km',
+                    '${waterSource.distance}km',
                     style: TextStyle(
                       fontSize: 11,
-                      color: color,
+                      color: CupertinoColors.systemTeal,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -186,18 +236,14 @@ class MapResourcesWidget extends StatelessWidget {
               ],
             ],
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // 资源详细信息
-          if (resourceType == 'water') ...[
-            _buildWaterSourceDetails(resource),
-          ] else if (resourceType == 'supply') ...[
-            _buildSupplyPointDetails(resource),
-          ],
-          
+          _buildWaterSourceDetails(waterSource),
+
           // 位置信息
-          if (resource['location'] != null) ...[
+          if (waterSource.location != null) ...[
             const SizedBox(height: 8),
             Row(
               children: [
@@ -209,7 +255,7 @@ class MapResourcesWidget extends StatelessWidget {
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    resource['location'],
+                    waterSource.location,
                     style: const TextStyle(
                       fontSize: 12,
                       color: CupertinoColors.systemGrey,
@@ -219,9 +265,9 @@ class MapResourcesWidget extends StatelessWidget {
               ],
             ),
           ],
-          
+
           // 注意事项
-          if (resource['notes'] != null) ...[
+          if (waterSource.notes != null) ...[
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(8),
@@ -240,7 +286,121 @@ class MapResourcesWidget extends StatelessWidget {
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      resource['notes'],
+                      waterSource.notes,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: CupertinoColors.systemGrey,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 构建补给点项
+  Widget _buildSupplyPointItem(SupplyPointModel supplyPoint) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: CupertinoColors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: CupertinoColors.separator,
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 资源名称和距离
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  supplyPoint.name ?? '未知资源点',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: CupertinoColors.label,
+                  ),
+                ),
+              ),
+              if (supplyPoint.distance != null) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: CupertinoColors.systemOrange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '${supplyPoint.distance}km',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: CupertinoColors.systemOrange,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          // 资源详细信息
+          _buildSupplyPointDetails(supplyPoint),
+
+          // 位置信息
+          if (supplyPoint.location != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(
+                  CupertinoIcons.location,
+                  size: 12,
+                  color: CupertinoColors.systemGrey,
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    supplyPoint.location,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: CupertinoColors.systemGrey,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+
+          // 注意事项
+          if (supplyPoint.notes != null) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: CupertinoColors.systemYellow.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    CupertinoIcons.info_circle,
+                    size: 12,
+                    color: CupertinoColors.systemYellow,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      supplyPoint.notes,
                       style: const TextStyle(
                         fontSize: 11,
                         color: CupertinoColors.systemGrey,
@@ -257,37 +417,37 @@ class MapResourcesWidget extends StatelessWidget {
   }
 
   /// 构建水源详细信息
-  Widget _buildWaterSourceDetails(Map<String, dynamic> waterSource) {
+  Widget _buildWaterSourceDetails(WaterSourceModel waterSource) {
     return Column(
       children: [
         // 水质和可用性
         Row(
           children: [
             // 水质
-            if (waterSource['quality'] != null) ...[
+            if (waterSource.quality != null) ...[
               _buildDetailChip(
                 icon: CupertinoIcons.drop,
                 label: '水质',
-                value: waterSource['quality'],
-                color: _getWaterQualityColor(waterSource['quality']),
+                value: waterSource.quality,
+                color: _getWaterQualityColor(waterSource.quality),
               ),
               const SizedBox(width: 8),
             ],
-            
+
             // 可用性
-            if (waterSource['availability'] != null) ...[
+            if (waterSource.availability != null) ...[
               _buildDetailChip(
                 icon: CupertinoIcons.clock,
                 label: '可用性',
-                value: waterSource['availability'],
-                color: _getAvailabilityColor(waterSource['availability']),
+                value: waterSource.availability,
+                color: _getAvailabilityColor(waterSource.availability),
               ),
             ],
           ],
         ),
-        
+
         // 处理建议
-        if (waterSource['treatment'] != null) ...[
+        if (waterSource.treatment != null) ...[
           const SizedBox(height: 8),
           Row(
             children: [
@@ -306,7 +466,7 @@ class MapResourcesWidget extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  waterSource['treatment'],
+                  waterSource.treatment,
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.label,
@@ -321,37 +481,37 @@ class MapResourcesWidget extends StatelessWidget {
   }
 
   /// 构建补给点详细信息
-  Widget _buildSupplyPointDetails(Map<String, dynamic> supplyPoint) {
+  Widget _buildSupplyPointDetails(SupplyPointModel supplyPoint) {
     return Column(
       children: [
         // 补给类型和营业时间
         Row(
           children: [
             // 补给类型
-            if (supplyPoint['type'] != null) ...[
+            if (supplyPoint.type != null) ...[
               _buildDetailChip(
                 icon: CupertinoIcons.bag,
                 label: '类型',
-                value: supplyPoint['type'],
+                value: supplyPoint.type,
                 color: CupertinoColors.systemOrange,
               ),
               const SizedBox(width: 8),
             ],
-            
+
             // 营业状态
-            if (supplyPoint['status'] != null) ...[
+            if (supplyPoint.status != null) ...[
               _buildDetailChip(
                 icon: CupertinoIcons.time,
                 label: '状态',
-                value: supplyPoint['status'],
-                color: _getSupplyStatusColor(supplyPoint['status']),
+                value: supplyPoint.status,
+                color: _getSupplyStatusColor(supplyPoint.status),
               ),
             ],
           ],
         ),
-        
+
         // 可购买物品
-        if (supplyPoint['items'] != null && supplyPoint['items'].isNotEmpty) ...[
+        if (supplyPoint.items != null && supplyPoint.items.isNotEmpty) ...[
           const SizedBox(height: 8),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,7 +531,7 @@ class MapResourcesWidget extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  (supplyPoint['items'] as List).join('、'),
+                  (supplyPoint.items as List).join('、'),
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.label,
@@ -381,9 +541,9 @@ class MapResourcesWidget extends StatelessWidget {
             ],
           ),
         ],
-        
+
         // 营业时间
-        if (supplyPoint['hours'] != null) ...[
+        if (supplyPoint.hours != null) ...[
           const SizedBox(height: 8),
           Row(
             children: [
@@ -402,7 +562,7 @@ class MapResourcesWidget extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  supplyPoint['hours'],
+                  supplyPoint.hours,
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.label,

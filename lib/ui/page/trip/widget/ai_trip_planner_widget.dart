@@ -9,7 +9,7 @@ class AITripPlannerWidget extends StatefulWidget {
   final int participantCount;
   final DateTime departureDate;
   final int days;
-  final Function(AITripPlan) onPlanGenerated;
+  final Function(TripModel) onPlanGenerated;
 
   const AITripPlannerWidget({
     super.key,
@@ -27,7 +27,7 @@ class AITripPlannerWidget extends StatefulWidget {
 
 class _AITripPlannerWidgetState extends State<AITripPlannerWidget> {
   bool _isGenerating = false;
-  AITripPlan? _generatedPlan;
+  TripModel? _generatedPlan;
 
   @override
   Widget build(BuildContext context) {
@@ -145,25 +145,21 @@ class _AITripPlannerWidgetState extends State<AITripPlannerWidget> {
             ),
           ),
           const SizedBox(height: 12),
-
           _buildAnalysisItem(
             '• 路线匹配度：95% ✅',
             CupertinoColors.systemGreen,
           ),
           const SizedBox(height: 8),
-
           _buildAnalysisItem(
             '• 季节适宜性：${_getSeasonSuitability()}',
             CupertinoColors.systemBlue,
           ),
           const SizedBox(height: 8),
-
           _buildAnalysisItem(
             '• 团队规模：${widget.participantCount}人${_getTeamSizeComment()}',
             CupertinoColors.systemOrange,
           ),
           const SizedBox(height: 8),
-
           _buildAnalysisItem(
             '• 行程安排：${widget.days}天${_getDurationComment()}',
             CupertinoColors.systemPurple,
@@ -340,11 +336,11 @@ class _AITripPlannerWidgetState extends State<AITripPlannerWidget> {
           ),
         ),
         const SizedBox(height: 8),
-
-        _buildOverviewItem('总预算', '¥${_generatedPlan!.totalBudget}/人'),
-        _buildOverviewItem('装备重量', '${_generatedPlan!.equipmentWeight}kg/人'),
-        _buildOverviewItem('安全等级', _generatedPlan!.safetyLevel),
-        _buildOverviewItem('体力要求', _generatedPlan!.physicalRequirement),
+        _buildOverviewItem('总预算', '¥${_generatedPlan!.budget?.toInt() ?? 0}/人'),
+        _buildOverviewItem('参与人数', '${_generatedPlan!.participantCount}人'),
+        _buildOverviewItem('行程天数',
+            '${_generatedPlan!.endDate.difference(_generatedPlan!.startDate).inDays + 1}天'),
+        _buildOverviewItem('状态', _generatedPlan!.getStatusName()),
       ],
     );
   }
@@ -415,17 +411,21 @@ class _AITripPlannerWidgetState extends State<AITripPlannerWidget> {
     // 模拟AI分析延迟
     await Future.delayed(const Duration(seconds: 2));
 
-    // 生成模拟的AI规划结果
-    final plan = AITripPlan(
-      totalBudget: _calculateBudget(),
-      equipmentWeight: _calculateEquipmentWeight(),
-      safetyLevel: _calculateSafetyLevel(),
-      physicalRequirement: _calculatePhysicalRequirement(),
-      transportation: _generateTransportation(),
-      dailyItinerary: _generateDailyItinerary(),
-      equipment: _generateEquipment(),
-      foodWater: _generateFoodWater(),
-      budget: _generateBudgetBreakdown(),
+    // 生成TripModel实例
+    final endDate = widget.departureDate.add(Duration(days: widget.days));
+    final plan = TripModel(
+      id: 'ai_trip_${DateTime.now().millisecondsSinceEpoch}',
+      name: '${widget.baseRoute?.name ?? "AI智能"}行程',
+      description: 'AI智能生成的行程方案',
+      startDate: widget.departureDate,
+      endDate: endDate,
+      status: TripStatus.planning,
+      participantCount: widget.participantCount,
+      organizerId: 'current_user',
+      privacySetting: 'private',
+      budget: _calculateBudget().toDouble(),
+      routeIds: widget.baseRoute != null ? [widget.baseRoute!.id] : [],
+      primaryRouteId: widget.baseRoute?.id,
     );
 
     setState(() {
@@ -437,160 +437,17 @@ class _AITripPlannerWidgetState extends State<AITripPlannerWidget> {
   int _calculateBudget() {
     // 基础预算计算
     int baseBudget = 800;
-    
+
     // 根据天数调整
     baseBudget += (widget.days - 1) * 200;
-    
+
     // 根据出发城市调整
-    if (widget.departureCity.contains('北京') || widget.departureCity.contains('上海')) {
+    if (widget.departureCity.contains('北京') ||
+        widget.departureCity.contains('上海')) {
       baseBudget += 200;
     }
-    
+
     return baseBudget;
-  }
-
-  double _calculateEquipmentWeight() {
-    // 基础装备重量
-    double baseWeight = 6.0;
-    
-    // 根据天数调整
-    baseWeight += (widget.days - 1) * 0.5;
-    
-    // 根据季节调整
-    final month = widget.departureDate.month;
-    if (month >= 12 || month <= 2) {
-      baseWeight += 2.0; // 冬季装备更重
-    }
-    
-    return baseWeight;
-  }
-
-  String _calculateSafetyLevel() {
-    if (widget.days <= 2) {
-      return '低风险';
-    } else if (widget.days <= 4) {
-      return '中等风险';
-    } else {
-      return '较高风险';
-    }
-  }
-
-  String _calculatePhysicalRequirement() {
-    if (widget.days <= 2) {
-      return '轻度强度';
-    } else if (widget.days <= 4) {
-      return '中等强度';
-    } else {
-      return '高强度';
-    }
-  }
-
-  Map<String, dynamic> _generateTransportation() {
-    return {
-      'departure': widget.departureCity,
-      'destination': '黄山',
-      'outbound': {
-        'date': widget.departureDate,
-        'mode': '高铁',
-        'details': 'G1509 07:17-10:33',
-        'cost': 154,
-      },
-      'return': {
-        'date': widget.departureDate.add(Duration(days: widget.days - 1)),
-        'mode': '高铁',
-        'details': 'G1512 16:45-19:58',
-        'cost': 154,
-      },
-      'totalCost': 308,
-    };
-  }
-
-  List<Map<String, dynamic>> _generateDailyItinerary() {
-    final List<Map<String, dynamic>> itinerary = [];
-    
-    for (int i = 0; i < widget.days; i++) {
-      final day = i + 1;
-      final date = widget.departureDate.add(Duration(days: i));
-      
-      if (day == 1) {
-        itinerary.add({
-          'day': day,
-          'date': date,
-          'title': '到达→云谷寺→白鹅岭→北海',
-          'duration': '6小时',
-          'highlights': ['云谷寺索道', '白鹅岭观景', '北海住宿'],
-        });
-      } else if (day == widget.days) {
-        itinerary.add({
-          'day': day,
-          'date': date,
-          'title': '玉屏楼→慈光阁→返程',
-          'duration': '3小时',
-          'highlights': ['迎客松', '慈光阁', '返程交通'],
-        });
-      } else {
-        itinerary.add({
-          'day': day,
-          'date': date,
-          'title': '北海→光明顶→天海→住宿',
-          'duration': '5小时',
-          'highlights': ['光明顶日出', '天海景区', '山上住宿'],
-        });
-      }
-    }
-    
-    return itinerary;
-  }
-
-  Map<String, dynamic> _generateEquipment() {
-    return {
-      'essential': [
-        {'name': '登山包45L', 'quantity': widget.participantCount},
-        {'name': '徒步鞋防滑', 'quantity': widget.participantCount},
-        {'name': '冲锋衣防风', 'quantity': widget.participantCount},
-        {'name': '睡袋-5°C', 'quantity': widget.participantCount},
-      ],
-      'recommended': [
-        {'name': '登山杖', 'quantity': widget.participantCount},
-        {'name': '头灯', 'quantity': widget.participantCount},
-        {'name': '防潮垫', 'quantity': widget.participantCount},
-      ],
-      'totalWeight': _calculateEquipmentWeight() * widget.participantCount,
-      'estimatedCost': 524,
-    };
-  }
-
-  Map<String, dynamic> _generateFoodWater() {
-    final totalCalories = 2800 * widget.days * widget.participantCount;
-    final totalWeight = 1.2 * widget.days * widget.participantCount;
-    
-    return {
-      'totalCalories': totalCalories,
-      'totalWeight': totalWeight,
-      'waterSources': 3,
-      'recommendations': [
-        '携带净水片',
-        '保温杯必备',
-        '高热量食物优先',
-      ],
-    };
-  }
-
-  Map<String, dynamic> _generateBudgetBreakdown() {
-    final transportation = 308 * widget.participantCount;
-    final accommodation = 400 * widget.participantCount;
-    final tickets = 230 * widget.participantCount;
-    final food = 200 * widget.participantCount;
-    final equipment = 524;
-    
-    return {
-      'transportation': transportation,
-      'accommodation': accommodation,
-      'tickets': tickets,
-      'food': food,
-      'equipment': equipment,
-      'total': transportation + accommodation + tickets + food + equipment,
-    };
   }
 
   void _applyPlan() {
@@ -605,29 +462,4 @@ class _AITripPlannerWidgetState extends State<AITripPlannerWidget> {
     });
     _generateAIPlan();
   }
-}
-
-/// AI生成的行程方案数据模型
-class AITripPlan {
-  final int totalBudget;
-  final double equipmentWeight;
-  final String safetyLevel;
-  final String physicalRequirement;
-  final Map<String, dynamic> transportation;
-  final List<Map<String, dynamic>> dailyItinerary;
-  final Map<String, dynamic> equipment;
-  final Map<String, dynamic> foodWater;
-  final Map<String, dynamic> budget;
-
-  AITripPlan({
-    required this.totalBudget,
-    required this.equipmentWeight,
-    required this.safetyLevel,
-    required this.physicalRequirement,
-    required this.transportation,
-    required this.dailyItinerary,
-    required this.equipment,
-    required this.foodWater,
-    required this.budget,
-  });
 }

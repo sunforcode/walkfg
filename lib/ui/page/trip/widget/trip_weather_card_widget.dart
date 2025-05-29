@@ -2,49 +2,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/theme/theme/app_colors.dart';
 import 'package:walk/ui/page/trip/widget/trip_card_template.dart';
-
-/// 天气信息模型
-class WeatherInfo {
-  /// 日期
-  final String day;
-  
-  /// 天气状况
-  final String weather;
-  
-  /// 温度范围
-  final String temperature;
-  
-  /// 天气图标
-  final IconData icon;
-  
-  /// 构造函数
-  WeatherInfo({
-    required this.day,
-    required this.weather,
-    required this.temperature,
-    required this.icon,
-  });
-}
+import 'package:walk/model/trip/weather_info_model.dart';
 
 /// 行程天气卡片组件
-/// 
+///
 /// 用于显示行程期间的天气预报
 class TripWeatherCardWidget extends StatelessWidget {
   /// 天气信息列表
-  final List<WeatherInfo> weatherList;
-  
+  final List<WeatherInfoModel> weatherList;
+
   /// 是否处于编辑模式
   final bool isEditMode;
-  
+
   /// 当前正在编辑的部分ID
   final String? editingSectionId;
-  
+
   /// 编辑按钮点击回调
   final Function(String) onEdit;
-  
+
   /// 保存按钮点击回调
   final Function(String) onSave;
-  
+
   /// 构造函数
   const TripWeatherCardWidget({
     Key? key,
@@ -54,14 +32,12 @@ class TripWeatherCardWidget extends StatelessWidget {
     required this.onEdit,
     required this.onSave,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     // 检查是否有雨天
-    final hasRainyDay = weatherList.any((w) => 
-      w.weather.contains('雨') || w.icon == CupertinoIcons.cloud_rain_fill
-    );
-    
+    final hasRainyDay = weatherList.any((w) => !w.isSuitableForHiking);
+
     // 创建编辑按钮
     final editButton = isEditMode && editingSectionId != 'weather'
         ? CupertinoButton(
@@ -83,7 +59,7 @@ class TripWeatherCardWidget extends StatelessWidget {
             onPressed: () => onEdit('weather'),
           )
         : null;
-    
+
     // 创建保存按钮
     final saveButton = isEditMode && editingSectionId == 'weather'
         ? CupertinoButton(
@@ -105,30 +81,33 @@ class TripWeatherCardWidget extends StatelessWidget {
             onPressed: () => onSave('weather'),
           )
         : null;
-    
+
     return TripCardTemplate(
       title: '天气预报',
       icon: CupertinoIcons.cloud_sun,
       usePrimaryHeader: false,
-      actionButton: isEditMode 
+      actionButton: isEditMode
           ? (editingSectionId == 'weather' ? saveButton : editButton)
           : null,
       content: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: weatherList.map((weather) => _buildWeatherItem(weather)).toList(),
+          children:
+              weatherList.map((weather) => _buildWeatherItem(weather)).toList(),
         ),
       ),
       warningText: hasRainyDay ? '行程期间有雨天，建议携带雨具和防水外套' : null,
       buttonText: isEditMode ? null : '查看详细天气',
-      onButtonPressed: isEditMode ? null : () {
-        // TODO: 跳转到详细天气页面
-      },
+      onButtonPressed: isEditMode
+          ? null
+          : () {
+              // TODO: 跳转到详细天气页面
+            },
     );
   }
-  
+
   /// 构建天气项
-  Widget _buildWeatherItem(WeatherInfo weather) {
+  Widget _buildWeatherItem(WeatherInfoModel weather) {
     return Container(
       width: 80,
       margin: const EdgeInsets.only(right: 12),

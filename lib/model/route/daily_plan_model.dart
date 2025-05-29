@@ -44,6 +44,14 @@ class DailyPlanModel {
   @JsonKey(name: 'end_waypoint_id')
   final String endWaypointId;
 
+  /// 起点名称（从TripDayPlanModel合并）
+  @JsonKey(name: 'start_point')
+  final String? startPoint;
+
+  /// 终点名称（从TripDayPlanModel合并）
+  @JsonKey(name: 'end_point')
+  final String? endPoint;
+
   /// 包含的分段ID列表
   @JsonKey(name: 'segment_ids')
   final List<String> segmentIds;
@@ -54,6 +62,9 @@ class DailyPlanModel {
   /// 关键点列表
   @JsonKey(name: 'key_points')
   final List<String> keyPoints;
+
+  /// 备注（从TripDayPlanModel合并）
+  final String? notes;
 
   /// 构造函数
   DailyPlanModel({
@@ -68,9 +79,12 @@ class DailyPlanModel {
     this.elevationLoss,
     required this.startWaypointId,
     required this.endWaypointId,
+    this.startPoint,
+    this.endPoint,
     required this.segmentIds,
     this.accommodation,
     this.keyPoints = const [],
+    this.notes,
   });
 
   /// 从JSON创建
@@ -80,11 +94,39 @@ class DailyPlanModel {
   /// 转换为JSON
   Map<String, dynamic> toJson() => _$DailyPlanModelToJson(this);
 
+  /// 兼容性访问器 - 与TripDayPlanModel保持一致
+  int get day => dayNumber;
+
   /// 获取交通方式
   String? get transportation => null;
 
   /// 获取日期
   DateTime? get date => null;
+
+  /// 格式化路线显示
+  String get formattedRoute {
+    if (startPoint != null && endPoint != null) {
+      return '$startPoint → $endPoint';
+    }
+    return title;
+  }
+
+  /// 格式化统计信息
+  String get formattedStats {
+    final List<String> stats = [];
+    stats.add('徒步${distance.toStringAsFixed(1)}km');
+    if (elevationGain > 0) {
+      stats.add('爬升${elevationGain}m');
+    }
+    final hours = estimatedTime.floor();
+    final minutes = ((estimatedTime - hours) * 60).round();
+    if (hours > 0) {
+      stats.add('${hours}小时${minutes > 0 ? '${minutes}分钟' : ''}');
+    } else {
+      stats.add('${minutes}分钟');
+    }
+    return stats.join('，');
+  }
 
   /// 获取格式化的预计时间
   String getFormattedEstimatedTime() {
@@ -109,9 +151,12 @@ class DailyPlanModel {
     double? elevationLoss,
     String? startWaypointId,
     String? endWaypointId,
+    String? startPoint,
+    String? endPoint,
     List<String>? segmentIds,
     String? accommodation,
     List<String>? keyPoints,
+    String? notes,
   }) {
     return DailyPlanModel(
       id: id ?? this.id,
@@ -125,9 +170,12 @@ class DailyPlanModel {
       elevationLoss: elevationLoss ?? this.elevationLoss,
       startWaypointId: startWaypointId ?? this.startWaypointId,
       endWaypointId: endWaypointId ?? this.endWaypointId,
+      startPoint: startPoint ?? this.startPoint,
+      endPoint: endPoint ?? this.endPoint,
       segmentIds: segmentIds ?? this.segmentIds,
       accommodation: accommodation ?? this.accommodation,
       keyPoints: keyPoints ?? this.keyPoints,
+      notes: notes ?? this.notes,
     );
   }
 }

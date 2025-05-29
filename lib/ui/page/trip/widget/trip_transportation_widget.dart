@@ -1,49 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/theme/theme/app_colors.dart';
-
-/// 交通信息模型
-class TransportationInfo {
-  /// 类型（去程/返程/中转）
-  final String type;
-  
-  /// 出发地
-  final String from;
-  
-  /// 目的地
-  final String to;
-  
-  /// 交通方式
-  final String method;
-  
-  /// 时间
-  final String time;
-  
-  /// 状态（已预订/未预订）
-  final bool isBooked;
-  
-  /// 构造函数
-  TransportationInfo({
-    required this.type,
-    required this.from,
-    required this.to,
-    required this.method,
-    required this.time,
-    this.isBooked = false,
-  });
-}
+import 'package:walk/model/trip/transportation_info_model.dart';
 
 /// 行程交通组件
 class TripTransportationWidget extends StatelessWidget {
   /// 交通信息列表
-  final List<TransportationInfo> transportations;
-  
+  final List<TransportationInfoModel> transportations;
+
   /// 构造函数
   const TripTransportationWidget({
     Key? key,
     required this.transportations,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     if (transportations.isEmpty) {
@@ -60,21 +30,23 @@ class TripTransportationWidget extends StatelessWidget {
         ),
       );
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: transportations.map((transport) => _buildTransportItem(transport)).toList(),
+      children: transportations
+          .map((transport) => _buildTransportItem(transport))
+          .toList(),
     );
   }
-  
+
   /// 构建交通项
-  Widget _buildTransportItem(TransportationInfo transport) {
-    final IconData directionIcon = transport.type == '去程' 
+  Widget _buildTransportItem(TransportationInfoModel transport) {
+    final IconData directionIcon = transport.type == '去程'
         ? CupertinoIcons.arrow_right_circle_fill
         : transport.type == '返程'
             ? CupertinoIcons.arrow_left_circle_fill
             : CupertinoIcons.arrow_up_right_diamond_fill;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -131,7 +103,7 @@ class TripTransportationWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: transport.isBooked 
+                  color: transport.isBooked
                       ? CupertinoColors.systemGreen.withOpacity(0.1)
                       : CupertinoColors.systemYellow.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -139,7 +111,7 @@ class TripTransportationWidget extends StatelessWidget {
                 child: Text(
                   transport.isBooked ? '已预订' : '未预订',
                   style: TextStyle(
-                    color: transport.isBooked 
+                    color: transport.isBooked
                         ? CupertinoColors.systemGreen
                         : CupertinoColors.systemYellow,
                     fontSize: 12,

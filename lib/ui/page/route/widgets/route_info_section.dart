@@ -28,9 +28,9 @@ class RouteInfoSection extends StatelessWidget {
         const SizedBox(height: 8),
 
         // 路线描述
-        if (route.description != null && route.description!.isNotEmpty)
+        if (!route.description.isEmpty)
           Text(
-            route.description!,
+            route.description,
             style: const TextStyle(
               fontSize: 16,
               color: CupertinoColors.systemGrey,
@@ -45,13 +45,13 @@ class RouteInfoSection extends StatelessWidget {
         _buildInfoRow('难度', route.difficulty.getName()),
 
         // 路线标签
-        if (route.tags != null && route.tags!.isNotEmpty)
+        if (route.tags.length > 0)
           Padding(
             padding: const EdgeInsets.only(top: 16),
             child: Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: route.tags!.map((tag) => _buildTag(tag)).toList(),
+              children: route.tags.map((tag) => _buildTag(tag)).toList(),
             ),
           ),
       ],

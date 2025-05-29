@@ -72,7 +72,8 @@ class TripMapHeaderWidget extends StatelessWidget {
               top: 16,
               left: 16,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: CupertinoColors.black.withOpacity(0.7),
                   borderRadius: BorderRadius.circular(8),
@@ -100,7 +101,7 @@ class TripMapHeaderWidget extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${route!.distance?.toStringAsFixed(1) ?? "0"}km',
+                          '${route!.distance.toStringAsFixed(1)}km',
                           style: const TextStyle(
                             color: CupertinoColors.white,
                             fontSize: 12,
@@ -114,7 +115,7 @@ class TripMapHeaderWidget extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${route!.elevationGain?.toString() ?? "0"}m',
+                          '${route!.elevationGain.toString()}m',
                           style: const TextStyle(
                             color: CupertinoColors.white,
                             fontSize: 12,

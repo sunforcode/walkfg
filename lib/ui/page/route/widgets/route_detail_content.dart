@@ -33,7 +33,8 @@ class RouteDetailContent extends StatelessWidget {
   final VoidCallback? onFavorite;
 
   /// 离线地图下载回调
-  final Function(MapBoundsVO bounds, MapType mapType, MapProviderType mapProvider)?
+  final Function(
+          MapBoundsVO bounds, MapType mapType, MapProviderType mapProvider)?
       onDownloadOfflineMap;
 
   /// 构造函数
@@ -88,10 +89,11 @@ class RouteDetailContent extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: RouteActionButtons(
-              onViewMap: onViewMap,
-              onPlanTrip: onPlanTrip,
-              onFavorite: onFavorite,
+              route: route,
               isFavorite: isFavorite,
+              onPlanTrip: onPlanTrip,
+              onToggleFavorite: onFavorite,
+              onMapAction: onViewMap,
             ),
           ),
 

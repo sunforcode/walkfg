@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
-import 'package:walk/model/trip/trip_day_plan_model.dart';
+import 'package:walk/model/trip/transportation_info_model.dart';
+import 'package:walk/model/trip/weather_info_model.dart';
 import 'package:walk/theme/theme/app_colors.dart';
 import 'package:walk/ui/page/trip/widget/trip_basic_info_card_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_card_template.dart';
@@ -11,7 +11,6 @@ import 'package:walk/ui/page/trip/widget/trip_food_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_itinerary_card_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_participants_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_transportation_card_widget.dart';
-import 'package:walk/ui/page/trip/widget/trip_transportation_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_water_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_weather_card_widget.dart';
 
@@ -69,25 +68,11 @@ class TripDetailsContentWidget extends StatelessWidget {
     // 计算行程天数
     final tripDays = trip.endDate.difference(trip.startDate).inDays + 1;
 
-    // 将 ParticipantModel 转换为 UserModel
+    // 直接使用trip.participants，无需转换
     final participants = trip.participants;
 
-    // 将 ItineraryDayModel 转换为 TripDayPlanModel
-    final itinerary = trip.itinerary
-        .map((day) => TripDayPlanModel(
-              id: day.id,
-              day: day.dayNumber,
-              title: day.title,
-              description: day.description,
-              startPoint: day.accommodation ?? '起点',
-              endPoint: day.startWaypointId,
-              distance: 5.0, // 模拟数据
-              elevationGain: 200, // 模拟数据
-              elevationLoss: 150, // 模拟数据
-              estimatedTime: 3.5, // 模拟数据
-              notes: "",
-            ))
-        .toList();
+    // 直接使用trip.itinerary，无需转换
+    final itinerary = trip.itinerary;
 
     // 创建装备清单模型
     final equipmentList = trip.equipmentList;
@@ -471,56 +456,37 @@ class TripDetailsContentWidget extends StatelessWidget {
   }
 
   /// 从行程数据创建交通信息列表
-  List<TransportationInfo> _createTransportationList(TripModel trip) {
-    final List<TransportationInfo> transportations = [];
+  List<TransportationInfoModel> _createTransportationList(TripModel trip) {
+    final List<TransportationInfoModel> transportations = [];
 
     // 从行程数据中提取交通信息
     // 这里使用行程的日程信息来构建交通信息
     if (trip.itinerary.isNotEmpty) {
       // 添加去程交通
       final firstDay = trip.itinerary.first;
-      if (firstDay.transportation != null) {
+      if (firstDay.accommodation != null) {
         transportations.add(
-          TransportationInfo(
+          TransportationInfoModel.simple(
             type: '去程',
             from: '出发地',
-            to: firstDay.accommodation ?? firstDay.title,
-            method: firstDay.transportation!,
-            time: '${firstDay.date?.month}月${firstDay.date?.day}日',
+            to: firstDay.accommodation!,
+            method: '高铁 + 大巴',
+            time: '${trip.startDate.month}月${trip.startDate.day}日',
             isBooked: true,
           ),
         );
       }
 
-      // 添加行程中的交通
-      for (int i = 1; i < trip.itinerary.length; i++) {
-        final prevDay = trip.itinerary[i - 1];
-        final currentDay = trip.itinerary[i];
-
-        if (currentDay.transportation != null) {
-          transportations.add(
-            TransportationInfo(
-              type: '中转',
-              from: prevDay.accommodation ?? prevDay.title,
-              to: currentDay.accommodation ?? currentDay.title,
-              method: currentDay.transportation!,
-              time: '${currentDay.date?.month}月${currentDay.date?.day}日',
-              isBooked: i < trip.itinerary.length - 1, // 假设除了最后一天，其他都已预订
-            ),
-          );
-        }
-      }
-
       // 添加返程交通
       final lastDay = trip.itinerary.last;
-      if (lastDay.transportation != null) {
+      if (lastDay.accommodation != null) {
         transportations.add(
-          TransportationInfo(
+          TransportationInfoModel.simple(
             type: '返程',
-            from: lastDay.accommodation ?? lastDay.title,
+            from: lastDay.accommodation!,
             to: '目的地',
-            method: lastDay.transportation!,
-            time: '${lastDay.date?.month}月${lastDay.date?.day}日',
+            method: '大巴 + 高铁',
+            time: '${trip.endDate.month}月${trip.endDate.day}日',
             isBooked: false,
           ),
         );
@@ -530,7 +496,7 @@ class TripDetailsContentWidget extends StatelessWidget {
     // 如果没有从行程数据中提取到交通信息，添加一些示例数据
     if (transportations.isEmpty) {
       transportations.addAll([
-        TransportationInfo(
+        TransportationInfoModel.simple(
           type: '去程',
           from: '北京',
           to: trip.name,
@@ -538,7 +504,7 @@ class TripDetailsContentWidget extends StatelessWidget {
           time: '${trip.startDate.month}月${trip.startDate.day}日 08:30',
           isBooked: true,
         ),
-        TransportationInfo(
+        TransportationInfoModel.simple(
           type: '返程',
           from: trip.name,
           to: '北京',
@@ -553,9 +519,9 @@ class TripDetailsContentWidget extends StatelessWidget {
   }
 
   /// 创建天气信息列表
-  List<WeatherInfo> _createWeatherList(TripModel trip) {
+  List<WeatherInfoModel> _createWeatherList(TripModel trip) {
     // 创建示例天气数据
-    final List<WeatherInfo> weatherList = [];
+    final List<WeatherInfoModel> weatherList = [];
 
     // 计算行程天数
     final tripDays = trip.endDate.difference(trip.startDate).inDays + 1;
@@ -563,11 +529,11 @@ class TripDetailsContentWidget extends StatelessWidget {
     // 为每一天创建天气信息
     for (int i = 0; i < tripDays; i++) {
       weatherList.add(
-        WeatherInfo(
-          day: '星期一',
+        WeatherInfoModel.simple(
+          day: '星期${i + 1}',
           weather: "天晴",
           temperature: '${18 + i}°/${8 + i}°',
-          icon: Icons.sunny,
+          iconCode: 'sunny',
         ),
       );
     }

@@ -3,26 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:walk/theme/theme/app_colors.dart';
 import 'package:walk/ui/page/trip/widget/trip_card_template.dart';
 import 'package:walk/ui/page/trip/widget/trip_transportation_widget.dart';
+import 'package:walk/model/trip/transportation_info_model.dart';
 
 /// 行程交通卡片组件
-/// 
+///
 /// 用于显示行程的交通安排，包括去程和返程
 class TripTransportationCardWidget extends StatefulWidget {
   /// 交通信息列表
-  final List<TransportationInfo> transportations;
-  
+  final List<TransportationInfoModel> transportations;
+
   /// 是否处于编辑模式
   final bool isEditMode;
-  
+
   /// 当前正在编辑的部分ID
   final String? editingSectionId;
-  
+
   /// 编辑按钮点击回调
   final Function(String) onEdit;
-  
+
   /// 保存按钮点击回调
   final Function(String) onSave;
-  
+
   /// 构造函数
   const TripTransportationCardWidget({
     Key? key,
@@ -32,27 +33,31 @@ class TripTransportationCardWidget extends StatefulWidget {
     required this.onEdit,
     required this.onSave,
   }) : super(key: key);
-  
+
   @override
-  State<TripTransportationCardWidget> createState() => _TripTransportationCardWidgetState();
+  State<TripTransportationCardWidget> createState() =>
+      _TripTransportationCardWidgetState();
 }
 
-class _TripTransportationCardWidgetState extends State<TripTransportationCardWidget> {
+class _TripTransportationCardWidgetState
+    extends State<TripTransportationCardWidget> {
   /// 当前方向（去程/返程）
   bool _isOutbound = true;
-  
+
   @override
   Widget build(BuildContext context) {
     // 根据当前方向筛选交通信息
-    final filteredTransportations = widget.transportations.where((t) => 
-      _isOutbound ? t.type == '去程' : t.type == '返程'
-    ).toList();
-    
+    final filteredTransportations = widget.transportations
+        .where((t) => _isOutbound ? t.type == '去程' : t.type == '返程')
+        .toList();
+
     // 检查是否有未预订的交通
-    final hasUnbookedTransportation = widget.transportations.any((t) => !t.isBooked);
-    
+    final hasUnbookedTransportation =
+        widget.transportations.any((t) => !t.isBooked);
+
     // 创建编辑按钮
-    final editButton = widget.isEditMode && widget.editingSectionId != 'transportation'
+    final editButton = widget.isEditMode &&
+            widget.editingSectionId != 'transportation'
         ? CupertinoButton(
             padding: EdgeInsets.zero,
             child: Container(
@@ -72,9 +77,10 @@ class _TripTransportationCardWidgetState extends State<TripTransportationCardWid
             onPressed: () => widget.onEdit('transportation'),
           )
         : null;
-    
+
     // 创建保存按钮
-    final saveButton = widget.isEditMode && widget.editingSectionId == 'transportation'
+    final saveButton = widget.isEditMode &&
+            widget.editingSectionId == 'transportation'
         ? CupertinoButton(
             padding: EdgeInsets.zero,
             child: Container(
@@ -94,7 +100,7 @@ class _TripTransportationCardWidgetState extends State<TripTransportationCardWid
             onPressed: () => widget.onSave('transportation'),
           )
         : null;
-    
+
     return Column(
       children: [
         // 方向切换按钮
@@ -123,7 +129,8 @@ class _TripTransportationCardWidgetState extends State<TripTransportationCardWid
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: _isOutbound ? AppColors.primary : Colors.transparent,
+                      color:
+                          _isOutbound ? AppColors.primary : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -161,7 +168,8 @@ class _TripTransportationCardWidgetState extends State<TripTransportationCardWid
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: !_isOutbound ? AppColors.primary : Colors.transparent,
+                      color:
+                          !_isOutbound ? AppColors.primary : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -193,64 +201,68 @@ class _TripTransportationCardWidgetState extends State<TripTransportationCardWid
             ],
           ),
         ),
-        
+
         // 交通信息卡片
         TripCardTemplate(
           title: _isOutbound ? '去程交通' : '返程交通',
-          icon: _isOutbound 
-              ? CupertinoIcons.arrow_right_circle_fill 
+          icon: _isOutbound
+              ? CupertinoIcons.arrow_right_circle_fill
               : CupertinoIcons.arrow_left_circle_fill,
           usePrimaryHeader: true,
-          actionButton: widget.isEditMode 
-              ? (widget.editingSectionId == 'transportation' ? saveButton : editButton)
+          actionButton: widget.isEditMode
+              ? (widget.editingSectionId == 'transportation'
+                  ? saveButton
+                  : editButton)
               : null,
-          content: widget.isEditMode && widget.editingSectionId == 'transportation'
-              ? Column(
-                  children: [
-                    TripTransportationWidget(
+          content:
+              widget.isEditMode && widget.editingSectionId == 'transportation'
+                  ? Column(
+                      children: [
+                        TripTransportationWidget(
+                          transportations: filteredTransportations,
+                        ),
+                        const SizedBox(height: 16),
+                        CupertinoButton(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 8),
+                          color: AppColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                CupertinoIcons.add,
+                                color: AppColors.primary,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '添加交通方案',
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            // TODO: 显示添加交通方案对话框
+                          },
+                        ),
+                      ],
+                    )
+                  : TripTransportationWidget(
                       transportations: filteredTransportations,
                     ),
-                    const SizedBox(height: 16),
-                    CupertinoButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                      color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            CupertinoIcons.add,
-                            color: AppColors.primary,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '添加交通方案',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      onPressed: () {
-                        // TODO: 显示添加交通方案对话框
-                      },
-                    ),
-                  ],
-                )
-              : TripTransportationWidget(
-                  transportations: filteredTransportations,
-                ),
-          warningText: hasUnbookedTransportation 
-              ? '您有未预订的交通，建议尽快完成预订' 
-              : null,
+          warningText: hasUnbookedTransportation ? '您有未预订的交通，建议尽快完成预订' : null,
           buttonText: widget.isEditMode ? null : '预订交通',
-          onButtonPressed: widget.isEditMode ? null : () {
-            // TODO: 跳转到预订页面
-          },
+          onButtonPressed: widget.isEditMode
+              ? null
+              : () {
+                  // TODO: 跳转到预订页面
+                },
         ),
-        
+
         // 预订状态卡片
         if (!widget.isEditMode) ...[
           const SizedBox(height: 16),
@@ -259,11 +271,12 @@ class _TripTransportationCardWidgetState extends State<TripTransportationCardWid
       ],
     );
   }
-  
+
   /// 构建预订状态卡片
-  Widget _buildBookingStatusCard(List<TransportationInfo> transportations) {
+  Widget _buildBookingStatusCard(
+      List<TransportationInfoModel> transportations) {
     final isBooked = transportations.every((t) => t.isBooked);
-    
+
     return Container(
       decoration: BoxDecoration(
         color: CupertinoColors.white,

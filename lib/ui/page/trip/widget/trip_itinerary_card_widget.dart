@@ -1,32 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
-import 'package:walk/model/trip/trip_day_plan_model.dart';
+import 'package:walk/model/route/daily_plan_model.dart';
 import 'package:walk/theme/theme/app_colors.dart';
 import 'package:walk/ui/page/trip/widget/trip_card_template.dart';
 
 /// 行程安排卡片组件
-/// 
+///
 /// 用于显示行程的每日安排
 class TripItineraryCardWidget extends StatelessWidget {
   /// 行程数据
   final TripModel trip;
-  
+
   /// 行程安排列表
-  final List<TripDayPlanModel> itinerary;
-  
+  final List<DailyPlanModel> itinerary;
+
   /// 是否处于编辑模式
   final bool isEditMode;
-  
+
   /// 当前正在编辑的部分ID
   final String? editingSectionId;
-  
+
   /// 编辑按钮点击回调
   final Function(String) onEdit;
-  
+
   /// 保存按钮点击回调
   final Function(String) onSave;
-  
+
   /// 构造函数
   const TripItineraryCardWidget({
     Key? key,
@@ -37,7 +37,7 @@ class TripItineraryCardWidget extends StatelessWidget {
     required this.onEdit,
     required this.onSave,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     // 创建编辑按钮
@@ -61,7 +61,7 @@ class TripItineraryCardWidget extends StatelessWidget {
             onPressed: () => onEdit('itinerary'),
           )
         : null;
-    
+
     // 创建保存按钮
     final saveButton = isEditMode && editingSectionId == 'itinerary'
         ? CupertinoButton(
@@ -83,12 +83,12 @@ class TripItineraryCardWidget extends StatelessWidget {
             onPressed: () => onSave('itinerary'),
           )
         : null;
-    
+
     return TripCardTemplate(
       title: '行程安排',
       icon: CupertinoIcons.calendar,
       usePrimaryHeader: false,
-      actionButton: isEditMode 
+      actionButton: isEditMode
           ? (editingSectionId == 'itinerary' ? saveButton : editButton)
           : null,
       content: Column(
@@ -102,12 +102,12 @@ class TripItineraryCardWidget extends StatelessWidget {
               fontSize: 16,
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 行程列表
           ...itinerary.map((day) => _buildDaySummary(day)).toList(),
-          
+
           // 编辑模式下的添加按钮
           if (isEditMode && editingSectionId == 'itinerary') ...[
             const SizedBox(height: 16),
@@ -141,14 +141,16 @@ class TripItineraryCardWidget extends StatelessWidget {
         ],
       ),
       buttonText: isEditMode ? null : '查看详细行程',
-      onButtonPressed: isEditMode ? null : () {
-        // TODO: 跳转到详细行程页面
-      },
+      onButtonPressed: isEditMode
+          ? null
+          : () {
+              // TODO: 跳转到详细行程页面
+            },
     );
   }
-  
+
   /// 构建日程概要
-  Widget _buildDaySummary(TripDayPlanModel day) {
+  Widget _buildDaySummary(DailyPlanModel day) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(

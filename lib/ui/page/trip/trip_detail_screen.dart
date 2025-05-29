@@ -4,12 +4,10 @@ import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/service/route_service.dart';
 import 'package:walk/service/service_manager.dart';
 import 'package:walk/service/trip_service.dart';
-import 'package:walk/ui/page/trip/widgets/trip_map_header_widget.dart';
-import 'package:walk/ui/page/trip/widgets/trip_adjustment_bottom_sheet.dart';
-import 'package:walk/ui/page/trip/widgets/ai_analysis_dialog.dart';
-import 'package:walk/ui/page/trip/widgets/ai_trip_planner_widget.dart';
-import 'package:walk/ui/page/trip/widgets/ai_generated_plan_widget.dart';
-import 'package:walk/ui/page/trip/widgets/floating_ai_button.dart';
+import 'package:walk/ui/page/trip/widget/trip_map_header_widget.dart';
+import 'package:walk/ui/page/trip/widget/ai_analysis_dialog.dart';
+import 'package:walk/ui/page/trip/widget/ai_generated_plan_widget.dart';
+import 'package:walk/ui/page/trip/widget/floating_ai_button.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
 import 'package:walk/theme/theme/app_colors.dart';
@@ -60,17 +58,11 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   /// 编辑模式状态
   bool _isEditMode = false;
 
-  /// 当前正在编辑的部分ID
-  String? _editingSectionId;
-
   /// 编辑中的行程数据
   TripModel? _editingTrip;
 
   /// 关联的路线数据
   List<RouteModel> _relatedRoutes = [];
-
-  /// 是否正在加载路线
-  bool _isLoadingRoutes = false;
 
   /// 滚动控制器
   final ScrollController _scrollController = ScrollController();
@@ -82,7 +74,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   int _days = 4;
 
   /// AI生成的方案
-  AITripPlan? _aiGeneratedPlan;
+  TripModel? _aiGeneratedPlan;
 
   /// 是否显示悬浮AI按钮
   bool _showFloatingAIButton = false;
@@ -143,7 +135,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     // 立即设置_tripFuture为加载中状态，避免未初始化错误
     setState(() {
       _tripFuture = Future.value(null);
-      _isLoadingRoutes = true;
     });
 
     final route = await _routeService.getRouteById(widget.routeId!);
@@ -168,7 +159,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       _isEditMode = true;
       _editingTrip = newTrip;
       _relatedRoutes = [route];
-      _isLoadingRoutes = false;
     });
 
     // 延迟启动AI分析
@@ -241,7 +231,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   }
 
   /// 处理初始AI分析完成
-  void _handleInitialAIAnalysisComplete(AITripPlan plan) {
+  void _handleInitialAIAnalysisComplete(TripModel plan) {
     setState(() {
       _aiGeneratedPlan = plan;
       _hasCompletedInitialAnalysis = true;
@@ -256,40 +246,15 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   Future<void> _loadRelatedRoutes(TripModel trip) async {
     if (trip.routeIds.isEmpty) return;
 
-    setState(() {
-      _isLoadingRoutes = true;
-    });
-
-    try {
-      final routes = <RouteModel>[];
-      for (final routeId in trip.routeIds) {
-        final route = await _routeService.getRouteById(routeId);
-        routes.add(route);
-      }
-
-      setState(() {
-        _relatedRoutes = routes;
-        _isLoadingRoutes = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoadingRoutes = false;
-      });
+    final routes = <RouteModel>[];
+    for (final routeId in trip.routeIds) {
+      final route = await _routeService.getRouteById(routeId);
+      routes.add(route);
     }
-  }
 
-  /// 显示行程微调弹框
-  void _showTripAdjustmentBottomSheet() {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) => TripAdjustmentBottomSheet(
-        initialDepartureCity: _departureCity,
-        initialParticipantCount: _participantCount,
-        initialDepartureDate: _departureDate,
-        initialDays: _days,
-        onConfirm: _updateTripParameters,
-      ),
-    );
+    setState(() {
+      _relatedRoutes = routes;
+    });
   }
 
   /// 显示AI助手弹框
@@ -340,16 +305,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     });
   }
 
-  /// 处理AI方案生成
-  void _handleAIPlanGenerated(AITripPlan plan) {
-    setState(() {
-      _aiGeneratedPlan = plan;
-    });
-
-    // 显示成功提示
-    _showToast('AI规划生成完成！');
-  }
-
   /// 切换编辑模式
   void _toggleEditMode() {
     if (_isEditMode) {
@@ -393,7 +348,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
 
                 setState(() {
                   _isEditMode = false;
-                  _editingSectionId = null;
                   _editingTrip = null;
                 });
 
@@ -453,7 +407,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                   Navigator.of(context).pop();
                   setState(() {
                     _isEditMode = false;
-                    _editingSectionId = null;
                     _tripFuture = Future.value(savedTrip);
                   });
                 },
@@ -485,63 +438,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         },
       );
     });
-  }
-
-  /// 编辑特定部分
-  void _editSection(String sectionId) {
-    setState(() {
-      _editingSectionId = sectionId;
-    });
-  }
-
-  /// 保存特定部分
-  void _saveSection(String sectionId) {
-    // 根据部分ID保存相应数据
-    setState(() {
-      _editingSectionId = null;
-    });
-  }
-
-  /// 显示日期选择器
-  void _showDatePicker(
-      DateTime initialDate, Function(DateTime) onDateSelected) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 300,
-          color: CupertinoColors.systemBackground,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CupertinoButton(
-                    child: const Text('取消'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  CupertinoButton(
-                    child: const Text('确定'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-              Expanded(
-                child: CupertinoDatePicker(
-                  initialDateTime: initialDate,
-                  mode: CupertinoDatePickerMode.date,
-                  onDateTimeChanged: onDateSelected,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   /// 更新行程数据
