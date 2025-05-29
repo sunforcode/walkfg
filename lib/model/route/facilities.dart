@@ -21,6 +21,14 @@ class FacilitiesVO {
   @JsonKey(name: 'signal_coverage')
   final String signalCoverage;
 
+  /// 是否需要许可证
+  @JsonKey(name: 'requires_permit')
+  final bool requiresPermit;
+
+  /// 安全警告列表
+  @JsonKey(name: 'safety_warnings')
+  final List<String> safetyWarnings;
+
   /// 构造函数
   FacilitiesVO({
     required this.water,
@@ -28,6 +36,8 @@ class FacilitiesVO {
     required this.accommodation,
     required this.toilets,
     required this.signalCoverage,
+    this.requiresPermit = false,
+    this.safetyWarnings = const [],
   });
 
   /// 从JSON创建
@@ -36,4 +46,25 @@ class FacilitiesVO {
 
   /// 转换为JSON
   Map<String, dynamic> toJson() => _$FacilitiesVOToJson(this);
+
+  /// 创建副本
+  FacilitiesVO copyWith({
+    String? water,
+    String? food,
+    String? accommodation,
+    String? toilets,
+    String? signalCoverage,
+    bool? requiresPermit,
+    List<String>? safetyWarnings,
+  }) {
+    return FacilitiesVO(
+      water: water ?? this.water,
+      food: food ?? this.food,
+      accommodation: accommodation ?? this.accommodation,
+      toilets: toilets ?? this.toilets,
+      signalCoverage: signalCoverage ?? this.signalCoverage,
+      requiresPermit: requiresPermit ?? this.requiresPermit,
+      safetyWarnings: safetyWarnings ?? this.safetyWarnings,
+    );
+  }
 }

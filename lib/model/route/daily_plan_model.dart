@@ -24,6 +24,10 @@ class DailyPlanModel {
   /// 预计时长
   final String duration;
 
+  /// 预计时间（小时数）
+  @JsonKey(name: 'estimated_time')
+  final double estimatedTime;
+
   /// 爬升（米）
   @JsonKey(name: 'elevation_gain')
   final int elevationGain;
@@ -47,6 +51,10 @@ class DailyPlanModel {
   /// 住宿信息
   final String? accommodation;
 
+  /// 关键点列表
+  @JsonKey(name: 'key_points')
+  final List<String> keyPoints;
+
   /// 构造函数
   DailyPlanModel({
     required this.id,
@@ -55,12 +63,14 @@ class DailyPlanModel {
     required this.description,
     required this.distance,
     required this.duration,
+    this.estimatedTime = 8.0, // 默认8小时
     required this.elevationGain,
     this.elevationLoss,
     required this.startWaypointId,
     required this.endWaypointId,
     required this.segmentIds,
     this.accommodation,
+    this.keyPoints = const [],
   });
 
   /// 从JSON创建
@@ -69,10 +79,55 @@ class DailyPlanModel {
 
   /// 转换为JSON
   Map<String, dynamic> toJson() => _$DailyPlanModelToJson(this);
-  
+
   /// 获取交通方式
   String? get transportation => null;
 
   /// 获取日期
   DateTime? get date => null;
+
+  /// 获取格式化的预计时间
+  String getFormattedEstimatedTime() {
+    final hours = estimatedTime.floor();
+    final minutes = ((estimatedTime - hours) * 60).round();
+    if (minutes == 0) {
+      return '${hours}小时';
+    }
+    return '${hours}小时${minutes}分钟';
+  }
+
+  /// 创建副本
+  DailyPlanModel copyWith({
+    String? id,
+    int? dayNumber,
+    String? title,
+    String? description,
+    double? distance,
+    String? duration,
+    double? estimatedTime,
+    int? elevationGain,
+    double? elevationLoss,
+    String? startWaypointId,
+    String? endWaypointId,
+    List<String>? segmentIds,
+    String? accommodation,
+    List<String>? keyPoints,
+  }) {
+    return DailyPlanModel(
+      id: id ?? this.id,
+      dayNumber: dayNumber ?? this.dayNumber,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      distance: distance ?? this.distance,
+      duration: duration ?? this.duration,
+      estimatedTime: estimatedTime ?? this.estimatedTime,
+      elevationGain: elevationGain ?? this.elevationGain,
+      elevationLoss: elevationLoss ?? this.elevationLoss,
+      startWaypointId: startWaypointId ?? this.startWaypointId,
+      endWaypointId: endWaypointId ?? this.endWaypointId,
+      segmentIds: segmentIds ?? this.segmentIds,
+      accommodation: accommodation ?? this.accommodation,
+      keyPoints: keyPoints ?? this.keyPoints,
+    );
+  }
 }

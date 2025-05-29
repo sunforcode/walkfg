@@ -18,7 +18,7 @@
     "rating_count": 256
   },
   "tags": ["山岳", "森林", "观景", "摄影", "世界遗产"],
-  "difficulty": 0,
+  "difficulty": 1,
   "waypoints": [
     {
       "id": "wp_001",
@@ -27,7 +27,7 @@
       "latitude": 30.1234,
       "longitude": 118.1567,
       "elevation": 630.0,
-      "type": "entrance",
+      "type": "start",
       "icon_url": "https://example.com/icons/entrance.png",
       "image_url": "https://example.com/images/yungu_temple.jpg",
       "sequence_number": 1
@@ -87,7 +87,7 @@
       "latitude": 30.1734,
       "longitude": 118.1267,
       "elevation": 820.0,
-      "type": "exit",
+      "type": "end",
       "icon_url": "https://example.com/icons/exit.png",
       "image_url": "https://example.com/images/mercy_pavilion.jpg",
       "sequence_number": 6
@@ -183,12 +183,14 @@
       "description": "从云谷寺出发，经迎客松到达光明顶，住宿山顶",
       "distance": 5.5,
       "duration": "4:00",
+      "estimated_time": 6.0,
       "elevation_gain": 1230,
       "elevation_loss": 0.0,
       "start_waypoint_id": "wp_001",
       "end_waypoint_id": "wp_003",
       "segment_ids": ["seg_001", "seg_002"],
-      "accommodation": "北海宾馆"
+      "accommodation": "北海宾馆",
+      "key_points": ["云谷寺", "白鹅岭", "迎客松", "天海", "光明顶"]
     },
     {
       "id": "dp_002",
@@ -197,12 +199,14 @@
       "description": "从光明顶出发，游览西海大峡谷，经排云亭到达慈光阁下山",
       "distance": 10.0,
       "duration": "5:00",
+      "estimated_time": 7.0,
       "elevation_gain": 130,
       "elevation_loss": 1170.0,
       "start_waypoint_id": "wp_003",
       "end_waypoint_id": "wp_006",
       "segment_ids": ["seg_003", "seg_004", "seg_005"],
-      "accommodation": "黄山市区酒店"
+      "accommodation": "黄山市区酒店",
+      "key_points": ["光明顶", "西海大峡谷", "排云亭", "飞来石", "慈光阁"]
     }
   ],
   "weather_info": {
@@ -221,7 +225,9 @@
     "food": "山顶有餐厅和小卖部，提供简单餐食，价格较高",
     "accommodation": "山顶有北海宾馆、白云宾馆等住宿点，需提前预订",
     "toilets": "主要景点和住宿区附近有公共厕所",
-    "signal_coverage": "山顶大部分区域有手机信号，但在峡谷等地可能较弱"
+    "signal_coverage": "山顶大部分区域有手机信号，但在峡谷等地可能较弱",
+    "requires_permit": false,
+    "safety_warnings": ["山路陡峭，注意安全", "天气多变，备好雨具", "高海拔地区，注意高反"]
   },
   "image_urls": [
     "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",

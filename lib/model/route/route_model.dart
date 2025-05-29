@@ -324,4 +324,156 @@ class RouteModel extends BaseModel {
       status: status ?? this.status,
     );
   }
+
+  // === 便捷方法 ===
+
+  /// 获取评分
+  double get rating => ratings.overall;
+
+  /// 获取最佳季节文本
+  String? get bestSeasonText {
+    if (bestSeason.isEmpty) return null;
+    return bestSeason.join('、');
+  }
+
+  /// 获取起点名称
+  String get startPoint {
+    if (waypoints.isNotEmpty) {
+      final startWaypoint = waypoints.firstWhere(
+        (w) => w.type == 'start' || w.name.contains('起点'),
+        orElse: () => waypoints.first,
+      );
+      return startWaypoint.name;
+    }
+    return '起点待确定';
+  }
+
+  /// 获取终点名称
+  String get endPoint {
+    if (waypoints.isNotEmpty) {
+      final endWaypoint = waypoints.lastWhere(
+        (w) => w.type == 'end' || w.name.contains('终点'),
+        orElse: () => waypoints.last,
+      );
+      return endWaypoint.name;
+    }
+    return '终点待确定';
+  }
+
+  /// 获取安全警告列表
+  List<String> get safetyWarnings {
+    List<String> warnings = [];
+
+    // 从标签中提取安全警告
+    for (String tag in tags) {
+      if (tag.contains('危险') || tag.contains('注意') || tag.contains('警告')) {
+        warnings.add(tag);
+      }
+    }
+
+    // 从设施信息中提取安全警告
+    if (facilities?.safetyWarnings != null) {
+      warnings.addAll(facilities!.safetyWarnings);
+    }
+
+    // 根据难度添加通用警告
+    switch (difficulty) {
+      case RouteDifficulty.hard:
+        if (!warnings.any((w) => w.contains('体力'))) {
+          warnings.add('需要良好的体力和户外经验');
+        }
+        break;
+      case RouteDifficulty.extreme:
+        if (!warnings.any((w) => w.contains('专业'))) {
+          warnings.add('需要专业户外技能和装备');
+        }
+        break;
+      default:
+        break;
+    }
+
+    return warnings;
+  }
+
+  /// 获取轨迹数量
+  int get trackCount {
+    // 这里可以根据实际的轨迹数据来计算
+    // 目前返回一个基于难度的估算值
+    switch (difficulty) {
+      case RouteDifficulty.easy:
+        return 2; // 简单路线通常有推荐和备选轨迹
+      case RouteDifficulty.medium:
+        return 3; // 中等难度有推荐、挑战、季节性轨迹
+      case RouteDifficulty.hard:
+      case RouteDifficulty.extreme:
+        return 4; // 困难路线有更多轨迹选择
+    }
+  }
+
+  /// 获取预计完成时间文本
+  String get estimatedTimeText {
+    if (dailyPlans.isNotEmpty) {
+      final totalTime =
+          dailyPlans.fold(0.0, (sum, plan) => sum + plan.estimatedTime);
+      final days = dailyPlans.length;
+      final avgHoursPerDay = totalTime / days;
+      return '${days}天 (平均每天${avgHoursPerDay.toStringAsFixed(1)}小时)';
+    }
+    return duration;
+  }
+
+  /// 获取路线特色标签
+  List<String> get featureTags {
+    List<String> features = [];
+
+    // 基于评分添加标签
+    if (rating >= 4.8)
+      features.add('五星推荐');
+    else if (rating >= 4.5) features.add('高分路线');
+
+    // 基于人气添加标签
+    if (popularity > 1000) features.add('热门路线');
+
+    // 基于难度添加标签
+    if (difficulty == RouteDifficulty.extreme) features.add('挑战极限');
+
+    // 基于距离添加标签
+    if (distance > 100)
+      features.add('长距离');
+    else if (distance < 20) features.add('短途');
+
+    // 基于天数添加标签
+    if (dailyPlans.length >= 7)
+      features.add('长线徒步');
+    else if (dailyPlans.length <= 2) features.add('周末路线');
+
+    return features;
+  }
+
+  /// 是否为多日路线
+  bool get isMultiDay => dailyPlans.length > 1;
+
+  /// 是否为环线
+  bool get isLoop {
+    if (waypoints.length < 2) return false;
+    final start = waypoints.first;
+    final end = waypoints.last;
+    // 简单判断：起终点距离很近则认为是环线
+    final distance = _calculateDistance(
+      start.latitude,
+      start.longitude,
+      end.latitude,
+      end.longitude,
+    );
+    return distance < 1.0; // 1公里内认为是环线
+  }
+
+  /// 计算两点间距离（简化版）
+  double _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    // 简化的距离计算，实际应该使用更精确的公式
+    final deltaLat = (lat2 - lat1).abs();
+    final deltaLon = (lon2 - lon1).abs();
+    return (deltaLat + deltaLon) * 111; // 粗略转换为公里
+  }
 }

@@ -4,8 +4,12 @@ import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/service/route_service.dart';
 import 'package:walk/service/service_manager.dart';
 import 'package:walk/service/trip_service.dart';
-import 'package:walk/ui/page/trip/widget/trip_details_content_widget.dart';
-import 'package:walk/ui/page/trip/widget/trip_planning_button_widget.dart';
+import 'package:walk/ui/page/trip/widgets/trip_map_header_widget.dart';
+import 'package:walk/ui/page/trip/widgets/trip_adjustment_bottom_sheet.dart';
+import 'package:walk/ui/page/trip/widgets/ai_analysis_dialog.dart';
+import 'package:walk/ui/page/trip/widgets/ai_trip_planner_widget.dart';
+import 'package:walk/ui/page/trip/widgets/ai_generated_plan_widget.dart';
+import 'package:walk/ui/page/trip/widgets/floating_ai_button.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
 import 'package:walk/theme/theme/app_colors.dart';
@@ -71,6 +75,21 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   /// 滚动控制器
   final ScrollController _scrollController = ScrollController();
 
+  /// 行程参数
+  String _departureCity = '上海市';
+  int _participantCount = 2;
+  DateTime _departureDate = DateTime.now().add(const Duration(days: 7));
+  int _days = 4;
+
+  /// AI生成的方案
+  AITripPlan? _aiGeneratedPlan;
+
+  /// 是否显示悬浮AI按钮
+  bool _showFloatingAIButton = false;
+
+  /// 是否已经完成初始AI分析
+  bool _hasCompletedInitialAnalysis = false;
+
   @override
   void initState() {
     super.initState();
@@ -95,16 +114,16 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   /// 创建空行程
   void _createEmptyTrip() {
     final now = DateTime.now();
-    final endDate = now.add(const Duration(days: 7));
+    final endDate = now.add(Duration(days: _days));
 
     final emptyTrip = TripModel(
       id: 'new_trip_${DateTime.now().millisecondsSinceEpoch}',
       name: '新行程',
       description: '',
-      startDate: now,
+      startDate: _departureDate,
       endDate: endDate,
       status: TripStatus.planning,
-      participantCount: 1,
+      participantCount: _participantCount,
       organizerId: 'current_user',
       privacySetting: 'private',
     );
@@ -114,6 +133,9 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       _isEditMode = true;
       _editingTrip = emptyTrip;
     });
+
+    // 延迟启动AI分析
+    _startInitialAIAnalysis();
   }
 
   /// 从路线加载新行程
@@ -125,19 +147,18 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     });
 
     final route = await _routeService.getRouteById(widget.routeId!);
-    final now = DateTime.now();
-    final endDate = now.add(const Duration(days: 7));
+    final endDate = _departureDate.add(Duration(days: _days));
 
     final newTrip = TripModel(
       id: 'new_trip_${DateTime.now().millisecondsSinceEpoch}',
       name: route.name,
       description: route.description,
-      startDate: now,
+      startDate: _departureDate,
       endDate: endDate,
       status: TripStatus.planning,
       routeIds: [route.id],
       primaryRouteId: route.id,
-      participantCount: 1,
+      participantCount: _participantCount,
       organizerId: 'current_user',
       privacySetting: 'private',
     );
@@ -149,6 +170,9 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       _relatedRoutes = [route];
       _isLoadingRoutes = false;
     });
+
+    // 延迟启动AI分析
+    _startInitialAIAnalysis();
   }
 
   /// 加载行程详情
@@ -166,6 +190,16 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     _tripFuture.then((trip) {
       if (trip != null) {
         _loadRelatedRoutes(trip);
+        // 从行程数据中提取参数
+        setState(() {
+          _departureCity = '上海市'; // 这里可以从trip数据中获取
+          _participantCount = trip.participantCount;
+          _departureDate = trip.startDate;
+          _days = trip.endDate.difference(trip.startDate).inDays + 1;
+        });
+
+        // 如果是已有行程，也启动AI分析
+        _startInitialAIAnalysis();
       }
     }).catchError((error) {
       // 处理错误情况
@@ -173,6 +207,49 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       // 可以选择创建一个空行程或显示错误
       _createEmptyTrip();
     });
+  }
+
+  /// 启动初始AI分析
+  void _startInitialAIAnalysis() {
+    // 等待页面渲染完成后再显示Dialog
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_hasCompletedInitialAnalysis && mounted) {
+        _showAIAnalysisDialog();
+      }
+    });
+  }
+
+  /// 显示AI分析Dialog
+  void _showAIAnalysisDialog() {
+    showCupertinoModalPopup(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AIAnalysisDialog(
+        departureCity: _departureCity,
+        participantCount: _participantCount,
+        departureDate: _departureDate,
+        days: _days,
+        onAnalysisComplete: _handleInitialAIAnalysisComplete,
+        onCancel: () {
+          Navigator.of(context).pop();
+          setState(() {
+            _showFloatingAIButton = true;
+          });
+        },
+      ),
+    );
+  }
+
+  /// 处理初始AI分析完成
+  void _handleInitialAIAnalysisComplete(AITripPlan plan) {
+    setState(() {
+      _aiGeneratedPlan = plan;
+      _hasCompletedInitialAnalysis = true;
+      _showFloatingAIButton = true;
+    });
+
+    // 显示成功提示
+    _showToast('AI规划生成完成！');
   }
 
   /// 加载关联的路线
@@ -199,6 +276,78 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         _isLoadingRoutes = false;
       });
     }
+  }
+
+  /// 显示行程微调弹框
+  void _showTripAdjustmentBottomSheet() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => TripAdjustmentBottomSheet(
+        initialDepartureCity: _departureCity,
+        initialParticipantCount: _participantCount,
+        initialDepartureDate: _departureDate,
+        initialDays: _days,
+        onConfirm: _updateTripParameters,
+      ),
+    );
+  }
+
+  /// 显示AI助手弹框
+  void _showAIAssistantBottomSheet() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => AIAssistantBottomSheet(
+        departureCity: _departureCity,
+        participantCount: _participantCount,
+        departureDate: _departureDate,
+        days: _days,
+        onParametersChanged: _updateTripParameters,
+        onRegenerateAI: _regenerateAIPlan,
+      ),
+    );
+  }
+
+  /// 重新生成AI规划
+  void _regenerateAIPlan() {
+    setState(() {
+      _aiGeneratedPlan = null;
+    });
+    _showAIAnalysisDialog();
+  }
+
+  /// 更新行程参数
+  void _updateTripParameters(String city, int count, DateTime date, int days) {
+    setState(() {
+      _departureCity = city;
+      _participantCount = count;
+      _departureDate = date;
+      _days = days;
+    });
+
+    // 更新行程数据
+    if (_editingTrip != null) {
+      final updatedTrip = _editingTrip!.copyWith(
+        participantCount: count,
+        startDate: date,
+        endDate: date.add(Duration(days: days)),
+      );
+      _updateTrip(updatedTrip);
+    }
+
+    // 清除之前的AI方案，因为参数已改变
+    setState(() {
+      _aiGeneratedPlan = null;
+    });
+  }
+
+  /// 处理AI方案生成
+  void _handleAIPlanGenerated(AITripPlan plan) {
+    setState(() {
+      _aiGeneratedPlan = plan;
+    });
+
+    // 显示成功提示
+    _showToast('AI规划生成完成！');
   }
 
   /// 切换编辑模式
@@ -402,202 +551,44 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     });
   }
 
-  /// 显示路线选择对话框
-  void _showRouteSelectionDialog(TripModel trip) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.7,
-          padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            color: CupertinoColors.systemBackground,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
+  /// 显示提示信息
+  void _showToast(String message) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: 100,
+        left: 0,
+        right: 0,
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(
+              color: CupertinoColors.systemGrey.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Text(
+              message,
+              style: const TextStyle(
+                color: CupertinoColors.white,
+                fontSize: 14,
+              ),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 标题
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    '选择路线',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: const Text('关闭'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              // 搜索框
-              CupertinoSearchTextField(
-                placeholder: '搜索路线',
-                onSubmitted: (value) {
-                  // TODO: 实现路线搜索
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-              // 路线列表
-              Expanded(
-                child: FutureBuilder<List<RouteModel>>(
-                  future: _routeService.getRecommendedRoutes(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CupertinoActivityIndicator(),
-                      );
-                    }
-
-                    if (snapshot.hasError || !snapshot.hasData) {
-                      return const Center(
-                        child: Text('无法加载路线'),
-                      );
-                    }
-
-                    final routes = snapshot.data!;
-
-                    return ListView.builder(
-                      itemCount: routes.length,
-                      itemBuilder: (context, index) {
-                        final route = routes[index];
-                        return GestureDetector(
-                          onTap: () {
-                            // 添加路线到行程
-                            _addRouteToTrip(trip, route);
-                            Navigator.of(context).pop();
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: CupertinoColors.systemGrey6,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    CupertinoIcons.map,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        route.name,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '${route.distance}km | ${route.elevationGain}m爬升',
-                                        style: const TextStyle(
-                                          color: CupertinoColors.systemGrey,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Icon(
-                                  CupertinoIcons.chevron_right,
-                                  color: CupertinoColors.systemGrey,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+        ),
+      ),
     );
+
+    overlay.insert(overlayEntry);
+    Future.delayed(const Duration(seconds: 2), () {
+      overlayEntry.remove();
+    });
   }
 
-  /// 添加路线到行程
-  void _addRouteToTrip(TripModel trip, RouteModel route) {
-    if (_editingTrip == null) {
-      _editingTrip = trip;
-    }
-
-    // 创建新的路线ID列表
-    final List<String> newRouteIds = List.from(_editingTrip!.routeIds);
-    if (!newRouteIds.contains(route.id)) {
-      newRouteIds.add(route.id);
-    }
-
-    // 更新行程数据
-    final updatedTrip = _editingTrip!.copyWith(
-      routeIds: newRouteIds,
-      primaryRouteId: _editingTrip!.primaryRouteId ?? route.id,
-    );
-
-    _updateTrip(updatedTrip);
-
-    // 重新加载关联的路线
-    _loadRelatedRoutes(updatedTrip);
-
-    // 显示提示
-    showCupertinoDialog(
-      context: context,
-      builder: (context) {
-        return CupertinoAlertDialog(
-          title: const Text('路线已添加'),
-          content: Text('路线"${route.name}"已添加到行程中。'),
-          actions: [
-            CupertinoDialogAction(
-              child: const Text('确定'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            CupertinoDialogAction(
-              child: const Text('开始规划'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  /// 格式化日期
+  String _formatDateRange() {
+    final endDate = _departureDate.add(Duration(days: _days - 1));
+    return '${_departureDate.year}-${_departureDate.month.toString().padLeft(2, '0')}-${_departureDate.day.toString().padLeft(2, '0')} ~ ${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')} ($_days天)';
   }
-
-  /// 开始规划行程
-  void _startPlanning(TripModel trip) {}
 
   @override
   Widget build(BuildContext context) {
@@ -681,31 +672,188 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
 
           return Stack(
             children: [
-              // 行程详情内容
-              TripDetailsContentWidget(
-                trip: displayTrip,
-                isEditMode: _isEditMode,
-                editingSectionId: _editingSectionId,
-                editingTrip: _editingTrip,
-                scrollController: _scrollController,
-                onEdit: _editSection,
-                onSave: _saveSection,
-                onToggleEditMode: _toggleEditMode,
-                onShowDatePicker: _showDatePicker,
-                onTripUpdated: _updateTrip,
+              CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  // 地图头部
+                  SliverToBoxAdapter(
+                    child: TripMapHeaderWidget(
+                      route: _relatedRoutes.isNotEmpty
+                          ? _relatedRoutes.first
+                          : null,
+                      height: 220,
+                    ),
+                  ),
+
+                  // 基础信息
+                  SliverToBoxAdapter(
+                    child: Container(
+                      margin: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.systemBackground,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: CupertinoColors.separator,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '📍 基础信息',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: CupertinoColors.label,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // 路线信息
+                          if (_relatedRoutes.isNotEmpty) ...[
+                            Row(
+                              children: [
+                                const Icon(
+                                  CupertinoIcons.map,
+                                  size: 20,
+                                  color: CupertinoColors.systemBlue,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    _relatedRoutes.first.name,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: CupertinoColors.label,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+
+                          // 时间信息
+                          Row(
+                            children: [
+                              const Icon(
+                                CupertinoIcons.calendar,
+                                size: 20,
+                                color: CupertinoColors.systemGreen,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _formatDateRange(),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: CupertinoColors.label,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+
+                          // 人数和出发地
+                          Row(
+                            children: [
+                              const Icon(
+                                CupertinoIcons.person_2,
+                                size: 20,
+                                color: CupertinoColors.systemOrange,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '$_participantCount人',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: CupertinoColors.label,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              const Icon(
+                                CupertinoIcons.location,
+                                size: 20,
+                                color: CupertinoColors.systemPurple,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '$_departureCity出发',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: CupertinoColors.label,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // AI生成的方案
+                  if (_aiGeneratedPlan != null)
+                    SliverToBoxAdapter(
+                      child: AIGeneratedPlanWidget(
+                        plan: _aiGeneratedPlan!,
+                        onEdit: () {
+                          // 这里可以实现编辑功能
+                          _showToast('编辑功能开发中');
+                        },
+                      ),
+                    ),
+
+                  // 确认操作
+                  if (_aiGeneratedPlan != null)
+                    SliverToBoxAdapter(
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: CupertinoButton.filled(
+                                child: const Text('确认此方案'),
+                                onPressed: () {
+                                  _showToast('方案已确认');
+                                  // 这里可以保存方案并进入下一步
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: CupertinoButton(
+                                color: CupertinoColors.systemGrey5,
+                                child: const Text(
+                                  '邀请同行',
+                                  style:
+                                      TextStyle(color: CupertinoColors.label),
+                                ),
+                                onPressed: () {
+                                  _showToast('邀请功能开发中');
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  // 底部间距，避免被悬浮按钮遮挡
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 120), // 增加底部间距
+                  ),
+                ],
               ),
 
-              // 规划按钮
-              if (!_isEditMode)
-                Positioned(
-                  bottom: 20,
-                  right: 20,
-                  child: TripPlanningButtonWidget(
-                    onAddRoute: () => _showRouteSelectionDialog(displayTrip),
-                    onStartPlanning: () => _startPlanning(displayTrip),
-                    hasRoutes: displayTrip.routeIds.isNotEmpty,
-                  ),
-                ),
+              // 悬浮AI按钮
+              FloatingAIButton(
+                isVisible: _showFloatingAIButton,
+                onPressed: _showAIAssistantBottomSheet,
+              ),
             ],
           );
         },
