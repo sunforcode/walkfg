@@ -154,6 +154,10 @@ class TripCoverWidget extends StatelessWidget {
         color = CupertinoColors.systemGrey;
         label = '已取消';
         break;
+      case TripStatus.confirmed:
+        color = CupertinoColors.systemGrey;
+        label = '已确认';
+        break;
     }
 
     return Container(

@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:walk/model/route/route_model.dart';
-import 'package:walk/model/route/waypoint_model.dart';
+import 'package:walk/model/map/marker_point_model.dart';
+import 'package:walk/model/weather/weather_condition.dart';
 import 'package:walk/model/weather/weather_model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -12,12 +13,12 @@ const String heWeatherApiBaseUrl = 'https://n42k5mjnnd.re.qweatherapi.com';
 const String heWeatherApiKey =
     '4b2389c9c5bf47df91dcbb2671bc75c5'; // 替换为您的和风天气API密钥
 
-/// 天气管理器 - 负责获取和管理关键点的天气预报
+/// 天气管理器 - 负责获取和管理标记点的天气预报
 class WeatherManager {
   /// HTTP客户端
   final http.Client _httpClient;
 
-  /// 天气数据缓存 - 使用关键点ID或坐标作为键
+  /// 天气数据缓存 - 使用标记点ID或坐标作为键
   final Map<String, dynamic> _weatherCache = {};
 
   /// 缓存时间戳 - 记录每个天气数据的获取时间
@@ -111,34 +112,34 @@ class WeatherManager {
     return _weatherCache[cacheKey] as WeatherModel?;
   }
 
-  /// 获取关键点的当前天气
+  /// 获取标记点的当前天气
   ///
-  /// [waypoint] 关键点模型
+  /// [markerPoint] 标记点模型
   /// [forceRefresh] 是否强制刷新缓存
-  /// 返回关键点的天气模型
-  Future<WeatherModel?> getWaypointWeather(
-    WaypointModel waypoint, {
+  /// 返回标记点的天气模型
+  Future<WeatherModel?> getMarkerPointWeather(
+    MarkerPointModel markerPoint, {
     bool forceRefresh = false,
   }) async {
     return getWeatherByLocation(
-      latitude: waypoint.latitude,
-      longitude: waypoint.longitude,
+      latitude: markerPoint.latitude,
+      longitude: markerPoint.longitude,
       forceRefresh: forceRefresh,
     );
   }
 
-  /// 获取关键点的天气预报
+  /// 获取标记点的天气预报
   ///
-  /// [waypoint] 关键点模型
+  /// [markerPoint] 标记点模型
   /// [days] 预报天数，默认为3天
   /// [forceRefresh] 是否强制刷新缓存
-  /// 返回关键点的天气预报列表
-  Future<List<WeatherModel>> getWaypointForecast(
-    WaypointModel waypoint, {
+  /// 返回标记点的天气预报列表
+  Future<List<WeatherModel>> getMarkerPointForecast(
+    MarkerPointModel markerPoint, {
     int days = 3,
     bool forceRefresh = false,
   }) async {
-    final cacheKey = '${waypoint.id}_forecast';
+    final cacheKey = '${markerPoint.id}_forecast';
 
     // 检查缓存是否有效
     if (!forceRefresh && _isWeatherCacheValid(cacheKey)) {
@@ -152,7 +153,7 @@ class WeatherManager {
       // 构建和风天气API请求URL
       final uri = Uri.parse('$heWeatherApiBaseUrl/v7/weather/${days}d')
           .replace(queryParameters: {
-        'location': '${waypoint.longitude},${waypoint.latitude}',
+        'location': '${markerPoint.longitude},${markerPoint.latitude}',
         'key': heWeatherApiKey,
         'lang': 'zh',
         'unit': 'm', // 公制单位
@@ -166,9 +167,9 @@ class WeatherManager {
         final data = json.decode(response.body);
         final forecasts = _parseHeWeatherForecastResponse(
           data,
-          waypoint.latitude,
-          waypoint.longitude,
-          waypoint.name,
+          markerPoint.latitude,
+          markerPoint.longitude,
+          markerPoint.name ?? '标记点',
         );
 
         // 更新缓存
@@ -191,24 +192,24 @@ class WeatherManager {
     return [];
   }
 
-  /// 批量获取多个关键点的天气数据
+  /// 批量获取多个标记点的天气数据
   ///
-  /// [waypoints] 关键点列表
+  /// [markerPoints] 标记点列表
   /// [forceRefresh] 是否强制刷新缓存
-  /// 返回关键点ID到天气模型的映射
-  Future<Map<String, WeatherModel>> getMultipleWaypointsWeather(
-    List<WaypointModel> waypoints, {
+  /// 返回标记点ID到天气模型的映射
+  Future<Map<String, WeatherModel>> getMultipleMarkerPointsWeather(
+    List<MarkerPointModel> markerPoints, {
     bool forceRefresh = false,
   }) async {
     final Map<String, WeatherModel> result = {};
     final List<Future<void>> futures = [];
 
-    for (final waypoint in waypoints) {
+    for (final markerPoint in markerPoints) {
       futures.add(
-        getWaypointWeather(waypoint, forceRefresh: forceRefresh)
+        getMarkerPointWeather(markerPoint, forceRefresh: forceRefresh)
             .then((weather) {
           if (weather != null) {
-            result[waypoint.id] = weather;
+            result[markerPoint.id] = weather;
           }
         }),
       );
@@ -218,31 +219,22 @@ class WeatherManager {
     return result;
   }
 
-  /// 获取路线所有关键点的天气数据
+  /// 获取路线所有标记点的天气数据
   ///
   /// [route] 路线模型
   /// [forceRefresh] 是否强制刷新缓存
-  /// 返回包含天气数据的路线模型
-  Future<RouteModel> getRouteWeather(
+  /// 返回标记点ID到天气模型的映射
+  Future<Map<String, WeatherModel>> getRouteWeather(
     RouteModel route, {
     bool forceRefresh = false,
   }) async {
-    final weatherData = await getMultipleWaypointsWeather(
-      route.waypoints,
+    // 获取路线所有标记点的天气数据
+    final weatherData = await getMultipleMarkerPointsWeather(
+      route.markerPoints,
       forceRefresh: forceRefresh,
     );
 
-    // 更新关键点的天气数据
-    final updatedWaypoints = route.waypoints.map((waypoint) {
-      if (weatherData.containsKey(waypoint.id)) {
-        // 创建一个新的关键点，并设置天气数据
-        return waypoint..weather = weatherData[waypoint.id];
-      }
-      return waypoint;
-    }).toList();
-
-    // 返回更新后的路线
-    return route.copyWith(waypoints: updatedWaypoints);
+    return weatherData;
   }
 
   /// 获取当前位置
@@ -312,15 +304,15 @@ class WeatherManager {
     _cacheTimestamps.clear();
   }
 
-  /// 清除特定关键点的缓存
+  /// 清除特定标记点的缓存
   ///
-  /// [waypointId] 关键点ID
-  void clearWaypointCache(String waypointId) {
-    _weatherCache.remove(waypointId);
-    _cacheTimestamps.remove(waypointId);
+  /// [markerPointId] 标记点ID
+  void clearMarkerPointCache(String markerPointId) {
+    _weatherCache.remove(markerPointId);
+    _cacheTimestamps.remove(markerPointId);
 
     // 同时清除预报缓存
-    final forecastKey = '${waypointId}_forecast';
+    final forecastKey = '${markerPointId}_forecast';
     _weatherCache.remove(forecastKey);
     _cacheTimestamps.remove(forecastKey);
   }
@@ -338,7 +330,6 @@ class WeatherManager {
 
       // 获取实时天气数据
       final now = data['now'];
-      debugPrint('和风天气API返回数据格式错误: 缺少now字段${data}');
       if (now == null) {
         debugPrint('和风天气API返回数据格式错误: 缺少now字段${data}');
         return null;
@@ -350,7 +341,7 @@ class WeatherManager {
 
       // 解析天气状况
       String weatherText = now['text'] ?? '';
-      String temp = now['temp'];
+      String temp = now['temp'] ?? '0';
       String windSpeed = now['windSpeed'] ?? '0';
       String humidity = now['humidity'] ?? '0';
 
@@ -359,11 +350,11 @@ class WeatherManager {
 
       return WeatherModel(
         city: cityName,
-        condition: weatherText,
+        condition: WeatherCondition.cloudy,
         suitability: isSuitable,
-        temperature: double.parse(temp),
-        windLevel: double.parse(windSpeed),
-        humidity: double.parse(humidity),
+        temperature: double.tryParse(temp) ?? 0.0,
+        windLevel: double.tryParse(windSpeed) ?? 0.0,
+        humidity: double.tryParse(humidity) ?? 0.0,
       );
     } catch (e) {
       debugPrint('解析和风天气API响应失败: $e');
@@ -422,11 +413,11 @@ class WeatherManager {
 
           forecasts.add(WeatherModel(
             city: cityName,
-            condition: weatherText,
+            condition: WeatherCondition.cloudy,
             suitability: isSuitable,
             temperature: avgTemp,
-            windLevel: windSpeed,
-            humidity: humidity,
+            windLevel: double.tryParse(windSpeed) ?? 0.0,
+            humidity: double.tryParse(humidity) ?? 0.0,
             forecastDate: date,
             maxTemperature: tempMax,
             minTemperature: tempMin,

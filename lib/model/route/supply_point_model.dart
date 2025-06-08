@@ -1,78 +1,77 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../base/base_model.dart';
+import '../map/track_point_model.dart';
 
 part 'supply_point_model.g.dart';
 
-/// 补给点模型
+/// 补给点类型枚举
+enum SupplyPointType {
+  /// 综合商店
+  store,
+
+  /// 小卖部
+  shop,
+
+  /// 餐厅
+  restaurant,
+
+  /// 住宿
+  accommodation,
+
+  /// 加油站
+  gasStation,
+
+  /// 医疗点
+  medical,
+
+  /// 其他
+  other,
+}
+
+/// 补给点模型 - 继承TrackPointVO并扩展补给点特有信息
 @JsonSerializable()
-class SupplyPointModel extends BaseModel {
+class SupplyPointModel extends TrackPointVO {
+  /// 唯一标识
+  final String id;
+
   /// 补给点名称
-  final String name;
+  final String? name;
 
-  /// 距离起点的距离(km)
-  final double distance;
+  /// 补给点描述
+  final String? description;
 
-  /// 位置描述
-  final String location;
+  /// 创建时间
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
 
-  /// 补给点类型（综合商店/小卖部/餐厅/住宿）
-  final String type;
+  /// 更新时间
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
 
-  /// 营业状态（营业/停业/季节性营业）
-  final String status;
+  /// 补给点类型
+  @JsonKey(
+      name: 'supply_type',
+      fromJson: _parseSupplyType,
+      toJson: _supplyTypeToJson)
+  final SupplyPointType supplyType;
 
-  /// 营业时间
-  final String hours;
-
-  /// 可购买物品列表
-  final List<String> items;
-
-  /// 备注信息
-  final String notes;
-
-  /// 价格水平（便宜/适中/较高/昂贵）
-  final String? priceLevel;
-
-  /// 支付方式（现金/刷卡/移动支付）
-  final List<String>? paymentMethods;
-
-  /// 联系电话
-  final String? phone;
-
-  /// 海拔高度
-  final int? elevation;
-
-  /// 经纬度
-  final double? latitude;
-  final double? longitude;
-
-  /// 是否提供住宿
-  final bool? hasAccommodation;
-
-  /// 是否提供热食
-  final bool? hasHotFood;
+  /// 更新者ID
+  @JsonKey(name: 'updated_by')
+  final String? updatedBy;
 
   /// 构造函数
   SupplyPointModel({
-    required super.id,
-    super.createdAt,
-    super.updatedAt,
-    required this.name,
-    required this.distance,
-    required this.location,
-    required this.type,
-    required this.status,
-    required this.hours,
-    required this.items,
-    required this.notes,
-    this.priceLevel,
-    this.paymentMethods,
-    this.phone,
-    this.elevation,
-    this.latitude,
-    this.longitude,
-    this.hasAccommodation,
-    this.hasHotFood,
+    required this.id,
+    required super.latitude,
+    required super.longitude,
+    required super.elevation,
+    super.timestamp,
+    super.distanceFromStart,
+    this.name,
+    this.description,
+    this.createdAt,
+    this.updatedAt,
+    this.supplyType = SupplyPointType.other,
+    this.updatedBy,
   });
 
   /// 从JSON创建
@@ -83,98 +82,98 @@ class SupplyPointModel extends BaseModel {
   @override
   Map<String, dynamic> toJson() => _$SupplyPointModelToJson(this);
 
-  /// 简单构造函数（兼容原有的Map数据）
-  factory SupplyPointModel.fromMap(Map<String, dynamic> map) {
+  /// 创建副本并更新指定字段
+  SupplyPointModel copyWith({
+    String? id,
+    double? latitude,
+    double? longitude,
+    double? elevation,
+    DateTime? timestamp,
+    double? distanceFromStart,
+    String? name,
+    String? description,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    SupplyPointType? supplyType,
+    String? updatedBy,
+  }) {
     return SupplyPointModel(
-      id: 'supply_${DateTime.now().millisecondsSinceEpoch}',
-      name: map['name'] ?? '',
-      distance: (map['distance'] ?? 0.0).toDouble(),
-      location: map['location'] ?? '',
-      type: map['type'] ?? '',
-      status: map['status'] ?? '',
-      hours: map['hours'] ?? '',
-      items: List<String>.from(map['items'] ?? []),
-      notes: map['notes'] ?? '',
-      priceLevel: map['priceLevel'],
-      paymentMethods: map['paymentMethods'] != null 
-          ? List<String>.from(map['paymentMethods'])
-          : null,
-      phone: map['phone'],
-      elevation: map['elevation'],
-      latitude: map['latitude'],
-      longitude: map['longitude'],
-      hasAccommodation: map['hasAccommodation'],
-      hasHotFood: map['hasHotFood'],
+      id: id ?? this.id,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      elevation: elevation ?? this.elevation,
+      timestamp: timestamp ?? this.timestamp,
+      distanceFromStart: distanceFromStart ?? this.distanceFromStart,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      supplyType: supplyType ?? this.supplyType,
+      updatedBy: updatedBy ?? this.updatedBy,
     );
   }
 
-  /// 获取状态颜色
-  String get statusColor {
-    switch (status) {
-      case '营业':
-        return '#4CAF50'; // 绿色
-      case '季节性营业':
-        return '#FF9800'; // 橙色
-      case '停业':
-        return '#F44336'; // 红色
-      default:
-        return '#9E9E9E'; // 灰色
+  // ========== 便捷访问方法 ==========
+
+  /// 获取类型显示文本
+  String get typeText {
+    switch (supplyType) {
+      case SupplyPointType.store:
+        return '综合商店';
+      case SupplyPointType.shop:
+        return '小卖部';
+      case SupplyPointType.restaurant:
+        return '餐厅';
+      case SupplyPointType.accommodation:
+        return '住宿';
+      case SupplyPointType.gasStation:
+        return '加油站';
+      case SupplyPointType.medical:
+        return '医疗点';
+      case SupplyPointType.other:
+        return '其他';
     }
   }
 
   /// 获取类型图标
   String get typeIcon {
-    switch (type) {
-      case '综合商店':
+    switch (supplyType) {
+      case SupplyPointType.store:
         return '🏪';
-      case '小卖部':
+      case SupplyPointType.shop:
         return '🏬';
-      case '餐厅':
+      case SupplyPointType.restaurant:
         return '🍽️';
-      case '住宿':
+      case SupplyPointType.accommodation:
         return '🏨';
-      default:
-        return '🏪';
+      case SupplyPointType.gasStation:
+        return '⛽';
+      case SupplyPointType.medical:
+        return '🏥';
+      case SupplyPointType.other:
+        return '📍';
     }
   }
 
-  /// 是否正在营业
-  bool get isOpen => status == '营业';
-
-  /// 获取距离显示文本
-  String get distanceText {
-    if (distance == 0) {
-      return '起点';
-    } else if (distance < 1) {
-      return '${(distance * 1000).toInt()}m';
-    } else {
-      return '${distance.toStringAsFixed(1)}km';
-    }
+  @override
+  String toString() {
+    return 'SupplyPointModel(id: $id, name: $name, type: $typeText, location: $latitude, $longitude)';
   }
+}
 
-  /// 获取物品显示文本
-  String get itemsText {
-    if (items.isEmpty) return '暂无商品信息';
-    if (items.length <= 3) {
-      return items.join('、');
-    } else {
-      return '${items.take(3).join('、')}等${items.length}种商品';
-    }
+/// 解析补给点类型
+SupplyPointType _parseSupplyType(dynamic value) {
+  if (value == null) return SupplyPointType.other;
+  if (value is String) {
+    return SupplyPointType.values.firstWhere(
+      (type) => type.name == value,
+      orElse: () => SupplyPointType.other,
+    );
   }
+  return SupplyPointType.other;
+}
 
-  /// 获取价格水平显示
-  String get priceLevelText {
-    switch (priceLevel) {
-      case '便宜':
-        return '💰';
-      case '适中':
-        return '💰💰';
-      case '较高':
-        return '💰💰💰';
-      case '昂贵':
-        return '💰💰💰💰';
-      default:
-        return '价格未知';
-    }
-  }
+/// 补给点类型转JSON
+String _supplyTypeToJson(SupplyPointType type) {
+  return type.name;
 }

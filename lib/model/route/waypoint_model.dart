@@ -1,9 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../weather/weather_model.dart';
 
 part 'waypoint_model.g.dart';
 
-/// 路线关键点模型
+/// 路标点模型
 @JsonSerializable()
 class WaypointModel {
   /// ID
@@ -13,7 +12,7 @@ class WaypointModel {
   final String name;
 
   /// 描述
-  final String description;
+  final String? description;
 
   /// 纬度
   final double latitude;
@@ -21,15 +20,11 @@ class WaypointModel {
   /// 经度
   final double longitude;
 
-  /// 海拔
-  final double? elevation;
+  /// 海拔高度（米）
+  final double elevation;
 
-  /// 类型
+  /// 类型（start, end, attraction, rest, peak等）
   final String type;
-
-  /// 天气数据
-  @JsonKey(ignore: true)
-  WeatherModel? weather;
 
   /// 图标URL
   @JsonKey(name: 'icon_url')
@@ -47,12 +42,11 @@ class WaypointModel {
   WaypointModel({
     required this.id,
     required this.name,
-    required this.description,
+    this.description,
     required this.latitude,
     required this.longitude,
-    this.elevation,
+    required this.elevation,
     required this.type,
-    this.weather,
     this.iconUrl,
     this.imageUrl,
     required this.sequenceNumber,
@@ -64,8 +58,64 @@ class WaypointModel {
 
   /// 转换为JSON
   Map<String, dynamic> toJson() => _$WaypointModelToJson(this);
-  
-  /// 创建副本并更新部分属性
+
+  /// 获取类型显示名称
+  String get typeDisplayName {
+    switch (type) {
+      case 'start':
+        return '起点';
+      case 'end':
+        return '终点';
+      case 'attraction':
+        return '景点';
+      case 'rest':
+        return '休息点';
+      case 'peak':
+        return '山峰';
+      case 'viewpoint':
+        return '观景点';
+      case 'danger':
+        return '危险点';
+      case 'supply':
+        return '补给点';
+      default:
+        return '路标点';
+    }
+  }
+
+  /// 获取类型图标
+  String get typeIcon {
+    switch (type) {
+      case 'start':
+        return '🚩';
+      case 'end':
+        return '🏁';
+      case 'attraction':
+        return '🏛️';
+      case 'rest':
+        return '🛑';
+      case 'peak':
+        return '⛰️';
+      case 'viewpoint':
+        return '👁️';
+      case 'danger':
+        return '⚠️';
+      case 'supply':
+        return '🏪';
+      default:
+        return '📍';
+    }
+  }
+
+  /// 是否为重要路标点
+  bool get isImportant {
+    return type == 'start' ||
+        type == 'end' ||
+        type == 'peak' ||
+        type == 'danger';
+  }
+
+  /// 创建副本
   WaypointModel copyWith({
     String? id,
     String? name,
@@ -74,7 +124,6 @@ class WaypointModel {
     double? longitude,
     double? elevation,
     String? type,
-    WeatherModel? weather,
     String? iconUrl,
     String? imageUrl,
     int? sequenceNumber,
@@ -87,10 +136,14 @@ class WaypointModel {
       longitude: longitude ?? this.longitude,
       elevation: elevation ?? this.elevation,
       type: type ?? this.type,
-      weather: weather ?? this.weather,
       iconUrl: iconUrl ?? this.iconUrl,
       imageUrl: imageUrl ?? this.imageUrl,
       sequenceNumber: sequenceNumber ?? this.sequenceNumber,
     );
+  }
+
+  @override
+  String toString() {
+    return 'WaypointModel(id: $id, name: $name, type: $type, sequence: $sequenceNumber)';
   }
 }

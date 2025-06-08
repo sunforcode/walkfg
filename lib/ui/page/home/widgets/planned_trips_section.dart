@@ -190,6 +190,8 @@ class PlannedTripsSection extends StatelessWidget {
         return CupertinoColors.activeOrange;
       case TripStatus.cancelled:
         return CupertinoColors.systemGrey;
+      case TripStatus.confirmed:
+        return CupertinoColors.systemGrey;
     }
   }
 
@@ -207,7 +209,7 @@ class PlannedTripsSection extends StatelessWidget {
     Navigator.of(context, rootNavigator: true).push(
       CupertinoPageRoute(
         builder: (context) => TripDetailScreen(
-          tripId: trip.id,
+          tripModel: trip,
         ),
       ),
     );

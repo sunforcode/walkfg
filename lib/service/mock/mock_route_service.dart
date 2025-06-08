@@ -83,14 +83,8 @@ class MockRouteService implements RouteService {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 400));
 
-    // 获取路线详情
-    final routeDetail = await getRouteDetail(routeId);
-
     // 返回途经点
-    return {
-      'route_id': routeId,
-      'waypoints': routeDetail.waypoints.map((w) => w.toJson()).toList(),
-    };
+    return {'route_id': routeId};
   }
 
   @override
@@ -676,5 +670,26 @@ class MockRouteService implements RouteService {
   Future<List<RouteModel>> getWeekendRoutes({int limit = 10}) {
     // TODO: implement getWeekendRoutes
     throw UnimplementedError();
+  }
+
+  @override
+  Future<List<RouteModel>> getRelatedRoutes(String routeId,
+      {int limit = 5}) async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    // 获取当前路线信息
+    final currentRoute = await getRouteById(routeId);
+
+    // 加载所有路线数据
+    final routesJson = await _loadJsonData('assets/mock_data/routes.json');
+    if (routesJson == null || !(routesJson is List)) {
+      return [];
+    }
+
+    List<RouteModel> allRoutes = routesJson
+        .map<RouteModel>((json) => RouteModel.fromJson(json))
+        .toList();
+    return allRoutes;
   }
 }

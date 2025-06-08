@@ -8,12 +8,16 @@ part 'track_model.g.dart';
 enum TrackType {
   /// 推荐轨迹
   recommended,
+
   /// 挑战轨迹
   challenge,
+
   /// 季节性轨迹
   seasonal,
+
   /// 快速轨迹
   fast,
+
   /// 备选轨迹
   alternative,
 }
@@ -81,9 +85,6 @@ class TrackModel {
   @JsonKey(name: 'track_points')
   final List<TrackPointVO> trackPoints;
 
-  /// 路标点列表
-  final List<TrackPointVO> waypoints;
-
   /// GPX文件URL
   @JsonKey(name: 'gpx_url')
   final String? gpxUrl;
@@ -104,7 +105,7 @@ class TrackModel {
   @JsonKey(name: 'created_by')
   final String createdBy;
 
-  /// 是否验证
+  /// 是否已验证
   @JsonKey(name: 'is_verified')
   final bool isVerified;
 
@@ -136,7 +137,6 @@ class TrackModel {
     this.minElevation,
     this.estimatedTime = 8.0,
     this.trackPoints = const [],
-    this.waypoints = const [],
     this.gpxUrl,
     this.kmlUrl,
     required this.createdAt,
@@ -205,9 +205,6 @@ class TrackModel {
   /// 是否有轨迹数据
   bool get hasTrackData => trackPoints.isNotEmpty;
 
-  /// 是否有路标数据
-  bool get hasWaypointData => waypoints.isNotEmpty;
-
   /// 是否有GPS文件
   bool get hasGpsFile => gpxUrl != null || kmlUrl != null;
 
@@ -257,7 +254,6 @@ class TrackModel {
       minElevation: minElevation ?? this.minElevation,
       estimatedTime: estimatedTime ?? this.estimatedTime,
       trackPoints: trackPoints ?? this.trackPoints,
-      waypoints: waypoints ?? this.waypoints,
       gpxUrl: gpxUrl ?? this.gpxUrl,
       kmlUrl: kmlUrl ?? this.kmlUrl,
       createdAt: createdAt ?? this.createdAt,
@@ -332,5 +328,21 @@ class TrackModel {
 
   static int _trackTypeToJson(TrackType trackType) {
     return trackType.index;
+  }
+
+  /// 获取起点名称
+  String get startPoint {
+    if (trackPoints.isNotEmpty) {
+      return '起点';
+    }
+    return '起点待确定';
+  }
+
+  /// 获取终点名称
+  String get endPoint {
+    if (trackPoints.isNotEmpty) {
+      return '终点';
+    }
+    return '终点待确定';
   }
 }

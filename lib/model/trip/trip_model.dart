@@ -21,6 +21,7 @@ enum TripStatus {
 
   /// 已取消
   cancelled,
+  confirmed,
 }
 
 /// 行程模型 - 具体行程的规划和执行实体
@@ -190,6 +191,8 @@ class TripModel extends BaseModel {
         return '已完成';
       case TripStatus.cancelled:
         return '已取消';
+      case TripStatus.confirmed:
+        return '已确认';
     }
   }
 

@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
-import '../../../../model/guide/guide_model.dart';
-import '../../guide/guide_detail_screen.dart';
-import '../../../../theme/theme/app_colors.dart';
-import '../../common/loading_indicator.dart';
-import '../../common/error_widget.dart';
-import '../../common/empty_content_widget.dart';
-import '../../common/section_header.dart';
-import '../../guide/cards/guide_card.dart';
+import 'package:walk/model/guide/guide_model.dart';
+import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/ui/page/common/empty_content_widget.dart';
+import 'package:walk/ui/page/common/error_widget.dart';
+import 'package:walk/ui/page/common/loading_indicator.dart';
+import 'package:walk/ui/page/common/section_header.dart';
+import 'package:walk/ui/page/guide/cards/guide_card.dart';
+import 'package:walk/ui/page/guide/guide_detail_screen.dart';
+import 'package:walk/utils/toast_utils.dart';
 
 /// 徒步攻略部分组件
 class HikingGuidesSection extends StatelessWidget {
@@ -100,29 +101,13 @@ class HikingGuidesSection extends StatelessWidget {
   void _handleGuideLike(BuildContext context, String guideId, bool isLiked) {
     // 这里可以添加点赞逻辑，例如调用API
     final message = isLiked ? '已添加到收藏' : '已取消收藏';
-    _showToast(context, message);
-  }
-
-  /// 显示提示信息
-  void _showToast(BuildContext context, String message) {
-    showCupertinoDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        Future.delayed(const Duration(seconds: 1), () {
-          Navigator.of(context, rootNavigator: true).pop();
-        });
-        return CupertinoAlertDialog(
-          content: Text(message),
-        );
-      },
-    );
+    ToastUtils.showToast(context, message);
   }
 
   /// 导航到所有攻略页面
   void _navigateToAllGuides(BuildContext context) {
     // TODO: 实现导航到攻略列表页面
-    _showToast(context, '攻略列表页面尚未实现');
+    ToastUtils.showToast(context, '攻略列表页面尚未实现');
     // Navigator.of(context, rootNavigator: true).push(
     //   CupertinoPageRoute(
     //     builder: (context) => const GuideListScreen(),

@@ -69,12 +69,9 @@ class MockTrackFormatService implements TrackFormatService {
 
               if (longitude != null && latitude != null) {
                 points.add(TrackPointVO(
-                  latitude: latitude,
-                  longitude: longitude,
-                  elevation: elevation,
-                  name: name,
-                  description: description,
-                ));
+                    latitude: latitude,
+                    longitude: longitude,
+                    elevation: elevation));
               }
             }
           }
@@ -226,9 +223,6 @@ class MockTrackFormatService implements TrackFormatService {
         gpx.writeln(
             '        <time>${point.timestamp!.toIso8601String()}</time>');
       }
-      if (point.name != null) {
-        gpx.writeln('        <name>${point.name}</name>');
-      }
       gpx.writeln('      </trkpt>');
     }
 
@@ -262,17 +256,6 @@ class MockTrackFormatService implements TrackFormatService {
     kml.writeln('    <Placemark>');
     kml.writeln('      <name>$name</name>');
     kml.writeln('      <styleUrl>#track</styleUrl>');
-
-    // 途经点
-    for (final point in trackPoints.where((p) => p.name != null)) {
-      kml.writeln('    <Placemark>');
-      kml.writeln('      <name>${point.name}</name>');
-      kml.writeln('      <Point>');
-      kml.writeln(
-          '        <coordinates>${point.longitude},${point.latitude},${point.elevation}</coordinates>');
-      kml.writeln('      </Point>');
-      kml.writeln('    </Placemark>');
-    }
 
     // KML尾部
     kml.writeln('  </Document>');
@@ -315,23 +298,6 @@ class MockTrackFormatService implements TrackFormatService {
     geojson.writeln('        ]');
     geojson.writeln('      }');
     geojson.writeln('    }');
-
-    // 途经点
-    final waypointList = trackPoints.where((p) => p.name != null).toList();
-    for (int i = 0; i < waypointList.length; i++) {
-      final point = waypointList[i];
-      geojson.writeln('    ,{');
-      geojson.writeln('      "type": "Feature",');
-      geojson.writeln('      "properties": {');
-      geojson.writeln('        "name": "${point.name}"');
-      geojson.writeln('      },');
-      geojson.writeln('      "geometry": {');
-      geojson.writeln('        "type": "Point",');
-      geojson.writeln(
-          '        "coordinates": [${point.longitude}, ${point.latitude}, ${point.elevation}]');
-      geojson.writeln('      }');
-      geojson.writeln('    }');
-    }
 
     geojson.writeln('  ]');
     geojson.writeln('}');

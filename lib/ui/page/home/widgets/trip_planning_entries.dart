@@ -159,7 +159,8 @@ class TripPlanningEntries extends StatelessWidget {
       Navigator.of(context).push(
         CupertinoPageRoute(
           builder: (context) => TripDetailScreen(
-            routeId: route.first.regionId,
+            routeId: route.first.id,
+            isReadOnly: true,
           ),
         ),
       );

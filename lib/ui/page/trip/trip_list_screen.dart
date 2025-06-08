@@ -230,6 +230,9 @@ class _TripListScreenState extends State<TripListScreen> {
         color = CupertinoColors.systemGrey;
         label = '已取消';
         break;
+      case TripStatus.confirmed:
+        color = CupertinoColors.systemGrey;
+        label = '已确认';
     }
 
     return Container(
@@ -255,7 +258,7 @@ class _TripListScreenState extends State<TripListScreen> {
     Navigator.of(context).push(
       CupertinoPageRoute(
         builder: (context) => TripDetailScreen(
-          tripId: trip.id,
+          tripModel: trip,
         ),
       ),
     );

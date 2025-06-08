@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/ui/map/core/map_enum.dart';
-import 'package:walk/ui/map/unified_map_widget.dart';
+import 'package:walk/ui/map/widgets/simple_map_widget.dart';
 import 'package:walk/theme/theme/app_colors.dart';
 
 /// 地图头部部分
@@ -45,17 +45,25 @@ class MapHeaderSection extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          UnifiedMapWidget(
-            route: route,
+          SimpleMapWidget(
             trackPoints: trackPoints,
-            height: MediaQuery.of(context).size.height * 0.25,
-            showCurrentLocation: false,
-            showMapTypeToolbar: true,
-            mapType: mapType,
-            mapProvider: mapProvider,
-            onMapTypeChanged: onMapTypeChanged,
-            onMapProviderChanged: onMapProviderChanged,
+            config: SimpleMapConfig(
+              height: MediaQuery.of(context).size.height * 0.25,
+              mapType: mapType,
+              mapProvider: mapProvider,
+              showTrack: true,
+              showStartEnd: true,
+              showPointsOfInterest: true,
+              showCurrentLocation: false,
+            ),
+            events: SimpleMapEvents(
+              onMapTap: (position) {
+                // 可以添加地图点击处理逻辑
+                print('地图点击: $position');
+              },
+            ),
           ),
+
           // 路线信息悬浮卡片
           Positioned(
             bottom: 16,

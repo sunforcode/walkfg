@@ -98,4 +98,7 @@ abstract class RouteService {
 
   /// 删除路线
   Future<bool> deleteRoute(String routeId);
+
+  /// 获取相关路线
+  Future<List<RouteModel>> getRelatedRoutes(String routeId, {int limit = 5});
 }

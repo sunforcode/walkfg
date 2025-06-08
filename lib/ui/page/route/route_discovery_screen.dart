@@ -5,7 +5,7 @@ import '../../../model/route/route_model.dart';
 import '../../../service/service_manager.dart';
 import '../common/error_widget.dart';
 import '../common/empty_content_widget.dart';
-import 'route_detail_screen.dart';
+import 'detail/route_detail_screen.dart';
 
 /// 路线发现页面
 class RouteDiscoveryScreen extends StatefulWidget {

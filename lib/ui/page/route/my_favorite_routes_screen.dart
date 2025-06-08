@@ -5,7 +5,7 @@ import '../../../service/service_manager.dart';
 import '../common/loading_indicator.dart';
 import '../common/error_widget.dart';
 import '../common/empty_content_widget.dart';
-import 'route_detail_screen.dart';
+import 'detail/route_detail_screen.dart';
 
 /// 我的收藏路线页面
 class MyFavoriteRoutesScreen extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import '../../../../model/route/route_model.dart';
 import '../../route/route_discovery_screen.dart';
-import '../../route/route_detail_screen.dart';
+import '../../route/detail/route_detail_screen.dart';
 import '../../common/section_header.dart';
 import '../../common/loading_indicator.dart';
 import '../../common/error_widget.dart';

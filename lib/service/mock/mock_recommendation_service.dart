@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../recommendation_service.dart';
 import '../../model/route/route_model.dart';
 import '../../model/search/hot_search_model.dart';
-import '../../model/routes/recommended_route_model.dart';
+import '../../model/route/recommended_route_model.dart';
 
 /// Mock推荐服务实现
 class MockRecommendationService implements RecommendationService {
@@ -134,34 +134,10 @@ class MockRecommendationService implements RecommendationService {
       return [];
     }
 
-    // 获取参考路线
-    RouteModel? referenceRoute;
-    try {
-      final referenceJson =
-          routesJson.firstWhere((route) => route['id'] == routeId);
-      referenceRoute = RouteModel.fromJson(referenceJson);
-    } catch (e) {
-      return [];
-    }
-
     List<RouteModel> routes = routesJson
         .where((json) => json['id'] != routeId) // 排除参考路线自身
         .map<RouteModel>((json) => RouteModel.fromJson(json))
         .toList();
     return routes;
-  }
-
-  /// 获取当前季节
-  String _getCurrentSeason() {
-    final now = DateTime.now();
-    if (now.month >= 3 && now.month <= 5) {
-      return '春';
-    } else if (now.month >= 6 && now.month <= 8) {
-      return '夏';
-    } else if (now.month >= 9 && now.month <= 11) {
-      return '秋';
-    } else {
-      return '冬';
-    }
   }
 }

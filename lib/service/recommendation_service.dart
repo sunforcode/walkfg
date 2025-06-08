@@ -1,6 +1,6 @@
 import '../model/route/route_model.dart';
 import '../model/search/hot_search_model.dart';
-import '../model/routes/recommended_route_model.dart';
+import '../model/route/recommended_route_model.dart';
 
 /// 推荐服务接口
 ///

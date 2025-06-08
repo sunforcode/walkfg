@@ -8,8 +8,8 @@
     "start_date": "2023-07-01T00:00:00.000Z",
     "end_date": "2023-07-03T00:00:00.000Z",
     "status": 0,
-    "route_ids": ["route001"],
-    "primary_route_id": "route001",
+    "route_ids": ["route_001"],
+    "primary_route_id": "route_001",
     "participants": [
       {
         "id": "user001",
@@ -279,20 +279,6 @@
           "temperature": 28.5,
           "activity_intensity": "high",
           "available_sources": [
-            {
-              "id": "ws001",
-              "name": "山涧溪流",
-              "description": "位于营地西北方向500米处的小溪流，水质清澈",
-              "type": "stream",
-              "location": "营地西北方向500米",
-              "distance_from_trail": 50.0,
-              "quality": "excellent",
-              "reliability": 4,
-              "estimated_volume": 5000,
-              "needs_treatment": true,
-              "created_at": "2023-05-01T08:00:00.000Z",
-              "updated_at": "2023-05-01T08:00:00.000Z"
-            }
           ]
         }
       ],
@@ -304,10 +290,15 @@
           "type": "stream",
           "location": "营地西北方向500米",
           "distance_from_trail": 50.0,
+          "distance_from_start":1,
           "quality": "excellent",
           "reliability": 4,
+          "latitude": 30.1234,
+          "longitude": 118.1567,
+          "elevation": 630.0,
           "estimated_volume": 5000,
           "needs_treatment": true,
+          
           "created_at": "2023-05-01T08:00:00.000Z",
           "updated_at": "2023-05-01T08:00:00.000Z"
         }
@@ -324,12 +315,15 @@
         "description": "从黄山北门进入景区，经过云谷寺，登上始信峰，欣赏奇松怪石，傍晚抵达白鹅岭住宿。",
         "distance": 8.5,
         "duration": "6:00",
+        "estimated_time": 6.0,
         "elevation_gain": 800,
         "elevation_loss": 200.0,
         "start_waypoint_id": "waypoint_001",
         "end_waypoint_id": "waypoint_002",
-        "segment_ids": [],
-        "accommodation": "白鹅岭山庄"
+        "segment_ids": ["seg_001", "seg_002"],
+        "accommodation": "白鹅岭山庄",
+        "key_points": ["黄山北门", "云谷寺", "始信峰", "白鹅岭"],
+        "points_of_interest": []
       },
       {
         "id": "daily_plan_002",
@@ -338,12 +332,15 @@
         "description": "早起观赏日出，登顶光明顶，游览西海大峡谷，傍晚返回白鹅岭住宿。",
         "distance": 10.2,
         "duration": "7:00",
+        "estimated_time": 7.0,
         "elevation_gain": 600,
         "elevation_loss": 300.0,
         "start_waypoint_id": "waypoint_002",
         "end_waypoint_id": "waypoint_003",
-        "segment_ids": [],
-        "accommodation": "白鹅岭山庄"
+        "segment_ids": ["seg_003", "seg_004"],
+        "accommodation": "白鹅岭山庄",
+        "key_points": ["白鹅岭", "光明顶", "西海大峡谷"],
+        "points_of_interest": []
       },
       {
         "id": "daily_plan_003",
@@ -352,12 +349,15 @@
         "description": "游览莲花峰，经过百步云梯，抵达排云亭结束行程。",
         "distance": 6.8,
         "duration": "5:00",
+        "estimated_time": 5.0,
         "elevation_gain": 400,
         "elevation_loss": 600.0,
         "start_waypoint_id": "waypoint_003",
         "end_waypoint_id": "waypoint_004",
-        "segment_ids": [],
-        "accommodation": "下山"
+        "segment_ids": ["seg_005"],
+        "accommodation": "下山",
+        "key_points": ["白鹅岭", "莲花峰", "百步云梯", "排云亭"],
+        "points_of_interest": []
       }
     ],
     "cover_url": "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",

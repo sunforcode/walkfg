@@ -6,6 +6,7 @@ import '../../../model/user/user_model.dart';
 import '../../page/home/widgets/stats_card.dart';
 import 'login_screen.dart';
 import 'auth/register_screen.dart';
+import 'package:walk/utils/toast_utils.dart';
 
 /// 个人页面
 class ProfileScreen extends StatefulWidget {
@@ -73,19 +74,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   /// 导航到已完成路线页面
   void _navigateToCompletedRoutes() {
     // TODO: 实现导航到已完成路线页面
-    _showToast('导航到已完成路线页面');
+    ToastUtils.showToast(context, '导航到已完成路线页面');
   }
 
   /// 导航到装备列表页面
   void _navigateToEquipmentList() {
     // TODO: 实现导航到装备列表页面
-    _showToast('导航到装备列表页面');
+    ToastUtils.showToast(context, '导航到装备列表页面');
   }
 
   /// 导航到收藏路线页面
   void _navigateToFavoriteRoutes() {
     // TODO: 实现导航到收藏路线页面
-    _showToast('导航到收藏路线页面');
+    ToastUtils.showToast(context, '导航到收藏路线页面');
   }
 
   /// 刷新用户统计数据
@@ -95,24 +96,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
 
     // 显示刷新提示
-    _showToast('统计数据已更新');
+    ToastUtils.showToast(context, '统计数据已更新');
   }
 
   /// 显示提示信息
-  void _showToast(String message) {
-    showCupertinoDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        Future.delayed(const Duration(seconds: 1), () {
-          Navigator.of(context, rootNavigator: true).pop();
-        });
-        return CupertinoAlertDialog(
-          content: Text(message),
-        );
-      },
-    );
-  }
 
   /// 导航到登录页面
   void _navigateToLogin() {
@@ -179,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _user = null;
                   _isLoggedIn = false;
                 });
-                _showToast('已退出登录');
+                ToastUtils.showToast(context, '已退出登录');
               },
             ),
           ],

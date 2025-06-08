@@ -83,26 +83,6 @@ class WaterPlanModel extends BaseModel {
     return totalWaterNeed ~/ (personCount * tripDays);
   }
 
-  /// 获取需要携带的水量(ml)
-  int getWaterToCarry({double safetyMargin = 1.2}) {
-    // 简化计算：总需求 × 安全系数 - 可靠水源提供量
-    int reliableSourceWater = waterSources
-        .where((source) => source.reliability >= 4)
-        .fold(0, (sum, source) => sum + source.estimatedVolume);
-
-    return ((totalWaterNeed * safetyMargin) - reliableSourceWater).toInt();
-  }
-
-  /// 获取可靠水源
-  List<WaterSourceModel> getReliableSources() {
-    return waterSources.where((source) => source.reliability >= 4).toList();
-  }
-
-  /// 获取需要处理的水源
-  List<WaterSourceModel> getSourcesNeedingTreatment() {
-    return waterSources.where((source) => source.needsTreatment).toList();
-  }
-
   /// 创建副本并更新指定字段
   WaterPlanModel copyWith({
     String? id,

@@ -85,4 +85,7 @@ abstract class TripService {
       throw Exception('获取行程列表失败: $e');
     }
   }
+
+  /// 获取相关行程
+  Future<List<TripModel>> getRelatedTrips(String routeId, {int limit = 5});
 }

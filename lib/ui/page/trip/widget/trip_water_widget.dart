@@ -3,7 +3,6 @@ import 'package:flutter/material.dart' show Divider;
 import 'package:walk/model/water/water_plan_model.dart';
 import 'package:walk/model/water/water_source_model.dart';
 import 'package:walk/model/water/day_water_plan_model.dart';
-import 'package:walk/model/water/water_types.dart';
 
 class TripWaterWidget extends StatefulWidget {
   final WaterPlanModel? waterPlan;
@@ -75,8 +74,9 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
     final waterPlan = widget.waterPlan!;
 
     // 计算需要处理的水源数量
-    final needTreatmentCount =
-        waterPlan.waterSources.where((source) => source.needsTreatment).length;
+    final needTreatmentCount = waterPlan.waterSources
+        .where((source) => source.requiresTreatment)
+        .length;
 
     return GestureDetector(
       onTap: () {
@@ -453,9 +453,11 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
               color: CupertinoColors.activeBlue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              _getWaterSourceIcon(source.getSourceType()),
-              color: CupertinoColors.activeBlue,
+            child: Center(
+              child: Text(
+                source.waterTypeIcon,
+                style: const TextStyle(fontSize: 20),
+              ),
             ),
           ),
 
@@ -467,31 +469,69 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  source.name,
+                  source.name ?? '未命名水源',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  '${source.getSourceTypeText()} · ${source.getQualityText()} · ${_formatVolume(source.estimatedVolume)}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: CupertinoColors.systemGrey,
-                  ),
+
+                // 水源类型和水质
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.systemBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        source.waterTypeText,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: CupertinoColors.systemBlue,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.systemTeal.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        source.waterQualityText,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: CupertinoColors.systemTeal,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                if (source.description.isNotEmpty) ...[
-                  const SizedBox(height: 4),
+
+                const SizedBox(height: 4),
+
+                // 描述信息
+                if (source.description != null &&
+                    source.description!.isNotEmpty) ...[
                   Text(
-                    source.description,
+                    source.description!,
                     style: const TextStyle(
                       fontSize: 12,
                       color: CupertinoColors.systemGrey,
                     ),
                   ),
+                  const SizedBox(height: 4),
                 ],
-                const SizedBox(height: 4),
+
+                // 位置信息
                 Row(
                   children: [
                     Icon(
@@ -501,46 +541,102 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      source.location,
+                      '${source.latitude.toStringAsFixed(4)}, ${source.longitude.toStringAsFixed(4)}',
                       style: const TextStyle(
                         fontSize: 12,
                         color: CupertinoColors.systemGrey,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Icon(
-                      CupertinoIcons.arrow_right_arrow_left,
-                      size: 12,
-                      color: CupertinoColors.systemGrey,
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      '距路线${source.distanceFromTrail}米',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: CupertinoColors.systemGrey,
-                      ),
-                    ),
-                  ],
-                ),
-                if (source.needsTreatment) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
+                    if (source.elevation > 0) ...[
+                      const SizedBox(width: 8),
                       Icon(
-                        CupertinoIcons.exclamationmark_triangle,
+                        CupertinoIcons.arrow_up,
                         size: 12,
-                        color: CupertinoColors.systemOrange,
+                        color: CupertinoColors.systemGrey,
                       ),
                       const SizedBox(width: 2),
                       Text(
-                        '需要净水处理',
-                        style: TextStyle(
+                        '海拔${source.elevation.toStringAsFixed(0)}m',
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: CupertinoColors.systemOrange,
+                          color: CupertinoColors.systemGrey,
                         ),
                       ),
                     ],
+                  ],
+                ),
+
+                // 可靠性信息
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.systemGreen.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '可靠性${source.reliabilityText}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: CupertinoColors.systemGreen,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    if (source.requiresTreatment) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemOrange.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          '需处理',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: CupertinoColors.systemOrange,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+
+                // 备注信息
+                if (source.notes.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.systemYellow.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          CupertinoIcons.info_circle,
+                          size: 12,
+                          color: CupertinoColors.systemYellow,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            source.notes,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ],
@@ -549,24 +645,5 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
         ],
       ),
     );
-  }
-
-  IconData _getWaterSourceIcon(WaterSourceType type) {
-    switch (type) {
-      case WaterSourceType.rain:
-        return CupertinoIcons.arrow_2_circlepath;
-      case WaterSourceType.stream:
-        return CupertinoIcons.arrow_swap;
-      case WaterSourceType.lake:
-        return CupertinoIcons.drop_fill;
-      case WaterSourceType.spring:
-        return CupertinoIcons.drop;
-      case WaterSourceType.tap:
-        return CupertinoIcons.house_fill;
-      case WaterSourceType.well:
-        return CupertinoIcons.house_fill;
-      case WaterSourceType.snow:
-        return CupertinoIcons.house_fill;
-    }
   }
 }

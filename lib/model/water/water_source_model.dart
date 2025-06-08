@@ -3,66 +3,120 @@
 /// 用于表示户外活动中的水源信息
 ///
 /// WaterSourceModel是饮水模块的基础单元，代表一个具体的水源，如"山涧溪流"、"水井"等。
-/// 它记录了水源的位置、水质、可靠性和预估水量等关键信息，用于：
-///
-/// 1. 记录水源的详细属性，帮助用户找到和评估水源
-/// 2. 标记水源是否需要处理，提醒用户携带净水设备
-/// 3. 计算可用水量，帮助规划饮水策略
-/// 4. 评估水源的可靠性，减少饮水风险
-
-import '../base/base_model.dart';
+/// 它继承TrackPointVO的地理位置信息，并扩展水源特有的属性。
+import 'package:walk/model/map/track_point_model.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'water_types.dart';
 
 part 'water_source_model.g.dart';
 
-/// 水源模型
+/// 水源类型枚举
+enum WaterSourceType {
+  /// 山涧溪流
+  stream,
+
+  /// 泉水
+  spring,
+
+  /// 水井
+  well,
+
+  /// 湖泊
+  lake,
+
+  /// 人工水源
+  artificial,
+
+  /// 其他
+  other,
+}
+
+/// 水质等级枚举
+enum WaterQuality {
+  /// 优质 - 可直接饮用
+  excellent,
+
+  /// 良好 - 建议过滤后饮用
+  good,
+
+  /// 一般 - 需要净化处理
+  fair,
+
+  /// 差 - 不建议饮用
+  poor,
+
+  /// 未知
+  unknown,
+}
+
+/// 水源模型 - 继承TrackPointVO的地理位置信息
 @JsonSerializable()
-class WaterSourceModel extends BaseModel {
-  /// 名称
-  final String name;
+class WaterSourceModel extends TrackPointVO {
+  /// 唯一标识
+  final String id;
 
-  /// 描述
-  final String description;
+  /// 水源名称
+  final String? name;
 
-  /// 类型
-  final String type;
+  /// 水源描述
+  final String? description;
 
-  /// 位置描述
-  final String location;
+  /// 创建时间
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
 
-  /// 距离路线的距离(m)
-  @JsonKey(name: 'distance_from_trail')
-  final double distanceFromTrail;
+  /// 更新时间
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
 
-  /// 水质
-  final String quality;
+  /// 水源类型
+  @JsonKey(
+      name: 'water_type', fromJson: _parseWaterType, toJson: _waterTypeToJson)
+  final WaterSourceType waterType;
 
-  /// 可靠性(1-5)
-  final int reliability;
+  /// 水质等级
+  @JsonKey(
+      name: 'water_quality',
+      fromJson: _parseWaterQuality,
+      toJson: _waterQualityToJson)
+  final WaterQuality waterQuality;
 
-  /// 预估水量(ml)
-  @JsonKey(name: 'estimated_volume')
-  final int estimatedVolume;
+  /// 水源可靠性（0-1，1表示全年可靠）
+  final double reliability;
 
-  /// 是否需要处理
-  @JsonKey(name: 'needs_treatment')
-  final bool needsTreatment;
+  /// 是否需要处理（过滤、净化等）
+  @JsonKey(name: 'requires_treatment')
+  final bool requiresTreatment;
+
+  /// 水源备注（包含取水方式、注意事项等）
+  final String notes;
+
+  /// 最后确认时间
+  @JsonKey(name: 'last_verified')
+  final DateTime? lastVerified;
+
+  /// 确认者ID
+  @JsonKey(name: 'verified_by')
+  final String? verifiedBy;
 
   /// 构造函数
   WaterSourceModel({
-    required super.id,
-    super.createdAt,
-    super.updatedAt,
-    required this.name,
-    required this.description,
-    required this.type,
-    required this.location,
-    required this.distanceFromTrail,
-    required this.quality,
-    required this.reliability,
-    required this.estimatedVolume,
-    required this.needsTreatment,
+    required this.id,
+    required super.latitude,
+    required super.longitude,
+    required super.elevation,
+    super.timestamp,
+    super.distanceFromStart,
+    this.name,
+    this.description,
+    this.createdAt,
+    this.updatedAt,
+    this.waterType = WaterSourceType.other,
+    this.waterQuality = WaterQuality.unknown,
+    this.reliability = 0.5,
+    this.requiresTreatment = true,
+    this.notes = '',
+    this.lastVerified,
+    this.verifiedBy,
   });
 
   /// 从JSON创建
@@ -73,67 +127,70 @@ class WaterSourceModel extends BaseModel {
   @override
   Map<String, dynamic> toJson() => _$WaterSourceModelToJson(this);
 
-  /// 获取水源类型枚举
-  WaterSourceType getSourceType() {
-    switch (type.toLowerCase()) {
-      case 'stream':
-        return WaterSourceType.stream;
-      case 'lake':
-        return WaterSourceType.lake;
-      case 'spring':
-        return WaterSourceType.spring;
-      case 'well':
-        return WaterSourceType.well;
-      case 'tap':
-        return WaterSourceType.tap;
-      case 'snow':
-        return WaterSourceType.snow;
-      case 'rain':
-        return WaterSourceType.rain;
-      default:
-        return WaterSourceType.stream;
-    }
+  /// 创建副本并更新指定字段
+  WaterSourceModel copyWith({
+    String? id,
+    double? latitude,
+    double? longitude,
+    double? elevation,
+    DateTime? timestamp,
+    double? distanceFromStart,
+    String? name,
+    String? description,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    WaterSourceType? waterType,
+    WaterQuality? waterQuality,
+    double? reliability,
+    bool? requiresTreatment,
+    String? notes,
+    DateTime? lastVerified,
+    String? verifiedBy,
+  }) {
+    return WaterSourceModel(
+      id: id ?? this.id,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      elevation: elevation ?? this.elevation,
+      timestamp: timestamp ?? this.timestamp,
+      distanceFromStart: distanceFromStart ?? this.distanceFromStart,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      waterType: waterType ?? this.waterType,
+      waterQuality: waterQuality ?? this.waterQuality,
+      reliability: reliability ?? this.reliability,
+      requiresTreatment: requiresTreatment ?? this.requiresTreatment,
+      notes: notes ?? this.notes,
+      lastVerified: lastVerified ?? this.lastVerified,
+      verifiedBy: verifiedBy ?? this.verifiedBy,
+    );
   }
 
-  /// 获取水质枚举
-  WaterQuality getWaterQuality() {
-    switch (quality.toLowerCase()) {
-      case 'excellent':
-        return WaterQuality.excellent;
-      case 'good':
-        return WaterQuality.good;
-      case 'fair':
-        return WaterQuality.fair;
-      case 'poor':
-        return WaterQuality.poor;
-      default:
-        return WaterQuality.unknown;
-    }
-  }
+  // ========== 便捷访问方法 ==========
 
-  /// 获取水源类型文本
-  String getSourceTypeText() {
-    switch (getSourceType()) {
+  /// 获取水源类型显示文本
+  String get waterTypeText {
+    switch (waterType) {
       case WaterSourceType.stream:
-        return '溪流';
-      case WaterSourceType.lake:
-        return '湖泊';
+        return '山涧溪流';
       case WaterSourceType.spring:
         return '泉水';
       case WaterSourceType.well:
         return '水井';
-      case WaterSourceType.tap:
-        return '自来水';
-      case WaterSourceType.snow:
-        return '积雪';
-      case WaterSourceType.rain:
-        return '雨水';
+      case WaterSourceType.lake:
+        return '湖泊';
+      case WaterSourceType.artificial:
+        return '人工水源';
+      case WaterSourceType.other:
+        return '其他';
     }
   }
 
-  /// 获取水质文本
-  String getQualityText() {
-    switch (getWaterQuality()) {
+  /// 获取水质等级显示文本
+  String get waterQualityText {
+    switch (waterQuality) {
       case WaterQuality.excellent:
         return '优质';
       case WaterQuality.good:
@@ -141,58 +198,85 @@ class WaterSourceModel extends BaseModel {
       case WaterQuality.fair:
         return '一般';
       case WaterQuality.poor:
-        return '较差';
+        return '差';
       case WaterQuality.unknown:
         return '未知';
     }
   }
 
-  /// 获取可靠性文本
-  String getReliabilityText() {
-    switch (reliability) {
-      case 5:
-        return '极高';
-      case 4:
-        return '高';
-      case 3:
-        return '中等';
-      case 2:
-        return '低';
-      case 1:
-        return '极低';
-      default:
-        return '未知';
+  /// 获取水源类型图标
+  String get waterTypeIcon {
+    switch (waterType) {
+      case WaterSourceType.stream:
+        return '🏞️';
+      case WaterSourceType.spring:
+        return '⛲';
+      case WaterSourceType.well:
+        return '🕳️';
+      case WaterSourceType.lake:
+        return '🏔️';
+      case WaterSourceType.artificial:
+        return '🚰';
+      case WaterSourceType.other:
+        return '💧';
     }
   }
 
-  /// 创建副本并更新指定字段
-  WaterSourceModel copyWith({
-    String? id,
-    String? name,
-    String? description,
-    String? type,
-    String? location,
-    double? distanceFromTrail,
-    String? quality,
-    int? reliability,
-    int? estimatedVolume,
-    bool? needsTreatment,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return WaterSourceModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      type: type ?? this.type,
-      location: location ?? this.location,
-      distanceFromTrail: distanceFromTrail ?? this.distanceFromTrail,
-      quality: quality ?? this.quality,
-      reliability: reliability ?? this.reliability,
-      estimatedVolume: estimatedVolume ?? this.estimatedVolume,
-      needsTreatment: needsTreatment ?? this.needsTreatment,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
+  /// 获取水质等级颜色（用于UI显示）
+  String get waterQualityColor {
+    switch (waterQuality) {
+      case WaterQuality.excellent:
+        return '#4CAF50'; // 绿色
+      case WaterQuality.good:
+        return '#8BC34A'; // 浅绿色
+      case WaterQuality.fair:
+        return '#FF9800'; // 橙色
+      case WaterQuality.poor:
+        return '#F44336'; // 红色
+      case WaterQuality.unknown:
+        return '#9E9E9E'; // 灰色
+    }
   }
+
+  /// 是否推荐使用
+  bool get isRecommended {
+    return waterQuality == WaterQuality.excellent ||
+        waterQuality == WaterQuality.good;
+  }
+
+  /// 获取可靠性等级文本
+  String get reliabilityText {
+    if (reliability >= 0.8) return '高';
+    if (reliability >= 0.5) return '中';
+    return '低';
+  }
+
+  @override
+  String toString() {
+    return 'WaterSourceModel(id: $id, name: $name, type: ${waterTypeText}, quality: ${waterQualityText}, location: $latitude, $longitude)';
+  }
+}
+
+/// 解析水源类型
+WaterSourceType _parseWaterType(dynamic value) {
+  if (value == null) return WaterSourceType.other;
+  return WaterSourceType.values.firstWhere((type) => type.name == value,
+      orElse: () => WaterSourceType.other);
+}
+
+/// 解析水质等级
+WaterQuality _parseWaterQuality(dynamic value) {
+  if (value == null) return WaterQuality.unknown;
+  return WaterQuality.values.firstWhere((quality) => quality.name == value,
+      orElse: () => WaterQuality.unknown);
+}
+
+/// 水源类型转JSON
+String _waterTypeToJson(WaterSourceType type) {
+  return type.name;
+}
+
+/// 水质等级转JSON
+String _waterQualityToJson(WaterQuality quality) {
+  return quality.name;
 }

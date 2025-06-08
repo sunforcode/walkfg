@@ -228,4 +228,105 @@ class MockTripService implements TripService {
     // TODO: implement getAllTrips
     throw UnimplementedError();
   }
+
+  @override
+  Future<List<TripModel>> getRelatedTrips(String routeId,
+      {int limit = 5}) async {
+    // 模拟网络延迟
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    try {
+      // 从JSON文件加载行程数据
+      final tripsJson = await _loadJsonData('assets/mock_data/trips.json');
+      if (tripsJson == null || !(tripsJson is List)) {
+        return [];
+      }
+
+      // 将JSON数据转换为TripModel对象列表
+      List<TripModel> allTrips = [];
+      for (final tripJson in tripsJson) {
+        try {
+          final trip = TripModel.fromJson(tripJson);
+          allTrips.add(trip);
+        } catch (e) {
+          print('解析行程数据失败: $e');
+          continue;
+        }
+      }
+
+      // 筛选与指定路线相关的行程
+      List<TripModel> relatedTrips = [];
+
+      // 1. 直接使用相同路线的行程（检查主路线ID和路线ID列表）
+      final sameRouteTrips = allTrips.where((trip) {
+        // 检查主路线ID
+        if (trip.primaryRouteId == routeId) {
+          return true;
+        }
+        // 检查路线ID列表
+        if (trip.routeIds.contains(routeId)) {
+          return true;
+        }
+        return false;
+      }).toList();
+      relatedTrips.addAll(sameRouteTrips);
+
+      // 2. 如果直接相关的行程不够，添加其他相似的行程
+      if (relatedTrips.length < limit) {
+        // 获取其他行程，按创建时间排序
+        final otherTrips = allTrips.where((trip) {
+          // 排除已经添加的行程
+          return !relatedTrips.contains(trip);
+        }).toList();
+
+        // 按创建时间倒序排序，优先显示最新的行程
+        otherTrips.sort((a, b) {
+          final aCreatedAt = a.createdAt ?? DateTime.now();
+          final bCreatedAt = b.createdAt ?? DateTime.now();
+          return bCreatedAt.compareTo(aCreatedAt);
+        });
+
+        // 添加到相关行程列表，直到达到限制数量
+        final remainingCount = limit - relatedTrips.length;
+        if (otherTrips.length > remainingCount) {
+          relatedTrips.addAll(otherTrips.sublist(0, remainingCount));
+        } else {
+          relatedTrips.addAll(otherTrips);
+        }
+      }
+
+      // 按状态和创建时间排序：进行中的行程优先，然后按创建时间倒序
+      relatedTrips.sort((a, b) {
+        // 首先按状态排序：进行中 > 规划中 > 已完成 > 已取消
+        final statusPriority = {
+          TripStatus.inProgress: 4,
+          TripStatus.planning: 3,
+          TripStatus.completed: 2,
+          TripStatus.cancelled: 1,
+        };
+
+        final aPriority = statusPriority[a.status] ?? 0;
+        final bPriority = statusPriority[b.status] ?? 0;
+
+        if (aPriority != bPriority) {
+          return bPriority.compareTo(aPriority);
+        }
+
+        // 状态相同时按创建时间倒序
+        final aCreatedAt = a.createdAt ?? DateTime.now();
+        final bCreatedAt = b.createdAt ?? DateTime.now();
+        return bCreatedAt.compareTo(aCreatedAt);
+      });
+
+      // 限制数量
+      if (relatedTrips.length > limit) {
+        relatedTrips = relatedTrips.sublist(0, limit);
+      }
+
+      return relatedTrips;
+    } catch (e) {
+      print('获取相关行程失败: $e');
+      return [];
+    }
+  }
 }

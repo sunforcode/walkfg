@@ -16,9 +16,7 @@ import 'guide_service.dart';
 import 'weather_service.dart';
 import 'recommendation_service.dart';
 import 'trip_service.dart';
-import 'map_service.dart';
 import 'equipment_service.dart';
-import 'route_data_service.dart';
 import 'mock/mock_equipment_service.dart';
 
 /// 服务定位器，用于管理和访问各种服务
@@ -37,9 +35,6 @@ class ServiceLocator {
 
   /// 路线服务 - 提供路线相关功能
   late RouteService _routeService;
-
-  /// 路线数据服务 - 提供路线相关数据
-  late final RouteDataService _routeDataService;
 
   /// 用户服务 - 提供用户相关功能
   late final UserService _userService;
@@ -64,10 +59,7 @@ class ServiceLocator {
     // 初始化服务
     _routeService = MockRouteService();
     _equipmentService = MockEquipmentService();
-    _routeDataService = RouteDataService();
   }
-
-  late final MapService _mapService;
 
   /// 初始化服务
   void initialize({bool useMock = true}) {
@@ -94,7 +86,6 @@ class ServiceLocator {
     _weatherService = MockWeatherService();
     _tripPlanService = MockTripPlanService();
     _recommendationService = MockRecommendationService();
-    _mapService = MapService.instance;
   }
 
   /// 注册真实服务
@@ -108,7 +99,6 @@ class ServiceLocator {
     _weatherService = MockWeatherService(); // 临时使用Mock
     _tripPlanService = MockTripPlanService(); // 临时使用Mock
     _recommendationService = MockRecommendationService(); // 临时使用Mock
-    _mapService = MapService.instance;
   }
 
   /// 获取行程服务
@@ -129,11 +119,6 @@ class ServiceLocator {
   /// 获取路线服务
   RouteService getRouteService() {
     return _routeService;
-  }
-
-  /// 获取路线数据服务
-  RouteDataService getRouteDataService() {
-    return _routeDataService;
   }
 
   /// 获取用户服务
@@ -159,10 +144,6 @@ class ServiceLocator {
   /// 获取推荐服务
   RecommendationService getRecommendationService() {
     return _recommendationService;
-  }
-
-  MapService getMapService() {
-    return _mapService;
   }
 
   /// 获取装备服务

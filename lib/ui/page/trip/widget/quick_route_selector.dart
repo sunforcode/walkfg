@@ -59,52 +59,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
 
   List<RouteModel> _getMockSearchResults(String query) {
     // 模拟搜索结果
-    return [
-      RouteModel(
-        id: 'search_1',
-        name: '黄山经典路线',
-        description: '适合初学者的经典路线',
-        regionId: 'huangshan',
-        ratings: RouteRatingsVO(
-          ratingCount: 189,
-          overall: 4.7,
-          scenery: 4.8,
-          difficulty: 4.6,
-          experience: 4.7,
-          facilities: 4.5,
-        ),
-        tags: ['经典', '初级'],
-        difficulty: RouteDifficulty.easy,
-        imageUrls: [],
-        mapDataId: 'map_1',
-        createdBy: 'system',
-        popularity: 100,
-        bestSeason: ['春季', '秋季'],
-        dailyPlans: [],
-      ),
-      RouteModel(
-        id: 'search_2',
-        name: '黄山挑战路线',
-        description: '适合有经验的徒步者',
-        regionId: 'huangshan',
-        ratings: RouteRatingsVO(
-          ratingCount: 189,
-          overall: 4.7,
-          scenery: 4.8,
-          difficulty: 4.6,
-          experience: 4.7,
-          facilities: 4.5,
-        ),
-        tags: ['挑战', '高级'],
-        difficulty: RouteDifficulty.hard,
-        imageUrls: [],
-        mapDataId: 'map_2',
-        createdBy: 'system',
-        popularity: 80,
-        bestSeason: ['夏季', '秋季'],
-        dailyPlans: [],
-      ),
-    ];
+    return [];
   }
 
   @override

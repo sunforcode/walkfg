@@ -312,7 +312,7 @@ class WelcomeWeatherCard extends StatelessWidget {
 
   /// 根据天气获取渐变色
   List<Color> _getWeatherGradient(WeatherModel weather) {
-    final condition = weather.condition.toLowerCase();
+    final condition = weather.condition.name;
 
     if (condition.contains('晴') || condition.contains('sunny')) {
       return [Colors.orange.shade300, Colors.orange.shade700];

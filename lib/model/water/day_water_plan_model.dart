@@ -64,11 +64,11 @@ class DayWaterPlanModel {
 
   /// 获取温度调整系数
   double get temperatureFactor {
-    if (temperature > 30) return 1.5;      // 高温
-    if (temperature > 25) return 1.3;      // 温暖
-    if (temperature > 15) return 1.0;      // 适中
-    if (temperature > 5) return 0.8;       // 凉爽
-    return 0.7;                            // 寒冷
+    if (temperature > 30) return 1.5; // 高温
+    if (temperature > 25) return 1.3; // 温暖
+    if (temperature > 15) return 1.0; // 适中
+    if (temperature > 5) return 0.8; // 凉爽
+    return 0.7; // 寒冷
   }
 
   /// 获取活动强度调整系数
@@ -88,12 +88,6 @@ class DayWaterPlanModel {
   /// 获取调整后的饮水需求(ml)
   int get adjustedWaterNeed {
     return (totalWaterNeed * temperatureFactor * intensityFactor).toInt();
-  }
-
-  /// 获取可用水源总量(ml)
-  int get availableWaterVolume {
-    return availableSources.fold(
-        0, (sum, source) => sum + source.estimatedVolume);
   }
 
   /// 获取活动强度级别
