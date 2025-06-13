@@ -68,17 +68,6 @@ class DailyPlanModel {
     this.segments = const <SegmentModel>[],
     this.accommodation,
     this.notes,
-    this.startWaypointId,
-    this.endWaypointId,
-    this.startPoint,
-    this.endPoint,
-    this.segmentIds = const <String>[],
-    this.keyPoints = const <String>[],
-    this.plannedDate,
-    this.pointsOfInterest = const <PointOfInterestModel>[],
-    this.startLocation,
-    this.endLocation,
-    this.difficultyLevel,
   });
 
   /// 从JSON创建
@@ -95,16 +84,10 @@ class DailyPlanModel {
   String? get transportation => null;
 
   /// 获取日期
-  DateTime? get date => plannedDate;
+  DateTime? get date => null;
 
   /// 格式化路线显示
   String get formattedRoute {
-    if (startPoint != null && endPoint != null) {
-      return '$startPoint → $endPoint';
-    }
-    if (startLocation != null && endLocation != null) {
-      return '$startLocation → $endLocation';
-    }
     return title;
   }
 
@@ -137,20 +120,7 @@ class DailyPlanModel {
 
   /// 获取难度描述
   String get difficultyDescription {
-    switch (difficultyLevel) {
-      case 1:
-        return '简单';
-      case 2:
-        return '容易';
-      case 3:
-        return '中等';
-      case 4:
-        return '困难';
-      case 5:
-        return '极难';
-      default:
-        return '未知';
-    }
+    return '中等'; // 默认返回中等难度
   }
 
   /// 获取海拔变化描述
@@ -161,56 +131,19 @@ class DailyPlanModel {
     return '';
   }
 
-  /// 获取兴趣点按类型分组
-  Map<String, List<PointOfInterestModel>> get pointsOfInterestByType {
-    final Map<String, List<PointOfInterestModel>> grouped = {};
-    for (final poi in pointsOfInterest) {
-      if (!grouped.containsKey(poi.type)) {
-        grouped[poi.type] = [];
-      }
-      grouped[poi.type]!.add(poi);
-    }
-    return grouped;
-  }
-
-  /// 获取景点列表
-  List<PointOfInterestModel> get scenicSpots {
-    return pointsOfInterest.where((poi) => poi.type == '景点').toList();
-  }
-
-  /// 获取休息点列表
-  List<PointOfInterestModel> get restPoints {
-    return pointsOfInterest.where((poi) => poi.type == '休息点').toList();
-  }
-
-  /// 获取补给点列表
-  List<PointOfInterestModel> get supplyPoints {
-    return pointsOfInterest.where((poi) => poi.type == '补给点').toList();
-  }
-
   /// 是否是今天的计划
   bool get isToday {
-    if (plannedDate == null) return false;
-    final now = DateTime.now();
-    return plannedDate!.year == now.year &&
-        plannedDate!.month == now.month &&
-        plannedDate!.day == now.day;
+    return false; // 默认返回false
   }
 
   /// 是否是未来的计划
   bool get isFuture {
-    if (plannedDate == null) return false;
-    return plannedDate!.isAfter(DateTime.now());
+    return false; // 默认返回false
   }
 
   /// 是否是过去的计划
   bool get isPast {
-    if (plannedDate == null) return false;
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final planDate =
-        DateTime(plannedDate!.year, plannedDate!.month, plannedDate!.day);
-    return planDate.isBefore(today);
+    return false; // 默认返回false
   }
 
   /// 创建副本
@@ -228,17 +161,6 @@ class DailyPlanModel {
     List<SegmentModel>? segments,
     String? accommodation,
     String? notes,
-    String? startWaypointId,
-    String? endWaypointId,
-    String? startPoint,
-    String? endPoint,
-    List<String>? segmentIds,
-    List<String>? keyPoints,
-    DateTime? plannedDate,
-    List<PointOfInterestModel>? pointsOfInterest,
-    String? startLocation,
-    String? endLocation,
-    int? difficultyLevel,
   }) {
     return DailyPlanModel(
       id: id ?? this.id,
@@ -254,17 +176,6 @@ class DailyPlanModel {
       segments: segments ?? this.segments,
       accommodation: accommodation ?? this.accommodation,
       notes: notes ?? this.notes,
-      startWaypointId: startWaypointId ?? this.startWaypointId,
-      endWaypointId: endWaypointId ?? this.endWaypointId,
-      startPoint: startPoint ?? this.startPoint,
-      endPoint: endPoint ?? this.endPoint,
-      segmentIds: segmentIds ?? this.segmentIds,
-      keyPoints: keyPoints ?? this.keyPoints,
-      plannedDate: plannedDate ?? this.plannedDate,
-      pointsOfInterest: pointsOfInterest ?? this.pointsOfInterest,
-      startLocation: startLocation ?? this.startLocation,
-      endLocation: endLocation ?? this.endLocation,
-      difficultyLevel: difficultyLevel ?? this.difficultyLevel,
     );
   }
 

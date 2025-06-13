@@ -165,22 +165,6 @@ class _CampsitesWidgetState extends State<CampsitesWidget> {
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: _getFacilityColor(campsite.facilityLevel)
-                      .withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  campsite.facilityLevelText,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: _getFacilityColor(campsite.facilityLevel),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
             ],
           ),
 
@@ -272,28 +256,6 @@ class _CampsitesWidgetState extends State<CampsitesWidget> {
               ),
             ],
           ),
-
-          // 额外特性标签
-          if (campsite.waterDistance != null ||
-              campsite.allowsCampfire ||
-              campsite.requiresBooking) ...[
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                if (campsite.waterDistance != null)
-                  _buildFeatureTag('水源${campsite.waterDistanceText}',
-                      CupertinoIcons.drop, CupertinoColors.systemBlue),
-                if (campsite.allowsCampfire)
-                  _buildFeatureTag('可生火', CupertinoIcons.flame,
-                      CupertinoColors.systemOrange),
-                if (campsite.requiresBooking)
-                  _buildFeatureTag('需预订', CupertinoIcons.calendar,
-                      CupertinoColors.systemRed),
-              ],
-            ),
-          ],
 
           if (campsite.notes.isNotEmpty) ...[
             const SizedBox(height: 12),

@@ -188,14 +188,6 @@ class DailyItineraryListWidget extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  plan.startPoint ?? "",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: CupertinoColors.label,
-                  ),
-                ),
               ],
             ),
           ),
@@ -231,15 +223,6 @@ class DailyItineraryListWidget extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  plan.endPoint ?? "",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: CupertinoColors.label,
-                  ),
-                  textAlign: TextAlign.end,
-                ),
               ],
             ),
           ),
@@ -327,36 +310,6 @@ class DailyItineraryListWidget extends StatelessWidget {
   /// 构建关键点信息
   Widget _buildKeyPointsInfo(DailyPlanModel plan) {
     final keyPoints = <Map<String, dynamic>>[];
-
-    // 添加途径点
-    if (plan.keyPoints.isNotEmpty) {
-      keyPoints.add({
-        'icon': CupertinoIcons.map_pin,
-        'label': '途径点',
-        'value': plan.keyPoints.join('、'),
-        'color': CupertinoColors.systemPurple,
-      });
-    }
-
-    // 添加补给点
-    if (plan.keyPoints.isNotEmpty) {
-      keyPoints.add({
-        'icon': CupertinoIcons.bag,
-        'label': '补给点',
-        'value': plan.keyPoints.join('、'),
-        'color': CupertinoColors.systemIndigo,
-      });
-    }
-
-    // 添加水源点
-    if (plan.keyPoints.isNotEmpty) {
-      keyPoints.add({
-        'icon': CupertinoIcons.drop,
-        'label': '水源',
-        'value': plan.keyPoints.join('、'),
-        'color': CupertinoColors.systemTeal,
-      });
-    }
 
     if (keyPoints.isEmpty) {
       return const SizedBox.shrink();

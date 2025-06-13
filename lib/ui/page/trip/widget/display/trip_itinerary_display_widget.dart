@@ -184,17 +184,14 @@ class _TripItineraryDisplayWidgetState
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        if (plan.startPoint != null &&
-                            plan.endPoint != null) ...[
-                          Text(
-                            '${plan.startPoint} → ${plan.endPoint}',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: CupertinoColors.secondaryLabel,
-                            ),
+                        Text(
+                          '',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: CupertinoColors.secondaryLabel,
                           ),
-                          const SizedBox(width: 16),
-                        ],
+                        ),
+                        const SizedBox(width: 16),
                         Icon(
                           CupertinoIcons.location,
                           size: 12,

@@ -175,13 +175,6 @@ class TripItineraryCardWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${day.startPoint} → ${day.endPoint}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
                 const SizedBox(height: 4),
                 Text(
                   '徒步${day.distance}km，爬升${day.elevationGain}m',

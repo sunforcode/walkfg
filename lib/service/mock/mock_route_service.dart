@@ -175,12 +175,6 @@ class MockRouteService implements RouteService {
         .map<RouteModel>((json) => RouteModel.fromJson(json))
         .toList();
 
-    // 季节过滤
-    if (season != null && season.isNotEmpty) {
-      routes =
-          routes.where((route) => route.bestSeason.contains(season)).toList();
-    }
-
     // 限制数量
     if (limit != null && routes.length > limit) {
       routes = routes.sublist(0, limit);
@@ -453,12 +447,6 @@ class MockRouteService implements RouteService {
         .map<RouteModel>((json) => RouteModel.fromJson(json))
         .toList();
 
-    // 季节过滤
-    if (season != null && season.isNotEmpty) {
-      routes =
-          routes.where((route) => route.bestSeason.contains(season)).toList();
-    }
-
     // 按评分排序
     routes.sort((a, b) => b.ratings.overall.compareTo(a.ratings.overall));
 
@@ -580,13 +568,6 @@ class MockRouteService implements RouteService {
     if (filter.difficulty != null && filter.difficulty!.isNotEmpty) {
       routes = routes
           .where((route) => route.difficulty == filter.difficulty)
-          .toList();
-    }
-
-    // 季节过滤
-    if (filter.season != null && filter.season!.isNotEmpty) {
-      routes = routes
-          .where((route) => route.bestSeason.contains(filter.season))
           .toList();
     }
 

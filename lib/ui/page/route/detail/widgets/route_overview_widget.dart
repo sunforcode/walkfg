@@ -120,8 +120,9 @@ class RouteOverviewWidget extends StatelessWidget {
     final tags = <Map<String, dynamic>>[];
 
     // 1. 最佳季节（最高优先级，带emoji）
-    if (route.bestSeason.isNotEmpty) {
-      for (final season in route.bestSeason.take(2)) {
+    if (route.weatherInfo?.bestSeasons != null &&
+        !route.weatherInfo!.bestSeasons.isEmpty) {
+      for (final season in route.weatherInfo!.bestSeasons.take(2)) {
         final emoji = _getSeasonEmoji(season);
         tags.add({
           'text': '$emoji$season',

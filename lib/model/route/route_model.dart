@@ -118,7 +118,9 @@ class RouteModel extends BaseModel {
   @JsonKey(name: 'marker_points', defaultValue: <MarkerPointModel>[])
   final List<MarkerPointModel> markerPoints;
 
-  final UserModel createUser;
+  /// 创建用户信息
+  @JsonKey(name: 'create_user')
+  final UserModel? createUser;
 
   /// 当前地图数据模型（运行时设置，不从JSON获取）
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -136,8 +138,6 @@ class RouteModel extends BaseModel {
     required this.description,
     required this.regionId,
     this.region = "未知区域",
-    this.bestSeason = const <String>[],
-    this.relatedMapIds = const <String>[],
     this.defaultMapId = "",
     this.defaultMap,
     required this.ratings,
@@ -151,7 +151,6 @@ class RouteModel extends BaseModel {
     this.isFavorite = false,
     required this.popularity,
     this.isLoop = false,
-    this.relatedRouteIds = const <String>[],
     RouteStatus? status,
     this.waterSources = const <WaterSourceModel>[],
     this.supplyPoints = const <SupplyPointModel>[],
@@ -245,26 +244,20 @@ class RouteModel extends BaseModel {
     int? usageCount,
     String? description,
     String? regionId,
-    String? regionName,
     String? region,
-    List<String>? bestSeason,
-    List<String>? relatedMapIds,
     String? defaultMapId,
     TrackModel? defaultMap,
     RouteRatingsVO? ratings,
     List<String>? tags,
     RouteDifficulty? difficulty,
-    List<WaypointModel>? waypoints,
     List<SegmentModel>? segments,
     List<DailyPlanModel>? dailyPlans,
     WeatherInfoVO? weatherInfo,
     List<String>? imageUrls,
     String? coverUrl,
-    String? mapDataId,
     bool? isFavorite,
     int? popularity,
     bool? isLoop,
-    List<String>? relatedRouteIds,
     RouteStatus? status,
     List<WaterSourceModel>? waterSources,
     List<SupplyPointModel>? supplyPoints,
@@ -282,26 +275,20 @@ class RouteModel extends BaseModel {
       usageCount: usageCount ?? this.usageCount,
       description: description ?? this.description,
       regionId: regionId ?? this.regionId,
-      regionName: regionName ?? this.regionName,
       region: region ?? this.region,
-      bestSeason: bestSeason ?? this.bestSeason,
-      relatedMapIds: relatedMapIds ?? this.relatedMapIds,
       defaultMapId: defaultMapId ?? this.defaultMapId,
       defaultMap: defaultMap,
       ratings: ratings ?? this.ratings,
       tags: tags ?? this.tags,
       difficulty: difficulty ?? this.difficulty,
-      waypoints: waypoints ?? this.waypoints,
       segments: segments ?? this.segments,
       dailyPlans: dailyPlans ?? this.dailyPlans,
       weatherInfo: weatherInfo ?? this.weatherInfo,
       imageUrls: imageUrls ?? this.imageUrls,
       coverUrl: coverUrl ?? this.coverUrl,
-      mapDataId: mapDataId ?? this.mapDataId,
       isFavorite: isFavorite ?? this.isFavorite,
       popularity: popularity ?? this.popularity,
       isLoop: isLoop ?? this.isLoop,
-      relatedRouteIds: relatedRouteIds ?? this.relatedRouteIds,
       status: status ?? this.status,
       waterSources: waterSources ?? this.waterSources,
       supplyPoints: supplyPoints ?? this.supplyPoints,
@@ -315,12 +302,6 @@ class RouteModel extends BaseModel {
 
   /// 获取评分
   double get rating => ratings.overall;
-
-  /// 获取最佳季节文本
-  String? get bestSeasonText {
-    if (bestSeason.isEmpty) return null;
-    return bestSeason.join('、');
-  }
 
   /// 获取路线距离（公里）
   double get distance {
@@ -372,38 +353,5 @@ class RouteModel extends BaseModel {
     final minutes = ((estimatedHours - hours) * 60).round();
 
     return '$hours:${minutes.toString().padLeft(2, '0')}';
-  }
-
-  /// 获取起点
-  WaypointModel? get startPoint {
-    if (waypoints.isEmpty) return null;
-    return waypoints.firstWhere(
-      (wp) => wp.type == 'start',
-      orElse: () => waypoints.first,
-    );
-  }
-
-  /// 获取终点
-  WaypointModel? get endPoint {
-    if (waypoints.isEmpty) return null;
-    return waypoints.firstWhere(
-      (wp) => wp.type == 'end',
-      orElse: () => waypoints.last,
-    );
-  }
-
-  /// 获取景点列表
-  List<WaypointModel> get attractions {
-    return waypoints.where((wp) => wp.type == 'attraction').toList();
-  }
-
-  /// 获取休息点列表
-  List<WaypointModel> get restPoints {
-    return waypoints.where((wp) => wp.type == 'rest').toList();
-  }
-
-  /// 获取山峰列表
-  List<WaypointModel> get peaks {
-    return waypoints.where((wp) => wp.type == 'peak').toList();
   }
 }

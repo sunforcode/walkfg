@@ -45,24 +45,6 @@ enum CampsiteFacility {
   unknown,
 }
 
-/// 营地容量等级枚举
-enum CampsiteCapacity {
-  /// 小型(1-3顶帐篷)
-  small,
-
-  /// 中型(4-8顶帐篷)
-  medium,
-
-  /// 大型(9-15顶帐篷)
-  large,
-
-  /// 超大型(15+顶帐篷)
-  xlarge,
-
-  /// 未知
-  unknown,
-}
-
 /// 营地模型 - 继承TrackPointVO的地理位置信息
 @JsonSerializable()
 class CampsiteModel extends TrackPointVO {
@@ -94,7 +76,7 @@ class CampsiteModel extends TrackPointVO {
   final String notes;
 
   /// 确认者ID
-  @JsonKey(name: 'last_verified_id')
+  @JsonKey(name: 'verified_by')
   final String? verifiedBy;
 
   /// 构造函数
@@ -110,13 +92,7 @@ class CampsiteModel extends TrackPointVO {
     this.createdAt,
     this.updatedAt,
     this.campsiteType = CampsiteType.other,
-    this.facilityLevel = CampsiteFacility.unknown,
-    this.capacity = CampsiteCapacity.unknown,
-    this.requiresBooking = false,
-    this.allowsCampfire = false,
-    this.waterDistance,
     this.notes = '',
-    this.lastVerified,
     this.verifiedBy,
   });
 
@@ -141,13 +117,7 @@ class CampsiteModel extends TrackPointVO {
     DateTime? createdAt,
     DateTime? updatedAt,
     CampsiteType? campsiteType,
-    CampsiteFacility? facilityLevel,
-    CampsiteCapacity? capacity,
-    bool? requiresBooking,
-    bool? allowsCampfire,
-    double? waterDistance,
     String? notes,
-    DateTime? lastVerified,
     String? verifiedBy,
   }) {
     return CampsiteModel(
@@ -162,13 +132,7 @@ class CampsiteModel extends TrackPointVO {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       campsiteType: campsiteType ?? this.campsiteType,
-      facilityLevel: facilityLevel ?? this.facilityLevel,
-      capacity: capacity ?? this.capacity,
-      requiresBooking: requiresBooking ?? this.requiresBooking,
-      allowsCampfire: allowsCampfire ?? this.allowsCampfire,
-      waterDistance: waterDistance ?? this.waterDistance,
       notes: notes ?? this.notes,
-      lastVerified: lastVerified ?? this.lastVerified,
       verifiedBy: verifiedBy ?? this.verifiedBy,
     );
   }
@@ -197,34 +161,12 @@ class CampsiteModel extends TrackPointVO {
 
   /// 获取设施等级显示文本
   String get facilityLevelText {
-    switch (facilityLevel) {
-      case CampsiteFacility.excellent:
-        return '完善';
-      case CampsiteFacility.good:
-        return '良好';
-      case CampsiteFacility.fair:
-        return '一般';
-      case CampsiteFacility.none:
-        return '无设施';
-      case CampsiteFacility.unknown:
-        return '未知';
-    }
+    return '未知'; // 默认返回未知
   }
 
   /// 获取容量等级显示文本
   String get capacityText {
-    switch (capacity) {
-      case CampsiteCapacity.small:
-        return '小型(1-3顶)';
-      case CampsiteCapacity.medium:
-        return '中型(4-8顶)';
-      case CampsiteCapacity.large:
-        return '大型(9-15顶)';
-      case CampsiteCapacity.xlarge:
-        return '超大型(15+顶)';
-      case CampsiteCapacity.unknown:
-        return '未知';
-    }
+    return '未知'; // 默认返回未知
   }
 
   /// 获取营地类型图标
@@ -249,34 +191,17 @@ class CampsiteModel extends TrackPointVO {
 
   /// 获取设施等级颜色（用于UI显示）
   String get facilityLevelColor {
-    switch (facilityLevel) {
-      case CampsiteFacility.excellent:
-        return '#4CAF50'; // 绿色
-      case CampsiteFacility.good:
-        return '#8BC34A'; // 浅绿色
-      case CampsiteFacility.fair:
-        return '#FF9800'; // 橙色
-      case CampsiteFacility.none:
-        return '#F44336'; // 红色
-      case CampsiteFacility.unknown:
-        return '#9E9E9E'; // 灰色
-    }
+    return '#9E9E9E'; // 默认灰色
   }
 
   /// 是否推荐使用
   bool get isRecommended {
-    return facilityLevel == CampsiteFacility.excellent ||
-        facilityLevel == CampsiteFacility.good;
+    return false; // 默认不推荐
   }
 
   /// 获取水源距离文本
   String get waterDistanceText {
-    if (waterDistance == null) return '未知';
-    if (waterDistance! < 100) return '${waterDistance!.toInt()}米';
-    if (waterDistance! < 1000) {
-      return '${(waterDistance! / 100).toStringAsFixed(1)}百米';
-    }
-    return '${(waterDistance! / 1000).toStringAsFixed(1)}公里';
+    return '未知'; // 默认未知
   }
 
   @override
@@ -293,32 +218,8 @@ CampsiteType _parseCampsiteType(dynamic value) {
 }
 
 /// 解析设施等级
-CampsiteFacility _parseFacilityLevel(dynamic value) {
-  if (value == null) return CampsiteFacility.unknown;
-  return CampsiteFacility.values.firstWhere(
-      (facility) => facility.name == value,
-      orElse: () => CampsiteFacility.unknown);
-}
-
-/// 解析容量等级
-CampsiteCapacity _parseCapacity(dynamic value) {
-  if (value == null) return CampsiteCapacity.unknown;
-  return CampsiteCapacity.values.firstWhere(
-      (capacity) => capacity.name == value,
-      orElse: () => CampsiteCapacity.unknown);
-}
 
 /// 营地类型转JSON
 String _campsiteTypeToJson(CampsiteType type) {
   return type.name;
-}
-
-/// 设施等级转JSON
-String _facilityLevelToJson(CampsiteFacility facility) {
-  return facility.name;
-}
-
-/// 容量等级转JSON
-String _capacityToJson(CampsiteCapacity capacity) {
-  return capacity.name;
 }

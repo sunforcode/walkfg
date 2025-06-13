@@ -146,7 +146,7 @@ class WaterSourceModel extends TrackPointVO {
     bool? requiresTreatment,
     String? notes,
     DateTime? lastVerified,
-    String? verifiedBy,
+    UserModel? verifiedBy,
   }) {
     return WaterSourceModel(
       id: id ?? this.id,

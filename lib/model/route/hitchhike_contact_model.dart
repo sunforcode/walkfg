@@ -35,7 +35,7 @@ class HitchhikeContactModel {
     this.description,
     this.location,
     this.price,
-    this.isVerified = false,
+    this.lastVerified = false,
   });
 
   /// 从JSON创建

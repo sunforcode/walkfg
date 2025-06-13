@@ -169,34 +169,32 @@ class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
                   ),
                 ),
               ),
-              if (contact.isVerified)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: CupertinoColors.systemGreen.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        CupertinoIcons.checkmark_seal,
-                        size: 12,
-                        color: CupertinoColors.systemGreen,
-                      ),
-                      SizedBox(width: 2),
-                      Text(
-                        '已认证',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: CupertinoColors.systemGreen,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemGreen.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
                 ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      CupertinoIcons.checkmark_seal,
+                      size: 12,
+                      color: CupertinoColors.systemGreen,
+                    ),
+                    SizedBox(width: 2),
+                    Text(
+                      '已认证',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: CupertinoColors.systemGreen,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
 
