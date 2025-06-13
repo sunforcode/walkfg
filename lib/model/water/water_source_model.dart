@@ -6,6 +6,7 @@
 /// 它继承TrackPointVO的地理位置信息，并扩展水源特有的属性。
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:walk/model/user/user_model.dart';
 
 part 'water_source_model.g.dart';
 
@@ -96,7 +97,7 @@ class WaterSourceModel extends TrackPointVO {
 
   /// 确认者ID
   @JsonKey(name: 'verified_by')
-  final String? verifiedBy;
+  final UserModel? verifiedBy;
 
   /// 构造函数
   WaterSourceModel({

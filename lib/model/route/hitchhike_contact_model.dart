@@ -24,8 +24,8 @@ class HitchhikeContactModel {
   final double? price;
 
   /// 是否已认证
-  @JsonKey(name: 'is_verified')
-  final bool isVerified;
+  @JsonKey(name: 'last_verified')
+  final bool lastVerified;
 
   /// 构造函数
   const HitchhikeContactModel({

@@ -198,7 +198,7 @@ class TripDailyItineraryWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          plan.duration,
+                          plan.estimatedTime.toString(),
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

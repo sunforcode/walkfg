@@ -18,60 +18,69 @@ class TripOverviewDisplayWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: CupertinoColors.separator,
-          width: 0.5,
-        ),
-      ),
+      margin: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题区域
+          // 标题行
+          Row(
+            children: [
+              const Icon(
+                CupertinoIcons.chart_bar,
+                size: 20,
+                color: CupertinoColors.systemBlue,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _getOverviewTitle().replaceAll('📊 ', ''),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: CupertinoColors.label,
+                ),
+              ),
+              const Spacer(),
+              _buildStatusBadge(),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 基础信息卡片
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: CupertinoColors.separator,
-                  width: 0.5,
-                ),
+            decoration: BoxDecoration(
+              color: CupertinoColors.systemGrey6,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: CupertinoColors.separator,
+                width: 0.5,
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      _getOverviewTitle(),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: CupertinoColors.label,
-                      ),
-                    ),
-                    const Spacer(),
-                    _buildStatusBadge(),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
                 // 基础信息
                 ..._buildBasicInfo(),
+
+                // 重要提醒（条件显示）
+                ..._buildImportantAlertsInline(),
               ],
             ),
           ),
 
-          // 重要提醒（条件显示）
-          ..._buildImportantAlerts(),
+          const SizedBox(height: 16),
 
           // 计划现状概览或完成记录
           Container(
             padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: CupertinoColors.systemGrey6,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: CupertinoColors.separator,
+                width: 0.5,
+              ),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -672,5 +681,71 @@ class TripOverviewDisplayWidget extends StatelessWidget {
   // 获取行程评分（已完成状态）
   double _getTripRating() {
     return 4.8; // 模拟数据
+  }
+
+  List<Widget> _buildImportantAlertsInline() {
+    // 只在规划中和已确认状态显示提醒
+    if (trip.status != TripStatus.planning &&
+        trip.status != TripStatus.confirmed) {
+      return [];
+    }
+
+    final alerts = _getImportantAlerts();
+
+    if (alerts.isEmpty) {
+      return [];
+    }
+
+    return [
+      const Row(
+        children: [
+          Icon(
+            CupertinoIcons.exclamationmark_triangle_fill,
+            size: 16,
+            color: CupertinoColors.systemOrange,
+          ),
+          SizedBox(width: 8),
+          Text(
+            '重要提醒',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: CupertinoColors.systemOrange,
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      ...alerts
+          .map((alert) => Container(
+                margin: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: (alert['color'] as Color).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      alert['icon'] as IconData,
+                      size: 12,
+                      color: alert['color'] as Color,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        alert['message'] as String,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: alert['color'] as Color,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ))
+          .toList(),
+    ];
   }
 }

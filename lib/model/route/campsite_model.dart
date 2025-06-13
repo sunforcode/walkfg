@@ -1,6 +1,5 @@
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../base/base_model.dart';
 
 part 'campsite_model.g.dart';
 
@@ -30,7 +29,7 @@ enum CampsiteType {
 
 /// 营地设施等级枚举
 enum CampsiteFacility {
-  /// 完善 - 有厕所、水源、垃圾处理
+  /// 完善 - 有完整设施
   excellent,
 
   /// 良好 - 有基本设施
@@ -39,7 +38,7 @@ enum CampsiteFacility {
   /// 一般 - 设施简陋
   fair,
 
-  /// 无设施 - 纯野营
+  /// 无设施
   none,
 
   /// 未知
@@ -48,16 +47,16 @@ enum CampsiteFacility {
 
 /// 营地容量等级枚举
 enum CampsiteCapacity {
-  /// 小型 - 1-3顶帐篷
+  /// 小型(1-3顶帐篷)
   small,
 
-  /// 中型 - 4-8顶帐篷
+  /// 中型(4-8顶帐篷)
   medium,
 
-  /// 大型 - 9-15顶帐篷
+  /// 大型(9-15顶帐篷)
   large,
 
-  /// 超大型 - 15顶以上帐篷
+  /// 超大型(15+顶帐篷)
   xlarge,
 
   /// 未知
@@ -91,38 +90,11 @@ class CampsiteModel extends TrackPointVO {
       toJson: _campsiteTypeToJson)
   final CampsiteType campsiteType;
 
-  /// 设施等级
-  @JsonKey(
-      name: 'facility_level',
-      fromJson: _parseFacilityLevel,
-      toJson: _facilityLevelToJson)
-  final CampsiteFacility facilityLevel;
-
-  /// 营地容量
-  @JsonKey(name: 'capacity', fromJson: _parseCapacity, toJson: _capacityToJson)
-  final CampsiteCapacity capacity;
-
-  /// 是否需要预订
-  @JsonKey(name: 'requires_booking')
-  final bool requiresBooking;
-
-  /// 是否允许篝火
-  @JsonKey(name: 'allows_campfire')
-  final bool allowsCampfire;
-
-  /// 水源距离（米）
-  @JsonKey(name: 'water_distance')
-  final double? waterDistance;
-
   /// 营地备注（包含注意事项、规则等）
   final String notes;
 
-  /// 最后确认时间
-  @JsonKey(name: 'last_verified')
-  final DateTime? lastVerified;
-
   /// 确认者ID
-  @JsonKey(name: 'verified_by')
+  @JsonKey(name: 'last_verified_id')
   final String? verifiedBy;
 
   /// 构造函数
@@ -301,14 +273,15 @@ class CampsiteModel extends TrackPointVO {
   String get waterDistanceText {
     if (waterDistance == null) return '未知';
     if (waterDistance! < 100) return '${waterDistance!.toInt()}米';
-    if (waterDistance! < 1000)
+    if (waterDistance! < 1000) {
       return '${(waterDistance! / 100).toStringAsFixed(1)}百米';
+    }
     return '${(waterDistance! / 1000).toStringAsFixed(1)}公里';
   }
 
   @override
   String toString() {
-    return 'CampsiteModel(id: $id, name: $name, type: ${campsiteTypeText}, facility: ${facilityLevelText}, location: $latitude, $longitude)';
+    return 'CampsiteModel(id: $id, name: $name, type: $campsiteTypeText, facility: $facilityLevelText, location: $latitude, $longitude)';
   }
 }
 

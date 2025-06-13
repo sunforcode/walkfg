@@ -9,6 +9,7 @@ class WeatherInfoVO {
   final String description;
 
   /// 季节性信息
+  @JsonKey(name: 'seasonal_weather')
   final Map<String, String> seasonal;
 
   /// 最佳季节

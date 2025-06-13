@@ -6,10 +6,10 @@ import 'package:walk/ui/page/trip/widget/trip_section_placeholder.dart';
 class TripTransportSection extends StatelessWidget {
   /// 行程数据
   final TripModel? trip;
-  
+
   /// 是否处于编辑模式
   final bool isEditMode;
-  
+
   /// 编辑回调
   final VoidCallback? onEdit;
 
@@ -45,12 +45,12 @@ class TripTransportSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // 展示交通相关的每日计划
           if ((trip?.itinerary ?? []).isNotEmpty)
             ...(trip?.itinerary ?? [])
-                .where((plan) => 
-                    plan.title.contains('交通') || 
+                .where((plan) =>
+                    plan.title.contains('交通') ||
                     plan.title.contains('transport'))
                 .map((plan) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -80,7 +80,7 @@ class TripTransportSection extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            plan.duration,
+                            plan.estimatedTime.toString(),
                             style: const TextStyle(
                               fontSize: 14,
                               color: CupertinoColors.activeBlue,
@@ -89,12 +89,11 @@ class TripTransportSection extends StatelessWidget {
                         ],
                       ),
                     )),
-          
+
           // 占位符
           if ((trip?.itinerary ?? [])
-              .where((plan) => 
-                  plan.title.contains('交通') || 
-                  plan.title.contains('transport'))
+              .where((plan) =>
+                  plan.title.contains('交通') || plan.title.contains('transport'))
               .isEmpty)
             TripSectionPlaceholder(
               icon: CupertinoIcons.car,

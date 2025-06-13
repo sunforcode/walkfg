@@ -189,7 +189,7 @@ class DailyItineraryListWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  plan.startWaypointId,
+                  plan.startPoint ?? "",
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -232,7 +232,7 @@ class DailyItineraryListWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  plan.endWaypointId,
+                  plan.endPoint ?? "",
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,

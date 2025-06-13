@@ -47,6 +47,10 @@ class SupplyPointModel extends TrackPointVO {
   @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
+  /// 最后确认时间
+  @JsonKey(name: 'last_verified')
+  final String? lastVerified;
+
   /// 补给点类型
   @JsonKey(
       name: 'supply_type',
@@ -70,6 +74,7 @@ class SupplyPointModel extends TrackPointVO {
     this.description,
     this.createdAt,
     this.updatedAt,
+    this.lastVerified,
     this.supplyType = SupplyPointType.other,
     this.updatedBy,
   });
@@ -94,6 +99,7 @@ class SupplyPointModel extends TrackPointVO {
     String? description,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? lastVerified,
     SupplyPointType? supplyType,
     String? updatedBy,
   }) {
@@ -108,6 +114,7 @@ class SupplyPointModel extends TrackPointVO {
       description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      lastVerified: lastVerified ?? this.lastVerified,
       supplyType: supplyType ?? this.supplyType,
       updatedBy: updatedBy ?? this.updatedBy,
     );

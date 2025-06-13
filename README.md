@@ -1,182 +1,687 @@
-我需要先了解您的代码库，以便进行产品评估。让我先探索一下您的项目结构。
+# Walk - 徒步应用
 
-已读取
-walk
-(24)
+一个专为徒步爱好者设计的移动应用，提供路线规划、装备管理、行程记录等功能。
 
-看起来这是一个Flutter项目。让我查看一下主要的代码文件和项目结构，以便更好地理解产品。
+## 📱 功能模块
 
-已读取
-lib
-(9)
+### 核心模块
+- **Route（路线）** - 主要模块，包含徒步路线的详细信息、分段数据、海拔变化等
+- **Trip（行程）** - 主要模块，记录实际的徒步行程、时间轨迹、照片等
+- **Equipment（装备）** - 装备管理，包含装备清单、重量计算、打包建议等
+- **Weather（天气）** - 天气信息查询和预报
+- **Map（地图）** - 地图显示、轨迹点管理、导航功能
 
-让我先看一下主要的入口文件，了解应用的基本结构。
+### 页面结构
+\`\`\`
+├── 首页 - 路线推荐和快速入口
+├── 路线模块
+│   ├── 路线列表
+│   ├── 路线详情
+│   └── 路线分段信息
+├── 行程模块
+│   ├── 行程计划
+│   ├── 行程记录
+│   └── 行程回顾
+├── 装备模块
+│   ├── 装备库
+│   ├── 打包清单
+│   └── 装备推荐
+└── 个人中心
+    ├── 用户信息
+    ├── 历史记录
+    └── 设置
+\`\`\`
 
-已读取
-main.dart
+## 🛠 技术架构
 
-已读取
-app.dart
+### 数据模型
+- **JSON序列化**: 使用 `json_annotation` 进行数据模型与JSON的自动转换
+- **命名规范**:
+  - Dart模型使用驼峰命名法 (camelCase)
+  - JSON字段使用下划线命名法 (snake_case)
+  - 通过 `@JsonKey(name: 'field_name')` 进行映射
 
-让我看一下主布局文件，了解应用的主要界面结构。
+\`\`\`dart
+@JsonSerializable()
+class RouteModel {
+  final String routeName;           // Dart中使用驼峰
 
-已读取
-main_layout.dart
+  @JsonKey(name: 'created_time')    // JSON中使用下划线
+  final DateTime createdTime;
+}
+\`\`\`
 
-让我看一下项目的模型文件，了解数据结构。
+### 枚举处理
+- 枚举值使用整数类型，便于数据库存储和网络传输
+- 使用 `@JsonValue()` 注解指定序列化值
+- 通过扩展方法提供多种转换方式
+- 支持自定义JSON转换器处理复杂场景
 
-已读取
-lib/model
-(13)
+\`\`\`dart
+/// 道路类型枚举定义
+enum RouteType {
+  @JsonValue(0)
+  mudRoad,      // 泥路
 
-让我看一下主要的UI页面，了解用户界面设计。
+  @JsonValue(1)
+  farmRoad,     // 机耕路
 
-已读取
-ui/page
-(8)
+  @JsonValue(2)
+  stoneRoad,    // 石路
 
-让我看一下首页的实现，了解用户的主要入口体验。
+  @JsonValue(3)
+  concreteRoad, // 水泥路
 
-已读取
-home_screen.dart
+  @JsonValue(4)
+  asphaltRoad,  // 柏油路
 
-让我看一下路线发现页面，了解路线相关功能。
+  @JsonValue(5)
+  trail,        // 小径
 
-已读取
-route_discovery_screen.dart
+  @JsonValue(6)
+  boardwalk,    // 栈道
+}
 
-让我看一下装备页面，了解装备相关功能。
+/// 枚举扩展方法
+extension RouteTypeExtension on RouteType {
+  /// 转换为整数值（用于JSON序列化）
+  int get intValue {
+    switch (this) {
+      case RouteType.mudRoad:
+        return 0;
+      case RouteType.farmRoad:
+        return 1;
+      case RouteType.stoneRoad:
+        return 2;
+      case RouteType.concreteRoad:
+        return 3;
+      case RouteType.asphaltRoad:
+        return 4;
+      case RouteType.trail:
+        return 5;
+      case RouteType.boardwalk:
+        return 6;
+    }
+  }
 
-已读取
-equipment_screen.dart
+  /// 转换为字符串标识符（用于内部处理）
+  String get value {
+    switch (this) {
+      case RouteType.mudRoad:
+        return 'mud_road';
+      case RouteType.farmRoad:
+        return 'farm_road';
+      case RouteType.stoneRoad:
+        return 'stone_road';
+      case RouteType.concreteRoad:
+        return 'concrete_road';
+      case RouteType.asphaltRoad:
+        return 'asphalt_road';
+      case RouteType.trail:
+        return 'trail';
+      case RouteType.boardwalk:
+        return 'boardwalk';
+    }
+  }
 
-让我看一下项目的README文件，了解项目的整体介绍。
+  /// 获取中文显示名称（用于UI显示）
+  String get displayName {
+    switch (this) {
+      case RouteType.mudRoad:
+        return '泥路';
+      case RouteType.farmRoad:
+        return '机耕路';
+      case RouteType.stoneRoad:
+        return '石路';
+      case RouteType.concreteRoad:
+        return '水泥路';
+      case RouteType.asphaltRoad:
+        return '柏油路';
+      case RouteType.trail:
+        return '小径';
+      case RouteType.boardwalk:
+        return '栈道';
+    }
+  }
 
-已读取
-README.md
+  /// 从整数创建枚举（用于JSON反序列化）
+  static RouteType fromInt(int value) {
+    switch (value) {
+      case 0:
+        return RouteType.mudRoad;
+      case 1:
+        return RouteType.farmRoad;
+      case 2:
+        return RouteType.stoneRoad;
+      case 3:
+        return RouteType.concreteRoad;
+      case 4:
+        return RouteType.asphaltRoad;
+      case 5:
+        return RouteType.trail;
+      case 6:
+        return RouteType.boardwalk;
+      default:
+        return RouteType.trail; // 默认值
+    }
+  }
 
-让我看一下装备模型，了解装备相关的数据结构。
+  /// 从字符串创建枚举（用于兼容处理）
+  static RouteType fromString(String value) {
+    switch (value) {
+      case 'mud_road':
+        return RouteType.mudRoad;
+      case 'farm_road':
+        return RouteType.farmRoad;
+      case 'stone_road':
+        return RouteType.stoneRoad;
+      case 'concrete_road':
+        return RouteType.concreteRoad;
+      case 'asphalt_road':
+        return RouteType.asphaltRoad;
+      case 'trail':
+        return RouteType.trail;
+      case 'boardwalk':
+        return RouteType.boardwalk;
+      default:
+        return RouteType.trail; // 默认值
+    }
+  }
+}
 
-已读取
-equipment_list_model.dart
+/// 在模型中使用自定义JSON转换器
+@JsonSerializable()
+class SegmentModel {
+  @JsonKey(
+    name: 'route_type',
+    defaultValue: RouteType.trail,
+    fromJson: _routeTypeFromJson,
+    toJson: _routeTypeToJson,
+  )
+  final RouteType type;
 
-让我看一下路线模型，了解路线相关的数据结构。
+  /// 自定义RouteType从JSON转换
+  static RouteType _routeTypeFromJson(int? value) {
+    if (value == null) return RouteType.trail;
+    return RouteTypeExtension.fromInt(value);
+  }
 
-已读取
-route_model.dart
+  /// 自定义RouteType转JSON
+  static int _routeTypeToJson(RouteType type) {
+    return type.intValue;
+  }
+}
+\`\`\`
 
-让我看一下pubspec.yaml文件，了解项目的依赖和配置。
+### 状态管理
+- 使用 Provider/Riverpod 进行状态管理
+- 数据持久化使用 Hive/SharedPreferences
 
-已读取
-pubspec.yaml
+### 网络请求
+- 使用 Dio 进行HTTP请求
+- 统一的API响应处理和错误处理机制
 
-基于我对代码的分析，我将从产品定位、用户体验评估和功能完整性与优先级三个方面对这个徒步旅行助手应用进行评估。
-产品评估报告：Walk - 徒步旅行助手
+## 🎨 UI设计规范
 
-1. 产品定位分析
-   优势
-   明确的目标用户群体：产品明确针对徒步爱好者，解决了特定用户群体在徒步旅行中的规划、装备准备和路线选择等核心痛点。
-   差异化价值主张：
-   将徒步路线、装备管理和行程规划整合在一个应用中，提供全流程解决方案
-   注重细节，如装备重量计算、路线难度评估、天气信息整合等专业功能
-   支持离线地图和轨迹，解决户外网络不稳定的问题
-   专业性：
-   提供了专业的徒步相关数据模型，如路线海拔、爬升、下降等专业指标
-   装备管理系统非常详细，包括重量、必要性、状态等专业分类
-   改进建议
-   市场定位更加精准：
-   可以进一步细分目标用户，如区分初级徒步者和专业户外爱好者，提供不同层次的功能
-   考虑增加社交属性，建立徒步社区，增强用户粘性
-   价值主张传达：
-   首页可以更直观地展示产品的核心价值，目前首页信息较为分散
-   可以增加成功案例或用户故事，让新用户快速理解产品价值
-   品牌定位：
-   建议强化品牌形象，如统一的设计语言、独特的品牌标识等
-   可以考虑增加品牌故事，增强用户情感连接
-2. 用户体验评估
-   优势
-   界面设计：
-   采用iOS风格的Cupertino设计，界面简洁、美观
-   色彩搭配合理，功能区块划分清晰
-   使用了大量的视觉提示（如图标、颜色编码）帮助用户理解功能
-   交互设计：
-   底部导航栏布局合理，核心功能一目了然
-   使用浮动按钮增强主要操作的可访问性
-   提供了多种视图模式（列表/网格）满足不同用户偏好
-   信息架构：
-   功能分组逻辑清晰，如装备、路线、个人中心等
-   使用标签页和分区标题有效组织内容
-   提供搜索和筛选功能，方便用户快速找到所需信息
-   改进建议
-   导航优化：
-   部分页面（如路线发现页）信息过于密集，可以考虑简化布局
-   建议增加面包屑导航或返回提示，帮助用户了解当前位置
-   一致性增强：
-   不同页面的设计风格有细微差异，建议统一交互模式和视觉元素
-   部分功能（如地图展开/收起）的交互方式不够直观，可以优化
-   性能优化：
-   地图和图片加载可能影响性能，建议增加懒加载和缓存策略
-   考虑增加骨架屏(Skeleton Screen)减少加载等待的不适感
-   可访问性：
-   部分文字对比度不足，如浅灰色文字在白色背景上
-   建议增加字体大小调整选项，适应不同用户需求
-3. 功能完整性与优先级评估
-   核心功能评估
-   路线发现与规划：
-   优势：提供了丰富的路线信息，包括难度、距离、海拔等专业数据
-   不足：路线搜索功能较为简单，可以增加更多筛选条件和智能推荐
-   装备管理系统：
-   优势：装备清单功能非常完善，支持分类、状态跟踪、重量计算等
-   不足：缺少装备推荐功能，无法根据路线特点自动推荐装备
-   行程规划：
-   优势：支持详细的行程安排，包括每日计划、途经点等
-   不足：与交通、住宿等服务的集成不足，用户需要在其他平台完成这些规划
-   地图功能：
-   优势：支持轨迹显示和下载，集成了地理位置服务
-   不足：离线地图功能不够突出，户外场景下的实用性有待提高
-   功能优先级建议
-   高优先级功能（建议立即完善）：
-   离线地图和轨迹导航：户外环境网络不稳定，这是核心需求
-   装备智能推荐：根据路线、天气、季节自动推荐装备清单
-   紧急求助功能：户外安全是用户的首要关注点
-   中优先级功能（下一阶段考虑）：
-   社区功能：用户分享、评论、徒步经验交流
-   天气预报集成优化：提供更精准的路线天气预报
-   交通和住宿服务集成：提供一站式出行解决方案
-   低优先级功能（长期规划）：
-   高级数据分析：如用户徒步数据统计、成就系统
-   多平台同步：支持手表、GPS设备等多设备数据同步
-   商业化功能：如装备商城、路线付费下载等
-   功能缺口分析
-   社交功能：
-   缺少用户间的互动功能，如分享路线、结伴同行等
-   建议增加社区模块，提高用户粘性
-   安全功能：
-   缺少紧急求助、轨迹实时分享等安全相关功能
-   建议增加SOS功能和位置共享功能
-   数据同步与备份：
-   未见明确的云同步和数据备份功能
-   建议增加账户系统和云存储功能
-   总结与建议
-   产品定位
-   Walk徒步旅行助手在产品定位上已经有了明确的方向，针对徒步爱好者提供专业的规划和管理工具。建议进一步细分用户群体，针对不同级别的徒步者提供差异化功能，同时强化品牌形象和社区属性。
-   用户体验
-   整体用户体验设计较为出色，界面美观、交互流畅。建议进一步优化信息架构，减少页面信息密度，增强设计一致性，并提高可访问性。性能优化也应作为下一步改进的重点。
-   功能优先级
-   建议优先完善离线地图、装备智能推荐和安全功能，这些是户外场景下的刚需。其次考虑增加社区功能和第三方服务集成，提供更完整的用户体验。长期规划可以考虑数据分析和商业化功能。
-   发展路径建议
-   短期（3-6个月）：
-   完善核心功能，特别是离线地图和安全功能
-   优化现有UI/UX问题，提高应用稳定性
-   增加基础社交功能，如分享和评论
-   中期（6-12个月）：
-   建立用户社区，增强用户粘性
-   集成更多第三方服务，如交通、住宿预订
-   开发高级功能，如AI路线推荐、装备智能推荐
-   长期（1年以上）：
-   探索商业化模式，如会员订阅、装备商城
-   扩展到更多户外活动类型，如骑行、露营等
-   建立开放平台，允许第三方开发者接入
-   总体而言，Walk徒步旅行助手是一款定位明确、功能丰富的专业应用，具有很大的发展潜力。通过优化用户体验、完善核心功能并逐步扩展服务范围，有望成为户外爱好者的首选工具。
+### 设计系统
+- **设计语言**: Material Design 3.0 + 自定义徒步主题
+- **色彩方案**:
+  - 主色调: 自然绿色系 (#2E7D32, #4CAF50)
+  - 辅助色: 橙色警示 (#FF9800), 蓝色信息 (#2196F3)
+  - 中性色: 灰色系 (#757575, #BDBDBD, #F5F5F5)
+- **字体**:
+  - 中文: PingFang SC / Noto Sans CJK
+  - 英文/数字: Roboto
+  - 等宽字体: Roboto Mono (用于数据展示)
 
-cd /Users/sunyongji/Develop/AI/walk && dart run build_runner build --delete-conflicting-outputs
+### 组件规范
+\`\`\`dart
+// 主题配置示例
+class AppTheme {
+  static ThemeData get lightTheme => ThemeData(
+    primarySwatch: Colors.green,
+    primaryColor: const Color(0xFF2E7D32),
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: const Color(0xFF4CAF50),
+      brightness: Brightness.light,
+    ),
+    textTheme: const TextTheme(
+      headlineLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      bodyLarge: TextStyle(fontSize: 16, height: 1.5),
+      labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+    ),
+  );
+}
+\`\`\`
+
+### 间距规范
+\`\`\`dart
+class AppSpacing {
+  static const double xs = 4.0;    // 极小间距
+  static const double sm = 8.0;    // 小间距
+  static const double md = 16.0;   // 中等间距
+  static const double lg = 24.0;   // 大间距
+  static const double xl = 32.0;   // 超大间距
+}
+\`\`\`
+
+### 图标规范
+- **系统图标**: 优先使用 Material Icons
+- **自定义图标**: SVG格式，24x24dp基准尺寸
+- **徒步专用图标**: 登山包、指南针、海拔等专业图标
+
+## 🏗️ 架构设计
+
+### 项目架构
+\`\`\`
+lib/
+├── app/                    # 应用入口和配置
+│   ├── app.dart           # 应用主类
+│   ├── routes.dart        # 路由配置
+│   └── theme.dart         # 主题配置
+├── core/                  # 核心功能
+│   ├── constants/         # 常量定义
+│   ├── extensions/        # 扩展方法
+│   ├── utils/            # 工具类
+│   └── exceptions/       # 异常定义
+├── data/                  # 数据层
+│   ├── models/           # 数据模型
+│   ├── repositories/     # 数据仓库
+│   ├── datasources/      # 数据源
+│   └── services/         # 网络服务
+├── domain/               # 业务逻辑层
+│   ├── entities/         # 业务实体
+│   ├── usecases/         # 用例
+│   └── repositories/     # 仓库接口
+├── presentation/         # 表现层
+│   ├── pages/           # 页面
+│   ├── widgets/         # 通用组件
+│   ├── providers/       # 状态管理
+│   └── utils/           # UI工具
+└── shared/              # 共享资源
+    ├── assets/          # 静态资源
+    ├── l10n/           # 国际化
+    └── config/         # 配置文件
+\`\`\`
+
+### 状态管理模式
+\`\`\`dart
+// 使用Provider进行状态管理
+class RouteProvider extends ChangeNotifier {
+  List<RouteModel> _routes = [];
+  bool _isLoading = false;
+  String? _error;
+
+  // Getters
+  List<RouteModel> get routes => _routes;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  // 业务方法
+  Future<void> loadRoutes() async {
+    _setLoading(true);
+    try {
+      _routes = await _routeRepository.getRoutes();
+      _error = null;
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  void _setLoading(bool loading) {
+    _isLoading = loading;
+    notifyListeners();
+  }
+}
+\`\`\`
+
+## 📝 代码规范
+
+### Widget设计原则
+1. **单一职责**: 每个Widget只负责一个明确的功能
+2. **合理大小**: 单个Widget代码行数控制在150行以内
+3. **组件化**: 复杂UI拆分为多个小Widget组合
+4. **可复用**: 通用组件抽取为独立Widget
+
+\`\`\`dart
+// ❌ 不推荐 - Widget过大
+class LargeWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // 200+ 行代码...
+    );
+  }
+}
+
+// ✅ 推荐 - 拆分为小组件
+class RouteDetailPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: Column(
+        children: [
+          RouteInfoCard(),
+          RouteSegmentsList(),
+          RouteElevationChart(),
+        ],
+      ),
+    );
+  }
+}
+\`\`\`
+
+### 页面结构模板
+\`\`\`dart
+class RoutePage extends StatefulWidget {
+  const RoutePage({Key? key}) : super(key: key);
+
+  @override
+  State<RoutePage> createState() => _RoutePageState();
+}
+
+class _RoutePageState extends State<RoutePage> {
+  @override
+  void initState() {
+    super.initState();
+    // 初始化逻辑
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+      floatingActionButton: _buildFAB(),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      title: const Text('路线'),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: _onSearchPressed,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBody() {
+    return Consumer<RouteProvider>(
+      builder: (context, provider, child) {
+        if (provider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (provider.error != null) {
+          return ErrorWidget(provider.error!);
+        }
+
+        return ListView.builder(
+          itemCount: provider.routes.length,
+          itemBuilder: (context, index) {
+            return RouteCard(route: provider.routes[index]);
+          },
+        );
+      },
+    );
+  }
+
+  Widget? _buildFAB() {
+    return FloatingActionButton(
+      onPressed: _onAddRoute,
+      child: const Icon(Icons.add),
+    );
+  }
+
+  void _onSearchPressed() {
+    // 搜索逻辑
+  }
+
+  void _onAddRoute() {
+    // 添加路线逻辑
+  }
+}
+\`\`\`
+
+### 命名规范
+- **文件命名**: 使用下划线分隔 (`route_model.dart`)
+- **类命名**: 使用大驼峰 (`RouteModel`)
+- **变量/方法**: 使用小驼峰 (`routeName`)
+- **常量**: 使用大写下划线 (`MAX_ROUTE_COUNT`)
+- **私有成员**: 以下划线开头 (`_privateMethod`)
+
+### 目录结构
+\`\`\`
+lib/
+├── model/              # 数据模型
+│   ├── route/         # 路线相关模型
+│   ├── trip/          # 行程相关模型
+│   └── equipment/     # 装备相关模型
+├── pages/             # 页面
+├── widgets/           # 通用组件
+├── services/          # 业务服务
+├── utils/             # 工具类
+└── constants/         # 常量定义
+\`\`\`
+
+### 注释规范
+- 类和重要方法必须添加文档注释
+- 使用 `///` 进行文档注释
+- 复杂逻辑添加行内注释说明
+
+\`\`\`dart
+/// 路线分段模型
+///
+/// 用于表示徒步路线中的一个分段，包含距离、海拔、道路类型等信息
+@JsonSerializable()
+class SegmentModel {
+  /// 分段ID，全局唯一标识符
+  final String id;
+
+  /// 道路类型，影响徒步难度和装备选择
+  final RouteType type;
+}
+\`\`\`
+
+### 错误处理
+- 统一的异常处理机制
+- 用户友好的错误提示
+- 关键操作添加try-catch
+
+\`\`\`dart
+try {
+  final route = await routeService.getRoute(id);
+  return route;
+} on NetworkException catch (e) {
+  showErrorSnackBar('网络连接失败，请检查网络设置');
+} catch (e) {
+  showErrorSnackBar('获取路线信息失败');
+}
+\`\`\`
+
+## 🚀 开发指南
+
+### 环境要求
+- Flutter SDK >= 3.0.0
+- Dart SDK >= 2.17.0
+
+### 依赖管理
+\`\`\`yaml
+# pubspec.yaml 主要依赖
+dependencies:
+  flutter:
+    sdk: flutter
+  json_annotation: ^4.8.1      # JSON序列化注解
+  dio: ^5.3.2                  # 网络请求
+  provider: ^6.0.5             # 状态管理
+  hive: ^2.2.3                 # 本地数据库
+  geolocator: ^9.0.2           # 地理位置
+  flutter_map: ^6.0.1          # 地图组件
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  json_serializable: ^6.7.1    # JSON序列化代码生成
+  build_runner: ^2.4.7         # 代码生成工具
+  flutter_lints: ^2.0.0        # 代码规范检查
+\`\`\`
+
+### 安装依赖
+\`\`\`bash
+flutter pub get
+\`\`\`
+
+### 代码生成
+\`\`\`bash
+# 生成JSON序列化代码
+flutter packages pub run build_runner build
+
+# 监听文件变化自动生成
+flutter packages pub run build_runner watch
+\`\`\`
+
+### 运行项目
+\`\`\`bash
+# 调试模式
+flutter run
+
+# 发布模式
+flutter run --release
+\`\`\`
+
+## 🔧 工具和插件
+
+### 推荐VS Code插件
+- Flutter
+- Dart
+- Flutter Widget Snippets
+- Awesome Flutter Snippets
+- Flutter Tree
+- Error Lens
+
+### 代码片段示例
+\`\`\`json
+// .vscode/snippets.json
+{
+  "Stateful Widget": {
+    "prefix": "stf",
+    "body": [
+      "class ${1:WidgetName} extends StatefulWidget {",
+      "  const ${1:WidgetName}({Key? key}) : super(key: key);",
+      "",
+      "  @override",
+      "  State<${1:WidgetName}> createState() => _${1:WidgetName}State();",
+      "}",
+      "",
+      "class _${1:WidgetName}State extends State<${1:WidgetName}> {",
+      "  @override",
+      "  Widget build(BuildContext context) {",
+      "    return ${2:Container()};",
+      "  }",
+      "}"
+    ]
+  }
+}
+\`\`\`
+
+## 🧪 测试规范
+
+### 测试结构
+\`\`\`
+test/
+├── unit/              # 单元测试
+│   ├── models/       # 模型测试
+│   ├── services/     # 服务测试
+│   └── utils/        # 工具测试
+├── widget/           # Widget测试
+└── integration/      # 集成测试
+\`\`\`
+
+### 测试示例
+\`\`\`dart
+// 单元测试示例
+void main() {
+  group('RouteModel', () {
+    test('should create RouteModel from JSON', () {
+      // Arrange
+      final json = {
+        'id': '1',
+        'name': 'Test Route',
+        'distance': 10.5,
+      };
+
+      // Act
+      final route = RouteModel.fromJson(json);
+
+      // Assert
+      expect(route.id, '1');
+      expect(route.name, 'Test Route');
+      expect(route.distance, 10.5);
+    });
+  });
+}
+
+// Widget测试示例
+void main() {
+  testWidgets('RouteCard should display route information', (tester) async {
+    // Arrange
+    final route = RouteModel(id: '1', name: 'Test Route');
+
+    // Act
+    await tester.pumpWidget(
+      MaterialApp(
+        home: RouteCard(route: route),
+      ),
+    );
+
+    // Assert
+    expect(find.text('Test Route'), findsOneWidget);
+  });
+}
+\`\`\`
+
+## 📋 开发规范检查清单
+
+### 提交代码前检查
+- [ ] 代码格式化 (`flutter format .`)
+- [ ] 静态分析通过 (`flutter analyze`)
+- [ ] 单元测试通过 (`flutter test`)
+- [ ] Widget大小合理（<150行）
+- [ ] 添加必要注释
+- [ ] 遵循命名规范
+
+### Code Review要点
+- [ ] 业务逻辑正确性
+- [ ] 性能优化考虑
+- [ ] 错误处理完整性
+- [ ] UI/UX体验
+- [ ] 代码可维护性
+
+### 枚举使用示例
+\`\`\`dart
+// 创建枚举
+RouteType type = RouteType.mudRoad;
+
+// 获取不同格式的值
+int jsonValue = type.intValue;        // 0 (用于JSON)
+String identifier = type.value;       // 'mud_road' (用于内部)
+String displayText = type.displayName; // '泥路' (用于UI)
+
+// 从不同格式创建枚举
+RouteType fromJson = RouteTypeExtension.fromInt(0);
+RouteType fromString = RouteTypeExtension.fromString('mud_road');
+
+// JSON序列化示例
+Map<String, dynamic> json = {
+  'route_type': 0,  // JSON中使用整数
+};
+SegmentModel segment = SegmentModel.fromJson(json);
+print(segment.type.displayName); // 输出: 泥路
+\`\`\`
+

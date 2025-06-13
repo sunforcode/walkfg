@@ -3,7 +3,7 @@ import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/route/daily_plan_model.dart';
 
 /// 每日行程展示组件
-class TripItineraryDisplayWidget extends StatelessWidget {
+class TripItineraryDisplayWidget extends StatefulWidget {
   final TripModel trip;
 
   const TripItineraryDisplayWidget({
@@ -12,85 +12,137 @@ class TripItineraryDisplayWidget extends StatelessWidget {
   });
 
   @override
+  State<TripItineraryDisplayWidget> createState() =>
+      _TripItineraryDisplayWidgetState();
+}
+
+class _TripItineraryDisplayWidgetState
+    extends State<TripItineraryDisplayWidget> {
+  bool _showAll = false;
+  static const int _maxDisplayCount = 3;
+
+  @override
   Widget build(BuildContext context) {
+    final itinerary = widget.trip.itinerary;
+    final displayItinerary =
+        _showAll ? itinerary : itinerary.take(_maxDisplayCount).toList();
+    final hasMore = itinerary.length > _maxDisplayCount;
+
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: CupertinoColors.separator,
-          width: 0.5,
-        ),
-      ),
+      margin: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: CupertinoColors.separator,
-                  width: 0.5,
+          // 标题行
+          Row(
+            children: [
+              const Icon(
+                CupertinoIcons.calendar,
+                size: 20,
+                color: CupertinoColors.systemGreen,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                '每日行程',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: CupertinoColors.label,
                 ),
               ),
-            ),
-            child: const Text(
-              '📅 每日行程',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: CupertinoColors.label,
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemGreen.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${itinerary.length}天',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: CupertinoColors.systemGreen,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-
+          const SizedBox(height: 16),
           // 行程内容
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (trip.itinerary.isNotEmpty)
-                  ..._buildItineraryItems()
-                else
-                  _buildEmptyState(),
-              ],
-            ),
-          ),
+          if (itinerary.isNotEmpty) ...[
+            ...displayItinerary.map((plan) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildDayPlan(plan),
+              );
+            }).toList(),
+            // 更多按钮
+            if (hasMore && !_showAll)
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  setState(() {
+                    _showAll = true;
+                  });
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: CupertinoColors.systemGrey6,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: CupertinoColors.separator,
+                      width: 0.5,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '查看更多行程',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: CupertinoColors.systemGreen,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '(${itinerary.length - _maxDisplayCount}天)',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: CupertinoColors.systemGrey,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        CupertinoIcons.chevron_down,
+                        size: 16,
+                        color: CupertinoColors.systemGreen,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ] else
+            _buildEmptyState(),
         ],
       ),
     );
-  }
-
-  List<Widget> _buildItineraryItems() {
-    final itinerary = trip.itinerary;
-    if (itinerary.isEmpty) {
-      return [];
-    }
-
-    return itinerary.asMap().entries.map((entry) {
-      final index = entry.key;
-      final plan = entry.value;
-      final isLast = index == itinerary.length - 1;
-
-      return Column(
-        children: [
-          _buildDayPlan(plan),
-          if (!isLast) const SizedBox(height: 16),
-        ],
-      );
-    }).toList();
   }
 
   Widget _buildDayPlan(DailyPlanModel plan) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6.withOpacity(0.5),
+        color: CupertinoColors.systemGrey6,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: CupertinoColors.separator,
+          width: 0.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +263,7 @@ class TripItineraryDisplayWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        plan.duration,
+                        plan.estimatedTime.toString(),
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -292,7 +344,15 @@ class TripItineraryDisplayWidget extends StatelessWidget {
 
   Widget _buildEmptyState() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: CupertinoColors.systemGrey6,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: CupertinoColors.separator,
+          width: 0.5,
+        ),
+      ),
       child: const Column(
         children: [
           Icon(

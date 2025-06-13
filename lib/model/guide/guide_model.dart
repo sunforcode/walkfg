@@ -136,23 +136,23 @@ class GuideModel extends BaseModel {
   // === 运行时关联数据（不序列化）===
 
   /// 基础路线数据
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   final RouteModel? baseRoute;
 
   /// 基础行程数据
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   final TripModel? baseTrip;
 
   /// 推荐装备清单
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   final EquipmentListModel? equipmentList;
 
   /// 作者详细信息
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   final UserModel? authorProfile;
 
   /// 相关攻略列表
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   final List<GuideModel>? relatedGuides;
 
   /// 默认作者头像

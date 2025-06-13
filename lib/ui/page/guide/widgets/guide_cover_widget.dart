@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
 import 'package:walk/theme/theme/app_colors.dart';
+import 'guide_detail_constants.dart';
 
 /// 攻略封面组件
+///
+/// 显示攻略的封面图片、标签、难度等基本信息
 class GuideCoverWidget extends StatelessWidget {
+  /// 攻略数据
   final GuideModel guide;
 
+  /// 构造函数
   const GuideCoverWidget({
     super.key,
     required this.guide,
@@ -14,7 +19,7 @@ class GuideCoverWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250,
+      height: _CoverConstants.coverHeight,
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
@@ -43,7 +48,8 @@ class GuideCoverWidget extends StatelessWidget {
           ? Image.network(
               guide.coverUrl!,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => _buildFallbackImage(),
+              errorBuilder: (context, error, stackTrace) =>
+                  _buildFallbackImage(),
             )
           : _buildFallbackImage(),
     );
@@ -52,11 +58,12 @@ class GuideCoverWidget extends StatelessWidget {
   /// 构建占位图片
   Widget _buildFallbackImage() {
     return Container(
-      color: AppColors.primary.withOpacity(0.2),
+      color:
+          AppColors.primary.withOpacity(_CoverConstants.fallbackImageOpacity),
       child: const Center(
         child: Icon(
           CupertinoIcons.photo,
-          size: 64,
+          size: _CoverConstants.fallbackIconSize,
           color: AppColors.primary,
         ),
       ),
@@ -70,14 +77,15 @@ class GuideCoverWidget extends StatelessWidget {
       left: 0,
       right: 0,
       child: Container(
-        height: 100,
+        height: _CoverConstants.gradientHeight,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
               CupertinoColors.black.withOpacity(0.0),
-              CupertinoColors.black.withOpacity(0.7),
+              CupertinoColors.black
+                  .withOpacity(_CoverConstants.gradientOpacity),
             ],
           ),
         ),
@@ -88,18 +96,22 @@ class GuideCoverWidget extends StatelessWidget {
   /// 构建标签徽章
   Widget _buildTagBadge() {
     return Positioned(
-      top: 16,
-      right: 16,
+      top: GuideDetailConstants.horizontalPadding,
+      right: GuideDetailConstants.horizontalPadding,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: _CoverConstants.tagPaddingHorizontal,
+          vertical: _CoverConstants.tagPaddingVertical,
+        ),
         decoration: BoxDecoration(
           color: AppColors.primary,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(_CoverConstants.tagBorderRadius),
           boxShadow: [
             BoxShadow(
-              color: CupertinoColors.black.withOpacity(0.2),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+              color: CupertinoColors.black
+                  .withOpacity(_CoverConstants.shadowOpacity),
+              blurRadius: _CoverConstants.shadowBlurRadius,
+              offset: const Offset(0, _CoverConstants.shadowOffsetY),
             ),
           ],
         ),
@@ -107,7 +119,7 @@ class GuideCoverWidget extends StatelessWidget {
           guide.tags.first,
           style: const TextStyle(
             color: CupertinoColors.white,
-            fontSize: 14,
+            fontSize: _CoverConstants.tagFontSize,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -118,9 +130,9 @@ class GuideCoverWidget extends StatelessWidget {
   /// 构建底部信息
   Widget _buildBottomInfo() {
     return Positioned(
-      bottom: 16,
-      left: 16,
-      right: 16,
+      bottom: GuideDetailConstants.horizontalPadding,
+      left: GuideDetailConstants.horizontalPadding,
+      right: GuideDetailConstants.horizontalPadding,
       child: Row(
         children: [
           // 难度指示
@@ -128,7 +140,7 @@ class GuideCoverWidget extends StatelessWidget {
             icon: CupertinoIcons.chart_bar_alt_fill,
             text: guide.getDifficultyName(),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: _CoverConstants.badgeSpacing),
           // 阅读时长
           _buildInfoBadge(
             icon: CupertinoIcons.time,
@@ -151,10 +163,15 @@ class GuideCoverWidget extends StatelessWidget {
     required String text,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: _CoverConstants.infoBadgePaddingHorizontal,
+        vertical: _CoverConstants.infoBadgePaddingVertical,
+      ),
       decoration: BoxDecoration(
-        color: CupertinoColors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
+        color:
+            CupertinoColors.white.withOpacity(_CoverConstants.infoBadgeOpacity),
+        borderRadius:
+            BorderRadius.circular(_CoverConstants.infoBadgeBorderRadius),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -162,14 +179,14 @@ class GuideCoverWidget extends StatelessWidget {
           Icon(
             icon,
             color: CupertinoColors.white,
-            size: 12,
+            size: _CoverConstants.infoBadgeIconSize,
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: _CoverConstants.infoBadgeIconSpacing),
           Text(
             text,
             style: const TextStyle(
               color: CupertinoColors.white,
-              fontSize: 12,
+              fontSize: _CoverConstants.infoBadgeFontSize,
             ),
           ),
         ],
@@ -179,10 +196,88 @@ class GuideCoverWidget extends StatelessWidget {
 
   /// 格式化数字
   String _formatNumber(int number) {
-    if (number >= 1000) {
-      final double result = number / 1000;
+    if (number >= _CoverConstants.thousandThreshold) {
+      final double result = number / _CoverConstants.thousandThreshold;
       return '${result.toStringAsFixed(1)}k';
     }
     return number.toString();
   }
+}
+
+/// 封面组件私有常量
+class _CoverConstants {
+  _CoverConstants._();
+
+  // ==================== 布局尺寸 ====================
+
+  /// 封面高度
+  static const double coverHeight = 250.0;
+
+  /// 渐变遮罩高度
+  static const double gradientHeight = 100.0;
+
+  /// 标签内边距 - 水平
+  static const double tagPaddingHorizontal = 12.0;
+
+  /// 标签内边距 - 垂直
+  static const double tagPaddingVertical = 6.0;
+
+  /// 标签圆角半径
+  static const double tagBorderRadius = 16.0;
+
+  /// 信息徽章内边距 - 水平
+  static const double infoBadgePaddingHorizontal = 10.0;
+
+  /// 信息徽章内边距 - 垂直
+  static const double infoBadgePaddingVertical = 4.0;
+
+  /// 信息徽章圆角半径
+  static const double infoBadgeBorderRadius = 12.0;
+
+  /// 徽章间距
+  static const double badgeSpacing = 8.0;
+
+  /// 信息徽章图标间距
+  static const double infoBadgeIconSpacing = 4.0;
+
+  // ==================== 字体大小 ====================
+
+  /// 标签字体大小
+  static const double tagFontSize = 14.0;
+
+  /// 信息徽章字体大小
+  static const double infoBadgeFontSize = 12.0;
+
+  /// 信息徽章图标大小
+  static const double infoBadgeIconSize = 12.0;
+
+  /// 占位图标大小
+  static const double fallbackIconSize = 64.0;
+
+  // ==================== 透明度和颜色 ====================
+
+  /// 渐变遮罩透明度
+  static const double gradientOpacity = 0.7;
+
+  /// 信息徽章背景透明度
+  static const double infoBadgeOpacity = 0.2;
+
+  /// 占位图片背景透明度
+  static const double fallbackImageOpacity = 0.2;
+
+  /// 阴影透明度
+  static const double shadowOpacity = 0.2;
+
+  // ==================== 阴影配置 ====================
+
+  /// 阴影模糊半径
+  static const double shadowBlurRadius = 4.0;
+
+  /// 阴影Y轴偏移
+  static const double shadowOffsetY = 2.0;
+
+  // ==================== 数值配置 ====================
+
+  /// 千位数阈值
+  static const int thousandThreshold = 1000;
 }

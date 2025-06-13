@@ -9,6 +9,8 @@
   "best_season": ["春季", "秋季"],
   "related_map_ids": ["map_001", "map_002"],
   "default_map_id": "map_001",
+  "region_name":"黄山",
+  "usage_count":1,
   "ratings": {
     "overall": 4.8,
     "scenery": 5.0,
@@ -87,6 +89,7 @@
       "latitude": 30.1734,
       "longitude": 118.1267,
       "elevation": 820.0,
+    
       "type": "end",
       "icon_url": "https://example.com/icons/exit.png",
       "image_url": "https://example.com/images/mercy_pavilion.jpg",
@@ -99,7 +102,7 @@
       "name": "云谷寺至迎客松",
       "description": "从云谷寺出发，沿石阶上山到迎客松",
       "distance": 2.5,
-      "duration": "2:00",
+      "duration": 12,
       "elevation_gain": 1020,
       "elevation_loss": 0.0,
       "start_waypoint_id": "wp_001",
@@ -115,7 +118,7 @@
       "name": "迎客松至光明顶",
       "description": "从迎客松经天海到达光明顶",
       "distance": 3.0,
-      "duration": "1:30",
+      "duration": 12,
       "elevation_gain": 210,
       "elevation_loss": 0.0,
       "start_waypoint_id": "wp_002",
@@ -131,7 +134,7 @@
       "name": "光明顶至西海大峡谷",
       "description": "从光明顶下行到西海大峡谷",
       "distance": 4.0,
-      "duration": "2:00",
+      "duration": 12,
       "elevation_gain": 0,
       "elevation_loss": 360.0,
       "start_waypoint_id": "wp_003",
@@ -147,7 +150,7 @@
       "name": "西海大峡谷至排云亭",
       "description": "从西海大峡谷到排云亭",
       "distance": 3.0,
-      "duration": "1:30",
+      "duration": 12,
       "elevation_gain": 130,
       "elevation_loss": 0.0,
       "start_waypoint_id": "wp_004",
@@ -157,28 +160,13 @@
         [30.1584, 118.1417],
         [30.1634, 118.1367]
       ]
-    },
-    {
-      "id": "seg_005",
-      "name": "排云亭至慈光阁",
-      "description": "从排云亭下山到慈光阁",
-      "distance": 3.0,
-      "duration": "1:30",
-      "elevation_gain": 0,
-      "elevation_loss": 810.0,
-      "start_waypoint_id": "wp_005",
-      "end_waypoint_id": "wp_006",
-      "path_points": [
-        [30.1634, 118.1367],
-        [30.1684, 118.1317],
-        [30.1734, 118.1267]
-      ]
     }
   ],
   "daily_plans": [
     {
       "id": "dp_001",
       "day_number": 1,
+      "type":"",
       "title": "黄山东线登山",
       "description": "从云谷寺出发，经迎客松到达光明顶，住宿山顶",
       "distance": 5.5,
@@ -199,6 +187,7 @@
       "description": "从光明顶出发，游览西海大峡谷，经排云亭到达慈光阁下山",
       "distance": 10.0,
       "duration": "5:00",
+      "type":"",
       "estimated_time": 7.0,
       "elevation_gain": 130,
       "elevation_loss": 1170.0,

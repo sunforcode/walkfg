@@ -1,51 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:walk/model/map/track_point_model.dart';
+import 'package:walk/model/route/segment_model.dart';
 
 part 'daily_plan_model.g.dart';
-
-/// 兴趣点模型
-@JsonSerializable()
-class PointOfInterestModel {
-  /// ID
-  final String id;
-
-  /// 名称
-  final String name;
-
-  /// 描述
-  final String? description;
-
-  /// 纬度
-  final double latitude;
-
-  /// 经度
-  final double longitude;
-
-  /// 类型（景点、休息点、补给点等）
-  final String type;
-
-  /// 海拔
-  final double? elevation;
-
-  /// 预计到达时间
-  @JsonKey(name: 'estimated_arrival_time')
-  final String? estimatedArrivalTime;
-
-  PointOfInterestModel({
-    required this.id,
-    required this.name,
-    this.description,
-    required this.latitude,
-    required this.longitude,
-    required this.type,
-    this.elevation,
-    this.estimatedArrivalTime,
-  });
-
-  factory PointOfInterestModel.fromJson(Map<String, dynamic> json) =>
-      _$PointOfInterestModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$PointOfInterestModelToJson(this);
-}
 
 /// 每日计划模型
 @JsonSerializable()
@@ -66,9 +23,6 @@ class DailyPlanModel {
   /// 距离（公里）
   final double distance;
 
-  /// 预计时长
-  final String duration;
-
   /// 预计时间（小时数）
   @JsonKey(name: 'estimated_time')
   final double estimatedTime;
@@ -81,56 +35,6 @@ class DailyPlanModel {
   @JsonKey(name: 'elevation_loss')
   final double? elevationLoss;
 
-  /// 起点ID
-  @JsonKey(name: 'start_waypoint_id')
-  final String startWaypointId;
-
-  /// 终点ID
-  @JsonKey(name: 'end_waypoint_id')
-  final String endWaypointId;
-
-  /// 起点名称（从TripDayPlanModel合并）
-  @JsonKey(name: 'start_point')
-  final String? startPoint;
-
-  /// 终点名称（从TripDayPlanModel合并）
-  @JsonKey(name: 'end_point')
-  final String? endPoint;
-
-  /// 包含的分段ID列表
-  @JsonKey(name: 'segment_ids')
-  final List<String> segmentIds;
-
-  /// 住宿信息
-  final String? accommodation;
-
-  /// 关键点列表
-  @JsonKey(name: 'key_points')
-  final List<String> keyPoints;
-
-  /// 备注（从TripDayPlanModel合并）
-  final String? notes;
-
-  /// 计划日期
-  @JsonKey(name: 'planned_date')
-  final DateTime? plannedDate;
-
-  /// 兴趣点列表
-  @JsonKey(name: 'points_of_interest')
-  final List<PointOfInterestModel> pointsOfInterest;
-
-  /// 起点位置
-  @JsonKey(name: 'start_location')
-  final String? startLocation;
-
-  /// 终点位置
-  @JsonKey(name: 'end_location')
-  final String? endLocation;
-
-  /// 难度等级（1-5）
-  @JsonKey(name: 'difficulty_level')
-  final int? difficultyLevel;
-
   /// 最高海拔
   @JsonKey(name: 'max_elevation')
   final double? maxElevation;
@@ -139,6 +43,16 @@ class DailyPlanModel {
   @JsonKey(name: 'min_elevation')
   final double? minElevation;
 
+  /// 包含的分段列表
+  @JsonKey(name: 'segments', defaultValue: <SegmentModel>[])
+  final List<SegmentModel> segments;
+
+  /// 住宿信息
+  final String? accommodation;
+
+  /// 备注
+  final String? notes;
+
   /// 构造函数
   DailyPlanModel({
     required this.id,
@@ -146,25 +60,25 @@ class DailyPlanModel {
     required this.title,
     required this.description,
     required this.distance,
-    required this.duration,
     this.estimatedTime = 8.0, // 默认8小时
     required this.elevationGain,
     this.elevationLoss,
-    required this.startWaypointId,
-    required this.endWaypointId,
+    this.maxElevation,
+    this.minElevation,
+    this.segments = const <SegmentModel>[],
+    this.accommodation,
+    this.notes,
+    this.startWaypointId,
+    this.endWaypointId,
     this.startPoint,
     this.endPoint,
-    required this.segmentIds,
-    this.accommodation,
-    this.keyPoints = const [],
-    this.notes,
+    this.segmentIds = const <String>[],
+    this.keyPoints = const <String>[],
     this.plannedDate,
-    this.pointsOfInterest = const [],
+    this.pointsOfInterest = const <PointOfInterestModel>[],
     this.startLocation,
     this.endLocation,
     this.difficultyLevel,
-    this.maxElevation,
-    this.minElevation,
   });
 
   /// 从JSON创建
@@ -306,25 +220,25 @@ class DailyPlanModel {
     String? title,
     String? description,
     double? distance,
-    String? duration,
     double? estimatedTime,
     int? elevationGain,
     double? elevationLoss,
+    double? maxElevation,
+    double? minElevation,
+    List<SegmentModel>? segments,
+    String? accommodation,
+    String? notes,
     String? startWaypointId,
     String? endWaypointId,
     String? startPoint,
     String? endPoint,
     List<String>? segmentIds,
-    String? accommodation,
     List<String>? keyPoints,
-    String? notes,
     DateTime? plannedDate,
     List<PointOfInterestModel>? pointsOfInterest,
     String? startLocation,
     String? endLocation,
     int? difficultyLevel,
-    double? maxElevation,
-    double? minElevation,
   }) {
     return DailyPlanModel(
       id: id ?? this.id,
@@ -332,25 +246,39 @@ class DailyPlanModel {
       title: title ?? this.title,
       description: description ?? this.description,
       distance: distance ?? this.distance,
-      duration: duration ?? this.duration,
       estimatedTime: estimatedTime ?? this.estimatedTime,
       elevationGain: elevationGain ?? this.elevationGain,
       elevationLoss: elevationLoss ?? this.elevationLoss,
+      maxElevation: maxElevation ?? this.maxElevation,
+      minElevation: minElevation ?? this.minElevation,
+      segments: segments ?? this.segments,
+      accommodation: accommodation ?? this.accommodation,
+      notes: notes ?? this.notes,
       startWaypointId: startWaypointId ?? this.startWaypointId,
       endWaypointId: endWaypointId ?? this.endWaypointId,
       startPoint: startPoint ?? this.startPoint,
       endPoint: endPoint ?? this.endPoint,
       segmentIds: segmentIds ?? this.segmentIds,
-      accommodation: accommodation ?? this.accommodation,
       keyPoints: keyPoints ?? this.keyPoints,
-      notes: notes ?? this.notes,
       plannedDate: plannedDate ?? this.plannedDate,
       pointsOfInterest: pointsOfInterest ?? this.pointsOfInterest,
       startLocation: startLocation ?? this.startLocation,
       endLocation: endLocation ?? this.endLocation,
       difficultyLevel: difficultyLevel ?? this.difficultyLevel,
-      maxElevation: maxElevation ?? this.maxElevation,
-      minElevation: minElevation ?? this.minElevation,
     );
   }
+
+  @override
+  String toString() {
+    return 'DailyPlanModel(id: $id, dayNumber: $dayNumber, title: $title, distance: $distance)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is DailyPlanModel && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

@@ -211,7 +211,7 @@ class _RouteSegmentsWidgetState extends State<RouteSegmentsWidget> {
 
           const SizedBox(height: 8),
           Text(
-            segment.description,
+            segment.name,
             style: const TextStyle(
               fontSize: 14,
               color: CupertinoColors.secondaryLabel,
@@ -255,7 +255,7 @@ class _RouteSegmentsWidgetState extends State<RouteSegmentsWidget> {
                 child: _buildStatItem(
                   icon: CupertinoIcons.time,
                   label: '时间',
-                  value: segment.duration,
+                  value: segment.duration.toString(),
                   color: CupertinoColors.systemPurple,
                 ),
               ),
@@ -296,7 +296,7 @@ class _RouteSegmentsWidgetState extends State<RouteSegmentsWidget> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        segment.startWaypointId,
+                        segment.startWaypoint?.name ?? "",
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -339,7 +339,7 @@ class _RouteSegmentsWidgetState extends State<RouteSegmentsWidget> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        segment.endWaypointId,
+                        segment.endWaypoint?.name ?? "",
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,

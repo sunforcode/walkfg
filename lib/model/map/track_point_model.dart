@@ -7,6 +7,8 @@ class TrackPointVO {
   /// 纬度
   final double latitude;
 
+  final String? name = null;
+
   /// 经度
   final double longitude;
 

@@ -10,7 +10,6 @@ import 'package:walk/model/route/track_model.dart';
 import 'package:walk/model/route/daily_plan_model.dart';
 import 'package:walk/model/route/weather_info.dart';
 import 'package:walk/model/route/waypoint_model.dart';
-import 'package:walk/model/route/facilities_model.dart';
 import 'package:walk/model/route/campsite_model.dart';
 import 'package:walk/model/route/hitchhike_contact_model.dart';
 import 'package:walk/model/user/user_model.dart';
@@ -29,10 +28,6 @@ class RouteModel extends BaseModel {
   @JsonKey(name: 'created_by')
   final String createdBy;
 
-  /// 创建者信息（可选，运行时设置）
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  final UserModel? createUser;
-
   /// 使用次数（默认值）
   @JsonKey(name: 'usage_count', defaultValue: 0)
   final int usageCount;
@@ -48,14 +43,6 @@ class RouteModel extends BaseModel {
   @JsonKey(name: 'region')
   final String region;
 
-  /// 最佳季节
-  @JsonKey(name: 'best_season')
-  final List<String> bestSeason;
-
-  /// 相关地图ID列表
-  @JsonKey(name: 'related_map_ids')
-  final List<String> relatedMapIds;
-
   /// 默认地图ID
   @JsonKey(name: 'default_map_id')
   final String defaultMapId;
@@ -64,6 +51,7 @@ class RouteModel extends BaseModel {
   final RouteRatingsVO ratings;
 
   /// 标签列表
+  @JsonKey(defaultValue: <String>[])
   final List<String> tags;
 
   /// 难度
@@ -71,49 +59,24 @@ class RouteModel extends BaseModel {
       name: 'difficulty', fromJson: _parseDifficulty, toJson: _difficultyToJson)
   final RouteDifficulty difficulty;
 
-  /// 路标点列表
-  final List<WaypointModel> waypoints;
-
-  /// 路径分段，ai根据 某些信息将地图分段
-  final List<SegmentModel> segments;
-
-  /// 每日行程计划， 可能执行多个路径分端，两者无关
-  @JsonKey(name: 'daily_plans')
-  final List<DailyPlanModel> dailyPlans;
-
-  /// 气候信息
-  @JsonKey(name: 'weather_info')
-  final WeatherInfoVO? weatherInfo;
-
-  /// 设施信息
-  final FacilitiesModel? facilities;
-
   /// 图片URL列表
-  @JsonKey(name: 'image_urls')
+  @JsonKey(name: 'image_urls', defaultValue: <String>[])
   final List<String> imageUrls;
 
   /// 封面图片URL
   @JsonKey(name: 'cover_url')
   final String? coverUrl;
 
-  /// 地图数据ID
-  @JsonKey(name: 'map_data_id')
-  final String mapDataId;
-
-  /// 当前地图数据模型（运行时设置，不从JSON获取）
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  final TrackModel? defaultMap;
-
   /// 是否收藏
-  @JsonKey(name: 'is_favorite')
+  @JsonKey(name: 'is_favorite', defaultValue: false)
   final bool isFavorite;
 
   /// 人气
   final int popularity;
 
-  /// 相关路线ID列表
-  @JsonKey(name: 'related_route_ids')
-  final List<String> relatedRouteIds;
+  /// 是否为环线
+  @JsonKey(name: 'is_loop', defaultValue: false)
+  final bool isLoop;
 
   /// 状态
   @JsonKey(fromJson: _parseStatus, toJson: _statusToJson)
@@ -123,45 +86,43 @@ class RouteModel extends BaseModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   bool get isMultiDay => dailyPlans.length > 1;
 
-  /// 是否为环线（根据waypoints判断）
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  bool get isLoop {
-    if (waypoints.length < 2) return false;
-    final start = waypoints.first;
-    final end = waypoints.last;
-    // 简单判断：起点终点距离小于100米认为是环线
-    final distance = _calculateDistance(
-      start.latitude,
-      start.longitude,
-      end.latitude,
-      end.longitude,
-    );
-    return distance < 0.1; // 100米
-  }
+  /// 路径分段，ai根据 某些信息将地图分段
+  @JsonKey(defaultValue: <SegmentModel>[])
+  final List<SegmentModel> segments;
 
   /// 水源点列表
-  @JsonKey(name: 'water_sources')
+  @JsonKey(name: 'water_sources', defaultValue: <WaterSourceModel>[])
   final List<WaterSourceModel> waterSources;
 
   /// 补给点列表
-  @JsonKey(name: 'supply_points')
+  @JsonKey(name: 'supplies', defaultValue: <SupplyPointModel>[])
   final List<SupplyPointModel> supplyPoints;
 
   /// 营地资源列表
-  @JsonKey(name: 'campsites')
+  @JsonKey(name: 'campsites', defaultValue: <CampsiteModel>[])
   final List<CampsiteModel> campsites;
 
+  /// 每日行程计划， 可能执行多个路径分端，两者无关
+  @JsonKey(name: 'daily_plans', defaultValue: <DailyPlanModel>[])
+  final List<DailyPlanModel> dailyPlans;
+
+  /// 气候信息
+  @JsonKey(name: 'weather_info')
+  final WeatherInfoVO? weatherInfo;
+
   /// 搭车联系方式列表
-  @JsonKey(name: 'hitchhike_contacts')
+  @JsonKey(name: 'hitchhike_contacts', defaultValue: <HitchhikeContactModel>[])
   final List<HitchhikeContactModel> hitchhikeContacts;
 
-  /// 标记点列表（从waypoints转换而来）
+  /// 标记点列表
+  @JsonKey(name: 'marker_points', defaultValue: <MarkerPointModel>[])
+  final List<MarkerPointModel> markerPoints;
+
+  final UserModel createUser;
+
+  /// 当前地图数据模型（运行时设置，不从JSON获取）
   @JsonKey(includeFromJson: false, includeToJson: false)
-  List<MarkerPointModel> get markerPoints {
-    return waypoints
-        .map((waypoint) => MarkerPointModel.fromWaypoint(waypoint))
-        .toList();
-  }
+  final TrackModel? defaultMap;
 
   /// 构造函数
   RouteModel({
@@ -174,44 +135,30 @@ class RouteModel extends BaseModel {
     this.usageCount = 0,
     required this.description,
     required this.regionId,
-    String? region,
-    List<String>? bestSeason,
-    List<String>? relatedMapIds,
-    String? defaultMapId,
+    this.region = "未知区域",
+    this.bestSeason = const <String>[],
+    this.relatedMapIds = const <String>[],
+    this.defaultMapId = "",
     this.defaultMap,
     required this.ratings,
-    List<String>? tags,
+    this.tags = const <String>[],
     required this.difficulty,
-    List<WaypointModel>? waypoints,
-    List<SegmentModel>? segments,
-    List<DailyPlanModel>? dailyPlans,
+    this.segments = const <SegmentModel>[],
+    this.dailyPlans = const <DailyPlanModel>[],
     this.weatherInfo,
-    this.facilities,
-    required this.imageUrls,
+    this.imageUrls = const <String>[],
     this.coverUrl,
-    required this.mapDataId,
     this.isFavorite = false,
     required this.popularity,
-    List<String>? relatedRouteIds,
+    this.isLoop = false,
+    this.relatedRouteIds = const <String>[],
     RouteStatus? status,
-    List<WaterSourceModel>? waterSources,
-    List<SupplyPointModel>? supplyPoints,
-    List<CampsiteModel>? campsites,
-    List<HitchhikeContactModel>? hitchhikeContacts,
-  })  : this.region = region ?? "未知区域",
-        this.bestSeason = bestSeason ?? const [],
-        this.relatedMapIds = relatedMapIds ?? const [],
-        this.tags = tags ?? const [],
-        this.waypoints = waypoints ?? const [],
-        this.segments = segments ?? const [],
-        this.dailyPlans = dailyPlans ?? const [],
-        this.relatedRouteIds = relatedRouteIds ?? const [],
-        this.status = status ?? RouteStatus.planning,
-        this.defaultMapId = defaultMapId ?? "",
-        this.waterSources = waterSources ?? const [],
-        this.supplyPoints = supplyPoints ?? const [],
-        this.campsites = campsites ?? const [],
-        this.hitchhikeContacts = hitchhikeContacts ?? const [];
+    this.waterSources = const <WaterSourceModel>[],
+    this.supplyPoints = const <SupplyPointModel>[],
+    this.campsites = const <CampsiteModel>[],
+    this.hitchhikeContacts = const <HitchhikeContactModel>[],
+    this.markerPoints = const <MarkerPointModel>[],
+  }) : this.status = status ?? RouteStatus.planning;
 
   /// 从JSON创建
   factory RouteModel.fromJson(Map<String, dynamic> json) =>
@@ -298,6 +245,7 @@ class RouteModel extends BaseModel {
     int? usageCount,
     String? description,
     String? regionId,
+    String? regionName,
     String? region,
     List<String>? bestSeason,
     List<String>? relatedMapIds,
@@ -310,18 +258,19 @@ class RouteModel extends BaseModel {
     List<SegmentModel>? segments,
     List<DailyPlanModel>? dailyPlans,
     WeatherInfoVO? weatherInfo,
-    FacilitiesModel? facilities,
     List<String>? imageUrls,
     String? coverUrl,
     String? mapDataId,
     bool? isFavorite,
     int? popularity,
+    bool? isLoop,
     List<String>? relatedRouteIds,
     RouteStatus? status,
     List<WaterSourceModel>? waterSources,
     List<SupplyPointModel>? supplyPoints,
     List<CampsiteModel>? campsites,
     List<HitchhikeContactModel>? hitchhikeContacts,
+    List<MarkerPointModel>? markerPoints,
   }) {
     return RouteModel(
       id: id ?? this.id,
@@ -333,6 +282,7 @@ class RouteModel extends BaseModel {
       usageCount: usageCount ?? this.usageCount,
       description: description ?? this.description,
       regionId: regionId ?? this.regionId,
+      regionName: regionName ?? this.regionName,
       region: region ?? this.region,
       bestSeason: bestSeason ?? this.bestSeason,
       relatedMapIds: relatedMapIds ?? this.relatedMapIds,
@@ -345,18 +295,19 @@ class RouteModel extends BaseModel {
       segments: segments ?? this.segments,
       dailyPlans: dailyPlans ?? this.dailyPlans,
       weatherInfo: weatherInfo ?? this.weatherInfo,
-      facilities: facilities ?? this.facilities,
       imageUrls: imageUrls ?? this.imageUrls,
       coverUrl: coverUrl ?? this.coverUrl,
       mapDataId: mapDataId ?? this.mapDataId,
       isFavorite: isFavorite ?? this.isFavorite,
       popularity: popularity ?? this.popularity,
+      isLoop: isLoop ?? this.isLoop,
       relatedRouteIds: relatedRouteIds ?? this.relatedRouteIds,
       status: status ?? this.status,
       waterSources: waterSources ?? this.waterSources,
       supplyPoints: supplyPoints ?? this.supplyPoints,
       campsites: campsites ?? this.campsites,
       hitchhikeContacts: hitchhikeContacts ?? this.hitchhikeContacts,
+      markerPoints: markerPoints ?? this.markerPoints,
     );
   }
 
@@ -386,7 +337,9 @@ class RouteModel extends BaseModel {
       return defaultMap!.elevationGain;
     }
     // 如果没有地图数据，则从分段计算
-    return segments.fold(0, (sum, segment) => sum + segment.elevationGain);
+    return segments
+        .fold(0, (sum, segment) => sum + segment.elevationGain)
+        .toDouble();
   }
 
   /// 获取路线下降（米）
@@ -404,13 +357,7 @@ class RouteModel extends BaseModel {
     // 从每日计划计算总时长
     if (dailyPlans.isNotEmpty) {
       final totalHours = dailyPlans.fold(0.0, (sum, plan) {
-        final parts = plan.duration.split(':');
-        if (parts.length == 2) {
-          return sum +
-              (int.tryParse(parts[0]) ?? 0) +
-              (int.tryParse(parts[1]) ?? 0) / 60;
-        }
-        return sum;
+        return sum + plan.estimatedTime;
       });
 
       final hours = totalHours.floor();
