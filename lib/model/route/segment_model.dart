@@ -150,7 +150,8 @@ class SegmentModel {
   final double distance;
 
   /// 预计时长（分钟）
-  final int duration;
+  @JsonKey(name: 'elevation_time')
+  final int estimatedTime;
 
   /// 爬升（米）
   @JsonKey(name: 'elevation_gain')
@@ -190,7 +191,7 @@ class SegmentModel {
     required this.name,
     this.description,
     required this.distance,
-    required this.duration,
+    required this.estimatedTime,
     required this.elevationGain,
     this.elevationLoss,
     this.startWaypoint,
@@ -227,7 +228,7 @@ class SegmentModel {
       name: name ?? this.name,
       description: description ?? this.description,
       distance: distance ?? this.distance,
-      duration: duration ?? this.duration,
+      estimatedTime: duration ?? this.estimatedTime,
       elevationGain: elevationGain ?? this.elevationGain,
       elevationLoss: elevationLoss ?? this.elevationLoss,
       startWaypoint: startWaypoint ?? this.startWaypoint,

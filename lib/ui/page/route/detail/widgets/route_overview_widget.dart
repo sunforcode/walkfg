@@ -84,7 +84,7 @@ class RouteOverviewWidget extends StatelessWidget {
               ),
             ),
             Text(
-              ' (${route.ratings.ratingCount})',
+              ' (${route.ratings?.ratingCount})',
               style: const TextStyle(
                 fontSize: 14,
                 color: CupertinoColors.systemGrey,
@@ -133,7 +133,7 @@ class RouteOverviewWidget extends StatelessWidget {
     }
 
     // 2. 特色标签（高优先级）
-    final featureTags = route.tags.take(2);
+    final featureTags = route.tags?.take(2) ?? [];
     for (final tag in featureTags) {
       tags.add({
         'text': tag,
@@ -145,7 +145,7 @@ class RouteOverviewWidget extends StatelessWidget {
     // 3. 路线标签（补充，最多2个）
     final remainingSlots = 6 - tags.length;
     if (remainingSlots > 0) {
-      final routeTags = route.tags.take(remainingSlots);
+      final routeTags = route.tags?.take(remainingSlots) ?? [];
       for (final tag in routeTags) {
         tags.add({
           'text': tag,
@@ -242,29 +242,30 @@ class RouteOverviewWidget extends StatelessWidget {
     final buffer = StringBuffer();
 
     // 行程安排信息
-    if (route.dailyPlans.isNotEmpty) {
+    if (route.dailyPlans != null) {
       final totalTime =
-          route.dailyPlans.fold(0.0, (sum, plan) => sum + plan.estimatedTime);
-      final avgTimePerDay = totalTime / route.dailyPlans.length;
+          route.dailyPlans!.fold(0.0, (sum, plan) => sum + plan.estimatedTime);
+      final avgTimePerDay = totalTime / route.dailyPlans!.length;
 
       buffer.write('行程安排：从${route.defaultMap?.startPoint}出发，');
       buffer.write('平均每天徒步${avgTimePerDay.toStringAsFixed(1)}小时，');
 
-      if (route.dailyPlans.length > 1) {
+      if (route.dailyPlans!.length > 1) {
         buffer.write(
-            '${route.dailyPlans.length}天行程最终在${route.defaultMap?.endPoint}结束。');
+            '${route.dailyPlans!.length}天行程最终在${route.defaultMap?.endPoint}结束。');
       } else {
         buffer.write('当天在${route.defaultMap?.endPoint}结束。');
       }
     }
 
     // 住宿信息
-    final accommodations = route.dailyPlans
-        .where((plan) =>
-            plan.accommodation != null && plan.accommodation!.isNotEmpty)
-        .map((plan) => plan.accommodation!)
-        .toSet()
-        .toList();
+    final accommodations = route.dailyPlans ??
+        []
+            .where((plan) =>
+                plan.accommodation != null && plan.accommodation!.isNotEmpty)
+            .map((plan) => plan.accommodation!)
+            .toSet()
+            .toList();
 
     if (accommodations.isNotEmpty) {
       buffer.write('沿途有${accommodations.join('、')}等住宿点，建议提前预订。');

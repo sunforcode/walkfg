@@ -317,7 +317,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                     // 每日行程列表
                     SliverToBoxAdapter(
                       child: DailyItineraryListWidget(
-                        dailyPlans: route.dailyPlans,
+                        dailyPlans: route.dailyPlans ?? [],
                         onDayTap: _handleDayTap,
                       ),
                     ),
@@ -334,35 +334,35 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                     // 水源点详解
                     SliverToBoxAdapter(
                       child: WaterSourcesWidget(
-                        waterSources: route.waterSources,
+                        waterSources: route.waterSources ?? [],
                       ),
                     ),
 
                     // 补给点详解
                     SliverToBoxAdapter(
                       child: SupplyPointsWidget(
-                        supplyPoints: route.supplyPoints,
+                        supplyPoints: route.supplyPoints ?? [],
                       ),
                     ),
 
                     // 营地资源
                     SliverToBoxAdapter(
                       child: CampsitesWidget(
-                        campsites: route.campsites,
+                        campsites: route.campsites ?? [],
                       ),
                     ),
 
                     // 路线分段介绍
                     SliverToBoxAdapter(
                       child: RouteSegmentsWidget(
-                        segments: route.segments,
+                        segments: route.segments ?? [],
                       ),
                     ),
 
                     // 搭车联系方式
                     SliverToBoxAdapter(
                       child: HitchhikeContactsWidget(
-                        contacts: route.hitchhikeContacts,
+                        contacts: route.hitchhikeContacts ?? [],
                       ),
                     ),
 
@@ -385,7 +385,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                     // 路线图片推荐
                     SliverToBoxAdapter(
                       child: RouteGalleryWidget(
-                        imageUrls: route.imageUrls,
+                        imageUrls: route.imageUrls ?? [],
                         onImageTap: _handleImageTap,
                       ),
                     ),

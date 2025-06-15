@@ -255,7 +255,7 @@ class _RouteSegmentsWidgetState extends State<RouteSegmentsWidget> {
                 child: _buildStatItem(
                   icon: CupertinoIcons.time,
                   label: '时间',
-                  value: segment.duration.toString(),
+                  value: segment.estimatedTime.toString(),
                   color: CupertinoColors.systemPurple,
                 ),
               ),

@@ -172,7 +172,7 @@ class RelatedRoutesWidget extends StatelessWidget {
                 // 天数
                 _buildRouteParam(
                   icon: CupertinoIcons.calendar,
-                  value: '${route.dailyPlans.length}天',
+                  value: '${route.dailyPlans?.length}天',
                   color: CupertinoColors.systemOrange,
                 ),
 
@@ -190,12 +190,12 @@ class RelatedRoutesWidget extends StatelessWidget {
             const SizedBox(height: 8),
 
             // 标签 - 最多显示2个
-            if (route.tags.isNotEmpty) ...[
+            if (route.tags != null) ...[
               Wrap(
                 spacing: 4,
                 runSpacing: 4,
                 children:
-                    route.tags.take(2).map((tag) => _buildTag(tag)).toList(),
+                    route.tags!.take(2).map((tag) => _buildTag(tag)).toList(),
               ),
               const SizedBox(height: 4),
             ],

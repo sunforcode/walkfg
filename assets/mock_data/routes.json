@@ -1,468 +1,199 @@
 [{
   "id": "route_001",
-  "created_at": "2023-05-15T08:00:00Z",
-  "updated_at": "2023-05-20T10:30:00Z",
-  "name": "黄山经典徒步路线",
-  "description": "这条路线带您游览黄山最著名的景点，包括迎客松、光明顶和西海大峡谷。沿途可欣赏壮丽的云海和奇特的松树。",
-  "region_id": "region_001",
+  "created_at": "2024-01-15T08:00:00.000Z",
+  "updated_at": "2024-01-20T10:30:00.000Z",
+  "name": "黄山西海大峡谷经典徒步路线",
+  "created_by": "user_123",
+  "usage_count": 156,
+  "description": "黄山西海大峡谷是黄山风景区最壮观的峡谷景观之一，这条路线将带您穿越险峻的峡谷，体验惊险刺激的栈道徒步，欣赏奇松怪石和云海奇观。路线从云谷寺出发，经过白鹅岭、始信峰，进入西海大峡谷，最终到达光明顶，是一条集自然风光、地质奇观和人文景观于一体的经典徒步路线。",
+  "region_id": "huangshan_scenic_area",
   "region": "黄山风景区",
-  "best_season": ["春季", "秋季"],
-  "related_map_ids": ["map_001", "map_002"],
-  "default_map_id": "map_001",
-  "region_name":"黄山",
-  "usage_count":1,
+  "default_map_id": "map_huangshan_xihai_001",
   "ratings": {
-    "overall": 4.8,
-    "scenery": 5.0,
-    "difficulty": 3.5,
-    "experience": 4.7,
-    "facilities": 4.2,
-    "rating_count": 256
+    "overall": 4.7,
+    "scenery": 4.9,
+    "difficulty": 4.2,
+    "experience": 4.8,
+    "facilities": 4.3,
+    "rating_count": 189
   },
-  "tags": ["山岳", "森林", "观景", "摄影", "世界遗产"],
-  "difficulty": 1,
-  "waypoints": [
-    {
-      "id": "wp_001",
-      "name": "云谷寺",
-      "description": "黄山东部入口，海拔约630米",
-      "latitude": 30.1234,
-      "longitude": 118.1567,
-      "elevation": 630.0,
-      "type": "start",
-      "icon_url": "https://example.com/icons/entrance.png",
-      "image_url": "https://example.com/images/yungu_temple.jpg",
-      "sequence_number": 1
-    },
-    {
-      "id": "wp_002",
-      "name": "迎客松",
-      "description": "黄山标志性景观，形似伸臂欢迎远方来客",
-      "latitude": 30.1334,
-      "longitude": 118.1667,
-      "elevation": 1650.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/attraction.png",
-      "image_url": "https://example.com/images/welcome_pine.jpg",
-      "sequence_number": 2
-    },
-    {
-      "id": "wp_003",
-      "name": "光明顶",
-      "description": "黄山主峰之一，海拔1860米，是观赏日出的绝佳地点",
-      "latitude": 30.1434,
-      "longitude": 118.1767,
-      "elevation": 1860.0,
-      "type": "peak",
-      "icon_url": "https://example.com/icons/peak.png",
-      "image_url": "https://example.com/images/bright_summit.jpg",
-      "sequence_number": 3
-    },
-    {
-      "id": "wp_004",
-      "name": "西海大峡谷",
-      "description": "黄山西部的壮观峡谷，景色秀丽",
-      "latitude": 30.1534,
-      "longitude": 118.1467,
-      "elevation": 1500.0,
-      "type": "attraction",
-      "icon_url": "https://example.com/icons/attraction.png",
-      "image_url": "https://example.com/images/west_sea_canyon.jpg",
-      "sequence_number": 4
-    },
-    {
-      "id": "wp_005",
-      "name": "排云亭",
-      "description": "位于西海大峡谷边缘的观景亭",
-      "latitude": 30.1634,
-      "longitude": 118.1367,
-      "elevation": 1630.0,
-      "type": "rest",
-      "icon_url": "https://example.com/icons/rest.png",
-      "image_url": "https://example.com/images/cloud_pavilion.jpg",
-      "sequence_number": 5
-    },
-    {
-      "id": "wp_006",
-      "name": "慈光阁",
-      "description": "黄山西部出口，可乘索道下山",
-      "latitude": 30.1734,
-      "longitude": 118.1267,
-      "elevation": 820.0,
-    
-      "type": "end",
-      "icon_url": "https://example.com/icons/exit.png",
-      "image_url": "https://example.com/images/mercy_pavilion.jpg",
-      "sequence_number": 6
-    }
+  "tags": ["峡谷", "栈道", "云海", "奇松", "怪石", "经典路线"],
+  "difficulty": 2,
+  "image_urls": [
+    "https://example.com/images/huangshan_xihai_1.jpg",
+    "https://example.com/images/huangshan_xihai_2.jpg",
+    "https://example.com/images/huangshan_xihai_3.jpg"
   ],
+  "cover_url": "https://example.com/images/huangshan_xihai_cover.jpg",
+  "is_favorite": false,
+  "popularity": 189,
+  "is_loop": false,
+  "status": "completed",
   "segments": [
     {
       "id": "seg_001",
-      "name": "云谷寺至迎客松",
-      "description": "从云谷寺出发，沿石阶上山到迎客松",
+      "name": "云谷寺至白鹅岭",
+      "description": "从云谷寺缆车站开始，沿石阶路上行至白鹅岭",
       "distance": 2.5,
-      "duration": 12,
-      "elevation_gain": 1020,
-      "elevation_loss": 0.0,
-      "start_waypoint_id": "wp_001",
-      "end_waypoint_id": "wp_002",
-      "path_points": [
-        [30.1234, 118.1567],
-        [30.1284, 118.1617],
-        [30.1334, 118.1667]
-      ]
-    },
+      "duration": 90,
+      "elevation_gain": 400,
+      "elevation_loss": 0,
+      "start_waypoint": {
+        "latitude": 30.1234,
+        "longitude": 118.1567,
+        "elevation": 630.0
+      },
+      "end_waypoint": {
+        "latitude": 30.1345,
+        "longitude": 118.1678,
+        "elevation": 1030.0
+      },
+      "key_points": [
+        {
+          "latitude": 30.1289,
+          "longitude": 118.1622,
+          "elevation": 830.0
+        }
+      ],
+      "note": "路况良好，有明确标识",
+      "route_type": 2
+    }
+  ],
+  "water_sources": [
     {
-      "id": "seg_002",
-      "name": "迎客松至光明顶",
-      "description": "从迎客松经天海到达光明顶",
-      "distance": 3.0,
-      "duration": 12,
-      "elevation_gain": 210,
-      "elevation_loss": 0.0,
-      "start_waypoint_id": "wp_002",
-      "end_waypoint_id": "wp_003",
-      "path_points": [
-        [30.1334, 118.1667],
-        [30.1384, 118.1717],
-        [30.1434, 118.1767]
-      ]
-    },
+      "id": "water_001",
+      "latitude": 30.1289,
+      "longitude": 118.1622,
+      "elevation": 830.0,
+      "name": "白鹅岭水源",
+      "description": "山涧溪流，水质清澈",
+      "created_at": "2024-01-10T10:00:00.000Z",
+      "updated_at": "2024-01-15T08:45:00.000Z",
+      "water_type": "stream",
+      "water_quality": "good",
+      "reliability": 0.8,
+      "requires_treatment": true,
+      "notes": "建议过滤后饮用，水量充足",
+      "last_verified": "2024-01-15T08:45:00.000Z",
+      "verified_by": {
+        "id": "user_456",
+        "created_at": "2023-06-01T00:00:00.000Z",
+        "updated_at": "2024-01-15T00:00:00.000Z",
+        "username": "mountain_guide",
+        "nickname": "山地向导",
+        "avatar_url": "https://example.com/avatars/guide.jpg",
+        "completed_routes": 45,
+        "equipment_lists": 12,
+        "favorite_routes": 23
+      }
+    }
+  ],
+  "supplies": [
     {
-      "id": "seg_003",
-      "name": "光明顶至西海大峡谷",
-      "description": "从光明顶下行到西海大峡谷",
-      "distance": 4.0,
-      "duration": 12,
-      "elevation_gain": 0,
-      "elevation_loss": 360.0,
-      "start_waypoint_id": "wp_003",
-      "end_waypoint_id": "wp_004",
-      "path_points": [
-        [30.1434, 118.1767],
-        [30.1484, 118.1617],
-        [30.1534, 118.1467]
-      ]
-    },
+      "id": "supply_001",
+      "latitude": 30.1345,
+      "longitude": 118.1678,
+      "elevation": 1030.0,
+      "name": "白鹅岭小卖部",
+      "description": "提供基本食品和饮用水",
+      "created_at": "2024-01-10T10:00:00.000Z",
+      "updated_at": "2024-01-15T09:30:00.000Z",
+      "last_verified": "2024-01-15",
+      "supply_type": "shop",
+      "updated_by": "user_789"
+    }
+  ],
+  "campsites": [
     {
-      "id": "seg_004",
-      "name": "西海大峡谷至排云亭",
-      "description": "从西海大峡谷到排云亭",
-      "distance": 3.0,
-      "duration": 12,
-      "elevation_gain": 130,
-      "elevation_loss": 0.0,
-      "start_waypoint_id": "wp_004",
-      "end_waypoint_id": "wp_005",
-      "path_points": [
-        [30.1534, 118.1467],
-        [30.1584, 118.1417],
-        [30.1634, 118.1367]
-      ]
+      "id": "camp_001",
+      "latitude": 30.1456,
+      "longitude": 118.1789,
+      "elevation": 1080.0,
+      "name": "西海大峡谷营地",
+      "description": "位于峡谷边缘的指定营地",
+      "created_at": "2024-01-10T10:00:00.000Z",
+      "updated_at": "2024-01-15T18:00:00.000Z",
+      "campsite_type": "designated",
+      "notes": "需要提前预约，有基本设施",
+      "verified_by": "user_101"
     }
   ],
   "daily_plans": [
     {
       "id": "dp_001",
       "day_number": 1,
-      "type":"",
       "title": "黄山东线登山",
       "description": "从云谷寺出发，经迎客松到达光明顶，住宿山顶",
-      "distance": 5.5,
-      "duration": "4:00",
+      "distance": 8.5,
       "estimated_time": 6.0,
       "elevation_gain": 1230,
-      "elevation_loss": 0.0,
-      "start_waypoint_id": "wp_001",
-      "end_waypoint_id": "wp_003",
-      "segment_ids": ["seg_001", "seg_002"],
+      "elevation_loss": 200.0,
+      "max_elevation": 1864.0,
+      "min_elevation": 630.0,
+      "segments": [
+        {
+          "id": "seg_001",
+          "name": "云谷寺至白鹅岭",
+          "description": "从云谷寺缆车站开始，沿石阶路上行至白鹅岭",
+          "distance": 2.5,
+          "duration": 90,
+          "elevation_gain": 400,
+          "elevation_loss": 0,
+          "start_waypoint": null,
+          "end_waypoint": null,
+          "key_points": [],
+          "note": "路况良好，有明确标识",
+          "route_type": 2
+        }
+      ],
       "accommodation": "北海宾馆",
-      "key_points": ["云谷寺", "白鹅岭", "迎客松", "天海", "光明顶"]
-    },
-    {
-      "id": "dp_002",
-      "day_number": 2,
-      "title": "黄山西线下山",
-      "description": "从光明顶出发，游览西海大峡谷，经排云亭到达慈光阁下山",
-      "distance": 10.0,
-      "duration": "5:00",
-      "type":"",
-      "estimated_time": 7.0,
-      "elevation_gain": 130,
-      "elevation_loss": 1170.0,
-      "start_waypoint_id": "wp_003",
-      "end_waypoint_id": "wp_006",
-      "segment_ids": ["seg_003", "seg_004", "seg_005"],
-      "accommodation": "黄山市区酒店",
-      "key_points": ["光明顶", "西海大峡谷", "排云亭", "飞来石", "慈光阁"]
+      "notes": "建议早起观日出"
     }
   ],
   "weather_info": {
-    "description": "黄山气候多变，山顶常有云雾，春秋两季最为宜人",
-    "seasonal": {
-      "春季": "3-5月，气温10-20℃，山花盛开，云海壮观",
-      "夏季": "6-8月，气温20-30℃，雨水较多，需防暑防雨",
-      "秋季": "9-11月，气温10-20℃，天高气爽，能见度最佳",
-      "冬季": "12-2月，气温-10-5℃，常有积雪，景色壮美但需防寒"
+    "description": "黄山地区属亚热带季风气候，四季分明，云雾多变",
+    "seasonal_weather": {
+      "spring": "3-5月，温度适宜，多雨雾，是观云海的好时节",
+      "summer": "6-8月，温度较高，午后多雷阵雨，需注意防雨",
+      "autumn": "9-11月，秋高气爽，是徒步的最佳季节",
+      "winter": "12-2月，寒冷多雪，路面湿滑，需要防滑装备"
     },
     "best_seasons": ["春季", "秋季"],
-    "precautions": "山顶天气多变，请携带雨具和保暖衣物，注意防晒"
+    "precautions": "山区天气变化快，请随时关注天气预报，携带雨具和保暖衣物"
   },
-  "facilities": {
-    "water": "山上有饮用水供应点，但价格较高，建议自带部分饮用水",
-    "food": "山顶有餐厅和小卖部，提供简单餐食，价格较高",
-    "accommodation": "山顶有北海宾馆、白云宾馆等住宿点，需提前预订",
-    "toilets": "主要景点和住宿区附近有公共厕所",
-    "signal_coverage": "山顶大部分区域有手机信号，但在峡谷等地可能较弱",
-    "requires_permit": false,
-    "safety_warnings": ["山路陡峭，注意安全", "天气多变，备好雨具", "高海拔地区，注意高反"]
-  },
-  "image_urls": [
-    "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-  ],
-  "cover_url": "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-  "map_data_id": "map_001",
-  "created_by": "user_001",
-  "is_favorite": false,
-  "popularity": 1250,
-  "related_route_ids": ["route_002", "route_003", "route_004"],
-  "status": "completed",
-  "water_sources": [
-    {
-      "id": "ws_001",
-      "name": "云谷寺山泉",
-      "description": "云谷寺附近的天然山泉，水质清澈甘甜",
-      "latitude": 30.1244,
-      "longitude": 118.1577,
-      "elevation": 650.0,
-      "timestamp": "2023-05-15T08:30:00Z",
-      "distance_from_start": 0.5,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "water_type": "spring",
-      "water_quality": "excellent",
-      "reliability": 0.9,
-      "requires_treatment": false,
-      "notes": "位于云谷寺入口处右侧，有明显标识，全年水量充足",
-      "last_verified": "2023-05-20T10:30:00Z",
-      "verified_by": "user_001"
-    },
-    {
-      "id": "ws_002",
-      "name": "天海补水点",
-      "description": "天海宾馆附近的人工水源",
-      "latitude": 30.1384,
-      "longitude": 118.1717,
-      "elevation": 1750.0,
-      "timestamp": "2023-05-15T12:00:00Z",
-      "distance_from_start": 4.0,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "water_type": "artificial",
-      "water_quality": "good",
-      "reliability": 0.8,
-      "requires_treatment": true,
-      "notes": "天海宾馆提供的饮用水，建议过滤后饮用，需付费",
-      "last_verified": "2023-05-20T10:30:00Z",
-      "verified_by": "user_002"
-    },
-    {
-      "id": "ws_003",
-      "name": "西海溪流",
-      "description": "西海大峡谷内的天然溪流",
-      "latitude": 30.1544,
-      "longitude": 118.1477,
-      "elevation": 1520.0,
-      "timestamp": "2023-05-16T10:00:00Z",
-      "distance_from_start": 8.5,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "water_type": "stream",
-      "water_quality": "fair",
-      "reliability": 0.6,
-      "requires_treatment": true,
-      "notes": "峡谷内溪流，雨季水量充足，旱季可能断流，建议净化后饮用",
-      "last_verified": "2023-05-18T14:00:00Z",
-      "verified_by": "user_003"
-    }
-  ],
-  "supply_points": [
-    {
-      "id": "sp_001",
-      "name": "云谷寺商店",
-      "description": "云谷寺入口处的综合商店，提供登山用品和食物",
-      "latitude": 30.1234,
-      "longitude": 118.1567,
-      "elevation": 630.0,
-      "timestamp": "2023-05-15T08:00:00Z",
-      "distance_from_start": 0.0,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "supply_type": "store",
-      "updated_by": "user_001"
-    },
-    {
-      "id": "sp_002",
-      "name": "北海宾馆餐厅",
-      "description": "北海宾馆内的餐厅，提供正餐和简餐",
-      "latitude": 30.1424,
-      "longitude": 118.1757,
-      "elevation": 1850.0,
-      "timestamp": "2023-05-15T18:00:00Z",
-      "distance_from_start": 5.0,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "supply_type": "restaurant",
-      "updated_by": "user_002"
-    },
-    {
-      "id": "sp_003",
-      "name": "北海宾馆",
-      "description": "黄山山顶的主要住宿点之一",
-      "latitude": 30.1434,
-      "longitude": 118.1767,
-      "elevation": 1860.0,
-      "timestamp": "2023-05-15T20:00:00Z",
-      "distance_from_start": 5.5,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "supply_type": "accommodation",
-      "updated_by": "user_002"
-    },
-    {
-      "id": "sp_004",
-      "name": "排云亭小卖部",
-      "description": "排云亭附近的小卖部，提供饮料和零食",
-      "latitude": 30.1634,
-      "longitude": 118.1367,
-      "elevation": 1630.0,
-      "timestamp": "2023-05-16T14:00:00Z",
-      "distance_from_start": 12.5,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "supply_type": "shop",
-      "updated_by": "user_003"
-    },
-    {
-      "id": "sp_005",
-      "name": "慈光阁商店",
-      "description": "慈光阁出口处的商店，提供纪念品和补给",
-      "latitude": 30.1734,
-      "longitude": 118.1267,
-      "elevation": 820.0,
-      "timestamp": "2023-05-16T16:00:00Z",
-      "distance_from_start": 15.5,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "supply_type": "store",
-      "updated_by": "user_001"
-    }
-  ],
-  "campsites": [
-    {
-      "id": "cs_001",
-      "name": "白鹅岭营地",
-      "description": "位于白鹅岭附近的指定营地，设施完善，是黄山最受欢迎的营地之一",
-      "latitude": 30.1434,
-      "longitude": 118.1767,
-      "elevation": 1860.0,
-      "timestamp": "2023-05-15T20:00:00Z",
-      "distance_from_start": 5.5,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "campsite_type": "designated",
-      "facility_level": "excellent",
-      "capacity": "large",
-      "requires_booking": true,
-      "allows_campfire": false,
-      "water_distance": 50.0,
-      "notes": "需提前预订，禁止生火，有公共厕所和垃圾处理设施，水源充足",
-      "last_verified": "2023-05-20T10:30:00Z",
-      "verified_by": "user_002"
-    },
-    {
-      "id": "cs_002",
-      "name": "天海湖边营地",
-      "description": "天海附近的湖边营地，环境优美，适合观星",
-      "latitude": 30.1384,
-      "longitude": 118.1717,
-      "elevation": 1750.0,
-      "timestamp": "2023-05-16T06:00:00Z",
-      "distance_from_start": 4.0,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "campsite_type": "lakeside",
-      "facility_level": "good",
-      "capacity": "medium",
-      "requires_booking": false,
-      "allows_campfire": true,
-      "water_distance": 20.0,
-      "notes": "湖边营地，景色优美，允许生火，但需注意防火安全，有基本设施",
-      "last_verified": "2023-05-18T14:00:00Z",
-      "verified_by": "user_003"
-    },
-    {
-      "id": "cs_003",
-      "name": "西海峡谷野营地",
-      "description": "西海大峡谷内的野营地，适合有经验的户外爱好者",
-      "latitude": 30.1544,
-      "longitude": 118.1477,
-      "elevation": 1520.0,
-      "timestamp": "2023-05-16T18:00:00Z",
-      "distance_from_start": 8.5,
-      "created_at": "2023-05-15T08:00:00Z",
-      "updated_at": "2023-05-20T10:30:00Z",
-      "campsite_type": "wild",
-      "facility_level": "none",
-      "capacity": "small",
-      "requires_booking": false,
-      "allows_campfire": false,
-      "water_distance": 200.0,
-      "notes": "野营地，无设施，需自备所有装备，禁止生火，水源较远，仅适合有经验者",
-      "last_verified": "2023-05-17T16:00:00Z",
-      "verified_by": "user_001"
-    }
-  ],
   "hitchhike_contacts": [
     {
-      "id": "contact_001",
+      "id": "hitch_001",
       "name": "张师傅",
-      "phone": "138****8888",
-      "description": "黄山本地司机，熟悉各个景点路线，服务态度好",
-      "location": "黄山风景区",
+      "phone": "13800138000",
+      "description": "专业山区接送服务",
+      "location": "汤口镇",
       "price": 50.0,
       "is_verified": true
-    },
-    {
-      "id": "contact_002",
-      "name": "李师傅",
-      "phone": "139****9999",
-      "description": "专业户外向导，可提供接送和向导服务",
-      "location": "汤口镇",
-      "price": 80.0,
-      "is_verified": true
-    },
-    {
-      "id": "contact_003",
-      "name": "王师傅",
-      "phone": "137****7777",
-      "description": "当地包车服务，价格实惠，车况良好",
-      "location": "黄山市区",
-      "price": 120.0,
-      "is_verified": false
-    },
-    {
-      "id": "contact_004",
-      "name": "陈师傅",
-      "phone": "136****6666",
-      "description": "夜间接送服务，24小时待命",
-      "location": "黄山北站",
-      "price": 60.0,
-      "is_verified": true
     }
-  ]
+  ],
+  "marker_points": [
+    {
+      "id": "marker_001",
+      "latitude": 30.1400,
+      "longitude": 118.1700,
+      "elevation": 1200.0,
+      "name": "迎客松",
+      "description": "黄山标志性景点，必打卡地点",
+      "marker_type": "landmark",
+      "icon_url": "https://example.com/icons/landmark.png",
+      "color": "#4CAF50"
+    }
+  ],
+  "creator": {
+    "id": "user_123",
+    "created_at": "2023-05-01T00:00:00.000Z",
+    "updated_at": "2024-01-20T00:00:00.000Z",
+    "username": "hiking_expert",
+    "nickname": "徒步专家",
+    "avatar_url": "https://example.com/avatars/expert.jpg",
+    "completed_routes": 78,
+    "equipment_lists": 25,
+    "favorite_routes": 45
+  }
 }]

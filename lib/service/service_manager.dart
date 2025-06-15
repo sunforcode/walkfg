@@ -18,6 +18,10 @@ import 'recommendation_service.dart';
 import 'trip_service.dart';
 import 'equipment_service.dart';
 import 'mock/mock_equipment_service.dart';
+import 'impl/real_route_service.dart';
+import 'package:walk/core/network/api_client.dart';
+import 'package:walk/core/network/network_manager.dart';
+import 'package:walk/core/config/app_config.dart';
 
 /// 服务定位器，用于管理和访问各种服务
 class ServiceLocator {
@@ -57,13 +61,21 @@ class ServiceLocator {
   /// 私有构造函数
   ServiceLocator._internal() {
     // 初始化服务
-    _routeService = MockRouteService();
+    // _routeService = MockRouteService();
     _equipmentService = MockEquipmentService();
   }
 
   /// 初始化服务
-  void initialize({bool useMock = true}) {
-    if (useMock) {
+  Future<void> initialize({bool? useMock}) async {
+    // 从配置中获取是否使用Mock服务
+    final shouldUseMock = useMock ?? AppConfig.instance.useMockServices;
+    AppConfig.instance.initialize();
+    await NetworkManager.instance.initialize();
+
+    // 初始化网络层（只有在使用真实服务时才需要）
+    if (!shouldUseMock) {}
+
+    if (shouldUseMock) {
       _registerMockServices();
     } else {
       _registerRealServices();
@@ -80,7 +92,7 @@ class ServiceLocator {
 
     // 然后初始化其他依赖API服务的服务
     _tripService = MockTripService();
-    _routeService = MockRouteService();
+    _routeService = RealRouteService(ApiClient.instance);
     _userService = MockUserService();
     _guideService = MockGuideService();
     _weatherService = MockWeatherService();
@@ -90,15 +102,16 @@ class ServiceLocator {
 
   /// 注册真实服务
   void _registerRealServices() {
-    // 在生产环境中注册真实的服务实现
-    // TODO: 实现真实服务
-    _tripService = MockTripService(); // 临时使用Mock
-    _routeService = MockRouteService(); // 临时使用Mock
-    _userService = MockUserService(); // 临时使用Mock
-    _guideService = MockGuideService(); // 临时使用Mock
-    _weatherService = MockWeatherService(); // 临时使用Mock
-    _tripPlanService = MockTripPlanService(); // 临时使用Mock
-    _recommendationService = MockRecommendationService(); // 临时使用Mock
+    // 注册真实的服务实现
+    _routeService = RealRouteService(ApiClient.instance);
+
+    // 其他服务暂时使用Mock，后续可以逐步替换
+    _tripService = MockTripService();
+    _userService = MockUserService();
+    _guideService = MockGuideService();
+    _weatherService = MockWeatherService();
+    _tripPlanService = MockTripPlanService();
+    _recommendationService = MockRecommendationService();
   }
 
   /// 获取行程服务

@@ -243,11 +243,11 @@ class GuideModel extends BaseModel {
   String getDaysText() {
     // 优先使用实际天数，其次是计划天数
     final days = actualDays ??
-        baseRoute?.dailyPlans.length ??
+        baseRoute?.dailyPlans?.length ??
         baseTrip?.itinerary.length;
     if (days != null) {
       final planned =
-          baseRoute?.dailyPlans.length ?? baseTrip?.itinerary.length;
+          baseRoute?.dailyPlans?.length ?? baseTrip?.itinerary.length;
       if (actualDays != null && planned != null && actualDays != planned) {
         return '实际${actualDays}天完成（计划${planned}天）';
       }

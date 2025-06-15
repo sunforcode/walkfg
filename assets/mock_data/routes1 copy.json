@@ -1,0 +1,264 @@
+{
+  "id": "route_huangshan_001",
+  "created_at": "2024-01-15T08:00:00.000Z",
+  "updated_at": "2024-01-20T10:30:00.000Z",
+  "name": "黄山东线经典徒步路线",
+  "created_by": "user_12345",
+  "create_user": {
+    "id": "user_12345",
+    "created_at": "2023-06-01T00:00:00.000Z",
+    "updated_at": "2024-01-20T00:00:00.000Z",
+    "username": "mountain_lover",
+    "nickname": "山野行者",
+    "avatar_url": "https://example.com/avatars/user_12345.jpg",
+    "completed_routes": 25,
+    "equipment_lists": 8,
+    "favorite_routes": 15
+  },
+  "usage_count": 156,
+  "description": "黄山东线是最经典的登山路线，从云谷寺出发，经白鹅岭、始信峰、北海、光明顶，最后到达慈光阁。沿途可欣赏迎客松、飞来石等著名景点，是体验黄山精华的最佳选择。",
+  "region_id": "anhui_huangshan",
+  "region": "安徽黄山",
+  "default_map_id": "map_huangshan_east_001",
+  "ratings": {
+    "overall": 4.7,
+    "scenery": 4.9,
+    "difficulty": 4.2,
+    "experience": 4.8,
+    "facilities": 4.3,
+    "rating_count": 234
+  },
+  "tags": ["经典路线", "观日出", "云海", "奇松", "怪石"],
+  "difficulty": 2,
+  "image_urls": [
+    "https://example.com/images/huangshan_sunrise.jpg",
+    "https://example.com/images/huangshan_pines.jpg",
+    "https://example.com/images/huangshan_peaks.jpg"
+  ],
+  "cover_url": "https://example.com/images/huangshan_cover.jpg",
+  "is_favorite": true,
+  "popularity": 234,
+  "is_loop": false,
+  "status": "completed",
+  "segments": [
+    {
+      "id": "seg_001",
+      "name": "云谷寺至白鹅岭",
+      "description": "缆车或步行上山，经过竹林和松林",
+      "distance": 3.5,
+      "duration": 120,
+      "elevation_gain": 800,
+      "elevation_loss": 50,
+      "start_waypoint": {
+        "latitude": 30.1234,
+        "longitude": 118.1567,
+        "elevation": 630.0,
+        "timestamp": "2024-01-15T08:00:00.000Z",
+        "distance_from_start": 0.0
+      },
+      "end_waypoint": {
+        "latitude": 30.1456,
+        "longitude": 118.1789,
+        "elevation": 1430.0,
+        "timestamp": "2024-01-15T10:00:00.000Z",
+        "distance_from_start": 3.5
+      },
+      "key_points": [
+        {
+          "latitude": 30.1345,
+          "longitude": 118.1678,
+          "elevation": 1000.0,
+          "timestamp": "2024-01-15T09:00:00.000Z",
+          "distance_from_start": 1.8
+        }
+      ],
+      "note": "可选择缆车上山，节省体力",
+      "route_type": 5
+    },
+    {
+      "id": "seg_002", 
+      "name": "白鹅岭至光明顶",
+      "description": "经过始信峰、北海，到达黄山最高峰",
+      "distance": 4.2,
+      "duration": 180,
+      "elevation_gain": 430,
+      "elevation_loss": 100,
+      "start_waypoint": {
+        "latitude": 30.1456,
+        "longitude": 118.1789,
+        "elevation": 1430.0,
+        "timestamp": "2024-01-15T10:00:00.000Z",
+        "distance_from_start": 3.5
+      },
+      "end_waypoint": {
+        "latitude": 30.1678,
+        "longitude": 118.1901,
+        "elevation": 1860.0,
+        "timestamp": "2024-01-15T13:00:00.000Z",
+        "distance_from_start": 7.7
+      },
+      "key_points": [],
+      "note": "沿途景点众多，建议预留充足时间",
+      "route_type": 5
+    }
+  ],
+  "water_sources": [
+    {
+      "id": "water_001",
+      "latitude": 30.1345,
+      "longitude": 118.1678,
+      "elevation": 1000.0,
+      "timestamp": "2024-01-15T09:00:00.000Z",
+      "distance_from_start": 1.8,
+      "name": "白鹅岭水源",
+      "description": "山泉水，水质清澈",
+      "created_at": "2024-01-10T00:00:00.000Z",
+      "updated_at": "2024-01-15T00:00:00.000Z",
+      "water_type": 1,
+      "water_quality": 1,
+      "is_seasonal": false,
+      "flow_rate": "中等",
+      "treatment_required": false,
+      "last_verified": "2024-01-15",
+      "verified_by": "user_12345",
+      "notes": "全年有水，可直接饮用"
+    }
+  ],
+  "supplies": [
+    {
+      "id": "supply_001",
+      "latitude": 30.1567,
+      "longitude": 118.1834,
+      "elevation": 1630.0,
+      "timestamp": "2024-01-15T11:30:00.000Z",
+      "distance_from_start": 5.2,
+      "name": "北海宾馆商店",
+      "description": "提供食物、饮水和基本用品",
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-15T00:00:00.000Z",
+      "last_verified": "2024-01-15",
+      "supply_type": 0,
+      "updated_by": "user_12345"
+    }
+  ],
+  "campsites": [
+    {
+      "id": "camp_001",
+      "latitude": 30.1678,
+      "longitude": 118.1901,
+      "elevation": 1860.0,
+      "timestamp": "2024-01-15T18:00:00.000Z",
+      "distance_from_start": 7.7,
+      "name": "光明顶露营区",
+      "description": "黄山最佳观日出点，可搭帐篷过夜",
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-15T00:00:00.000Z",
+      "campsite_type": 0,
+      "notes": "需要提前申请露营许可，注意防风保暖",
+      "verified_by": "user_12345"
+    }
+  ],
+  "daily_plans": [
+    {
+      "id": "dp_001",
+      "day_number": 1,
+      "title": "云谷寺至光明顶",
+      "description": "从云谷寺出发，经白鹅岭、始信峰、北海，最终到达光明顶观日落",
+      "distance": 7.7,
+      "estimated_time": 8.0,
+      "elevation_gain": 1230,
+      "elevation_loss": 150.0,
+      "max_elevation": 1860.0,
+      "min_elevation": 630.0,
+      "segments": [
+        {
+          "id": "seg_001",
+          "name": "云谷寺至白鹅岭",
+          "description": "缆车或步行上山，经过竹林和松林",
+          "distance": 3.5,
+          "duration": 120,
+          "elevation_gain": 800,
+          "elevation_loss": 50,
+          "route_type": 5
+        },
+        {
+          "id": "seg_002",
+          "name": "白鹅岭至光明顶", 
+          "description": "经过始信峰、北海，到达黄山最高峰",
+          "distance": 4.2,
+          "duration": 180,
+          "elevation_gain": 430,
+          "elevation_loss": 100,
+          "route_type": 5
+        }
+      ],
+      "accommodation": "光明顶山庄或露营",
+      "notes": "建议早起观日出，注意保暖"
+    },
+    {
+      "id": "dp_002",
+      "day_number": 2,
+      "title": "光明顶至慈光阁",
+      "description": "观日出后，经天海、玉屏楼，最终从慈光阁下山",
+      "distance": 6.3,
+      "estimated_time": 6.0,
+      "elevation_gain": 200,
+      "elevation_loss": 1400.0,
+      "max_elevation": 1860.0,
+      "min_elevation": 460.0,
+      "segments": [],
+      "accommodation": null,
+      "notes": "下山路较陡，注意安全"
+    }
+  ],
+  "weather_info": {
+    "description": "黄山气候多变，四季分明。春秋两季最适宜登山，夏季多雨需备雨具，冬季有雪景但路滑需谨慎。",
+    "seasonal_weather": {
+      "春季": "温和舒适，偶有春雨，是登山的最佳季节",
+      "夏季": "炎热多雨，午后常有雷阵雨，需备雨具",
+      "秋季": "凉爽干燥，天高云淡，观景效果最佳",
+      "冬季": "寒冷多雪，雾凇美景，但路面湿滑需小心"
+    },
+    "best_seasons": ["春季", "秋季"],
+    "precautions": "山区天气变化快，请随时关注天气预报，备好防雨防寒装备"
+  },
+  "hitchhike_contacts": [
+    {
+      "id": "hitch_001",
+      "name": "张师傅",
+      "phone": "13800138001",
+      "description": "专业山区接送，熟悉各个登山口",
+      "location": "汤口镇",
+      "price": 50.0,
+      "last_verified": true
+    }
+  ],
+  "marker_points": [
+    {
+      "id": "marker_001",
+      "latitude": 30.1567,
+      "longitude": 118.1823,
+      "elevation": 1670.0,
+      "timestamp": "2024-01-15T12:00:00.000Z",
+      "distance_from_start": 5.8,
+      "name": "迎客松",
+      "description": "黄山标志性景点，必打卡拍照点",
+      "marker_type": "poi",
+      "icon_url": "https://example.com/icons/pine_tree.png",
+      "color": "#228B22"
+    },
+    {
+      "id": "marker_002",
+      "latitude": 30.1645,
+      "longitude": 118.1878,
+      "elevation": 1780.0,
+      "timestamp": "2024-01-15T14:30:00.000Z",
+      "distance_from_start": 6.9,
+      "name": "飞来石",
+      "description": "奇石景观，《红楼梦》片头拍摄地",
+      "marker_type": "landmark",
+      "icon_url": "https://example.com/icons/rock.png",
+      "color": "#8B4513"
+    }
+  ]
+}

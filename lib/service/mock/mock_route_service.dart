@@ -448,7 +448,7 @@ class MockRouteService implements RouteService {
         .toList();
 
     // 按评分排序
-    routes.sort((a, b) => b.ratings.overall.compareTo(a.ratings.overall));
+    // routes.sort((a, b) => b.ratings.overall.compareTo(a.ratings.overall));
 
     // 限制数量
     if (limit != null && routes.length > limit) {
@@ -617,8 +617,8 @@ class MockRouteService implements RouteService {
           break;
         case 'rating':
           routes.sort((a, b) => asc
-              ? a.ratings.overall.compareTo(b.ratings.overall)
-              : b.ratings.overall.compareTo(a.ratings.overall));
+              ? a.ratings!.overall.compareTo(b.ratings!.overall)
+              : b.ratings!.overall.compareTo(a.ratings!.overall));
           break;
         case 'popularity':
           routes.sort((a, b) => asc
