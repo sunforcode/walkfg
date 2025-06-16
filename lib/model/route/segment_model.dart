@@ -150,8 +150,8 @@ class SegmentModel {
   final double distance;
 
   /// 预计时长（分钟）
-  @JsonKey(name: 'elevation_time')
-  final int estimatedTime;
+  @JsonKey(name: 'estimated_time')
+  final double estimatedTime;
 
   /// 爬升（米）
   @JsonKey(name: 'elevation_gain')
@@ -162,19 +162,19 @@ class SegmentModel {
   final int? elevationLoss;
 
   /// 起点
-  @JsonKey(name: 'start_waypoint')
+  @JsonKey(name: 'start_point')
   final TrackPointVO? startWaypoint;
 
   /// 终点
-  @JsonKey(name: 'end_waypoint')
+  @JsonKey(name: 'end_point')
   final TrackPointVO? endWaypoint;
 
   /// 路径点列表
-  @JsonKey(name: 'key_points', defaultValue: <TrackPointVO>[])
+  @JsonKey(name: 'keypoints', defaultValue: <TrackPointVO>[])
   final List<TrackPointVO> keyPoints;
 
   /// 备注
-  final String? note;
+  final String? notes;
 
   /// 道路类型
   @JsonKey(
@@ -197,7 +197,7 @@ class SegmentModel {
     this.startWaypoint,
     this.endWaypoint,
     this.keyPoints = const <TrackPointVO>[],
-    this.note,
+    this.notes,
     this.type = RouteType.trail,
   });
 
@@ -214,7 +214,7 @@ class SegmentModel {
     String? name,
     String? description,
     double? distance,
-    int? duration,
+    double? duration,
     int? elevationGain,
     int? elevationLoss,
     TrackPointVO? startWaypoint,
@@ -234,7 +234,7 @@ class SegmentModel {
       startWaypoint: startWaypoint ?? this.startWaypoint,
       endWaypoint: endWaypoint ?? this.endWaypoint,
       keyPoints: keyPoints ?? this.keyPoints,
-      note: note ?? this.note,
+      notes: note ?? this.notes,
       type: type ?? this.type,
     );
   }

@@ -41,7 +41,10 @@ class MarkerPointModel extends TrackPointVO {
   final String? description;
 
   /// 标记点类型
-  @JsonKey(name: 'marker_type')
+  @JsonKey(
+      name: 'marker_type',
+      fromJson: _parseMarkerType,
+      toJson: _markerTypeToJson)
   final MarkerPointType markerType;
 
   /// 图标URL或图标名称
@@ -286,4 +289,32 @@ class MarkerPointModel extends TrackPointVO {
   String toString() {
     return 'MarkerPointModel(id: $id, name: $name, type: $markerTypeText, location: $latitude, $longitude)';
   }
+}
+
+/// 解析标记点类型
+MarkerPointType _parseMarkerType(dynamic value) {
+  if (value == null) return MarkerPointType.other;
+
+  if (value is int) {
+    // 从整数索引转换为枚举
+    if (value >= 0 && value < MarkerPointType.values.length) {
+      return MarkerPointType.values[value];
+    }
+    return MarkerPointType.other;
+  }
+
+  if (value is String) {
+    // 从字符串名称转换为枚举
+    return MarkerPointType.values.firstWhere(
+      (type) => type.name == value,
+      orElse: () => MarkerPointType.other,
+    );
+  }
+
+  return MarkerPointType.other;
+}
+
+/// 标记点类型转JSON
+int _markerTypeToJson(MarkerPointType type) {
+  return type.index;
 }

@@ -1,5 +1,6 @@
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:walk/utils/json_utils.dart';
 
 part 'campsite_model.g.dart';
 
@@ -58,11 +59,17 @@ class CampsiteModel extends TrackPointVO {
   final String? description;
 
   /// 创建时间
-  @JsonKey(name: 'created_at')
+  @JsonKey(
+      name: 'created_at',
+      fromJson: JsonUtils.parseTimestamp,
+      toJson: JsonUtils.timestampToJson)
   final DateTime? createdAt;
 
   /// 更新时间
-  @JsonKey(name: 'updated_at')
+  @JsonKey(
+      name: 'updated_at',
+      fromJson: JsonUtils.parseTimestamp,
+      toJson: JsonUtils.timestampToJson)
   final DateTime? updatedAt;
 
   /// 营地类型
@@ -213,13 +220,28 @@ class CampsiteModel extends TrackPointVO {
 /// 解析营地类型
 CampsiteType _parseCampsiteType(dynamic value) {
   if (value == null) return CampsiteType.other;
-  return CampsiteType.values.firstWhere((type) => type.name == value,
-      orElse: () => CampsiteType.other);
+
+  if (value is int) {
+    // 从整数索引转换为枚举
+    if (value >= 0 && value < CampsiteType.values.length) {
+      return CampsiteType.values[value];
+    }
+    return CampsiteType.other;
+  }
+
+  if (value is String) {
+    return CampsiteType.values.firstWhere(
+      (type) => type.name == value,
+      orElse: () => CampsiteType.other,
+    );
+  }
+
+  return CampsiteType.other;
 }
 
 /// 解析设施等级
 
 /// 营地类型转JSON
-String _campsiteTypeToJson(CampsiteType type) {
-  return type.name;
+int _campsiteTypeToJson(CampsiteType type) {
+  return type.index;
 }

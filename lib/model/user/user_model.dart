@@ -17,15 +17,15 @@ class UserModel extends BaseModel {
   final String? avatarUrl;
 
   /// 已完成路线数量
-  @JsonKey(name: 'completed_routes')
+  @JsonKey(name: 'completed_routes', defaultValue: 0)
   final int completedRoutes;
 
   /// 装备清单数量
-  @JsonKey(name: 'equipment_lists')
+  @JsonKey(name: 'equipment_lists', defaultValue: 0)
   final int equipmentLists;
 
   /// 收藏路线数量
-  @JsonKey(name: 'favorite_routes')
+  @JsonKey(name: 'favorite_routes', defaultValue: 0)
   final int favoriteRoutes;
 
   /// 构造函数
@@ -36,9 +36,9 @@ class UserModel extends BaseModel {
     required this.username,
     required this.nickname,
     this.avatarUrl,
-    required this.completedRoutes,
-    required this.equipmentLists,
-    required this.favoriteRoutes,
+    this.completedRoutes = 0,
+    this.equipmentLists = 0,
+    this.favoriteRoutes = 0,
   });
 
   /// 从JSON创建模型

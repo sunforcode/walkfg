@@ -474,9 +474,6 @@ class MockRouteService implements RouteService {
         .where((comment) => comment.routeId == routeId)
         .toList();
 
-    // 按时间排序
-    comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-
     return comments;
   }
 
@@ -489,15 +486,13 @@ class MockRouteService implements RouteService {
     // 创建新评论
     final now = DateTime.now();
     final comment = RouteCommentModel(
-      id: 'comment_${now.millisecondsSinceEpoch}',
-      routeId: routeId,
-      userId: 'current_user',
-      userName: '当前用户',
-      userAvatar: null,
-      content: content,
-      rating: rating,
-      createdAt: now,
-    );
+        id: 'comment_${now.millisecondsSinceEpoch}',
+        routeId: routeId,
+        userId: 'current_user',
+        userName: '当前用户',
+        userAvatar: null,
+        content: content,
+        rating: rating);
 
     return comment;
   }

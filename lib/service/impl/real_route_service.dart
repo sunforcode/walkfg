@@ -225,8 +225,6 @@ class RealRouteService implements RouteService {
     final content = routesData['content'] as List<dynamic>;
     print("获取路线数据失败");
     print(content);
-    content[0]['created_at'] = '2024-01-15T08:00:00.000Z';
-    content[0]['region_id'] = '2024-01-15T08:00:00.000Z';
 
     return content.map((json) => RouteModel.fromJson(json)).toList();
   }
@@ -359,7 +357,6 @@ class RealRouteService implements RouteService {
   @override
   Future<List<RouteModel>> getRelatedRoutes(String routeId,
       {int limit = 5}) async {
-    // TODO: 实现获取相关路线的API调用
-    throw UnimplementedError('getRelatedRoutes not implemented yet');
+    return [];
   }
 }

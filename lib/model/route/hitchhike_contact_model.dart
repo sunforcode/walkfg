@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:walk/utils/json_utils.dart';
 
 part 'hitchhike_contact_model.g.dart';
 
@@ -23,9 +24,23 @@ class HitchhikeContactModel {
   /// 价格
   final double? price;
 
+  /// 创建时间
+  @JsonKey(
+      name: 'created_at',
+      fromJson: JsonUtils.parseTimestamp,
+      toJson: JsonUtils.timestampToJson)
+  final DateTime? createdAt;
+
+  /// 更新时间
+  @JsonKey(
+      name: 'updated_at',
+      fromJson: JsonUtils.parseTimestamp,
+      toJson: JsonUtils.timestampToJson)
+  final DateTime? updatedAt;
+
   /// 是否已认证
   @JsonKey(name: 'last_verified')
-  final bool lastVerified;
+  final bool isVerified;
 
   /// 构造函数
   const HitchhikeContactModel({
@@ -35,7 +50,9 @@ class HitchhikeContactModel {
     this.description,
     this.location,
     this.price,
-    this.lastVerified = false,
+    this.createdAt,
+    this.updatedAt,
+    this.isVerified = false,
   });
 
   /// 从JSON创建

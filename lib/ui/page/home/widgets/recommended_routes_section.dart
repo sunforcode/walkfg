@@ -174,7 +174,7 @@ class RecommendedRoutesSection extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        route.regionId,
+                        route.region,
                         style: const TextStyle(
                           fontSize: 12,
                           color: CupertinoColors.systemGrey,

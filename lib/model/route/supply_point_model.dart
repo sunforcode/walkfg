@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import '../map/track_point_model.dart';
+import 'package:walk/utils/json_utils.dart';
 
 part 'supply_point_model.g.dart';
 
@@ -40,11 +41,17 @@ class SupplyPointModel extends TrackPointVO {
   final String? description;
 
   /// 创建时间
-  @JsonKey(name: 'created_at')
+  @JsonKey(
+      name: 'created_at',
+      fromJson: JsonUtils.parseTimestamp,
+      toJson: JsonUtils.timestampToJson)
   final DateTime? createdAt;
 
   /// 更新时间
-  @JsonKey(name: 'updated_at')
+  @JsonKey(
+      name: 'updated_at',
+      fromJson: JsonUtils.parseTimestamp,
+      toJson: JsonUtils.timestampToJson)
   final DateTime? updatedAt;
 
   /// 最后确认时间
@@ -171,16 +178,26 @@ class SupplyPointModel extends TrackPointVO {
 /// 解析补给点类型
 SupplyPointType _parseSupplyType(dynamic value) {
   if (value == null) return SupplyPointType.other;
+
+  if (value is int) {
+    // 从整数索引转换为枚举
+    if (value >= 0 && value < SupplyPointType.values.length) {
+      return SupplyPointType.values[value];
+    }
+    return SupplyPointType.other;
+  }
+
   if (value is String) {
     return SupplyPointType.values.firstWhere(
       (type) => type.name == value,
       orElse: () => SupplyPointType.other,
     );
   }
+
   return SupplyPointType.other;
 }
 
 /// 补给点类型转JSON
-String _supplyTypeToJson(SupplyPointType type) {
-  return type.name;
+int _supplyTypeToJson(SupplyPointType type) {
+  return type.index;
 }

@@ -93,11 +93,14 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   /// 加载路线详情
   void _loadRouteDetail() {
+    final apiService = ServiceLocator.instance.getRouteService();
+
+    // 如果传入了route参数，从route中获取routeId请求详情
     if (widget.route != null) {
-      _routeFuture = Future.value(widget.route!);
+      _routeFuture = apiService.getRouteDetail(widget.route!.id);
     } else {
-      final apiService = ServiceLocator.instance.getRouteService();
-      _routeFuture = apiService.getRouteById(widget.routeId);
+      // 如果没有传入route参数，使用传入的routeId请求详情
+      _routeFuture = apiService.getRouteDetail(widget.routeId);
     }
     _checkIfFavorite();
   }
@@ -140,8 +143,8 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     final tripService = ServiceLocator.instance.getTripService();
     try {
       final results = await Future.wait([
-        routeDataService.getRelatedRoutes(widget.routeId),
-        tripService.getRelatedTrips(widget.routeId),
+        // routeDataService.getRelatedRoutes(widget.routeId),
+        // tripService.getRelatedTrips(widget.routeId),
       ]);
       setState(() {
         _relatedRoutes = results[0] as List<RouteModel>;

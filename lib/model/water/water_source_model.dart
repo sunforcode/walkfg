@@ -7,6 +7,7 @@
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:walk/model/user/user_model.dart';
+import 'package:walk/utils/json_utils.dart';
 
 part 'water_source_model.g.dart';
 
@@ -62,11 +63,17 @@ class WaterSourceModel extends TrackPointVO {
   final String? description;
 
   /// 创建时间
-  @JsonKey(name: 'created_at')
+  @JsonKey(
+      name: 'created_at',
+      fromJson: JsonUtils.parseTimestamp,
+      toJson: JsonUtils.timestampToJson)
   final DateTime? createdAt;
 
   /// 更新时间
-  @JsonKey(name: 'updated_at')
+  @JsonKey(
+      name: 'updated_at',
+      fromJson: JsonUtils.parseTimestamp,
+      toJson: JsonUtils.timestampToJson)
   final DateTime? updatedAt;
 
   /// 水源类型
@@ -92,7 +99,10 @@ class WaterSourceModel extends TrackPointVO {
   final String notes;
 
   /// 最后确认时间
-  @JsonKey(name: 'last_verified')
+  @JsonKey(
+      name: 'last_verified',
+      fromJson: JsonUtils.parseTimestamp,
+      toJson: JsonUtils.timestampToJson)
   final DateTime? lastVerified;
 
   /// 确认者ID
@@ -261,23 +271,53 @@ class WaterSourceModel extends TrackPointVO {
 /// 解析水源类型
 WaterSourceType _parseWaterType(dynamic value) {
   if (value == null) return WaterSourceType.other;
-  return WaterSourceType.values.firstWhere((type) => type.name == value,
-      orElse: () => WaterSourceType.other);
+
+  if (value is int) {
+    // 从整数索引转换为枚举
+    if (value >= 0 && value < WaterSourceType.values.length) {
+      return WaterSourceType.values[value];
+    }
+    return WaterSourceType.other;
+  }
+
+  if (value is String) {
+    return WaterSourceType.values.firstWhere(
+      (type) => type.name == value,
+      orElse: () => WaterSourceType.other,
+    );
+  }
+
+  return WaterSourceType.other;
 }
 
 /// 解析水质等级
 WaterQuality _parseWaterQuality(dynamic value) {
   if (value == null) return WaterQuality.unknown;
-  return WaterQuality.values.firstWhere((quality) => quality.name == value,
-      orElse: () => WaterQuality.unknown);
+
+  if (value is int) {
+    // 从整数索引转换为枚举
+    if (value >= 0 && value < WaterQuality.values.length) {
+      return WaterQuality.values[value];
+    }
+    return WaterQuality.unknown;
+  }
+
+  if (value is String) {
+    return WaterQuality.values.firstWhere(
+      (quality) => quality.name == value,
+      orElse: () => WaterQuality.unknown,
+    );
+  }
+
+  return WaterQuality.unknown;
 }
 
 /// 水源类型转JSON
-String _waterTypeToJson(WaterSourceType type) {
-  return type.name;
+int _waterTypeToJson(WaterSourceType type) {
+  return type.index;
 }
 
 /// 水质等级转JSON
-String _waterQualityToJson(WaterQuality quality) {
-  return quality.name;
+int _waterQualityToJson(WaterQuality quality) {
+  return quality.index;
 }

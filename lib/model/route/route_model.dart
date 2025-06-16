@@ -31,7 +31,7 @@ class RouteModel extends BaseModel {
 
   /// 区域ID
   @JsonKey(name: 'region_id')
-  final String regionId;
+  final String? regionId;
 
   /// 区域名称
   @JsonKey(name: 'region')
@@ -294,7 +294,7 @@ class RouteModel extends BaseModel {
     // 如果没有地图数据，则从分段计算
     return segments
             ?.fold(0, (sum, segment) => sum + segment.elevationGain)
-            ?.toDouble() ??
+            .toDouble() ??
         0.0;
   }
 

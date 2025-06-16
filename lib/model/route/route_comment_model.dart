@@ -24,9 +24,6 @@ class RouteCommentModel extends BaseModel {
   /// 评分
   final double rating;
 
-  /// 创建时间
-  final DateTime createdAt;
-
   /// 构造函数
   RouteCommentModel({
     required super.id,
@@ -36,7 +33,6 @@ class RouteCommentModel extends BaseModel {
     this.userAvatar,
     required this.content,
     required this.rating,
-    required this.createdAt,
   });
 
   /// 从JSON创建

@@ -11,7 +11,8 @@ class ApiEndpoints {
   static const String routes = '$apiPrefix/routes';
 
   /// 路线详情
-  static String routeDetail(String routeId) => '$apiPrefix/routes/$routeId';
+  static String routeDetail(String routeId) =>
+      '$apiPrefix/routes/$routeId/details';
 
   /// 搜索路线
   static const String searchRoutes = '$apiPrefix/routes/search';
