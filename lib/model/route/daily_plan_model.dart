@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/route/segment_model.dart';
 
 part 'daily_plan_model.g.dart';

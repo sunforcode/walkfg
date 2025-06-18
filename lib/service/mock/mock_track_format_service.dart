@@ -50,9 +50,6 @@ class MockTrackFormatService implements TrackFormatService {
       print('TrackFormatService.parseKmlFile - 找到地标元素数量: ${placemarks.length}');
 
       for (final placemark in placemarks) {
-        final name = placemark.findElements('name').firstOrNull?.text;
-        final description =
-            placemark.findElements('description').firstOrNull?.text;
         final point = placemark.findElements('Point').firstOrNull;
 
         if (point != null) {

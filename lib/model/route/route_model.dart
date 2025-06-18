@@ -13,7 +13,6 @@ import 'package:walk/model/route/hitchhike_contact_model.dart';
 import 'package:walk/model/user/user_model.dart';
 import 'package:walk/model/water/water_source_model.dart';
 import '../base/base_model.dart';
-import 'route_status.dart';
 part 'route_model.g.dart';
 
 /// 路线模型 - 户外路线的业务实体

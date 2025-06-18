@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../recommendation_service.dart';
 import '../../model/route/route_model.dart';
 import '../../model/search/hot_search_model.dart';
-import '../../model/route/recommended_route_model.dart';
 
 /// Mock推荐服务实现
 class MockRecommendationService implements RecommendationService {
@@ -53,38 +51,6 @@ class MockRecommendationService implements RecommendationService {
     }
 
     return HotSearchListModel(items: items);
-  }
-
-  @override
-  Future<RecommendedRouteListModel> getRecommendedRoutes() async {
-    // 模拟网络延迟
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    final recommendedRoutesJson =
-        await _loadJsonData('assets/mock_data/recommended_routes.json');
-
-    RecommendedRouteListModel items =
-        RecommendedRouteListModel.fromJson(recommendedRoutesJson);
-    return items;
-  }
-
-  @override
-  Future<RecommendedRouteModel?> getRecommendedRoutesByType(
-      RecommendedRouteType type) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    final recommendedRoutesJson =
-        await _loadJsonData('assets/mock_data/recommended_routes.json');
-    if (recommendedRoutesJson == null) {
-      debugPrint('推荐路线数据为空');
-      return null;
-    }
-
-    RecommendedRouteModel items =
-        RecommendedRouteModel.fromJson(recommendedRoutesJson);
-    return items;
   }
 
   @override

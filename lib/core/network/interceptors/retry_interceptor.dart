@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import '../api_exception.dart';
 
 /// 重试拦截器
 ///
@@ -102,8 +101,6 @@ class RetryInterceptor extends Interceptor {
         return false;
 
       case DioExceptionType.unknown:
-      default:
-        // 对于未知错误，检查是否为网络相关错误
         return _isNetworkError(error);
     }
   }

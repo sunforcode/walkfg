@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'api_response.dart';
 
 /// API异常基类
 ///

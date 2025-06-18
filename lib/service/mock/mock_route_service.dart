@@ -4,7 +4,6 @@ import 'package:walk/model/route/route_enums.dart';
 import '../route_service.dart';
 import '../../model/route/route_model.dart';
 import '../../model/route/route_comment_model.dart';
-import '../../model/route/route_status.dart';
 import '../../model/trip/trip_filter_model.dart';
 
 /// Mock路线服务实现
@@ -653,9 +652,6 @@ class MockRouteService implements RouteService {
       {int limit = 5}) async {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取当前路线信息
-    final currentRoute = await getRouteById(routeId);
 
     // 加载所有路线数据
     final routesJson = await _loadJsonData('assets/mock_data/routes.json');
