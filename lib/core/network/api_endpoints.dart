@@ -4,7 +4,7 @@
 class ApiEndpoints {
   // 基础配置
   static const String apiVersion = 'v1';
-  static const String apiPrefix = '/walkbg/api';
+  static const String apiPrefix = '/walkbg/api/$apiVersion';
 
   // ==================== 路线相关 ====================
   /// 路线列表
@@ -12,7 +12,7 @@ class ApiEndpoints {
 
   /// 路线详情
   static String routeDetail(String routeId) =>
-      '$apiPrefix/routes/$routeId/details';
+      '$apiPrefix/routes/$routeId';
 
   /// 搜索路线
   static const String searchRoutes = '$apiPrefix/routes/search';
@@ -124,7 +124,8 @@ class ApiEndpoints {
 
   // ==================== 用户相关 ====================
   /// 用户信息
-  static const String userProfile = '$apiPrefix/user/profile';
+  static const String userProfile =
+      '$apiPrefix/users/user_1750354562470_xAmPuJBl';
 
   /// 更新用户信息
   static const String updateUserProfile = '$apiPrefix/user/profile';

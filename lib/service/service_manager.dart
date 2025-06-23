@@ -1,9 +1,7 @@
 import 'package:walk/service/mock/mock_guide_service.dart';
-import 'package:walk/service/mock/mock_route_service.dart';
 import 'package:walk/service/mock/mock_search_history_service.dart';
 import 'package:walk/service/mock/mock_track_format_service.dart';
 import 'package:walk/service/mock/mock_trip_plan_service.dart';
-import 'package:walk/service/mock/mock_user_service.dart';
 import 'package:walk/service/mock/mock_weather_service.dart';
 import 'package:walk/service/mock/mock_recommendation_service.dart';
 import 'package:walk/service/mock/mock_trip_service.dart';
@@ -19,6 +17,7 @@ import 'trip_service.dart';
 import 'equipment_service.dart';
 import 'mock/mock_equipment_service.dart';
 import 'impl/real_route_service.dart';
+import 'impl/real_user_service.dart';
 import 'package:walk/core/network/api_client.dart';
 import 'package:walk/core/network/network_manager.dart';
 import 'package:walk/core/config/app_config.dart';
@@ -93,7 +92,7 @@ class ServiceLocator {
     // 然后初始化其他依赖API服务的服务
     _tripService = MockTripService();
     _routeService = RealRouteService(ApiClient.instance);
-    _userService = MockUserService();
+    _userService = RealUserService(ApiClient.instance);
     _guideService = MockGuideService();
     _weatherService = MockWeatherService();
     _tripPlanService = MockTripPlanService();
@@ -104,10 +103,10 @@ class ServiceLocator {
   void _registerRealServices() {
     // 注册真实的服务实现
     _routeService = RealRouteService(ApiClient.instance);
+    _userService = RealUserService(ApiClient.instance);
 
     // 其他服务暂时使用Mock，后续可以逐步替换
     _tripService = MockTripService();
-    _userService = MockUserService();
     _guideService = MockGuideService();
     _weatherService = MockWeatherService();
     _tripPlanService = MockTripPlanService();

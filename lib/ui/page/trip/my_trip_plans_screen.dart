@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:walk/model/route/route_status.dart';
+import 'package:walk/model/route/route_enums.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/utils/date_time_utils.dart';
 import '../../../service/service_manager.dart';

@@ -2,13 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../../model/user/user_model.dart';
+
 import '../../../model/guide/guide_model.dart';
 import '../../../model/route/route_model.dart';
 import '../../../model/trip/trip_model.dart';
 import '../../../model/weather/weather_model.dart';
 import '../../../service/service_manager.dart';
 import '../../../services/weather/weather_manager.dart';
+import '../../../services/location/location_service.dart';
 import 'widgets/welcome_weather_card.dart';
 import 'widgets/planned_trips_section.dart';
 import 'widgets/recommended_routes_section.dart';
@@ -42,6 +43,12 @@ class _HomeScreenState extends State<HomeScreen>
 
   /// 是否正在请求位置权限
   bool _isRequestingPermission = false;
+
+  /// 海拔信息
+  AltitudeInfo? _altitudeInfo;
+
+  /// 是否正在获取海拔
+  bool _isLoadingAltitude = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -97,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     // 如果无法获取当前位置的天气，使用默认位置（杭州）
     if (weather == null) {
+      print("获取到的天气为null");
       final weatherService = ServiceLocator.instance.getWeatherService();
       weather = await weatherService.getWeather(30.2741, 120.1551); // 杭州的经纬度
     }
@@ -133,6 +141,44 @@ class _HomeScreenState extends State<HomeScreen>
     return guideService.getGuides(limit: 4);
   }
 
+  /// 获取海拔信息
+  Future<void> _getAltitude() async {
+    if (_isLoadingAltitude) return;
+
+    setState(() {
+      _isLoadingAltitude = true;
+    });
+
+    try {
+      final altitudeInfo = await LocationService.instance.getCurrentAltitude(
+        forceRefresh: true,
+      );
+
+      if (mounted) {
+        setState(() {
+          _altitudeInfo = altitudeInfo;
+          _isLoadingAltitude = false;
+        });
+      }
+    } catch (e) {
+      print('获取海拔失败: $e');
+      if (mounted) {
+        setState(() {
+          _isLoadingAltitude = false;
+        });
+
+        // 显示错误提示
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('获取海拔失败: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context); // 必须调用super.build
@@ -155,6 +201,9 @@ class _HomeScreenState extends State<HomeScreen>
                     child: WelcomeWeatherCard.fromFuture(
                       future: _userWeatherFuture,
                       onRefresh: _refreshWeatherData,
+                      altitudeInfo: _altitudeInfo,
+                      isLoadingAltitude: _isLoadingAltitude,
+                      onGetAltitude: _getAltitude,
                     ),
                   ),
 
@@ -193,136 +242,8 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
           ),
-
-          // 地图功能悬浮按钮
-          Positioned(
-            right: 16,
-            bottom: 100, // 避免与底部导航栏重叠
-            child: _buildMapFloatingButton(),
-          ),
         ],
       ),
-    );
-  }
-
-  /// 构建地图功能悬浮按钮
-  Widget _buildMapFloatingButton() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        // 提示标签
-        Container(
-          margin: const EdgeInsets.only(bottom: 8, right: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: CupertinoColors.black.withOpacity(0.8),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: CupertinoColors.black.withOpacity(0.2),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                CupertinoIcons.sparkles,
-                color: Colors.white,
-                size: 14,
-              ),
-              SizedBox(width: 4),
-              Text(
-                '地图演示',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // 悬浮按钮
-        Container(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF4A90E2),
-                Color(0xFF357ABD),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF4A90E2).withOpacity(0.4),
-                blurRadius: 16,
-                offset: const Offset(0, 8),
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(28),
-              onTap: () {
-                // 添加触觉反馈
-                HapticFeedback.lightImpact();
-              },
-              child: Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(28),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // 主图标
-                    const Icon(
-                      CupertinoIcons.map_fill,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-
-                    // 闪烁效果
-                    Positioned(
-                      top: 12,
-                      right: 12,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withOpacity(0.6),
-                              blurRadius: 4,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
