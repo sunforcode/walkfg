@@ -1,13 +1,21 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/map/marker_point_model.dart';
+
 import 'package:walk/ui/map/core/unified_map_core.dart';
 import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/layers/track_layer.dart';
 import 'package:walk/ui/map/layers/marker_layer.dart';
+import 'package:walk/ui/map/widgets/elevation_chart_widget.dart';
+
+/// 地图显示模式
+enum MapDisplayMode {
+  compact, // 紧凑模式 - 300px，固定显示
+  standard, // 标准模式 - 400px，跟随滚动
+  immersive, // 沉浸模式 - 全屏，固定显示
+}
 
 /// 增强日程地图组件
 ///
@@ -31,6 +39,12 @@ class EnhancedDailyMapWidget extends StatefulWidget {
   /// 天数切换回调
   final void Function(int? day)? onDayChanged;
 
+  /// 显示模式（可选，如果不提供则不显示模式切换按钮）
+  final MapDisplayMode? displayMode;
+
+  /// 模式切换回调
+  final void Function(MapDisplayMode mode)? onDisplayModeChanged;
+
   const EnhancedDailyMapWidget({
     super.key,
     required this.trackPoints,
@@ -39,6 +53,8 @@ class EnhancedDailyMapWidget extends StatefulWidget {
     this.height = 400.0,
     this.selectedDay,
     this.onDayChanged,
+    this.displayMode,
+    this.onDisplayModeChanged,
   });
 
   @override
@@ -47,6 +63,10 @@ class EnhancedDailyMapWidget extends StatefulWidget {
 
 class _EnhancedDailyMapWidgetState extends State<EnhancedDailyMapWidget> {
   int? _selectedDay;
+  bool _showElevationChart = false;
+  bool _isRecording = false;
+  bool _isFollowingLocation = false;
+  MapType _currentMapType = MapType.standard;
 
   @override
   void initState() {
@@ -122,72 +142,6 @@ class _EnhancedDailyMapWidgetState extends State<EnhancedDailyMapWidget> {
       ];
       return colors[_selectedDay! % colors.length];
     }
-  }
-
-  /// 处理天数切换
-  void _handleDayChanged(int? day) {
-    setState(() {
-      _selectedDay = day;
-    });
-    widget.onDayChanged?.call(day);
-  }
-
-  /// 构建天数切换按钮
-  Widget _buildDaySelector() {
-    final dailyTracks = _splitTrackByDays();
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            // 全部按钮
-            _buildDayButton(
-              label: '全部',
-              isSelected: _selectedDay == null,
-              onTap: () => _handleDayChanged(null),
-            ),
-            const SizedBox(width: 8),
-
-            // 各天按钮
-            ...List.generate(dailyTracks.length, (index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: _buildDayButton(
-                  label: '第${index + 1}天',
-                  isSelected: _selectedDay == index,
-                  onTap: () => _handleDayChanged(index),
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// 构建天数按钮
-  Widget _buildDayButton({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return CupertinoButton(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color:
-          isSelected ? CupertinoColors.activeBlue : CupertinoColors.systemGrey4,
-      borderRadius: BorderRadius.circular(20),
-      minSize: 0,
-      onPressed: onTap,
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 14,
-          color: isSelected ? Colors.white : CupertinoColors.label,
-        ),
-      ),
-    );
   }
 
   /// 构建地图图层
@@ -366,12 +320,14 @@ class _EnhancedDailyMapWidgetState extends State<EnhancedDailyMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // 地图
-        SizedBox(
-          height: widget.height,
-          child: UnifiedMapCore(
+    final currentTrackPoints = _getCurrentTrackPoints();
+
+    return SizedBox(
+      height: widget.height,
+      child: Stack(
+        children: [
+          // 地图
+          UnifiedMapCore(
             config: UnifiedMapConfig(
               mapType: MapType.standard,
               mapProvider: MapProviderType.osm,
@@ -385,11 +341,435 @@ class _EnhancedDailyMapWidgetState extends State<EnhancedDailyMapWidget> {
             ),
             layers: _buildMapLayers(),
           ),
-        ),
 
-        // 天数选择器
-        if (widget.days > 1) _buildDaySelector(),
+          // 右侧功能按钮组
+          Positioned(
+            top: 16,
+            right: 16,
+            child: _buildRightButtonGroup(),
+          ),
+
+          // 地图模式切换按钮（如果提供了displayMode参数）
+          if (widget.displayMode != null)
+            Positioned(
+              top: 16,
+              right: 80, // 避免与右侧按钮重叠
+              child: _buildMapModeButton(),
+            ),
+
+          // 左上角功能按钮组
+          Positioned(
+            top: 16,
+            left: 16,
+            child: _buildLeftButtonGroup(),
+          ),
+
+          // 左下角功能按钮组
+          Positioned(
+            bottom: _showElevationChart ? 200 : 16,
+            left: 16,
+            child: _buildBottomLeftButtonGroup(),
+          ),
+
+          // 海拔图表切换按钮 - 悬浮在右下角
+          if (currentTrackPoints.isNotEmpty)
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: _buildElevationToggleButton(),
+            ),
+
+          // 海拔图表 - 悬浮在底部
+          if (currentTrackPoints.isNotEmpty && _showElevationChart)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: _buildFloatingElevationChart(currentTrackPoints),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建海拔图表切换按钮
+  Widget _buildElevationToggleButton() {
+    return CupertinoButton(
+      padding: const EdgeInsets.all(12),
+      color: CupertinoColors.systemBlue.withValues(alpha: 0.9),
+      borderRadius: BorderRadius.circular(25),
+      minSize: 0,
+      onPressed: () {
+        setState(() {
+          _showElevationChart = !_showElevationChart;
+        });
+      },
+      child: Icon(
+        _showElevationChart
+            ? CupertinoIcons.chart_bar_square_fill
+            : CupertinoIcons.chart_bar_square,
+        color: CupertinoColors.white,
+        size: 20,
+      ),
+    );
+  }
+
+  /// 构建悬浮的海拔图表
+  Widget _buildFloatingElevationChart(List<TrackPointVO> trackPoints) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: CupertinoColors.systemBackground.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: CupertinoColors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 标题栏
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: CupertinoColors.separator,
+                  width: 0.5,
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Text(
+                  '海拔图表',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minSize: 0,
+                  onPressed: () {
+                    setState(() {
+                      _showElevationChart = false;
+                    });
+                  },
+                  child: const Icon(
+                    CupertinoIcons.xmark,
+                    size: 18,
+                    color: CupertinoColors.secondaryLabel,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // 海拔图表
+          ElevationChartWidget(
+            trackPoints: trackPoints,
+            config: const ElevationChartConfig(
+              height: 120.0,
+              showLabels: false, // 禁用内部标签，避免重复
+              enableInteraction: true,
+            ),
+            events: ElevationChartEvents(
+              onPointSelected: (index, point) {
+                print('选中海拔点: $index, 海拔: ${point.elevation}m');
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建右侧功能按钮组
+  Widget _buildRightButtonGroup() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 定位按钮
+        _buildMapButton(
+          icon: _isFollowingLocation
+              ? CupertinoIcons.location_fill
+              : CupertinoIcons.location,
+          isActive: _isFollowingLocation,
+          onPressed: () {
+            setState(() {
+              _isFollowingLocation = !_isFollowingLocation;
+            });
+            // TODO: 实现定位功能
+            print('定位按钮点击: $_isFollowingLocation');
+          },
+        ),
+        const SizedBox(height: 8),
+
+        // 轨迹录制按钮
+        _buildMapButton(
+          icon: _isRecording
+              ? CupertinoIcons.stop_fill
+              : CupertinoIcons.circle_fill,
+          isActive: _isRecording,
+          activeColor: _isRecording
+              ? CupertinoColors.systemRed
+              : CupertinoColors.systemBlue,
+          onPressed: () {
+            setState(() {
+              _isRecording = !_isRecording;
+            });
+            // TODO: 实现轨迹录制功能
+            print('录制按钮点击: $_isRecording');
+          },
+        ),
+        const SizedBox(height: 8),
+
+        // 添加标记点按钮
+        _buildMapButton(
+          icon: CupertinoIcons.add_circled,
+          onPressed: () {
+            // TODO: 实现添加标记点功能
+            print('添加标记点');
+          },
+        ),
       ],
     );
+  }
+
+  /// 构建左上角功能按钮组
+  Widget _buildLeftButtonGroup() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 地图类型切换按钮
+        _buildMapButton(
+          icon: CupertinoIcons.map,
+          onPressed: () {
+            _showMapTypeSelector();
+          },
+        ),
+        const SizedBox(height: 8),
+
+        // 图层控制按钮
+        _buildMapButton(
+          icon: CupertinoIcons.layers_alt,
+          onPressed: () {
+            // TODO: 实现图层控制功能
+            print('图层控制');
+          },
+        ),
+      ],
+    );
+  }
+
+  /// 构建左下角功能按钮组
+  Widget _buildBottomLeftButtonGroup() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // 测量工具按钮
+        _buildMapButton(
+          icon: CupertinoIcons.triangle,
+          onPressed: () {
+            // TODO: 实现测量工具功能
+            print('测量工具');
+          },
+        ),
+        const SizedBox(height: 8),
+
+        // 回到轨迹中心按钮
+        _buildMapButton(
+          icon: CupertinoIcons.scope,
+          onPressed: () {
+            // TODO: 实现回到轨迹中心功能
+            print('回到轨迹中心');
+          },
+        ),
+        const SizedBox(height: 8),
+
+        // 更多功能按钮
+        _buildMapButton(
+          icon: CupertinoIcons.ellipsis,
+          onPressed: () {
+            _showMoreOptions();
+          },
+        ),
+      ],
+    );
+  }
+
+  /// 构建通用地图按钮
+  Widget _buildMapButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+    bool isActive = false,
+    Color? activeColor,
+  }) {
+    final buttonColor = isActive
+        ? (activeColor ?? CupertinoColors.systemBlue)
+        : CupertinoColors.systemGrey4;
+
+    final iconColor = isActive ? CupertinoColors.white : CupertinoColors.label;
+
+    return CupertinoButton(
+      padding: const EdgeInsets.all(12),
+      color: buttonColor.withValues(alpha: 0.9),
+      borderRadius: BorderRadius.circular(25),
+      minSize: 0,
+      onPressed: onPressed,
+      child: Icon(
+        icon,
+        color: iconColor,
+        size: 20,
+      ),
+    );
+  }
+
+  /// 显示地图类型选择器
+  void _showMapTypeSelector() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: const Text('选择地图类型'),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() {
+                _currentMapType = MapType.standard;
+              });
+              Navigator.pop(context);
+              // TODO: 实现地图类型切换
+              print('切换到标准地图');
+            },
+            child: const Text('标准地图'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() {
+                _currentMapType = MapType.satellite;
+              });
+              Navigator.pop(context);
+              // TODO: 实现地图类型切换
+              print('切换到卫星地图');
+            },
+            child: const Text('卫星地图'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() {
+                _currentMapType = MapType.terrain;
+              });
+              Navigator.pop(context);
+              // TODO: 实现地图类型切换
+              print('切换到地形地图');
+            },
+            child: const Text('地形地图'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('取消'),
+        ),
+      ),
+    );
+  }
+
+  /// 显示更多选项
+  void _showMoreOptions() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: const Text('更多功能'),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              // TODO: 实现轨迹导出功能
+              print('导出轨迹');
+            },
+            child: const Text('导出轨迹'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              // TODO: 实现离线地图功能
+              print('离线地图');
+            },
+            child: const Text('离线地图'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              // TODO: 实现天气信息功能
+              print('天气信息');
+            },
+            child: const Text('天气信息'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              // TODO: 实现设置功能
+              print('设置');
+            },
+            child: const Text('设置'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('取消'),
+        ),
+      ),
+    );
+  }
+
+  /// 构建地图模式切换按钮
+  Widget _buildMapModeButton() {
+    IconData icon;
+    String tooltip;
+
+    switch (widget.displayMode!) {
+      case MapDisplayMode.compact:
+        icon = CupertinoIcons.minus_rectangle;
+        tooltip = '紧凑模式';
+        break;
+      case MapDisplayMode.standard:
+        icon = CupertinoIcons.rectangle;
+        tooltip = '标准模式';
+        break;
+      case MapDisplayMode.immersive:
+        icon = CupertinoIcons.plus_rectangle;
+        tooltip = '沉浸模式';
+        break;
+    }
+
+    return _buildMapButton(
+      icon: icon,
+      isActive: widget.displayMode != MapDisplayMode.standard,
+      onPressed: _toggleMapDisplayMode,
+    );
+  }
+
+  /// 切换地图显示模式
+  void _toggleMapDisplayMode() {
+    MapDisplayMode newMode;
+    switch (widget.displayMode!) {
+      case MapDisplayMode.compact:
+        newMode = MapDisplayMode.standard;
+        break;
+      case MapDisplayMode.standard:
+        newMode = MapDisplayMode.immersive;
+        break;
+      case MapDisplayMode.immersive:
+        newMode = MapDisplayMode.compact;
+        break;
+    }
+
+    // 通知父组件模式改变
+    widget.onDisplayModeChanged?.call(newMode);
   }
 }

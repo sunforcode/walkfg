@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/core/constants/spacing_constants.dart';
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/route/route_model.dart';
-import 'package:walk/model/route/segment_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/service/service_manager.dart';
 import 'package:walk/ui/map/components/enhanced_daily_map_widget.dart';
-import 'package:walk/ui/map/utils/kml_parser.dart';
+import 'package:walk/ui/map/utils/kml_business_parser.dart';
 import 'package:walk/ui/page/common/error_view.dart';
 import 'package:walk/ui/page/common/loading_view.dart';
+import 'package:walk/ui/page/common/floating_back_button.dart';
 import 'package:walk/ui/page/route/detail/widgets/route_overview_widget.dart';
 import 'package:walk/ui/page/trip/trip_detail_screen.dart';
 import 'package:walk/utils/toast_utils.dart';
-import 'widgets/route_detail_info_widget.dart';
+
 import 'widgets/route_action_buttons.dart';
 import 'widgets/daily_itinerary_list_widget.dart';
 import 'widgets/seasonal_equipment_widget.dart';
@@ -48,7 +49,9 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   late Future<RouteModel> _routeFuture;
   late ScrollController _scrollController;
   bool _isFavorite = false;
-  bool _isMapFloating = false;
+
+  /// 当前地图显示模式
+  MapDisplayMode _mapDisplayMode = MapDisplayMode.standard;
 
   /// 轨迹点数据
   List<TrackPointVO> _kmlTrackPoints = [];
@@ -66,7 +69,6 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _scrollController.addListener(_onScroll);
     _loadRouteDetail();
     _loadRouteData();
     _loadKmlData();
@@ -74,21 +76,8 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
-  }
-
-  /// 监听滚动事件
-  void _onScroll() {
-    const threshold = 200.0;
-    final shouldFloat = _scrollController.offset > threshold;
-
-    if (shouldFloat != _isMapFloating) {
-      setState(() {
-        _isMapFloating = shouldFloat;
-      });
-    }
   }
 
   /// 加载路线详情
@@ -110,7 +99,8 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     try {
       print('开始加载KML数据...');
       // 使用新的parseFromPath方法替代已废弃的parseFromAsset
-      final mapData = await KmlParser.parseFromPath('assets/maps/wutai.kml');
+      final mapData =
+          await KmlBusinessParser.parseFromPath('assets/maps/wutai.kml');
       print(
           'KML数据加载成功: 轨迹点${mapData.trackPoints.length}个, 路标点${mapData.waypoints.length}个');
 
@@ -118,37 +108,22 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
         _kmlTrackPoints = mapData.trackPoints;
         _kmlWaypoints = mapData.waypoints;
       });
-
-      // 验证数据是否正确加载
-      if (_kmlTrackPoints.isNotEmpty) {
-        print(
-            '第一个轨迹点: lat=${_kmlTrackPoints.first.latitude}, lng=${_kmlTrackPoints.first.longitude}');
-      }
-      if (_kmlWaypoints.isNotEmpty) {
-        print(
-            '第一个路标点: lat=${_kmlWaypoints.first.latitude}, lng=${_kmlWaypoints.first.longitude}');
-      }
-    } catch (e, stackTrace) {
-      // 如果KML文件加载失败，使用模拟数据
+    } catch (e) {
       print('KML文件加载失败: $e');
-      print('堆栈跟踪: $stackTrace');
-      print(
-          '使用模拟数据: 轨迹点${_kmlTrackPoints.length}个, 路标点${_kmlWaypoints.length}个');
     }
   }
 
   /// 加载路线相关数据
   Future<void> _loadRouteData() async {
-    final routeDataService = ServiceLocator.instance.getRouteService();
-    final tripService = ServiceLocator.instance.getTripService();
     try {
       final results = await Future.wait([
         // routeDataService.getRelatedRoutes(widget.routeId),
         // tripService.getRelatedTrips(widget.routeId),
       ]);
       setState(() {
-        _relatedRoutes = results[0] as List<RouteModel>;
-        _relatedTrips = results[1] as List<TripModel>;
+        _relatedRoutes =
+            results.isNotEmpty ? results[0] as List<RouteModel> : [];
+        _relatedTrips = results.length > 1 ? results[1] as List<TripModel> : [];
       });
     } catch (e) {
       print('加载路线数据失败: $e');
@@ -236,36 +211,26 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     );
   }
 
-  /// 处理悬浮地图点击
-  void _handleFloatingMapTap() {
-    _scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
-    setState(() {
-      _isMapFloating = false;
-    });
+  /// 获取当前模式的地图高度
+  double _getMapHeight() {
+    switch (_mapDisplayMode) {
+      case MapDisplayMode.compact:
+        return 300.0;
+      case MapDisplayMode.standard:
+        return 400.0;
+      case MapDisplayMode.immersive:
+        return MediaQuery.of(context).size.height;
+    }
   }
 
-  /// 关闭悬浮地图
-  void _closeFloatingMap() {
-    setState(() {
-      _isMapFloating = false;
-    });
-    _scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
+  /// 获取当前模式是否固定显示
+  bool _isMapFixed() {
+    return _mapDisplayMode != MapDisplayMode.standard; // 只有标准模式可以跟随滚动
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('路线详情'),
-      ),
       child: SafeArea(
         child: FutureBuilder<RouteModel>(
           future: _routeFuture,
@@ -294,97 +259,207 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                 CustomScrollView(
                   controller: _scrollController,
                   slivers: [
-                    // 地图区域
-                    SliverToBoxAdapter(
-                      child: EnhancedDailyMapWidget(
-                        trackPoints: _kmlTrackPoints,
-                        markers: [],
-                        days: 3,
-                        height: 400,
+                    // 地图占位区域（只有在地图固定时才需要占位）
+                    if (_isMapFixed())
+                      SliverToBoxAdapter(
+                        child: SizedBox(height: _getMapHeight()),
+                      )
+                    else
+                      // 地图跟随滚动时，直接放在滚动列表中
+                      SliverToBoxAdapter(
+                        child: EnhancedDailyMapWidget(
+                          trackPoints: _kmlTrackPoints,
+                          markers: route.markerPoints,
+                          days: route.dailyPlans?.length ?? 1,
+                          height: _getMapHeight(),
+                          displayMode: _mapDisplayMode,
+                          onDisplayModeChanged: (mode) {
+                            setState(() {
+                              _mapDisplayMode = mode;
+                            });
+                          },
+                        ),
                       ),
+
+                    // 路线标题和简短信息
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            Text(
+                              route.name,
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.lg,
                     ),
 
                     // 路线概览
                     SliverToBoxAdapter(
-                      child: RouteOverviewWidget(route: route),
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: RouteOverviewWidget(route: route),
+                      ),
                     ),
 
-                    // 详细地图参数信息
-                    if (currentTrack != null)
-                      SliverToBoxAdapter(
-                        child: RouteDetailInfoWidget(
-                          currentTrack: currentTrack,
-                        ),
-                      ),
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.component,
+                    ),
 
                     // 每日行程列表
                     SliverToBoxAdapter(
-                      child: DailyItineraryListWidget(
-                        dailyPlans: route.dailyPlans ?? [],
-                        onDayTap: _handleDayTap,
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: DailyItineraryListWidget(
+                          dailyPlans: route.dailyPlans ?? [],
+                          onDayTap: _handleDayTap,
+                        ),
                       ),
                     ),
 
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.component,
+                    ),
+
                     // 当季出行装备推荐
-                    if (currentTrack != null)
+                    if (currentTrack != null) ...[
                       SliverToBoxAdapter(
-                        child: SeasonalEquipmentWidget(
-                          currentSeason: '春季',
-                          difficulty: route.difficulty.name,
+                        child: Padding(
+                          padding: PaddingConstants.pageHorizontal,
+                          child: SeasonalEquipmentWidget(
+                            currentSeason: '春季',
+                            difficulty: route.difficulty.name,
+                          ),
                         ),
                       ),
+                      const SliverToBoxAdapter(
+                        child: Spacing.component,
+                      ),
+                    ],
 
                     // 水源点详解
                     SliverToBoxAdapter(
-                      child: WaterSourcesWidget(
-                        waterSources: route.waterSources ?? [],
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: WaterSourcesWidget(
+                          waterSources: route.waterSources ?? [],
+                        ),
                       ),
+                    ),
+
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.component,
                     ),
 
                     // 补给点详解
                     SliverToBoxAdapter(
-                      child: SupplyPointsWidget(
-                        supplyPoints: route.supplyPoints ?? [],
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: SupplyPointsWidget(
+                          supplyPoints: route.supplyPoints ?? [],
+                        ),
                       ),
+                    ),
+
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.component,
                     ),
 
                     // 营地资源
                     SliverToBoxAdapter(
-                      child: CampsitesWidget(
-                        campsites: route.campsites ?? [],
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: CampsitesWidget(
+                          campsites: route.campsites ?? [],
+                        ),
                       ),
+                    ),
+
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.component,
                     ),
 
                     // 路线分段介绍
                     SliverToBoxAdapter(
-                      child: RouteSegmentsWidget(
-                        segments: route.segments ?? [],
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: RouteSegmentsWidget(
+                          segments: route.segments ?? [],
+                        ),
                       ),
+                    ),
+
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.component,
                     ),
 
                     // 搭车联系方式
                     SliverToBoxAdapter(
-                      child: HitchhikeContactsWidget(
-                        contacts: route.hitchhikeContacts ?? [],
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: HitchhikeContactsWidget(
+                          contacts: route.hitchhikeContacts ?? [],
+                        ),
                       ),
+                    ),
+
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.component,
                     ),
 
                     // 相关路线推荐
                     SliverToBoxAdapter(
-                      child: RelatedRoutesWidget(
-                        relatedRoutes: _relatedRoutes,
-                        onRouteTap: _handleRelatedRouteTap,
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: RelatedRoutesWidget(
+                          relatedRoutes: _relatedRoutes,
+                          onRouteTap: _handleRelatedRouteTap,
+                        ),
                       ),
+                    ),
+
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.component,
                     ),
 
                     // 相关行程推荐
                     SliverToBoxAdapter(
-                      child: RelatedTripsWidget(
-                        routeId: route.id,
-                        relatedTrips: _relatedTrips,
-                        onTripTap: _handleRelatedTripTap,
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: RelatedTripsWidget(
+                          routeId: route.id,
+                          relatedTrips: _relatedTrips,
+                          onTripTap: _handleRelatedTripTap,
+                        ),
                       ),
                     ),
+
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.component,
+                    ),
+
                     // 路线图片推荐
                     SliverToBoxAdapter(
                       child: RouteGalleryWidget(
@@ -393,18 +468,66 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                       ),
                     ),
 
+                    // 间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.page,
+                    ),
+
                     // 操作按钮
                     SliverToBoxAdapter(
-                      child: RouteActionButtons(
-                        route: route,
-                        isFavorite: _isFavorite,
-                        onPlanTrip: () => _startPlanning(route),
-                        onToggleFavorite: _handleFavorite,
-                        onMapAction: () =>
-                            ToastUtils.showFeatureInDevelopmentDialog(context),
+                      child: Padding(
+                        padding: PaddingConstants.pageHorizontal,
+                        child: RouteActionButtons(
+                          route: route,
+                          isFavorite: _isFavorite,
+                          onPlanTrip: () => _startPlanning(route),
+                          onToggleFavorite: _handleFavorite,
+                          onMapAction: () =>
+                              ToastUtils.showFeatureInDevelopmentDialog(
+                                  context),
+                        ),
                       ),
                     ),
+
+                    // 底部安全间距
+                    const SliverToBoxAdapter(
+                      child: Spacing.safe,
+                    ),
                   ],
+                ),
+
+                // 固定的地图组件（只有在固定模式下才显示）
+                if (_isMapFixed())
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom:
+                        _mapDisplayMode == MapDisplayMode.immersive ? 0 : null,
+                    child: Container(
+                      height: _mapDisplayMode == MapDisplayMode.immersive
+                          ? null
+                          : _getMapHeight(),
+                      child: EnhancedDailyMapWidget(
+                        trackPoints: _kmlTrackPoints,
+                        markers: route.markerPoints,
+                        days: route.dailyPlans?.length ?? 1,
+                        height: _getMapHeight(),
+                        displayMode: _mapDisplayMode,
+                        onDisplayModeChanged: (mode) {
+                          setState(() {
+                            _mapDisplayMode = mode;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+
+                // 悬浮返回按钮
+                Positioned(
+                  top: 16,
+                  left: 16,
+                  child: FloatingBackButton(),
                 ),
               ],
             );

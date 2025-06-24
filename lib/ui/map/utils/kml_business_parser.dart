@@ -1,12 +1,12 @@
 import 'package:walk/model/map/map_data_model.dart';
-import 'package:walk/parser/kml/kml_models.dart' as base_parser;
-import 'package:walk/parser/kml/kml_parser.dart' as base_parser;
-import 'package:walk/parser/kml/kml_to_map_converter.dart';
+import 'package:walk/ui/map/parser/kml/kml_models.dart';
+import 'package:walk/ui/map/parser/kml/kml_parser.dart';
+import 'package:walk/ui/map/parser/kml/kml_to_map_converter.dart';
 
 /// 高级KML解析器 - 业务层接口
 ///
 /// 提供简化的API，将KML解析和业务模型转换封装在一起
-class KmlParser {
+class KmlBusinessParser {
   /// 从路径解析为MapDataModel
   ///
   /// 支持的路径类型：
@@ -14,11 +14,11 @@ class KmlParser {
   /// - 网络URL: 'http://example.com/route.kml', 'https://example.com/route.kml'
   static Future<MapDataModel> parseFromPath(String path) async {
     try {
-      print('KmlParser.parseFromPath: 开始解析路径: $path');
+      print('KmlBusinessParser.parseFromPath: 开始解析路径: $path');
 
       // 使用底层解析器解析KML文档
-      final kmlDocument = await base_parser.KmlParser.parseFromPath(path);
-      print('KmlParser.parseFromPath: KML文档解析成功');
+      final kmlDocument = await KmlParser.parseFromPath(path);
+      print('KmlBusinessParser.parseFromPath: KML文档解析成功');
 
       // 转换为业务模型
       final mapData = KmlToMapConverter.convertToMapData(
@@ -26,12 +26,12 @@ class KmlParser {
         sourceUrl: path,
       );
       print(
-          'KmlParser.parseFromPath: 转换为MapDataModel成功，轨迹点数: ${mapData.trackPoints.length}');
+          'KmlBusinessParser.parseFromPath: 转换为MapDataModel成功，轨迹点数: ${mapData.trackPoints.length}');
 
       return mapData;
     } catch (e, stackTrace) {
-      print('KmlParser.parseFromPath: 解析失败: $e');
-      print('KmlParser.parseFromPath: 堆栈跟踪: $stackTrace');
+      print('KmlBusinessParser.parseFromPath: 解析失败: $e');
+      print('KmlBusinessParser.parseFromPath: 堆栈跟踪: $stackTrace');
       rethrow;
     }
   }
@@ -39,11 +39,12 @@ class KmlParser {
   /// 从字符串解析为MapDataModel
   static MapDataModel parseFromString(String kmlContent, {String? sourceUrl}) {
     try {
-      print('KmlParser.parseFromString: 开始解析KML字符串，长度: ${kmlContent.length}');
+      print(
+          'KmlBusinessParser.parseFromString: 开始解析KML字符串，长度: ${kmlContent.length}');
 
       // 使用底层解析器解析KML文档
-      final kmlDocument = base_parser.KmlParser.parseFromString(kmlContent);
-      print('KmlParser.parseFromString: KML文档解析成功');
+      final kmlDocument = KmlParser.parseFromString(kmlContent);
+      print('KmlBusinessParser.parseFromString: KML文档解析成功');
 
       // 转换为业务模型
       final mapData = KmlToMapConverter.convertToMapData(
@@ -52,26 +53,24 @@ class KmlParser {
         rawContent: kmlContent,
       );
       print(
-          'KmlParser.parseFromString: 转换为MapDataModel成功，轨迹点数: ${mapData.trackPoints.length}');
+          'KmlBusinessParser.parseFromString: 转换为MapDataModel成功，轨迹点数: ${mapData.trackPoints.length}');
 
       return mapData;
     } catch (e, stackTrace) {
-      print('KmlParser.parseFromString: 解析失败: $e');
-      print('KmlParser.parseFromString: 堆栈跟踪: $stackTrace');
+      print('KmlBusinessParser.parseFromString: 解析失败: $e');
+      print('KmlBusinessParser.parseFromString: 堆栈跟踪: $stackTrace');
       rethrow;
     }
   }
 
   /// 解析KML文档结构（不转换为业务模型）
-  static Future<base_parser.KmlDocument> parseKmlDocumentFromPath(
-      String path) async {
-    return await base_parser.KmlParser.parseFromPath(path);
+  static Future<KmlDocument> parseKmlDocumentFromPath(String path) async {
+    return await KmlParser.parseFromPath(path);
   }
 
   /// 从资源文件解析KML文档（向后兼容）
   @Deprecated('使用 parseKmlDocumentFromPath 替代')
-  static Future<base_parser.KmlDocument> parseKmlDocumentFromAsset(
-      String assetPath) async {
+  static Future<KmlDocument> parseKmlDocumentFromAsset(String assetPath) async {
     return parseKmlDocumentFromPath(assetPath);
   }
 }

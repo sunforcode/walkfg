@@ -13,84 +13,67 @@ class RouteOverviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题区域（路线名称 + 地区评分）
-          _buildTitleSection(),
-
-          const SizedBox(height: 12),
-
-          // 标签云（紧贴标题下方）
-          _buildTagsSection(),
-
-          const SizedBox(height: 16),
-
-          // 整合描述（路线简介 + 实用信息 + 安全提醒）
-          _buildIntegratedDescription(),
-        ],
-      ),
-    );
-  }
-
-  /// 构建标题部分
-  Widget _buildTitleSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 路线名称
+        // 标题区域（路线名称 + 地区评分）
+        _buildTitleSection(),
+
+        const SizedBox(height: 12),
+
+        // 标签云（紧贴标题下方）
+        _buildTagsSection(),
+
+        const SizedBox(height: 16),
+
+        // 轨迹基本信息（文字版）
+        _buildTrackBasicInfo(),
+        const SizedBox(height: 16),
+
+        // 整合描述（路线简介 + 实用信息 + 安全提醒）
+        _buildIntegratedDescription(),
+      ],
+    );
+  }
+
+  /// 构建标题部分（现在只显示地区和评分，不显示路线名称）
+  Widget _buildTitleSection() {
+    return Row(
+      children: [
+        Icon(
+          CupertinoIcons.location,
+          size: 16,
+          color: CupertinoColors.systemGrey,
+        ),
+        const SizedBox(width: 4),
         Text(
-          route.name,
+          route.region,
           style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: CupertinoColors.systemGrey,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Icon(
+          CupertinoIcons.star_fill,
+          size: 16,
+          color: CupertinoColors.systemYellow,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          route.rating.toStringAsFixed(1),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: CupertinoColors.label,
           ),
         ),
-
-        const SizedBox(height: 6),
-
-        // 地区和评分
-        Row(
-          children: [
-            Icon(
-              CupertinoIcons.location,
-              size: 16,
-              color: CupertinoColors.systemGrey,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              route.region,
-              style: const TextStyle(
-                fontSize: 16,
-                color: CupertinoColors.systemGrey,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Icon(
-              CupertinoIcons.star_fill,
-              size: 16,
-              color: CupertinoColors.systemYellow,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              route.rating.toStringAsFixed(1),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: CupertinoColors.label,
-              ),
-            ),
-            Text(
-              ' (${route.ratings?.ratingCount})',
-              style: const TextStyle(
-                fontSize: 14,
-                color: CupertinoColors.systemGrey,
-              ),
-            ),
-          ],
+        Text(
+          ' (${route.ratings?.ratingCount ?? 'null'})',
+          style: const TextStyle(
+            fontSize: 14,
+            color: CupertinoColors.systemGrey,
+          ),
         ),
       ],
     );
@@ -193,6 +176,41 @@ class RouteOverviewWidget extends StatelessWidget {
           color: textColor,
           fontWeight: FontWeight.w500,
         ),
+      ),
+    );
+  }
+
+  /// 构建轨迹基本信息（文字版）
+  Widget _buildTrackBasicInfo() {
+    final track = route.defaultMap;
+
+    // 调试信息
+    print('Route defaultMap: $track');
+
+    if (track == null) {
+      // 回退方案：使用route对象的计算属性
+      return Text(
+        '距离 ${route.distance.toStringAsFixed(1)}km · '
+        '用时 ${route.duration} · '
+        '爬升 ${route.elevationGain.toInt()}m · '
+        '下降 ${route.elevationLoss.toInt()}m',
+        style: const TextStyle(
+          fontSize: 14,
+          color: CupertinoColors.secondaryLabel,
+          fontWeight: FontWeight.w500,
+        ),
+      );
+    }
+
+    return Text(
+      '距离 ${track.distance.toStringAsFixed(1)}km · '
+      '用时 ${track.getEstimatedTimeText()} · '
+      '爬升 ${track.elevationGain.toInt()}m · '
+      '下降 ${track.elevationLoss.toInt()}m',
+      style: const TextStyle(
+        fontSize: 14,
+        color: CupertinoColors.secondaryLabel,
+        fontWeight: FontWeight.w500,
       ),
     );
   }
