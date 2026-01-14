@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walk/model/weather/weather_model.dart';
-import 'package:walk/services/location/location_service.dart';
+import 'package:walk/service/location/location_service.dart';
 import 'weather_detail_item.dart';
 import 'altitude_button.dart';
 

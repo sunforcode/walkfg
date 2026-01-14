@@ -3,7 +3,7 @@ import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/map/marker_point_model.dart';
 import 'package:walk/model/weather/weather_model.dart';
 import 'package:walk/model/weather/weather_condition.dart';
-import 'package:walk/services/location/location_service.dart';
+import 'package:walk/service/location/location_service.dart';
 import 'weather_api_service.dart';
 import 'weather_cache_service.dart';
 import 'weather_parser_service.dart';

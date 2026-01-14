@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walk/model/user/user_model.dart';
 import 'package:walk/model/weather/weather_model.dart';
-import 'package:walk/services/location/location_service.dart';
+import 'package:walk/service/location/location_service.dart';
 import 'package:walk/ui/page/home/widgets/component/error_card.dart';
 import 'package:walk/ui/page/home/widgets/component/loading_card.dart';
 import 'package:walk/ui/page/home/widgets/component/weather_header.dart';

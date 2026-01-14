@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walk/services/location/location_service.dart';
+import 'package:walk/service/location/location_service.dart';
 
 /// 海拔按钮组件
 class AltitudeButton extends StatelessWidget {
