@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/route/daily_plan_model.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/trip/widget/trip_card_template.dart';
 
 /// 行程安排卡片组件

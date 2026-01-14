@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:walk/service/service_manager.dart';
+import 'package:walk/service/user_service.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import '../../../model/user/user_model.dart';
 import '../../page/home/widgets/stats_card.dart';
 import 'login_screen.dart';
 import 'auth/register_screen.dart';
 import 'package:walk/utils/toast_utils.dart';
+import '../../map/examples/opensource_map_test_page.dart';
+import '../debug/debug_menu_page.dart';
 
 /// 个人页面
 class ProfileScreen extends StatefulWidget {
@@ -44,8 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadUserData() async {
     print('ProfileScreen - 开始加载用户数据');
     try {
-      final apiService = ServiceLocator.instance.getUserService();
-      final user = await apiService.getCurrentUser();
+      final user = await UserService.getCurrentUser();
       print('ProfileScreen - 用户数据加载成功: ${user.nickname}');
       if (mounted) {
         setState(() {
@@ -67,8 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   /// 加载用户统计数据
   Future<UserModel> _loadUserStatsData() async {
-    final userService = ServiceLocator.instance.getUserService();
-    return userService.getUserStats();
+    return UserService.getUserStats();
   }
 
   /// 导航到已完成路线页面
@@ -565,6 +565,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _showFeatureNotImplementedDialog(context);
           },
         ),
+        _buildListTile(
+          context,
+          CupertinoIcons.map_fill,
+          '开源3D地图测试',
+          onTap: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => const OpenSourceMapTestPage(),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -597,6 +609,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           '给我们评分',
           onTap: () {
             _showFeatureNotImplementedDialog(context);
+          },
+        ),
+        _buildListTile(
+          context,
+          CupertinoIcons.wrench,
+          '调试菜单',
+          onTap: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => const DebugMenuPage(),
+              ),
+            );
           },
         ),
       ],

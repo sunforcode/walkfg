@@ -4,7 +4,7 @@ import '../ui/page/route/route_discovery_screen.dart';
 import '../ui/page/equipment/equipment_screen.dart';
 import '../ui/page/profile/profile_screen.dart';
 import '../ui/page/search/route_search_page.dart';
-import 'theme/app_colors.dart';
+import 'tokens/tokens.dart';
 
 /// 主布局页面，包含底部导航栏和内容区域
 class MainLayout extends StatefulWidget {
@@ -132,7 +132,7 @@ class _MainLayoutState extends State<MainLayout> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                       blurRadius: 10,
                       spreadRadius: 2,
                       offset: const Offset(0, 4),

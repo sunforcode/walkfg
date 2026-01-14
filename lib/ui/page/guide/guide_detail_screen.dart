@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
-import 'package:walk/service/service_manager.dart';
+import 'package:walk/service/guide_service.dart';
 import 'package:walk/ui/page/common/error_view.dart';
 import 'package:walk/ui/page/common/loading_view.dart';
 import 'package:walk/ui/page/guide/widgets/guide_cover_widget.dart';
@@ -92,8 +92,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
         _guideFuture = Future.value(widget.guide!);
         _initializeGuideState(widget.guide!);
       } else {
-        final apiService = ServiceLocator.instance.getGuideService();
-        _guideFuture = apiService.getGuideWithDetails(widget.guideId);
+        _guideFuture = GuideService.getGuideWithDetails(widget.guideId);
       }
     } catch (e) {
       _handleLoadError(e);
@@ -124,8 +123,7 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
     });
 
     try {
-      final apiService = ServiceLocator.instance.getGuideService();
-      apiService.likeGuide(guide.id);
+      GuideService.likeGuide(guide.id);
 
       final message = _isLiked
           ? GuideDetailConstants.likeSuccessMessage

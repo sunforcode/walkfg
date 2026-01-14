@@ -34,6 +34,15 @@ class UnifiedMapConfig {
   /// 初始边界
   final LatLngBounds? initialBounds;
 
+  /// 是否启用3D模式
+  final bool enable3D;
+
+  /// 3D倾斜角度
+  final double pitch;
+
+  /// 3D旋转角度
+  final double bearing;
+
   const UnifiedMapConfig({
     this.mapType = MapType.standard,
     this.mapProvider = MapProviderType.osm,
@@ -44,6 +53,9 @@ class UnifiedMapConfig {
     this.padding = EdgeInsets.zero,
     this.initialCenter,
     this.initialBounds,
+    this.enable3D = false,
+    this.pitch = 0.0,
+    this.bearing = 0.0,
   });
 
   UnifiedMapConfig copyWith({

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/service/route_service.dart';
-import 'package:walk/service/service_manager.dart';
 import 'package:walk/service/trip_service.dart';
 import 'package:walk/ui/map/components/enhanced_daily_map_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_map_header_widget.dart';
@@ -17,7 +16,7 @@ import 'package:walk/ui/page/trip/widget/display/trip_weather_safety_display_wid
 import 'package:walk/ui/page/trip/trip_edit_screen.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/utils/toast_utils.dart';
 
 /// 行程详情展示页面
@@ -44,9 +43,6 @@ class TripDetailScreen extends StatefulWidget {
 }
 
 class _TripDetailScreenState extends State<TripDetailScreen> {
-  final TripService _tripService = ServiceLocator.instance.getTripService();
-  final RouteService _routeService = ServiceLocator.instance.getRouteService();
-
   /// 当前展示的TripModel
   TripModel? _trip;
 
@@ -89,7 +85,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         await _loadRelatedRoutes(_trip!);
       } else if (widget.routeId != null) {
         // 通过routeId加载RouteModel并构造临时TripModel
-        final route = await _routeService.getRouteById(widget.routeId!);
+        final route = await RouteService.getRouteById(widget.routeId!);
         _relatedRoutes = [route];
         _trip = _buildTripModelFromRoute(route);
       } else {
@@ -112,7 +108,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     final routes = <RouteModel>[];
     for (final routeId in trip.routeIds) {
       try {
-        final route = await _routeService.getRouteById(routeId);
+        final route = await RouteService.getRouteById(routeId);
         routes.add(route);
       } catch (e) {
         // 路线缺失时忽略

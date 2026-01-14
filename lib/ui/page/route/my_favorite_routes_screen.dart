@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../model/route/route_model.dart';
-import '../../../service/service_manager.dart';
+import '../../../service/route_service.dart';
 import '../common/loading_indicator.dart';
 import '../common/error_widget.dart';
 import '../common/empty_content_widget.dart';
@@ -28,8 +28,7 @@ class _MyFavoriteRoutesScreenState extends State<MyFavoriteRoutesScreen> {
 
   /// 加载收藏路线
   void _loadFavoriteRoutes() {
-    final apiService = ServiceLocator.instance.getRouteService();
-    _favoriteRoutesFuture = apiService.getFavoriteRoutes();
+    _favoriteRoutesFuture = RouteService.getFavoriteRoutes();
   }
 
   @override

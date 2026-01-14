@@ -126,7 +126,6 @@ class AppConfig {
 
   /// 获取默认基础URL
   String _getDefaultBaseUrl() {
-    return 'http://127.0.0.1:8080';
     switch (_environment) {
       case AppEnvironment.production:
         return const String.fromEnvironment('PROD_BASE_URL',
@@ -135,7 +134,6 @@ class AppConfig {
         return const String.fromEnvironment('STAGING_BASE_URL',
             defaultValue: 'https://staging-api.walkapp.com');
       case AppEnvironment.development:
-      default:
         return const String.fromEnvironment('DEV_BASE_URL',
             defaultValue: 'http://127.0.0.1:8080'); // 修改为你的后台地址
     }
@@ -149,7 +147,6 @@ class AppConfig {
       case AppEnvironment.staging:
         return const bool.fromEnvironment('USE_MOCK', defaultValue: false);
       case AppEnvironment.development:
-      default:
         return const bool.fromEnvironment('USE_MOCK', defaultValue: true);
     }
   }
@@ -161,7 +158,6 @@ class AppConfig {
         return false;
       case AppEnvironment.staging:
       case AppEnvironment.development:
-      default:
         return kDebugMode;
     }
   }

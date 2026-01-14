@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/ui/page/trip/trip_detail_screen.dart';
-import '../../../../theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import '../../trip/my_trip_plans_screen.dart';
-import '../../../../service/service_manager.dart';
+import '../../../../service/recommendation_service.dart';
 
 /// 行程规划入口组件
 class TripPlanningEntries extends StatelessWidget {
@@ -153,9 +153,8 @@ class TripPlanningEntries extends StatelessWidget {
   /// 导航到行程规划页面
   void _navigateToTripPlanning(BuildContext context) async {
     // 获取默认路线
-    final routeService = ServiceLocator.instance.getRecommendationService();
     try {
-      final route = await routeService.getPersonalizedRecommendations();
+      final route = await RecommendationService.getPersonalizedRecommendations();
       Navigator.of(context).push(
         CupertinoPageRoute(
           builder: (context) => TripDetailScreen(

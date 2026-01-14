@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../model/search/hot_search_model.dart';
 import '../../../service/search_history_service.dart';
-import '../../../service/service_manager.dart';
-import '../../../theme/theme/app_colors.dart';
+import '../../../service/recommendation_service.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 搜索部分组件
 class SearchSection extends StatefulWidget {
@@ -33,9 +33,6 @@ class SearchSection extends StatefulWidget {
 }
 
 class _SearchSectionState extends State<SearchSection> {
-  /// 搜索历史服务
-  late final SearchHistoryService _searchHistoryService;
-
   /// 最近搜索列表
   List<String> _recentSearches = [];
 
@@ -48,7 +45,6 @@ class _SearchSectionState extends State<SearchSection> {
   @override
   void initState() {
     super.initState();
-    _searchHistoryService = ServiceLocator.instance.getSearchHistoryService();
     _loadData();
   }
 
@@ -60,11 +56,10 @@ class _SearchSectionState extends State<SearchSection> {
 
     try {
       // 加载搜索历史
-      final keywords = await _searchHistoryService.getSearchKeywords();
+      final keywords = await SearchHistoryService.getSearchKeywords();
 
       // 加载热门搜索
-      final tripService = ServiceLocator.instance.getRecommendationService();
-      final hotSearches = await tripService.getHotSearches();
+      final hotSearches = await RecommendationService.getHotSearches();
 
       setState(() {
         _recentSearches = keywords;
@@ -85,10 +80,10 @@ class _SearchSectionState extends State<SearchSection> {
   Future<void> _addSearchHistory(String keyword) async {
     if (keyword.trim().isEmpty) return;
 
-    await _searchHistoryService.addSearch(keyword);
+    await SearchHistoryService.addSearch(keyword);
 
     // 重新加载搜索历史
-    final keywords = await _searchHistoryService.getSearchKeywords();
+    final keywords = await SearchHistoryService.getSearchKeywords();
     setState(() {
       _recentSearches = keywords;
     });
@@ -96,7 +91,7 @@ class _SearchSectionState extends State<SearchSection> {
 
   /// 清空搜索历史
   Future<void> _clearSearchHistory() async {
-    await _searchHistoryService.clearSearchHistory();
+    await SearchHistoryService.clearSearchHistory();
     setState(() {
       _recentSearches = [];
     });

@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'theme/main_layout.dart';
+import 'theme/app_theme.dart';
+import 'ui/map/examples/opensource_map_test_page.dart';
+import 'ui/page/debug/debug_menu_page.dart';
 
 /// 应用入口组件
 class App extends StatelessWidget {
@@ -10,14 +13,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoApp(
       title: 'Walk - 徒步旅行助手',
-      theme: const CupertinoThemeData(
-        primaryColor: Color(0xFF2196F3),
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: Color(0xFFF5F5F5),
-        textTheme: CupertinoTextThemeData(
-          primaryColor: Color(0xFF2196F3),
-        ),
-      ),
+      theme: AppTheme.cupertinoLight,
       home: const MainLayout(),
       routes: {
         '/settings': (context) => const CupertinoPageScaffold(
@@ -30,6 +26,8 @@ class App extends StatelessWidget {
                 ),
               ),
             ),
+        '/map-test': (context) => const OpenSourceMapTestPage(),
+        '/debug': (context) => const DebugMenuPage(),
       },
     );
   }

@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import '../api_client.dart';
+import '../../config/app_config.dart';
 
 /// 重试拦截器
 ///
@@ -43,14 +45,8 @@ class RetryInterceptor extends Interceptor {
         // 更新重试次数
         err.requestOptions.extra['retry_count'] = retryCount + 1;
 
-        // 创建新的Dio实例进行重试
-        final dio = Dio();
-
-        // 复制原始配置
-        dio.options = err.requestOptions.copyWith() as BaseOptions;
-
-        // 发送重试请求
-        final response = await dio.fetch(err.requestOptions);
+        // 使用原Dio实例进行重试（保持拦截器链完整）
+        final response = await ApiClient.instance.dio.fetch(err.requestOptions);
 
         debugPrint(
             'RetryInterceptor: Retry successful for ${err.requestOptions.path}');
@@ -151,12 +147,27 @@ class SmartRetryInterceptor extends Interceptor {
     RetryConfig? networkRetryConfig,
     RetryConfig? serverRetryConfig,
     RetryConfig? timeoutRetryConfig,
-  })  : networkRetryConfig =
-            networkRetryConfig ?? RetryConfig(maxRetries: 3, retryDelay: 1000),
-        serverRetryConfig =
-            serverRetryConfig ?? RetryConfig(maxRetries: 2, retryDelay: 2000),
-        timeoutRetryConfig =
-            timeoutRetryConfig ?? RetryConfig(maxRetries: 2, retryDelay: 1500);
+  })  : networkRetryConfig = networkRetryConfig ??
+            const RetryConfig(
+              maxRetries: 3,
+              retryDelay: 1000,
+              enableExponentialBackoff: true,
+              maxDelay: 10000,
+            ),
+        serverRetryConfig = serverRetryConfig ??
+            const RetryConfig(
+              maxRetries: 2,
+              retryDelay: 2000,
+              enableExponentialBackoff: true,
+              maxDelay: 10000,
+            ),
+        timeoutRetryConfig = timeoutRetryConfig ??
+            const RetryConfig(
+              maxRetries: 2,
+              retryDelay: 1500,
+              enableExponentialBackoff: true,
+              maxDelay: 10000,
+            );
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
@@ -180,7 +191,7 @@ class SmartRetryInterceptor extends Interceptor {
 
     try {
       // 计算延迟时间
-      final delay = retryConfig.useExponentialBackoff
+      final delay = retryConfig.enableExponentialBackoff
           ? _calculateExponentialDelay(retryCount, retryConfig)
           : retryConfig.retryDelay;
 
@@ -189,11 +200,8 @@ class SmartRetryInterceptor extends Interceptor {
       // 更新重试次数
       err.requestOptions.extra['retry_count'] = retryCount + 1;
 
-      // 创建新的Dio实例进行重试
-      final dio = Dio();
-      dio.options = err.requestOptions.copyWith() as BaseOptions;
-
-      final response = await dio.fetch(err.requestOptions);
+      // 使用原Dio实例进行重试（保持拦截器链完整）
+      final response = await ApiClient.instance.dio.fetch(err.requestOptions);
 
       debugPrint(
           'SmartRetryInterceptor: Retry successful for ${err.requestOptions.path}');
@@ -244,24 +252,4 @@ class SmartRetryInterceptor extends Interceptor {
   }
 }
 
-/// 重试配置
-class RetryConfig {
-  /// 最大重试次数
-  final int maxRetries;
 
-  /// 重试延迟（毫秒）
-  final int retryDelay;
-
-  /// 是否使用指数退避
-  final bool useExponentialBackoff;
-
-  /// 最大延迟时间（毫秒）
-  final int maxDelay;
-
-  const RetryConfig({
-    required this.maxRetries,
-    required this.retryDelay,
-    this.useExponentialBackoff = true,
-    this.maxDelay = 10000,
-  });
-}

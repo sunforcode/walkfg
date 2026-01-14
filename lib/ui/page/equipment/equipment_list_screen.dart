@@ -9,7 +9,7 @@ import '../../../model/equipment/equipment_list_model.dart';
 import '../../../model/equipment/equipment_item_model.dart';
 import '../../../model/equipment/equipment_category.dart';
 import '../../../model/equipment/equipment_necessity.dart';
-import '../../../service/service_manager.dart';
+import '../../../service/equipment_service.dart';
 import '../common/loading_view.dart';
 import '../common/error_view.dart';
 
@@ -50,9 +50,8 @@ class _EquipmentListDetailScreenState
       });
 
       // 使用EquipmentService加载装备清单
-      final equipmentService = ServiceLocator.instance.getEquipmentService();
       final equipmentList =
-          await equipmentService.getEquipmentListById(widget.equipmentId);
+          await EquipmentService.getEquipmentListById(widget.equipmentId);
 
       setState(() {
         _equipmentList = equipmentList;

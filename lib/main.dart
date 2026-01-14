@@ -5,9 +5,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'app.dart';
-import 'service/service_manager.dart';
+import 'core/network/api_client.dart';
+import 'core/config/app_config.dart';
+import 'core/network/network_manager.dart';
 
 void main() async {
   // 确保Flutter绑定初始化
@@ -17,8 +20,17 @@ void main() async {
   await initializeDateFormatting('zh_CN', null);
   await initializeDateFormatting('en_US', null);
 
-  // 初始化服务定位器
-  ServiceLocator.instance.initialize(useMock: true);
+  // 初始化 Hive
+  await Hive.initFlutter();
+
+  // 初始化应用配置
+  AppConfig.instance.initialize();
+  await NetworkManager.instance.initialize();
+
+  // 初始化 ApiClient（包含缓存）
+  await ApiClient.instance.initialize(
+    baseUrl: AppConfig.instance.baseUrl,
+  );
 
   // 预加载JSON数据
   await _preloadJsonData();

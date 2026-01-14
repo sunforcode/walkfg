@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/model/equipment/equipment_template_model.dart';
 import 'package:walk/model/equipment/equipment_list_type.dart';
 import 'package:walk/service/equipment_service.dart';
-import 'package:walk/service/mock/mock_equipment_service.dart';
 import 'package:walk/ui/widget/error_view.dart';
 import 'package:walk/ui/widget/empty_view.dart';
 
@@ -19,13 +18,11 @@ class _EquipmentTemplateScreenState extends State<EquipmentTemplateScreen> {
   bool _isLoading = true;
   String? _error;
   List<EquipmentTemplateModel> _templates = [];
-  late EquipmentService _equipmentService;
   EquipmentListType? _selectedType;
 
   @override
   void initState() {
     super.initState();
-    _equipmentService = MockEquipmentService();
     _loadTemplates();
   }
 
@@ -40,9 +37,9 @@ class _EquipmentTemplateScreenState extends State<EquipmentTemplateScreen> {
       List<EquipmentTemplateModel> templates;
       
       if (_selectedType != null) {
-        templates = await _equipmentService.getEquipmentTemplatesByType(_selectedType!);
+        templates = await EquipmentService.getEquipmentTemplatesByType(_selectedType!);
       } else {
-        templates = await _equipmentService.getEquipmentTemplates();
+        templates = await EquipmentService.getEquipmentTemplates();
       }
       
       if (mounted) {
@@ -79,7 +76,7 @@ class _EquipmentTemplateScreenState extends State<EquipmentTemplateScreen> {
     
     if (result != null) {
       try {
-        await _equipmentService.createEquipmentListFromTemplate(
+        await EquipmentService.createEquipmentListFromTemplate(
           template.id,
           name: result['name'],
           description: result['description'],

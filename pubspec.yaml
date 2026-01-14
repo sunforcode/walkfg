@@ -75,6 +75,10 @@ dependencies:
   flutter_map_tappable_polyline: ^6.0.0
   flutter_cache_manager: ^3.4.1
 
+  # 3D地图支持
+  maplibre_gl: ^0.20.0
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

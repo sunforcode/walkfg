@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/model/trip/transportation_info_model.dart';
 
 /// 行程交通组件

@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:walk/model/route/route_enums.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/utils/date_time_utils.dart';
-import '../../../service/service_manager.dart';
-import '../../../theme/theme/app_colors.dart';
+import '../../../service/trip_plan_service.dart';
+import '../../../service/route_service.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 我的行程规划页面
 class MyTripPlansScreen extends StatefulWidget {
@@ -27,8 +28,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
 
   /// 加载行程规划
   void _loadTripPlans() {
-    final apiService = ServiceLocator.instance.getTripPlanService();
-    _tripPlansFuture = apiService.getUserTripPlans();
+    _tripPlansFuture = TripPlanService.getUserTripPlans();
   }
 
   @override
@@ -304,7 +304,6 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
 
   /// 继续规划
   void _continuePlanning(TripModel plan) {
-    final apiService = ServiceLocator.instance.getRouteService();
-    apiService.getRouteById(plan.routeIds.first).then((route) {});
+    RouteService.getRouteById(plan.routeIds.first).then((route) {});
   }
 }

@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import '../../model/trip/trip_model.dart';
-import '../../theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 行程分享卡片组件
 class ShareCardWidget extends StatelessWidget {

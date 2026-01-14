@@ -3,7 +3,7 @@ import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/widgets/simple_map_widget.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 地图头部部分
 class MapHeaderSection extends StatelessWidget {

@@ -47,6 +47,12 @@ enum MapType {
 
   /// 3D地图
   threeD,
+
+  /// 3D地形图
+  threeDTerrain,
+
+  /// 3D卫星图
+  threeDSatellite,
 }
 
 /// 地图提供商

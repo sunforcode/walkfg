@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../model/guide/guide_model.dart';
-import '../../../../theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import '../../common/network_image_with_fallback.dart';
 import '../guide_detail_screen.dart';
 

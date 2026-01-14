@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'guide_detail_constants.dart';
 
 /// 攻略封面组件
@@ -59,7 +59,7 @@ class GuideCoverWidget extends StatelessWidget {
   Widget _buildFallbackImage() {
     return Container(
       color:
-          AppColors.primary.withOpacity(_CoverConstants.fallbackImageOpacity),
+          AppColors.primary.withValues(alpha: _CoverConstants.fallbackImageOpacity),
       child: const Center(
         child: Icon(
           CupertinoIcons.photo,
@@ -83,9 +83,9 @@ class GuideCoverWidget extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              CupertinoColors.black.withOpacity(0.0),
+              CupertinoColors.black.withValues(alpha: 0.0),
               CupertinoColors.black
-                  .withOpacity(_CoverConstants.gradientOpacity),
+                  .withValues(alpha: _CoverConstants.gradientOpacity),
             ],
           ),
         ),
@@ -109,7 +109,7 @@ class GuideCoverWidget extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: CupertinoColors.black
-                  .withOpacity(_CoverConstants.shadowOpacity),
+                  .withValues(alpha: _CoverConstants.shadowOpacity),
               blurRadius: _CoverConstants.shadowBlurRadius,
               offset: const Offset(0, _CoverConstants.shadowOffsetY),
             ),
@@ -169,7 +169,7 @@ class GuideCoverWidget extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color:
-            CupertinoColors.white.withOpacity(_CoverConstants.infoBadgeOpacity),
+            CupertinoColors.white.withValues(alpha: _CoverConstants.infoBadgeOpacity),
         borderRadius:
             BorderRadius.circular(_CoverConstants.infoBadgeBorderRadius),
       ),

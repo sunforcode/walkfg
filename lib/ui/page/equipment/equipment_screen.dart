@@ -4,7 +4,6 @@ import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/model/equipment/equipment_list_type.dart';
 import 'package:walk/model/equipment/equipment_list_status.dart';
 import 'package:walk/service/equipment_service.dart';
-import 'package:walk/service/mock/mock_equipment_service.dart';
 import 'package:walk/ui/page/equipment/equipment_detail_screen.dart';
 import 'package:walk/ui/page/equipment/equipment_create_screen.dart';
 import 'package:walk/ui/page/equipment/equipment_template_screen.dart';
@@ -25,7 +24,6 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
   bool _isLoading = true;
   String? _error;
   List<EquipmentListModel> _equipmentLists = [];
-  late EquipmentService _equipmentService;
 
   // 筛选条件
   EquipmentListType? _selectedType;
@@ -48,7 +46,6 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
   @override
   void initState() {
     super.initState();
-    _equipmentService = MockEquipmentService();
     _loadEquipmentLists();
   }
 
@@ -64,14 +61,14 @@ class _EquipmentScreenState extends State<EquipmentScreen> {
 
       // 根据筛选条件加载数据
       if (_searchQuery.isNotEmpty) {
-        lists = await _equipmentService.searchEquipmentLists(_searchQuery);
+        lists = await EquipmentService.searchEquipmentLists(_searchQuery);
       } else if (_selectedType != null) {
-        lists = await _equipmentService.getEquipmentListsByType(_selectedType!);
+        lists = await EquipmentService.getEquipmentListsByType(_selectedType!);
       } else if (_selectedStatus != null) {
         lists =
-            await _equipmentService.getEquipmentListsByStatus(_selectedStatus!);
+            await EquipmentService.getEquipmentListsByStatus(_selectedStatus!);
       } else {
-        lists = await _equipmentService.getEquipmentLists();
+        lists = await EquipmentService.getEquipmentLists();
       }
 
       // 应用快速筛选

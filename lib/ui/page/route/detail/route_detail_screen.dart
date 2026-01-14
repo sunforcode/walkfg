@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:walk/core/constants/spacing_constants.dart';
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
-import 'package:walk/service/service_manager.dart';
+import 'package:walk/service/route_service.dart';
 import 'package:walk/ui/map/components/enhanced_daily_map_widget.dart';
 import 'package:walk/ui/map/utils/kml_business_parser.dart';
+import 'package:walk/ui/map/widgets/map_3d_widget.dart';
+import 'package:walk/ui/map/adapters/route_to_3d_adapter.dart';
 import 'package:walk/ui/page/common/error_view.dart';
 import 'package:walk/ui/page/common/loading_view.dart';
 import 'package:walk/ui/page/common/floating_back_button.dart';
@@ -50,20 +53,20 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   late ScrollController _scrollController;
   bool _isFavorite = false;
 
-  /// 当前地图显示模式
-  MapDisplayMode _mapDisplayMode = MapDisplayMode.standard;
-
   /// 轨迹点数据
   List<TrackPointVO> _kmlTrackPoints = [];
-
-  /// 路标点数据
-  List<TrackPointVO> _kmlWaypoints = [];
 
   /// 相关路线列表
   List<RouteModel> _relatedRoutes = [];
 
   /// 相关行程列表
   List<TripModel> _relatedTrips = [];
+
+  /// 是否显示3D地图
+  bool _show3DMap = false;
+
+  /// 3D地图轨迹点数据
+  List<TrackPointVO> _3dTrackPoints = [];
 
   @override
   void initState() {
@@ -82,14 +85,12 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   /// 加载路线详情
   void _loadRouteDetail() {
-    final apiService = ServiceLocator.instance.getRouteService();
-
     // 如果传入了route参数，从route中获取routeId请求详情
     if (widget.route != null) {
-      _routeFuture = apiService.getRouteDetail(widget.route!.id);
+      _routeFuture = RouteService.getRouteDetail(widget.route!.id);
     } else {
       // 如果没有传入route参数，使用传入的routeId请求详情
-      _routeFuture = apiService.getRouteDetail(widget.routeId);
+      _routeFuture = RouteService.getRouteDetail(widget.routeId);
     }
     _checkIfFavorite();
   }
@@ -106,7 +107,8 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
       setState(() {
         _kmlTrackPoints = mapData.trackPoints;
-        _kmlWaypoints = mapData.waypoints;
+        // 同时设置3D地图的轨迹点数据
+        _3dTrackPoints = mapData.trackPoints;
       });
     } catch (e) {
       print('KML文件加载失败: $e');
@@ -132,8 +134,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   /// 检查路线是否已收藏
   void _checkIfFavorite() {
-    final apiService = ServiceLocator.instance.getRouteService();
-    apiService.checkIfFavorite(widget.routeId).then((isFavorite) {
+    RouteService.checkIfFavorite(widget.routeId).then((isFavorite) {
       setState(() {
         _isFavorite = isFavorite;
       });
@@ -153,17 +154,15 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   /// 处理收藏操作
   void _handleFavorite() {
-    final apiService = ServiceLocator.instance.getRouteService();
-
     if (_isFavorite) {
-      apiService.removeFavorite(widget.routeId).then((_) {
+      RouteService.removeFavorite(widget.routeId).then((_) {
         setState(() {
           _isFavorite = false;
         });
         ToastUtils.showToast(context, '已取消收藏');
       });
     } else {
-      apiService.addFavorite(widget.routeId).then((_) {
+      RouteService.addFavorite(widget.routeId).then((_) {
         setState(() {
           _isFavorite = true;
         });
@@ -213,19 +212,12 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   /// 获取当前模式的地图高度
   double _getMapHeight() {
-    switch (_mapDisplayMode) {
-      case MapDisplayMode.compact:
-        return 300.0;
-      case MapDisplayMode.standard:
-        return 400.0;
-      case MapDisplayMode.immersive:
-        return MediaQuery.of(context).size.height;
-    }
+    return 400.0; // 固定高度
   }
 
   /// 获取当前模式是否固定显示
   bool _isMapFixed() {
-    return _mapDisplayMode != MapDisplayMode.standard; // 只有标准模式可以跟随滚动
+    return false; // 地图跟随滚动
   }
 
   @override
@@ -267,18 +259,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                     else
                       // 地图跟随滚动时，直接放在滚动列表中
                       SliverToBoxAdapter(
-                        child: EnhancedDailyMapWidget(
-                          trackPoints: _kmlTrackPoints,
-                          markers: route.markerPoints,
-                          days: route.dailyPlans?.length ?? 1,
-                          height: _getMapHeight(),
-                          displayMode: _mapDisplayMode,
-                          onDisplayModeChanged: (mode) {
-                            setState(() {
-                              _mapDisplayMode = mode;
-                            });
-                          },
-                        ),
+                        child: _buildMapSection(route),
                       ),
 
                     // 路线标题和简短信息
@@ -496,33 +477,6 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                   ],
                 ),
 
-                // 固定的地图组件（只有在固定模式下才显示）
-                if (_isMapFixed())
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom:
-                        _mapDisplayMode == MapDisplayMode.immersive ? 0 : null,
-                    child: Container(
-                      height: _mapDisplayMode == MapDisplayMode.immersive
-                          ? null
-                          : _getMapHeight(),
-                      child: EnhancedDailyMapWidget(
-                        trackPoints: _kmlTrackPoints,
-                        markers: route.markerPoints,
-                        days: route.dailyPlans?.length ?? 1,
-                        height: _getMapHeight(),
-                        displayMode: _mapDisplayMode,
-                        onDisplayModeChanged: (mode) {
-                          setState(() {
-                            _mapDisplayMode = mode;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-
                 // 悬浮返回按钮
                 Positioned(
                   top: 16,
@@ -535,5 +489,119 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
         ),
       ),
     );
+  }
+
+  /// 构建地图区域（支持2D/3D切换）
+  Widget _buildMapSection(RouteModel route) {
+    return Container(
+      height: _getMapHeight(),
+      child: Stack(
+        children: [
+          // 地图内容
+          if (_show3DMap) _build3DMap(route) else _build2DMap(route),
+
+          // 2D/3D切换按钮
+          Positioned(
+            top: 16,
+            right: 16,
+            child: _build3DToggleButton(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建2D地图
+  Widget _build2DMap(RouteModel route) {
+    return EnhancedDailyMapWidget(
+      trackPoints: _kmlTrackPoints,
+      markers: route.markerPoints,
+      days: route.dailyPlans?.length ?? 1,
+      height: _getMapHeight(),
+    );
+  }
+
+  /// 构建3D地图
+  Widget _build3DMap(RouteModel route) {
+    // 如果没有3D轨迹数据，使用转换器生成
+    if (_3dTrackPoints.isEmpty) {
+      _3dTrackPoints = RouteTo3DAdapter.convertRouteToTrackPoints(route);
+    }
+
+    final config = RouteTo3DAdapter.recommendMap3DConfig(route);
+    final initialCenter =
+        RouteTo3DAdapter.calculateInitialCenter(_3dTrackPoints);
+
+    return Map3DWidget(
+      trackPoints: _3dTrackPoints,
+      config: config.copyWith(height: _getMapHeight()),
+      initialCenter: initialCenter,
+      events: Map3DEvents(
+        onMapTap: (position) {
+          print('3D地图点击: $position');
+        },
+        onMapReady: () {
+          print('3D地图准备就绪');
+        },
+      ),
+    );
+  }
+
+  /// 构建3D切换按钮
+  Widget _build3DToggleButton() {
+    return Container(
+      decoration: BoxDecoration(
+        color: CupertinoColors.systemBackground.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: CupertinoColors.systemGrey.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: CupertinoButton(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        minSize: 0,
+        onPressed: _toggle3DMap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              _show3DMap ? CupertinoIcons.map : CupertinoIcons.cube_box,
+              size: 18,
+              color: _show3DMap
+                  ? CupertinoColors.activeBlue
+                  : CupertinoColors.systemGrey,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              _show3DMap ? '2D' : '3D',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: _show3DMap
+                    ? CupertinoColors.activeBlue
+                    : CupertinoColors.systemGrey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 切换3D地图
+  void _toggle3DMap() {
+    setState(() {
+      _show3DMap = !_show3DMap;
+    });
+
+    // 触觉反馈
+    HapticFeedback.lightImpact();
+
+    // 显示提示
+    ToastUtils.showToast(context, _show3DMap ? '已切换到3D地图' : '已切换到2D地图');
   }
 }

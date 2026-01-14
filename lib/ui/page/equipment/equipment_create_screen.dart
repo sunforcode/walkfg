@@ -4,7 +4,6 @@ import 'package:walk/model/equipment/equipment_list_type.dart';
 import 'package:walk/model/equipment/equipment_list_status.dart';
 import 'package:walk/model/equipment/equipment_season.dart';
 import 'package:walk/service/equipment_service.dart';
-import 'package:walk/service/mock/mock_equipment_service.dart';
 
 /// 创建装备清单页面
 class EquipmentCreateScreen extends StatefulWidget {
@@ -24,13 +23,6 @@ class _EquipmentCreateScreenState extends State<EquipmentCreateScreen> {
   int _personCount = 1;
   final List<SeasonSuitability> _selectedSeasons = [SeasonSuitability.spring];
   bool _isCreating = false;
-  late EquipmentService _equipmentService;
-
-  @override
-  void initState() {
-    super.initState();
-    _equipmentService = MockEquipmentService();
-  }
 
   @override
   void dispose() {
@@ -75,7 +67,7 @@ class _EquipmentCreateScreenState extends State<EquipmentCreateScreen> {
       );
 
       // 调用服务创建装备清单
-      await _equipmentService.createEquipmentList(equipmentList);
+      await EquipmentService.createEquipmentList(equipmentList);
 
       if (mounted) {
         // 返回上一页并传递创建成功的结果

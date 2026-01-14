@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
 import '../config/app_config.dart';
 import 'api_client.dart';
 
@@ -30,7 +27,7 @@ class NetworkManager {
     try {
       // 获取应用配置
       final config = AppConfig.instance;
-      print("初始化的baseurla $config.baseUrl");
+      debugPrint('NetworkManager: Initializing with baseUrl: ${config.baseUrl}');
       // 初始化API客户端
       ApiClient.instance.initialize(
         baseUrl: config.baseUrl,

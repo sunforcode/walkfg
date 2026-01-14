@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../model/trip/trip_model.dart';
 import '../../../../service/share_service.dart';
-import '../../../../theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 行程分享区域组件
 class TripShareSection extends StatelessWidget {

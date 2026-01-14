@@ -5,7 +5,6 @@ import 'package:walk/model/equipment/equipment_category.dart';
 import 'package:walk/model/equipment/user_equipment_inventory_model.dart';
 import 'package:walk/model/equipment/weight_unit.dart';
 import 'package:walk/service/equipment_service.dart';
-import 'package:walk/service/mock/mock_equipment_service.dart';
 import 'package:walk/ui/widget/error_view.dart';
 import 'package:walk/ui/widget/empty_view.dart';
 
@@ -28,7 +27,6 @@ class EquipmentInventoryScreen extends StatefulWidget {
 class _EquipmentInventoryScreenState extends State<EquipmentInventoryScreen> {
   bool _isLoading = true;
   String? _error;
-  late EquipmentService _equipmentService;
   UserEquipmentInventoryModel? _inventory;
   EquipmentCategory? _selectedCategory;
   String _searchQuery = '';
@@ -37,7 +35,6 @@ class _EquipmentInventoryScreenState extends State<EquipmentInventoryScreen> {
   @override
   void initState() {
     super.initState();
-    _equipmentService = MockEquipmentService();
     _loadInventory();
   }
 
@@ -50,7 +47,7 @@ class _EquipmentInventoryScreenState extends State<EquipmentInventoryScreen> {
 
     try {
       final inventory =
-          await _equipmentService.getUserEquipmentInventory(widget.userId);
+          await EquipmentService.getUserEquipmentInventory(widget.userId);
 
       if (mounted) {
         setState(() {
@@ -134,7 +131,7 @@ class _EquipmentInventoryScreenState extends State<EquipmentInventoryScreen> {
   /// 删除装备
   Future<void> _deleteEquipment(String itemId) async {
     try {
-      await _equipmentService.removeEquipmentFromInventory(
+      await EquipmentService.removeEquipmentFromInventory(
           widget.userId, itemId);
       await _loadInventory();
     } catch (e) {

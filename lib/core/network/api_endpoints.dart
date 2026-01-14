@@ -123,9 +123,11 @@ class ApiEndpoints {
       '$apiPrefix/trip-plans/$planId';
 
   // ==================== 用户相关 ====================
-  /// 用户信息
-  static const String userProfile =
-      '$apiPrefix/users/user_1750354562470_xAmPuJBl';
+  /// 当前用户信息（通过Token识别用户）
+  static const String userProfile = '$apiPrefix/user/profile';
+
+  /// 获取指定用户信息
+  static String userDetail(String userId) => '$apiPrefix/users/$userId';
 
   /// 更新用户信息
   static const String updateUserProfile = '$apiPrefix/user/profile';

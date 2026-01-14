@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 通用加载指示器组件
 class LoadingIndicator extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/empty_content_widget.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';

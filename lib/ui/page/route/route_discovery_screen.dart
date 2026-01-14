@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../../../model/route/route_model.dart';
-import '../../../service/service_manager.dart';
+import '../../../service/recommendation_service.dart';
 import '../common/error_widget.dart';
 import '../common/empty_content_widget.dart';
 import 'detail/route_detail_screen.dart';
@@ -82,16 +82,14 @@ class _RouteDiscoveryScreenState extends State<RouteDiscoveryScreen>
   /// 加载路线数据
   void _loadRoutes() {
     try {
-      final apiService = ServiceLocator.instance.getRecommendationService();
-
       // 加载热门路线
-      _popularRoutesFuture = _loadPopularRoutes(apiService);
+      _popularRoutesFuture = _loadPopularRoutes();
 
       // 加载当季路线
-      _seasonalRoutesFuture = _loadSeasonalRoutes(apiService);
+      _seasonalRoutesFuture = _loadSeasonalRoutes();
 
       // 加载全部路线
-      _allRoutesFuture = _loadAllRoutes(apiService);
+      _allRoutesFuture = _loadAllRoutes();
     } catch (e) {
       // 统一错误处理
       _handleLoadError(e);
@@ -99,34 +97,27 @@ class _RouteDiscoveryScreenState extends State<RouteDiscoveryScreen>
   }
 
   /// 加载热门路线
-  Future<List<RouteModel>> _loadPopularRoutes(dynamic apiService) async {
+  Future<List<RouteModel>> _loadPopularRoutes() async {
     try {
-      final recommendedRoutes = await apiService.getRecommendedRoutes();
-      return recommendedRoutes.items[0].routes;
+      return await RecommendationService.getPersonalizedRecommendations();
     } catch (e) {
       throw Exception('加载热门路线失败: $e');
     }
   }
 
   /// 加载当季路线
-  Future<List<RouteModel>> _loadSeasonalRoutes(dynamic apiService) async {
+  Future<List<RouteModel>> _loadSeasonalRoutes() async {
     try {
-      final recommendedRoutes = await apiService.getRecommendedRoutes();
-      return recommendedRoutes.items[0].routes;
+      return await RecommendationService.getSeasonalRecommendations();
     } catch (e) {
       throw Exception('加载当季路线失败: $e');
     }
   }
 
   /// 加载全部路线
-  Future<List<RouteModel>> _loadAllRoutes(dynamic apiService) async {
+  Future<List<RouteModel>> _loadAllRoutes() async {
     try {
-      final recommendedRoutes = await apiService.getRecommendedRoutes();
-      List<RouteModel> allRoutes = [];
-      for (var item in recommendedRoutes.items) {
-        allRoutes.addAll(item.routes);
-      }
-      return allRoutes;
+      return await RecommendationService.getPersonalizedRecommendations();
     } catch (e) {
       throw Exception('加载全部路线失败: $e');
     }

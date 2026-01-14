@@ -229,7 +229,6 @@ class ApiExceptionFactory {
         );
 
       case DioExceptionType.unknown:
-      default:
         return UnknownException(
           dioException.message ?? '未知网络错误',
           code: 'UNKNOWN',

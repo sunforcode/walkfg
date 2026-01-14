@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/service/route_service.dart';
-import 'package:walk/service/service_manager.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import 'package:walk/ui/page/search/search_section.dart';
 import 'package:walk/ui/page/route/route_discovery_screen.dart';
@@ -32,9 +31,6 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
   /// 搜索结果
   List<RouteModel> _searchResults = [];
 
-  /// 路线服务
-  final RouteService _routeService = ServiceLocator.instance.getRouteService();
-
   /// 默认热门搜索词
   final List<String> _defaultHotSearches = [
     '北京周边',
@@ -60,7 +56,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
     });
 
     // 执行搜索
-    _routeService.searchRoutes(keyword).then((results) {
+    RouteService.searchRoutes(keyword).then((results) {
       setState(() {
         _searchResults = results;
         _isSearching = false;
@@ -122,7 +118,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
   /// 构建推荐路线
   Widget _buildRecommendedRoutes() {
     return FutureBuilder<List<RouteModel>>(
-      future: _routeService.getRecommendedRoutes(),
+      future: RouteService.getRecommendedRoutes(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: LoadingIndicator());

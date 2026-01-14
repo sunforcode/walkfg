@@ -7,7 +7,6 @@ import 'package:walk/model/equipment/equipment_list_status.dart';
 import 'package:walk/model/equipment/equipment_necessity.dart';
 import 'package:walk/model/equipment/weight_unit.dart';
 import 'package:walk/service/equipment_service.dart';
-import 'package:walk/service/mock/mock_equipment_service.dart';
 import 'package:walk/ui/widget/error_view.dart';
 import 'package:walk/ui/widget/empty_view.dart';
 
@@ -29,7 +28,6 @@ class EquipmentDetailScreen extends StatefulWidget {
 class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   bool _isLoading = true;
   String? _error;
-  late EquipmentService _equipmentService;
   EquipmentListModel? _equipmentList;
   EquipmentListStats? _stats;
   double _preparationProgress = 0;
@@ -37,7 +35,6 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _equipmentService = MockEquipmentService();
     _loadEquipmentList();
   }
 
@@ -50,10 +47,10 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
 
     try {
       final equipmentList =
-          await _equipmentService.getEquipmentListById(widget.equipmentListId);
+          await EquipmentService.getEquipmentListById(widget.equipmentListId);
       final stats =
-          await _equipmentService.getEquipmentListStats(widget.equipmentListId);
-      final progress = await _equipmentService
+          await EquipmentService.getEquipmentListStats(widget.equipmentListId);
+      final progress = await EquipmentService
           .getEquipmentListPreparationProgress(widget.equipmentListId);
 
       if (mounted) {
@@ -78,7 +75,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   Future<void> _updateEquipmentPreparedStatus(
       String itemId, bool prepared) async {
     try {
-      final updatedList = await _equipmentService.updateEquipmentPreparedStatus(
+      final updatedList = await EquipmentService.updateEquipmentPreparedStatus(
         widget.equipmentListId,
         itemId,
         prepared,
@@ -102,7 +99,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   /// 更新装备清单状态
   Future<void> _updateEquipmentListStatus(EquipmentListStatus status) async {
     try {
-      final updatedList = await _equipmentService.updateEquipmentListStatus(
+      final updatedList = await EquipmentService.updateEquipmentListStatus(
         widget.equipmentListId,
         status,
       );
@@ -123,8 +120,8 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   Future<void> _refreshStats() async {
     try {
       final stats =
-          await _equipmentService.getEquipmentListStats(widget.equipmentListId);
-      final progress = await _equipmentService
+          await EquipmentService.getEquipmentListStats(widget.equipmentListId);
+      final progress = await EquipmentService
           .getEquipmentListPreparationProgress(widget.equipmentListId);
 
       if (mounted) {
@@ -711,7 +708,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
 
   Future<void> _deleteEquipment(String itemId) async {
     try {
-      final updatedList = await _equipmentService.removeEquipmentItem(
+      final updatedList = await EquipmentService.removeEquipmentItem(
         widget.equipmentListId,
         itemId,
       );
@@ -743,7 +740,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
 
   Future<void> _cloneEquipmentList() async {
     try {
-      await _equipmentService.cloneEquipmentList(widget.equipmentListId);
+      await EquipmentService.cloneEquipmentList(widget.equipmentListId);
       if (mounted) {
         _showSuccessDialog('复制成功', '已成功创建装备清单副本');
       }
@@ -780,7 +777,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
 
   Future<void> _deleteEquipmentList() async {
     try {
-      await _equipmentService.deleteEquipmentList(widget.equipmentListId);
+      await EquipmentService.deleteEquipmentList(widget.equipmentListId);
       if (mounted) {
         Navigator.of(context).pop(true); // 返回上一页并传递删除成功的结果
       }

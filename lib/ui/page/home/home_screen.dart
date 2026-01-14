@@ -6,9 +6,13 @@ import '../../../model/guide/guide_model.dart';
 import '../../../model/route/route_model.dart';
 import '../../../model/trip/trip_model.dart';
 import '../../../model/weather/weather_model.dart';
-import '../../../service/service_manager.dart';
 import '../../../services/weather/weather_manager.dart';
 import '../../../services/location/location_service.dart';
+import '../../../service/user_service.dart';
+import '../../../service/weather_service.dart';
+import '../../../service/trip_service.dart';
+import '../../../service/route_service.dart';
+import '../../../service/guide_service.dart';
 import 'widgets/welcome_weather_card.dart';
 import 'widgets/planned_trips_section.dart';
 import 'widgets/recommended_routes_section.dart';
@@ -69,10 +73,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   /// 加载用户和天气数据
   Future<Map<String, dynamic>> _loadUserWeatherData() async {
-    final userService = ServiceLocator.instance.getUserService();
-
     // 先获取用户数据
-    final user = await userService.getCurrentUser();
+    final user = await UserService.getCurrentUser();
 
     // 尝试获取当前位置的天气
     WeatherModel? weather;
@@ -104,8 +106,7 @@ class _HomeScreenState extends State<HomeScreen>
     // 如果无法获取当前位置的天气，使用默认位置（杭州）
     if (weather == null) {
       print("获取到的天气为null");
-      final weatherService = ServiceLocator.instance.getWeatherService();
-      weather = await weatherService.getWeather(30.2741, 120.1551); // 杭州的经纬度
+      weather = await WeatherService.getWeather(30.2741, 120.1551); // 杭州的经纬度
     }
 
     return {
@@ -123,21 +124,18 @@ class _HomeScreenState extends State<HomeScreen>
 
   /// 加载规划行程数据
   Future<List<TripModel>> _loadPlannedTripsData() async {
-    final tripService = ServiceLocator.instance.getTripService();
-    return tripService.getPlannedTrips();
+    return TripService.getPlannedTrips();
   }
 
   /// 加载推荐路线数据
   Future<List<RouteModel>> _loadRecommendedRoutesData() async {
-    final routeService = ServiceLocator.instance.getRouteService();
-    return routeService.getPopularRoutes();
+    return RouteService.getPopularRoutes();
   }
 
   /// 加载徒步攻略数据
   Future<List<GuideModel>> _loadHikingGuidesData() async {
-    final guideService = ServiceLocator.instance.getGuideService();
     // 获取徒步攻略，限制4条
-    return guideService.getGuides(limit: 4);
+    return GuideService.getGuides(limit: 4);
   }
 
   /// 获取海拔信息

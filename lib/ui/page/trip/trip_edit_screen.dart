@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/trip/trip_model.dart';
-import 'package:walk/service/service_manager.dart';
 import 'package:walk/service/trip_service.dart';
 import 'package:walk/ui/page/trip/widget/trip_collapsible_section_widget.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/utils/toast_utils.dart';
 
 /// 行程编辑页面
@@ -25,7 +24,6 @@ class TripEditScreen extends StatefulWidget {
 
 class _TripEditScreenState extends State<TripEditScreen> {
   late Future<TripModel> _tripFuture;
-  final TripService _tripService = ServiceLocator.instance.getTripService();
 
   /// 编辑中的行程数据
   TripModel? _editingTrip;
@@ -51,7 +49,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
   /// 加载行程详情
   void _loadTripDetails() {
     setState(() {
-      _tripFuture = _tripService.getTripById(widget.tripId);
+      _tripFuture = TripService.getTripById(widget.tripId);
     });
 
     _tripFuture.then((trip) {
@@ -83,7 +81,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
     );
 
     try {
-      await _tripService.updateTrip(_editingTrip!);
+      await TripService.updateTrip(_editingTrip!);
 
       // 关闭保存中对话框
       if (mounted) Navigator.of(context).pop();

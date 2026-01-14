@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/trip/widget/trip_info_row_widget.dart';
 
 /// 行程基本信息卡片组件

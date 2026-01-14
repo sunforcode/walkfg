@@ -118,3 +118,38 @@ firebase_options.dart
 
 # CatPaw related
 .catpaw/
+
+# Android
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+*.jks
+*.keystore
+
+# macOS additional
+**/macos/Flutter/ephemeral/
+
+# FVM (Flutter Version Management)
+.fvm/
+
+# Hive database files
+*.hive
+*.lock
+!pubspec.lock
+
+# Log files
+*.log
+
+# Test output
+test/test_output/
+
+# Coverage lcov
+lcov.info
+
+# Xcode build directory
+**/ios/build/
+**/macos/build/

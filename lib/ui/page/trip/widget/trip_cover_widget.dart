@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
-import 'package:walk/theme/theme/app_colors.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 
 class TripCoverWidget extends StatelessWidget {
