@@ -1,75 +1,60 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:walk/core/network/api_client.dart';
+import 'package:walk/core/network/api_endpoints.dart';
+import 'package:walk/core/network/api_exception.dart';
 import 'package:walk/model/trip/trip_model.dart';
 
 /// 行程服务
 ///
 /// 使用静态方法，无需实例化
-/// 当前使用本地 JSON 数据，后续可改为 API 请求
 class TripService {
   // 禁止实例化
   TripService._();
 
-  /// 从JSON文件加载数据
-  static Future<dynamic> _loadJsonData(String path) async {
-    try {
-      final String jsonString = await rootBundle.loadString(path);
-      return json.decode(jsonString);
-    } catch (e) {
-      print('加载JSON文件失败: $e');
-      return null;
-    }
-  }
 
   /// 获取用户行程列表
   ///
   /// [status] 可选参数，用于筛选特定状态的行程
   static Future<List<TripModel>> getUserTrips({String? status}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 从JSON文件加载行程数据
-    final tripsJson = await _loadJsonData('assets/mock_data/trips.json');
-    if (tripsJson == null || !(tripsJson is List)) {
+    try {
+      final response = await ApiClient.instance.get(
+        ApiEndpoints.trips,
+        queryParameters: {
+          if (status != null) 'status': status,
+        },
+      );
+      return _parseTripsResponse(response.data);
+    } catch (e) {
+      debugPrint('TripService: 获取行程列表失败: $e');
       return [];
     }
-
-    // 将JSON数据转换为TripModel对象列表
-    List<TripModel> trips =
-        tripsJson.map<TripModel>((json) => TripModel.fromJson(json)).toList();
-
-    // 根据状态筛选
-    if (status != null && status.isNotEmpty) {
-      return trips
-          .where((trip) => trip.status.toString().split('.').last == status)
-          .toList();
-    }
-
-    return trips;
   }
 
   /// 获取行程详情
   ///
   /// [tripId] 行程ID
   static Future<TripModel> getTripDetail(String tripId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
+    try {
+      final response = await ApiClient.instance.get(
+        ApiEndpoints.tripDetail(tripId),
+      );
+      final responseData = response.data as Map<String, dynamic>;
 
-    // 从JSON文件加载行程详情数据
-    final tripsJson = await _loadJsonData('assets/mock_data/trips.json');
-    if (tripsJson == null || !(tripsJson is List)) {
-      throw Exception('Failed to load trip data');
+      if (responseData['code'] != 200) {
+        throw BusinessException(
+          responseData['message'] ?? '获取行程详情失败',
+          code: responseData['code']?.toString(),
+        );
+      }
+
+      final tripData = responseData['data'] as Map<String, dynamic>;
+      return TripModel.fromJson(tripData);
+    } catch (e) {
+      if (e is ApiException) {
+        rethrow;
+      }
+      throw ApiExceptionFactory.fromException(e as Exception);
     }
-
-    // 查找指定ID的行程
-    final tripJson = tripsJson.firstWhere(
-      (trip) => trip['id'] == tripId,
-      orElse: () => throw Exception('Trip not found: $tripId'),
-    );
-    final model = TripModel.fromJson(tripJson);
-    print(" equipmentList - object");
-    print(model.equipmentList?.equipments.length);
-    return model;
   }
 
   /// 创建行程
@@ -149,7 +134,15 @@ class TripService {
 
   /// 获取规划中的行程列表
   static Future<List<TripModel>> getPlannedTrips() async {
-    return getUserTrips(status: 'planned');
+    try {
+      final response = await ApiClient.instance.get(
+        ApiEndpoints.plannedTrips,
+      );
+      return _parseTripsResponse(response.data);
+    } catch (e) {
+      debugPrint('TripService: 获取规划行程列表失败: $e');
+      return [];
+    }
   }
 
   /// 获取所有行程列表
@@ -159,27 +152,36 @@ class TripService {
 
   /// 获取相关行程
   static Future<List<TripModel>> getRelatedTrips(String routeId, {int limit = 5}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 从JSON文件加载行程数据
-    final tripsJson = await _loadJsonData('assets/mock_data/trips.json');
-    if (tripsJson == null || !(tripsJson is List)) {
+    try {
+      final response = await ApiClient.instance.get(
+        ApiEndpoints.trips,
+        queryParameters: {
+          'routeId': routeId,
+          'limit': limit,
+        },
+      );
+      return _parseTripsResponse(response.data);
+    } catch (e) {
+      debugPrint('TripService: 获取相关行程失败: $e');
       return [];
     }
+  }
 
-    // 将JSON数据转换为TripModel对象列表
-    List<TripModel> trips =
-        tripsJson.map<TripModel>((json) => TripModel.fromJson(json)).toList();
+  /// 解析行程响应数据的通用方法
+  static List<TripModel> _parseTripsResponse(dynamic responseData) {
+    final data = responseData as Map<String, dynamic>;
 
-    // 筛选匹配路线ID的行程
-    final relatedTrips = trips.where((trip) => trip.primaryRouteId == routeId).toList();
-
-    // 限制数量
-    if (relatedTrips.length > limit) {
-      return relatedTrips.sublist(0, limit);
+    if (data['code'] != 200) {
+      throw BusinessException(
+        data['message'] ?? '获取行程数据失败',
+        code: data['code']?.toString(),
+      );
     }
 
-    return relatedTrips;
+    final tripsData = data['data'] as Map<String, dynamic>;
+    final content = tripsData['content'] as List<dynamic>;
+    debugPrint('TripService: 成功解析行程数据，共 ${content.length} 条');
+
+    return content.map((json) => TripModel.fromJson(json)).toList();
   }
 }
