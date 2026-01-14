@@ -1,3 +1,7 @@
+## Purpose
+
+本变更修改 api-endpoints 规范，移除用户端点中的硬编码用户ID，改为通过 Authorization Token 识别用户身份。
+
 ## MODIFIED Requirements
 
 ### Requirement: 用户相关端点 (User)

@@ -1,3 +1,7 @@
+## Purpose
+
+本变更修改 network-client 规范，优化环境配置管理，确保 baseUrl 从环境变量读取而非硬编码，并统一重试配置定义。
+
 ## MODIFIED Requirements
 
 ### Requirement: 环境配置

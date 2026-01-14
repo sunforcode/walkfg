@@ -1,3 +1,7 @@
+## Purpose
+
+本变更重构服务层架构，引入 DataSource 策略和缓存集成机制，将缓存逻辑从 Service 层移至 ApiClient 层，简化架构并提升一致性。
+
 ## ADDED Requirements
 
 ### Requirement: DataSource Strategy

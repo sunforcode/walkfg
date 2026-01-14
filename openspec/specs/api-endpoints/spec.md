@@ -1,7 +1,8 @@
 # api-endpoints Specification
 
 ## Purpose
-API 端点配置管理，提供统一的 URL 路径定义、参数构建和版本管理。
+API 端点配置管理，提供统一的 URL 路径定义、参数构建和版本管理，支持 RESTful API 的端点组织和路由配置。
+
 ## Requirements
 ### Requirement: API 版本管理
 ApiEndpoints SHALL 提供版本化的 API 路径：

@@ -1,3 +1,7 @@
+## Purpose
+
+本变更完善服务层架构规范，引入服务类型枚举、配置模型、缓存装饰器和配置驱动的服务组装机制，提供灵活的服务管理能力。
+
 ## ADDED Requirements
 
 ### Requirement: Service Type Enumeration

@@ -76,6 +76,37 @@ class AppShadows {
     ),
   ];
 
+  // ============ 卡片层级阴影 (用于数据卡片和列表) ============
+  /// 卡片层级 0 - 扁平卡片 (仅边框无阴影)
+  static const List<BoxShadow> cardElevation0 = [];
+
+  /// 卡片层级 1 - 普通卡片
+  static const List<BoxShadow> cardElevation1 = [
+    BoxShadow(
+      color: Color(0x0F000000), // 6% 透明度
+      blurRadius: 3,
+      offset: Offset(0, 1),
+    ),
+  ];
+
+  /// 卡片层级 2 - 悬浮卡片
+  static const List<BoxShadow> cardElevation2 = [
+    BoxShadow(
+      color: Color(0x1A000000), // 10% 透明度
+      blurRadius: 6,
+      offset: Offset(0, 2),
+    ),
+  ];
+
+  /// 卡片层级 3 - 弹出层
+  static const List<BoxShadow> cardElevation3 = [
+    BoxShadow(
+      color: Color(0x26000000), // 15% 透明度
+      blurRadius: 12,
+      offset: Offset(0, 4),
+    ),
+  ];
+
   /// 强调阴影 (带颜色)
   static List<BoxShadow> primaryGlow = [
     BoxShadow(

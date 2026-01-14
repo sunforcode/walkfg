@@ -157,6 +157,22 @@ class AppColors {
     colors: [Color(0xFFFF9800), Color(0xFFF57C00)],
   );
 
+  // ============ 交互状态颜色 (Interaction States) ============
+  /// 按压态叠加色 - 4% 黑色
+  static const Color pressed = Color(0x0A000000);
+
+  /// 悬停态叠加色 - 2% 黑色
+  static const Color hovered = Color(0x05000000);
+
+  /// 聚焦态边框色 - 主色
+  static const Color focused = primary;
+
+  /// 拖拽态叠加色 - 8% 黑色
+  static const Color dragging = Color(0x14000000);
+
+  /// 选中态背景色
+  static const Color selected = Color(0x14000000);
+
   // ============ 蓝色系调色板 ============
   /// 蓝色系调色板 - 用于卡片等元素的循环着色
   static const List<Color> blueColors = [

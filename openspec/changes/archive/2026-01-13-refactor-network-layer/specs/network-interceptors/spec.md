@@ -1,3 +1,7 @@
+## Purpose
+
+本变更修改 network-interceptors 规范，优化重试拦截器的实现，统一使用 AppConfig 中的 RetryConfig，避免重复定义。
+
 ## MODIFIED Requirements
 
 ### Requirement: 重试拦截器 (RetryInterceptor)

@@ -228,6 +228,49 @@ class AppTypography {
     height: lineHeightTight,
   );
 
+  // ============ 数据展示样式 (用于统计卡片和指标) ============
+  /// 统计卡片数值 - 28px bold
+  static const TextStyle statValue = TextStyle(
+    fontSize: fontSizeDisplayLg,
+    fontWeight: bold,
+    height: lineHeightTight,
+    color: AppColors.textPrimary,
+    fontFeatures: [FontFeature.tabularFigures()],
+  );
+
+  /// 统计卡片单位 - 12px regular
+  static const TextStyle statUnit = TextStyle(
+    fontSize: fontSizeSm,
+    fontWeight: regular,
+    height: lineHeightTight,
+    color: AppColors.textSecondary,
+  );
+
+  /// 统计卡片标签 - 10px regular
+  static const TextStyle statLabel = TextStyle(
+    fontSize: fontSizeXs,
+    fontWeight: regular,
+    height: lineHeightTight,
+    color: AppColors.textSecondary,
+  );
+
+  /// 指标数值 - 14px semibold
+  static const TextStyle metricValue = TextStyle(
+    fontSize: fontSizeMd,
+    fontWeight: semiBold,
+    height: lineHeightTight,
+    color: AppColors.textPrimary,
+    fontFeatures: [FontFeature.tabularFigures()],
+  );
+
+  /// 指标标签 - 12px regular
+  static const TextStyle metricLabel = TextStyle(
+    fontSize: fontSizeSm,
+    fontWeight: regular,
+    height: lineHeightTight,
+    color: AppColors.textSecondary,
+  );
+
   // ============ 工具方法 ============
   /// 获取带颜色的样式
   static TextStyle withColor(TextStyle style, Color color) {

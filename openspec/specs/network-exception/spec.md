@@ -1,7 +1,8 @@
 # network-exception Specification
 
 ## Purpose
-统一的网络异常体系，提供类型化的异常处理、错误转换和用户友好的错误消息。
+
+统一的网络异常体系，提供类型化的异常处理、错误转换和用户友好的错误消息，支持 HTTP 状态码到业务异常的映射和重试策略判断。
 
 ## Requirements
 
