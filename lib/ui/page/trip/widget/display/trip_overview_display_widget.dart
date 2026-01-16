@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/route/route_model.dart';
+import 'package:walk/utils/date_time_utils.dart';
 
 /// 行程概览展示组件
 class TripOverviewDisplayWidget extends StatelessWidget {
@@ -665,7 +666,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
   // 格式化日期范围
   String _formatDateRange() {
     final days = _getTotalDays();
-    return '${trip.startDate.year}-${trip.startDate.month.toString().padLeft(2, '0')}-${trip.startDate.day.toString().padLeft(2, '0')} ~ ${trip.endDate.year}-${trip.endDate.month.toString().padLeft(2, '0')}-${trip.endDate.day.toString().padLeft(2, '0')} ($days天)';
+    return DateTimeUtils.formatDateRange(trip.startDate, trip.endDate, days);
   }
 
   // 获取总里程（已完成状态）

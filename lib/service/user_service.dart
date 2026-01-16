@@ -42,7 +42,7 @@ class UserService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -66,7 +66,7 @@ class UserService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -93,7 +93,7 @@ class UserService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -125,7 +125,7 @@ class UserService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -176,7 +176,7 @@ class UserService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -217,7 +217,7 @@ class UserService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -246,7 +246,7 @@ class UserService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 }

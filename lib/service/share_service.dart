@@ -158,7 +158,7 @@ class ShareService {
   /// 生成简单的分享文本
   String _generateShareText(TripModel trip) {
     final duration = trip.endDate.difference(trip.startDate).inDays + 1;
-    return '我计划进行一次徒步旅行：${trip.name}，时间：${_formatDate(trip.startDate)} - ${_formatDate(trip.endDate)}，共${duration}天。来自Walk徒步助手。';
+    return '我计划进行一次徒步旅行：${trip.name}，时间：${_formatDate(trip.startDate)} - ${_formatDate(trip.endDate)}，共${duration}天。来自 Walk徒步助手。';
   }
 
   /// 生成详细的分享文本

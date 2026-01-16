@@ -147,7 +147,8 @@ class AppConfig {
       case AppEnvironment.staging:
         return const bool.fromEnvironment('USE_MOCK', defaultValue: false);
       case AppEnvironment.development:
-        return const bool.fromEnvironment('USE_MOCK', defaultValue: true);
+        // 开发环境默认使用真实API,如需使用Mock数据请设置环境变量 USE_MOCK=true
+        return const bool.fromEnvironment('USE_MOCK', defaultValue: false);
     }
   }
 

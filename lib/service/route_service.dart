@@ -57,7 +57,7 @@ class RouteService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -83,7 +83,7 @@ class RouteService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -121,7 +121,7 @@ class RouteService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -130,16 +130,18 @@ class RouteService {
     debugPrint('RouteService: 开始请求热门路线');
     try {
       final response = await ApiClient.instance.get(
-        ApiEndpoints.routes,
+        ApiEndpoints.popularRoutes,
         queryParameters: {'limit': limit},
       );
+      debugPrint('RouteService: 请求热门路线成功');
+
       return _parseRoutesResponse(response.data);
     } catch (e) {
       debugPrint('RouteService: 请求热门路线失败: $e');
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -156,7 +158,7 @@ class RouteService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -173,7 +175,7 @@ class RouteService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -190,7 +192,7 @@ class RouteService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -207,7 +209,7 @@ class RouteService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 

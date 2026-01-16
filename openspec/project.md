@@ -166,3 +166,18 @@ flutter packages pub run build_runner watch
 **数据存储**：
 - 本地 JSON Mock 数据（assets/mock_data/）
 - 后端 API 服务（通过 ApiClient 调用）
+
+## API Integration
+**后端服务**：
+- 后端项目：walkbg (Kotlin + Spring Boot)
+- API 基础路径：`http://localhost:8080/walkbg/api/v1`
+- API 协议规范：详见 `specs/api-contract/spec.md`
+
+**接口协议要点**：
+- 统一响应格式：`ApiResponse<T>`
+- 字段命名：JSON 使用 snake_case，Dart 使用 camelCase
+- 枚举值：使用整数类型（0, 1, 2...）
+- 分页参数：page（从1开始）、size（默认20）、sort
+- 时间格式：ISO 8601（UTC 时区）
+- 认证方式：JWT Token（`Authorization: Bearer {token}`）
+- 详细规范参考：`openspec/specs/api-contract/spec.md`

@@ -285,7 +285,7 @@ class WeatherManager {
   }) async {
     // 获取路线所有标记点的天气数据
     final weatherData = await getMultipleMarkerPointsWeather(
-      route.markerPoints,
+      route.markerPoints ?? [],
       forceRefresh: forceRefresh,
     );
 

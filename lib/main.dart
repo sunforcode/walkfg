@@ -24,7 +24,10 @@ void main() async {
   await Hive.initFlutter();
 
   // 初始化应用配置
-  AppConfig.instance.initialize();
+  // 显式禁用Mock服务,使用真实的后端API
+  AppConfig.instance.initialize(
+    useMockServices: false,
+  );
   await NetworkManager.instance.initialize();
 
   // 初始化 ApiClient（包含缓存）

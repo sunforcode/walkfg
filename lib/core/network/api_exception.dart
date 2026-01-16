@@ -373,7 +373,8 @@ class ApiExceptionFactory {
   }
 
   /// 从通用异常创建ApiException
-  static ApiException fromException(Exception exception) {
+  /// 支持任何类型的异常（Exception 或 Error）
+  static ApiException fromException(dynamic exception) {
     if (exception is DioException) {
       return fromDioException(exception);
     } else if (exception is ApiException) {

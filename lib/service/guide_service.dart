@@ -58,7 +58,7 @@ class GuideService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -276,7 +276,7 @@ class GuideService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 
@@ -302,7 +302,7 @@ class GuideService {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiExceptionFactory.fromException(e as Exception);
+      throw ApiExceptionFactory.fromException(e);
     }
   }
 

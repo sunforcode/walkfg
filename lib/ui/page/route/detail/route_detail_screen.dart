@@ -515,7 +515,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   Widget _build2DMap(RouteModel route) {
     return EnhancedDailyMapWidget(
       trackPoints: _kmlTrackPoints,
-      markers: route.markerPoints,
+      markers: route.markerPoints ?? [],
       days: route.dailyPlans?.length ?? 1,
       height: _getMapHeight(),
     );

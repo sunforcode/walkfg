@@ -26,8 +26,7 @@ abstract class BaseModel {
   Map<String, dynamic> toJson();
 
   /// 解析时间戳（支持秒和毫秒）
-  static DateTime? parseTimestamp(dynamic timestamp) {
-    if (timestamp == null) return null;
+  static DateTime parseTimestamp(dynamic timestamp) {
 
     if (timestamp is int) {
       // 判断是秒还是毫秒（毫秒数通常大于10位数）
@@ -50,11 +49,11 @@ abstract class BaseModel {
       try {
         return DateTime.parse(timestamp);
       } catch (e) {
-        return null;
+        return DateTime.now();
       }
     }
 
-    return null;
+    return DateTime.now(); 
   }
 
   /// 时间戳转JSON（输出毫秒时间戳）

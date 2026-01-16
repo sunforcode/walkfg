@@ -10,6 +10,7 @@ import 'data_source.dart';
 import 'interceptors/auth_interceptor.dart';
 import 'interceptors/error_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
+import 'interceptors/mock_interceptor.dart';
 import 'interceptors/retry_interceptor.dart';
 
 /// HTTP客户端管理器
@@ -79,18 +80,21 @@ class ApiClient {
 
   /// 添加拦截器
   void _addInterceptors() {
-    // 1. 认证拦截器（请求前添加token）
+    // 1. Mock拦截器（返回Mock数据，仅Mock模式）
+    _dio.interceptors.add(MockInterceptor());
+
+    // 2. 认证拦截器（请求前添加token）
     _dio.interceptors.add(AuthInterceptor());
 
-    // 2. 重试拦截器（网络失败时重试）
+    // 3. 重试拦截器（网络失败时重试）
     _dio.interceptors.add(RetryInterceptor());
 
-    // 3. 日志拦截器（开发环境下打印请求日志）
+    // 4. 日志拦截器（开发环境下打印请求日志）
     if (kDebugMode) {
       _dio.interceptors.add(LoggingInterceptor());
     }
 
-    // 4. 错误处理拦截器（统一处理错误）
+    // 5. 错误处理拦截器（统一处理错误）
     _dio.interceptors.add(ErrorInterceptor());
   }
 

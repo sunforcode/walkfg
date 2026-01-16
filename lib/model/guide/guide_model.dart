@@ -35,11 +35,11 @@ class GuideModel extends BaseModel {
   final int views;
 
   /// 发布时间
-  @JsonKey(name: 'publish_date')
+  @JsonKey(name: 'publish_date', fromJson: BaseModel.parseTimestamp, toJson: BaseModel.timestampToJson)
   final DateTime publishDate;
 
   /// 更新时间
-  @JsonKey(name: 'update_date')
+  @JsonKey(name: 'update_date', fromJson: BaseModel.parseTimestamp, toJson: BaseModel.timestampToJson)
   final DateTime updateDate;
 
   /// 封面图标（图标代码）

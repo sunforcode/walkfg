@@ -125,4 +125,13 @@ class DateTimeUtils {
       return formatDateShort(date);
     }
   }
+
+  /// 格式化日期范围 (yyyy-MM-dd ~ yyyy-MM-dd (X天))
+  /// 
+  /// [from] 开始日期
+  /// [to] 结束日期
+  /// [days] 总天数
+  static String formatDateRange(DateTime from, DateTime to, int days) {
+    return '${from.year}-${from.month.toString().padLeft(2, '0')}-${from.day.toString().padLeft(2, '0')} ~ ${to.year}-${to.month.toString().padLeft(2, '0')}-${to.day.toString().padLeft(2, '0')} (${days}天)';
+  }
 }

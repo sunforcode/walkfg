@@ -64,6 +64,7 @@ class RouteModel extends BaseModel {
   final bool isFavorite;
 
   /// 人气
+  @JsonKey(defaultValue: 0)
   final int popularity;
 
   /// 是否为环线
@@ -107,7 +108,7 @@ class RouteModel extends BaseModel {
 
   /// 标记点列表
   @JsonKey(name: 'marker_points', defaultValue: <MarkerPointModel>[])
-  final List<MarkerPointModel> markerPoints;
+  final List<MarkerPointModel>? markerPoints;
 
   /// 创建用户信息
   @JsonKey(name: 'creator')

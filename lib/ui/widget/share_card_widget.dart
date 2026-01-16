@@ -77,7 +77,7 @@ class ShareCardWidget extends StatelessWidget {
 
   Widget _buildHeader() {
     // 计算行程天数
-    final duration = trip.endDate.difference(trip.startDate).inDays + 1;
+    var duration = trip.endDate.difference(trip.startDate).inDays + 1;
 
     return Row(
       children: [

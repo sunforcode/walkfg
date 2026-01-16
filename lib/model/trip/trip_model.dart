@@ -34,11 +34,11 @@ class TripModel extends BaseModel {
   String description;
 
   /// 开始日期
-  @JsonKey(name: 'start_date')
+  @JsonKey(name: 'start_date', fromJson: BaseModel.parseTimestamp, toJson: BaseModel.timestampToJson)
   DateTime startDate;
 
   /// 结束日期
-  @JsonKey(name: 'end_date')
+  @JsonKey(name: 'end_date', fromJson: BaseModel.parseTimestamp, toJson: BaseModel.timestampToJson)
   DateTime endDate;
 
   /// 状态

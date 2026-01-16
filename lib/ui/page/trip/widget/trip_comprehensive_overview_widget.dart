@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/route/route_model.dart';
+import 'package:walk/utils/date_time_utils.dart';
 
 /// 综合总览组件
 class TripComprehensiveOverviewWidget extends StatelessWidget {
@@ -499,6 +500,6 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
   // 格式化日期范围
   String _formatDateRange() {
     final endDate = departureDate.add(Duration(days: days - 1));
-    return '${departureDate.year}-${departureDate.month.toString().padLeft(2, '0')}-${departureDate.day.toString().padLeft(2, '0')} ~ ${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')} ($days天)';
+    return DateTimeUtils.formatDateRange(departureDate, endDate, days);
   }
 }
