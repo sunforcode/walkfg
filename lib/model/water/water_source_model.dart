@@ -139,15 +139,20 @@ class WaterSourceModel extends TrackPointVO {
   Map<String, dynamic> toJson() => _$WaterSourceModelToJson(this);
 
   /// 创建副本并更新指定字段
+  @override
   WaterSourceModel copyWith({
     String? id,
     double? latitude,
     double? longitude,
     double? elevation,
-    DateTime? timestamp,
-    double? distanceFromStart,
     String? name,
     String? description,
+    String? type,
+    int? sequenceNumber,
+    String? iconUrl,
+    String? imageUrl,
+    DateTime? timestamp,
+    double? distanceFromStart,
     DateTime? createdAt,
     DateTime? updatedAt,
     WaterSourceType? waterType,

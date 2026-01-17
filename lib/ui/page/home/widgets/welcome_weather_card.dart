@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:walk/model/user/user_model.dart';
 import 'package:walk/model/weather/weather_model.dart';
 import 'package:walk/service/location/location_service.dart';
+import 'package:walk/theme/tokens/tokens.dart';
 import 'package:walk/ui/page/home/widgets/component/error_card.dart';
 import 'package:walk/ui/page/home/widgets/component/loading_card.dart';
 import 'package:walk/ui/page/home/widgets/component/weather_header.dart';
@@ -76,24 +77,19 @@ class WelcomeWeatherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: weather != null
-              ? _getWeatherGradient(weather!)
-              : [Colors.blue.shade300, Colors.blue.shade600],
-        ),
-        borderRadius: BorderRadius.circular(16),
+        gradient:
+            weather != null ? AppColors.getWeatherGradient(weather!.condition.name) : AppColors.weatherDefaultGradient,
+        borderRadius: AppRadius.borderXl,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: AppColors.shadow,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.borderXl,
         child: Stack(
           children: [
             // 背景图案
@@ -109,7 +105,7 @@ class WelcomeWeatherCard extends StatelessWidget {
 
             // 内容
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: AppSpacing.allMd,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -149,26 +145,5 @@ class WelcomeWeatherCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// 根据天气获取渐变色
-  List<Color> _getWeatherGradient(WeatherModel weather) {
-    final condition = weather.condition.name;
-
-    if (condition.contains('晴') || condition.contains('sunny')) {
-      return [Colors.orange.shade300, Colors.orange.shade700];
-    } else if (condition.contains('多云') || condition.contains('cloudy')) {
-      return [Colors.blueGrey.shade300, Colors.blueGrey.shade700];
-    } else if (condition.contains('雨') || condition.contains('rain')) {
-      return [Colors.blue.shade300, Colors.blue.shade700];
-    } else if (condition.contains('雪') || condition.contains('snow')) {
-      return [Colors.lightBlue.shade100, Colors.lightBlue.shade400];
-    } else if (condition.contains('雾') || condition.contains('fog')) {
-      return [Colors.grey.shade300, Colors.grey.shade600];
-    } else if (condition.contains('风') || condition.contains('wind')) {
-      return [Colors.teal.shade300, Colors.teal.shade700];
-    } else {
-      return [Colors.blue.shade300, Colors.blue.shade600];
-    }
   }
 }

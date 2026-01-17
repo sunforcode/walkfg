@@ -199,7 +199,7 @@ class _TripItineraryDisplayWidgetState
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${plan.distance.toStringAsFixed(1)}km',
+                          '${(plan.distance ?? 0).toStringAsFixed(1)}km',
                           style: const TextStyle(
                             fontSize: 12,
                             color: CupertinoColors.secondaryLabel,
@@ -213,7 +213,7 @@ class _TripItineraryDisplayWidgetState
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '+${plan.elevationGain}m',
+                          '+${plan.elevationGain ?? 0}m',
                           style: const TextStyle(
                             fontSize: 12,
                             color: CupertinoColors.secondaryLabel,
@@ -287,7 +287,7 @@ class _TripItineraryDisplayWidgetState
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${plan.distance.toStringAsFixed(1)}km',
+                        '${(plan.distance ?? 0).toStringAsFixed(1)}km',
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -314,7 +314,7 @@ class _TripItineraryDisplayWidgetState
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '+${plan.elevationGain}m',
+                        '+${plan.elevationGain ?? 0}m',
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,

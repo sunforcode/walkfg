@@ -126,9 +126,7 @@ class TripPlanningEntries extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          unfinishedPlansCount > 0
-                              ? '你有$unfinishedPlansCount个未完成的行程规划'
-                              : '查看你的所有行程规划',
+                          unfinishedPlansCount > 0 ? '你有$unfinishedPlansCount个未完成的行程规划' : '查看你的所有行程规划',
                           style: const TextStyle(
                             fontSize: 14,
                             color: CupertinoColors.systemGrey,

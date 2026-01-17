@@ -154,11 +154,11 @@ class SegmentModel {
   final double estimatedTime;
 
   /// 爬升（米）
-  @JsonKey(name: 'elevation_gain')
+  @JsonKey(name: 'elevation_gain', defaultValue: 0)
   final int elevationGain;
 
   /// 下降（米）
-  @JsonKey(name: 'elevation_loss')
+  @JsonKey(name: 'elevation_loss', defaultValue: 0)
   final int? elevationLoss;
 
   /// 起点

@@ -184,6 +184,67 @@ class AppColors {
     Color(0xFF0288D1), // Light Blue 700
   ];
 
+  // ============ 绿色系调色板 - Trip 颜色 ============
+  /// Trip 颜色调色板 - 用于行程卡片的循环着色
+  static const List<Color> tripColors = [
+    Color(0xFF388E3C), // 深绿色
+    Color(0xFF4CAF50), // 标准绿色
+    Color(0xFF66BB6A), // 浅绿色
+    Color(0xFF81C784), // 更浅的绿色
+    Color(0xFF1B5E20), // 深邃绿色
+    Color(0xFF00C853), // 亮绿色
+  ];
+
+  // ============ 天气渐变色 ============
+  /// 天气晴天渐变 - 橙色系
+  static const LinearGradient weatherSunnyGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFFF9800), Color(0xFFF57C00)],
+  );
+
+  /// 天气多云渐变 - 灰蓝色系
+  static const LinearGradient weatherCloudyGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF90A4AE), Color(0xFF546E7A)],
+  );
+
+  /// 天气下雨渐变 - 蓝色系
+  static const LinearGradient weatherRainyGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF2196F3), Color(0xFF1565C0)],
+  );
+
+  /// 天气下雪渐变 - 浅蓝色系
+  static const LinearGradient weatherSnowGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFB3E5FC), Color(0xFF4FC3F7)],
+  );
+
+  /// 天气有雾渐变 - 灰色系
+  static const LinearGradient weatherFoggyGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF78909C), Color(0xFF455A64)],
+  );
+
+  /// 天气有风渐变 - 青蓝色系
+  static const LinearGradient weatherWindyGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF009688), Color(0xFF00796B)],
+  );
+
+  /// 默认天气渐变 - 蓝色系 (主色)
+  static const LinearGradient weatherDefaultGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF2196F3), Color(0xFF1976D2)],
+  );
+
   // ============ 工具方法 ============
   /// 获取带透明度的颜色
   static Color withAlpha(Color color, double opacity) {
@@ -193,5 +254,53 @@ class AppColors {
   /// 获取蓝色系颜色 (循环使用)
   static Color getBlueColor(int index) {
     return blueColors[index % blueColors.length];
+  }
+
+  /// 获取 Trip 颜色 (循环使用)
+  static Color getTripColor(int index) {
+    return tripColors[index % tripColors.length];
+  }
+
+  /// 根据天气条件获取渐变色
+  ///
+  /// 支持多种天气条件识别，返回对应的渐变色。
+  /// 如果条件不识别或为 null，返回默认的蓝色渐变。
+  static LinearGradient getWeatherGradient(String? condition) {
+    if (condition == null || condition.isEmpty) {
+      return weatherDefaultGradient;
+    }
+
+    final lowerCondition = condition.toLowerCase();
+
+    // 晴天 - 橙色系
+    if (lowerCondition.contains('晴') || lowerCondition.contains('sunny')) {
+      return weatherSunnyGradient;
+    }
+    // 多云 - 灰蓝色系
+    else if (lowerCondition.contains('多云') ||
+        lowerCondition.contains('阴') ||
+        lowerCondition.contains('cloudy')) {
+      return weatherCloudyGradient;
+    }
+    // 下雨 - 蓝色系
+    else if (lowerCondition.contains('雨') || lowerCondition.contains('rain')) {
+      return weatherRainyGradient;
+    }
+    // 下雪 - 浅蓝色系
+    else if (lowerCondition.contains('雪') || lowerCondition.contains('snow')) {
+      return weatherSnowGradient;
+    }
+    // 有雾 - 灰色系
+    else if (lowerCondition.contains('雾') || lowerCondition.contains('fog')) {
+      return weatherFoggyGradient;
+    }
+    // 有风 - 青蓝色系
+    else if (lowerCondition.contains('风') || lowerCondition.contains('wind')) {
+      return weatherWindyGradient;
+    }
+    // 其他或未知 - 返回默认蓝色渐变
+    else {
+      return weatherDefaultGradient;
+    }
   }
 }

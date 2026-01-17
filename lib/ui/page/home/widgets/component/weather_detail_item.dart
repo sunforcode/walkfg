@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 天气详情项组件
 class WeatherDetailItem extends StatelessWidget {
@@ -24,21 +25,21 @@ class WeatherDetailItem extends StatelessWidget {
       children: [
         Icon(
           icon,
-          color: Colors.white.withOpacity(0.9),
+          color: AppColors.textOnDark.withOpacity(0.9),
           size: 20,
         ),
         const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
+            color: AppColors.textOnDark.withOpacity(0.9),
             fontSize: 12,
           ),
         ),
         Text(
           value,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textOnDark,
             fontSize: 14,
             fontWeight: FontWeight.bold,
           ),

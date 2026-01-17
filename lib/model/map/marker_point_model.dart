@@ -144,17 +144,21 @@ class MarkerPointModel extends TrackPointVO {
   Map<String, dynamic> toJson() => _$MarkerPointModelToJson(this);
 
   /// 创建副本并更新指定字段
+  @override
   MarkerPointModel copyWith({
     String? id,
     double? latitude,
     double? longitude,
     double? elevation,
-    DateTime? timestamp,
-    double? distanceFromStart,
     String? name,
     String? description,
-    MarkerPointType? markerType,
+    String? type,
+    int? sequenceNumber,
     String? iconUrl,
+    String? imageUrl,
+    DateTime? timestamp,
+    double? distanceFromStart,
+    MarkerPointType? markerType,
     String? color,
   }) {
     return MarkerPointModel(

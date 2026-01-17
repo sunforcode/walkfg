@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/theme/tokens/radius.dart';
 
 /// 加载中的卡片
 class LoadingCard extends StatelessWidget {
@@ -10,15 +11,11 @@ class LoadingCard extends StatelessWidget {
     return Container(
       height: 220,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.blue.shade300, Colors.blue.shade600],
-        ),
-        borderRadius: BorderRadius.circular(16),
+        gradient: AppColors.primaryGradient,
+        borderRadius: AppRadius.borderXl,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: AppColors.shadow,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -26,7 +23,7 @@ class LoadingCard extends StatelessWidget {
       ),
       child: const Center(
         child: CupertinoActivityIndicator(
-          color: Colors.white,
+          color: AppColors.textOnDark,
           radius: 16,
         ),
       ),

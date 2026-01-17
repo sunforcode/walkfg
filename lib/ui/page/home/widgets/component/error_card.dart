@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:walk/theme/tokens/tokens.dart';
 
 /// 错误卡片
 class ErrorCard extends StatelessWidget {
@@ -17,15 +18,15 @@ class ErrorCard extends StatelessWidget {
     return Container(
       height: 220,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.red.shade300, Colors.red.shade600],
+          colors: [Color(0xFFEF5350), Color(0xFFC62828)],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+BoxShadow(
+            color: AppColors.shadow,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -37,30 +38,30 @@ class ErrorCard extends StatelessWidget {
           children: [
             const Icon(
               Icons.error_outline,
-              color: Colors.white,
+              color: AppColors.textOnDark,
               size: 48,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.md),
             Text(
               '加载失败: $error',
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textOnDark,
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: AppSpacing.md),
               CupertinoButton(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: 24,
-                  vertical: 8,
+                  vertical: AppSpacing.xs,
                 ),
-                color: Colors.white.withOpacity(0.3),
+                color: AppColors.textOnDark.withOpacity(0.3),
                 child: const Text(
                   '重试',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textOnDark,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

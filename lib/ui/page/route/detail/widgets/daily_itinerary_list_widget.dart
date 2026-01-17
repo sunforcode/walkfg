@@ -240,7 +240,7 @@ class DailyItineraryListWidget extends StatelessWidget {
           child: _buildStatItem(
             icon: CupertinoIcons.location,
             label: '距离',
-            value: '${plan.distance.toStringAsFixed(1)}km',
+            value: '${(plan.distance ?? 0).toStringAsFixed(1)}km',
             color: CupertinoColors.systemBlue,
           ),
         ),
@@ -250,7 +250,7 @@ class DailyItineraryListWidget extends StatelessWidget {
           child: _buildStatItem(
             icon: CupertinoIcons.arrow_up,
             label: '上升',
-            value: '${plan.elevationGain}m',
+            value: '${plan.elevationGain ?? 0}m',
             color: CupertinoColors.systemGreen,
           ),
         ),
@@ -260,7 +260,7 @@ class DailyItineraryListWidget extends StatelessWidget {
           child: _buildStatItem(
             icon: CupertinoIcons.arrow_down,
             label: '下降',
-            value: '${plan.elevationLoss}m',
+            value: '${plan.elevationLoss ?? 0}m',
             color: CupertinoColors.systemOrange,
           ),
         ),

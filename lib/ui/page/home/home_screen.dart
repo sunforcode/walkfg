@@ -27,8 +27,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with AutomaticKeepAliveClientMixin {
+class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
   /// 所有页面数据的Future
   late Future<_HomePageData> _pageDataFuture;
 
@@ -94,8 +93,7 @@ class _HomeScreenState extends State<HomeScreen>
       try {
         // 检查位置权限
         LocationPermission permission = await Geolocator.checkPermission();
-        if (permission == LocationPermission.denied &&
-            !_isRequestingPermission) {
+        if (permission == LocationPermission.denied && !_isRequestingPermission) {
           // 直接请求位置权限
           if (mounted) {
             setState(() {
@@ -113,8 +111,7 @@ class _HomeScreenState extends State<HomeScreen>
         }
 
         // 如果有位置权限，获取当前位置的天气
-        if (permission == LocationPermission.always ||
-            permission == LocationPermission.whileInUse) {
+        if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
           weather = await _weatherManager.getCurrentLocationWeather();
         }
       } catch (e) {
@@ -310,8 +307,7 @@ class _HomeScreenState extends State<HomeScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: PlannedTripsSection(
-                          plannedTripsFuture:
-                              Future.value(pageData.plannedTrips),
+                          plannedTripsFuture: Future.value(pageData.plannedTrips),
                         ),
                       ),
 
@@ -321,8 +317,7 @@ class _HomeScreenState extends State<HomeScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: RecommendedRoutesSection(
-                          recommendedRoutesFuture:
-                              Future.value(pageData.recommendedRoutes),
+                          recommendedRoutesFuture: Future.value(pageData.recommendedRoutes),
                         ),
                       ),
 
@@ -332,8 +327,7 @@ class _HomeScreenState extends State<HomeScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: HikingGuidesSection(
-                          hikingGuidesFuture:
-                              Future.value(pageData.hikingGuides),
+                          hikingGuidesFuture: Future.value(pageData.hikingGuides),
                         ),
                       ),
 

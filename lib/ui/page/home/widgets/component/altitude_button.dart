@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walk/service/location/location_service.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 海拔按钮组件
 class AltitudeButton extends StatelessWidget {
@@ -30,7 +31,7 @@ class AltitudeButton extends StatelessWidget {
             children: [
               Icon(
                 Icons.terrain,
-                color: Colors.white.withOpacity(0.9),
+                color: AppColors.textOnDark.withOpacity(0.9),
                 size: 20,
               ),
               if (isLoadingAltitude)
@@ -40,7 +41,7 @@ class AltitudeButton extends StatelessWidget {
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.white.withOpacity(0.9),
+                      AppColors.textOnDark.withOpacity(0.9),
                     ),
                   ),
                 ),
@@ -50,7 +51,7 @@ class AltitudeButton extends StatelessWidget {
           Text(
             '海拔',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+              color: AppColors.textOnDark.withOpacity(0.9),
               fontSize: 12,
             ),
           ),
@@ -58,7 +59,7 @@ class AltitudeButton extends StatelessWidget {
             Text(
               '${altitudeInfo!.altitude.toInt()}m',
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textOnDark,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
@@ -66,7 +67,7 @@ class AltitudeButton extends StatelessWidget {
             Text(
               '±${altitudeInfo!.accuracy.toInt()}m',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: AppColors.textOnDark.withOpacity(0.7),
                 fontSize: 10,
               ),
             ),
@@ -74,7 +75,7 @@ class AltitudeButton extends StatelessWidget {
             Text(
               isLoadingAltitude ? '获取中...' : '点击获取',
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textOnDark,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),

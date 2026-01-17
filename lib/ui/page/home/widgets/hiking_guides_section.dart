@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
-import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/theme/tokens/tokens.dart';
 import 'package:walk/ui/page/common/empty_content_widget.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
@@ -66,16 +66,15 @@ class HikingGuidesSection extends StatelessWidget {
   }
 
   /// 构建徒步攻略瀑布流
-  Widget _buildHikingGuides(
-      BuildContext context, List<GuideModel> hikingGuides) {
+  Widget _buildHikingGuides(BuildContext context, List<GuideModel> hikingGuides) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.65, // 调整卡片比例，适应更大的图片区域
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
+        crossAxisSpacing: AppSpacing.sm,
+        mainAxisSpacing: AppSpacing.sm,
       ),
       itemCount: hikingGuides.length,
       itemBuilder: (context, index) {
@@ -89,8 +88,7 @@ class HikingGuidesSection extends StatelessWidget {
           child: GuideCard(
             guide: guide,
             accentColor: cardColor,
-            onLikeChanged: (isLiked) =>
-                _handleGuideLike(context, guide.id, isLiked),
+            onLikeChanged: (isLiked) => _handleGuideLike(context, guide.id, isLiked),
           ),
         );
       },

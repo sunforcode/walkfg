@@ -126,7 +126,7 @@ class TripDailyItineraryWidget extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${plan.distance.toStringAsFixed(1)}km',
+                            '${plan.distance ?? 0.toStringAsFixed(1)}km',
                             style: const TextStyle(
                               fontSize: 12,
                               color: CupertinoColors.secondaryLabel,
@@ -214,7 +214,7 @@ class TripDailyItineraryWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${plan.distance.toStringAsFixed(1)}km',
+                          '${plan.distance ?? 0.toStringAsFixed(1)}km',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

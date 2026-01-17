@@ -5,6 +5,7 @@ import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/service/route_service.dart';
+import 'package:walk/theme/tokens/tokens.dart';
 import 'package:walk/ui/map/components/enhanced_daily_map_widget.dart';
 import 'package:walk/ui/map/utils/kml_business_parser.dart';
 import 'package:walk/ui/map/widgets/map_3d_widget.dart';
@@ -13,11 +14,13 @@ import 'package:walk/ui/page/common/error_view.dart';
 import 'package:walk/ui/page/common/loading_view.dart';
 import 'package:walk/ui/page/common/floating_back_button.dart';
 import 'package:walk/ui/page/route/detail/widgets/route_overview_widget.dart';
+import 'package:walk/ui/page/route/detail/map_info_coordinator.dart';
 import 'package:walk/ui/page/trip/trip_detail_screen.dart';
 import 'package:walk/utils/toast_utils.dart';
 
 import 'widgets/route_action_buttons.dart';
 import 'widgets/daily_itinerary_list_widget.dart';
+import 'widgets/expandable_section.dart';
 import 'widgets/seasonal_equipment_widget.dart';
 import 'widgets/water_sources_widget.dart';
 import 'widgets/supply_points_widget.dart';
@@ -51,6 +54,7 @@ class RouteDetailScreen extends StatefulWidget {
 class _RouteDetailScreenState extends State<RouteDetailScreen> {
   late Future<RouteModel> _routeFuture;
   late ScrollController _scrollController;
+  late MapInfoCoordinator _mapCoordinator;
   bool _isFavorite = false;
 
   /// 轨迹点数据
@@ -68,18 +72,34 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   /// 3D地图轨迹点数据
   List<TrackPointVO> _3dTrackPoints = [];
 
+  /// 分类卡片展开状态
+  final Map<String, bool> _expandedSections = {
+    'overview': true,        // 概览 - 展开
+    'dailyItinerary': true,  // 每日行程 - 展开（核心）
+    'campsites': true,       // 营地 - 展开（高优先级）
+    'waterSources': true,    // 水源 - 展开（高优先级）
+    'supplyPoints': true,    // 补给点 - 展开（高优先级）
+    'segments': false,       // 路线分段 - 折叠（参考信息）
+    'equipment': false,      // 装备建议 - 折叠
+    'contacts': false,       // 搭车联系 - 折叠
+    'relatedRoutes': false,  // 相关路线 - 折叠
+    'relatedTrips': false,   // 相关行程 - 折叠
+    'gallery': false,        // 图片库 - 折叠
+  };
+
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    _mapCoordinator = MapInfoCoordinator();
     _loadRouteDetail();
     _loadRouteData();
-    _loadKmlData();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _mapCoordinator.dispose();
     super.dispose();
   }
 
@@ -93,13 +113,45 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
       _routeFuture = RouteService.getRouteDetail(widget.routeId);
     }
     _checkIfFavorite();
+    
+    // 等待路线详情加载完成后再加载KML数据
+    _routeFuture.then((route) {
+      _loadKmlData(route);
+    }).catchError((e) {
+      print('路线详情加载错误: $e');
+    });
   }
 
-  /// 从KML文件加载轨迹数据
-  Future<void> _loadKmlData() async {
+  /// 从路线数据或KML文件加载轨迹数据
+  void _loadKmlData(RouteModel route) async {
     try {
-      print('开始加载KML数据...');
-      // 使用新的parseFromPath方法替代已废弃的parseFromAsset
+      print('开始加载轨迹数据...');
+      
+      // 优先使用 API 提供的轨迹点数据
+      if (route.trackPoints.isNotEmpty) {
+        print('使用 API 返回的轨迹点: ${route.trackPoints.length} 个');
+        setState(() {
+          _kmlTrackPoints = route.trackPoints;
+          _3dTrackPoints = route.trackPoints;
+        });
+        return;
+      }
+      
+      // 其次使用 KML URL
+      if (route.kmlUrl != null && route.kmlUrl!.isNotEmpty) {
+        print('开始下载KML文件: ${route.kmlUrl}');
+        final mapData = await KmlBusinessParser.parseFromPath(route.kmlUrl!);
+        print('KML数据加载成功: 轨迹点${mapData.trackPoints.length}个');
+        
+        setState(() {
+          _kmlTrackPoints = mapData.trackPoints;
+          _3dTrackPoints = mapData.trackPoints;
+        });
+        return;
+      }
+      
+      // 最后使用本地 assets KML 文件作为备用
+      print('使用本地 assets KML 文件');
       final mapData =
           await KmlBusinessParser.parseFromPath('assets/maps/wutai.kml');
       print(
@@ -111,7 +163,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
         _3dTrackPoints = mapData.trackPoints;
       });
     } catch (e) {
-      print('KML文件加载失败: $e');
+      print('轨迹点加载失败: $e');
     }
   }
 
@@ -288,23 +340,32 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                       child: Spacing.lg,
                     ),
 
-                    // 路线概览
+                    // P0 - 路线概览（展开）
                     SliverToBoxAdapter(
-                      child: Padding(
-                        padding: PaddingConstants.pageHorizontal,
+                      child: ExpandableSection(
+                        title: '概览',
+                        icon: CupertinoIcons.info_circle,
+                        initiallyExpanded: _expandedSections['overview'] ?? true,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['overview'] = isExpanded;
+                          });
+                        },
                         child: RouteOverviewWidget(route: route),
                       ),
                     ),
 
-                    // 间距
-                    const SliverToBoxAdapter(
-                      child: Spacing.component,
-                    ),
-
-                    // 每日行程列表
+                    // P0 - 每日行程（展开，核心）
                     SliverToBoxAdapter(
-                      child: Padding(
-                        padding: PaddingConstants.pageHorizontal,
+                      child: ExpandableSection(
+                        title: '每日行程',
+                        icon: CupertinoIcons.calendar,
+                        initiallyExpanded: _expandedSections['dailyItinerary'] ?? true,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['dailyItinerary'] = isExpanded;
+                          });
+                        },
                         child: DailyItineraryListWidget(
                           dailyPlans: route.dailyPlans ?? [],
                           onDayTap: _handleDayTap,
@@ -312,106 +373,122 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                       ),
                     ),
 
-                    // 间距
-                    const SliverToBoxAdapter(
-                      child: Spacing.component,
-                    ),
-
-                    // 当季出行装备推荐
-                    if (currentTrack != null) ...[
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: PaddingConstants.pageHorizontal,
-                          child: SeasonalEquipmentWidget(
-                            currentSeason: '春季',
-                            difficulty: route.difficulty.name,
-                          ),
-                        ),
-                      ),
-                      const SliverToBoxAdapter(
-                        child: Spacing.component,
-                      ),
-                    ],
-
-                    // 水源点详解
+                    // P1 - 营地信息（展开，高优先级）
                     SliverToBoxAdapter(
-                      child: Padding(
-                        padding: PaddingConstants.pageHorizontal,
-                        child: WaterSourcesWidget(
-                          waterSources: route.waterSources ?? [],
-                        ),
-                      ),
-                    ),
-
-                    // 间距
-                    const SliverToBoxAdapter(
-                      child: Spacing.component,
-                    ),
-
-                    // 补给点详解
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: PaddingConstants.pageHorizontal,
-                        child: SupplyPointsWidget(
-                          supplyPoints: route.supplyPoints ?? [],
-                        ),
-                      ),
-                    ),
-
-                    // 间距
-                    const SliverToBoxAdapter(
-                      child: Spacing.component,
-                    ),
-
-                    // 营地资源
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: PaddingConstants.pageHorizontal,
+                      child: ExpandableSection(
+                        title: '营地',
+                        icon: CupertinoIcons.square_fill_on_square_fill,
+                        initiallyExpanded: _expandedSections['campsites'] ?? true,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['campsites'] = isExpanded;
+                          });
+                        },
                         child: CampsitesWidget(
                           campsites: route.campsites ?? [],
                         ),
                       ),
                     ),
 
-                    // 间距
-                    const SliverToBoxAdapter(
-                      child: Spacing.component,
+                    // P1 - 水源信息（展开，高优先级）
+                    SliverToBoxAdapter(
+                      child: ExpandableSection(
+                        title: '水源',
+                        icon: CupertinoIcons.drop,
+                        initiallyExpanded: _expandedSections['waterSources'] ?? true,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['waterSources'] = isExpanded;
+                          });
+                        },
+                        child: WaterSourcesWidget(
+                          waterSources: route.waterSources ?? [],
+                        ),
+                      ),
                     ),
 
-                    // 路线分段介绍
+                    // P1 - 补给点信息（展开，高优先级）
                     SliverToBoxAdapter(
-                      child: Padding(
-                        padding: PaddingConstants.pageHorizontal,
+                      child: ExpandableSection(
+                        title: '补给点',
+                        icon: CupertinoIcons.bag,
+                        initiallyExpanded: _expandedSections['supplyPoints'] ?? true,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['supplyPoints'] = isExpanded;
+                          });
+                        },
+                        child: SupplyPointsWidget(
+                          supplyPoints: route.supplyPoints ?? [],
+                        ),
+                      ),
+                    ),
+
+                    // P1 - 路线分段（折叠，参考信息）
+                    SliverToBoxAdapter(
+                      child: ExpandableSection(
+                        title: '路线分段',
+                        icon: CupertinoIcons.line_horizontal_3,
+                        initiallyExpanded: _expandedSections['segments'] ?? false,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['segments'] = isExpanded;
+                          });
+                        },
                         child: RouteSegmentsWidget(
                           segments: route.segments ?? [],
                         ),
                       ),
                     ),
 
-                    // 间距
-                    const SliverToBoxAdapter(
-                      child: Spacing.component,
-                    ),
+                    // P2 - 当季出行装备推荐（折叠）
+                    if (currentTrack != null) ...[
+                      SliverToBoxAdapter(
+                        child: ExpandableSection(
+                          title: '装备建议',
+                           icon: CupertinoIcons.bag,
+                           initiallyExpanded: _expandedSections['equipment'] ?? false,
+                          onExpansionChanged: (isExpanded) {
+                            setState(() {
+                              _expandedSections['equipment'] = isExpanded;
+                            });
+                          },
+                          child: SeasonalEquipmentWidget(
+                            currentSeason: '春季',
+                            difficulty: route.difficulty.name,
+                          ),
+                        ),
+                      ),
+                    ],
 
-                    // 搭车联系方式
+                    // P3 - 搭车联系方式（折叠）
                     SliverToBoxAdapter(
-                      child: Padding(
-                        padding: PaddingConstants.pageHorizontal,
+                      child: ExpandableSection(
+                        title: '搭车联系',
+                        icon: CupertinoIcons.person_2,
+                        initiallyExpanded: _expandedSections['contacts'] ?? false,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['contacts'] = isExpanded;
+                          });
+                        },
                         child: HitchhikeContactsWidget(
                           contacts: route.hitchhikeContacts ?? [],
                         ),
                       ),
                     ),
 
-                    // 间距
-                    const SliverToBoxAdapter(
-                      child: Spacing.component,
-                    ),
-
-                    // 相关路线推荐
+                    // P3 - 相关路线推荐（折叠）
                     SliverToBoxAdapter(
-                      child: Padding(
-                        padding: PaddingConstants.pageHorizontal,
+                      child: ExpandableSection(
+                        title: '相关路线',
+                        icon: CupertinoIcons.map_fill,
+                        initiallyExpanded: _expandedSections['relatedRoutes'] ?? false,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['relatedRoutes'] = isExpanded;
+                          });
+                        },
                         child: RelatedRoutesWidget(
                           relatedRoutes: _relatedRoutes,
                           onRouteTap: _handleRelatedRouteTap,
@@ -419,15 +496,17 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                       ),
                     ),
 
-                    // 间距
-                    const SliverToBoxAdapter(
-                      child: Spacing.component,
-                    ),
-
-                    // 相关行程推荐
+                    // P3 - 相关行程推荐（折叠）
                     SliverToBoxAdapter(
-                      child: Padding(
-                        padding: PaddingConstants.pageHorizontal,
+                      child: ExpandableSection(
+                        title: '相关行程',
+                        icon: CupertinoIcons.calendar_circle_fill,
+                        initiallyExpanded: _expandedSections['relatedTrips'] ?? false,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['relatedTrips'] = isExpanded;
+                          });
+                        },
                         child: RelatedTripsWidget(
                           routeId: route.id,
                           relatedTrips: _relatedTrips,
@@ -436,16 +515,21 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                       ),
                     ),
 
-                    // 间距
-                    const SliverToBoxAdapter(
-                      child: Spacing.component,
-                    ),
-
-                    // 路线图片推荐
+                    // P3 - 路线图片库（折叠）
                     SliverToBoxAdapter(
-                      child: RouteGalleryWidget(
-                        imageUrls: route.imageUrls ?? [],
-                        onImageTap: _handleImageTap,
+                      child: ExpandableSection(
+                        title: '图片库',
+                        icon: CupertinoIcons.photo_on_rectangle,
+                        initiallyExpanded: _expandedSections['gallery'] ?? false,
+                        onExpansionChanged: (isExpanded) {
+                          setState(() {
+                            _expandedSections['gallery'] = isExpanded;
+                          });
+                        },
+                        child: RouteGalleryWidget(
+                          imageUrls: route.imageUrls ?? [],
+                          onImageTap: _handleImageTap,
+                        ),
                       ),
                     ),
 

@@ -95,15 +95,20 @@ class SupplyPointModel extends TrackPointVO {
   Map<String, dynamic> toJson() => _$SupplyPointModelToJson(this);
 
   /// 创建副本并更新指定字段
+  @override
   SupplyPointModel copyWith({
     String? id,
     double? latitude,
     double? longitude,
     double? elevation,
-    DateTime? timestamp,
-    double? distanceFromStart,
     String? name,
     String? description,
+    String? type,
+    int? sequenceNumber,
+    String? iconUrl,
+    String? imageUrl,
+    DateTime? timestamp,
+    double? distanceFromStart,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? lastVerified,

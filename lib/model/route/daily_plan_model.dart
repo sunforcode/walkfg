@@ -20,15 +20,16 @@ class DailyPlanModel {
   final String description;
 
   /// 距离（公里）
-  final double distance;
+  @JsonKey(defaultValue: 0)
+  final double? distance;
 
   /// 预计时间（小时数）
   @JsonKey(name: 'estimated_time')
   final double estimatedTime;
 
   /// 爬升（米）
-  @JsonKey(name: 'elevation_gain')
-  final int elevationGain;
+  @JsonKey(name: 'elevation_gain', defaultValue: 0)
+  final int? elevationGain;
 
   /// 下降（米）
   @JsonKey(name: 'elevation_loss')
@@ -58,9 +59,9 @@ class DailyPlanModel {
     required this.dayNumber,
     required this.title,
     required this.description,
-    required this.distance,
+    this.distance = 0,
     this.estimatedTime = 8.0, // 默认8小时
-    required this.elevationGain,
+    this.elevationGain = 0,
     this.elevationLoss,
     this.maxElevation,
     this.minElevation,
@@ -93,8 +94,10 @@ class DailyPlanModel {
   /// 格式化统计信息
   String get formattedStats {
     final List<String> stats = [];
-    stats.add('徒步${distance.toStringAsFixed(1)}km');
-    if (elevationGain > 0) {
+    if (distance != null && distance! > 0) {
+      stats.add('徒步${distance!.toStringAsFixed(1)}km');
+    }
+    if (elevationGain != null && elevationGain! > 0) {
       stats.add('爬升${elevationGain}m');
     }
     final hours = estimatedTime.floor();
@@ -166,9 +169,9 @@ class DailyPlanModel {
       dayNumber: dayNumber ?? this.dayNumber,
       title: title ?? this.title,
       description: description ?? this.description,
-      distance: distance ?? this.distance,
+      distance: distance ?? this.distance ?? 0,
       estimatedTime: estimatedTime ?? this.estimatedTime,
-      elevationGain: elevationGain ?? this.elevationGain,
+      elevationGain: elevationGain ?? this.elevationGain ?? 0,
       elevationLoss: elevationLoss ?? this.elevationLoss,
       maxElevation: maxElevation ?? this.maxElevation,
       minElevation: minElevation ?? this.minElevation,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:walk/model/map/marker_point_model.dart';
+import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/route/route_enums.dart';
 import 'package:walk/model/route/segment_model.dart';
 import 'package:walk/model/route/route_ratings.dart';
@@ -114,7 +115,19 @@ class RouteModel extends BaseModel {
   @JsonKey(name: 'creator')
   final UserModel? createUser;
 
-  /// 当前地图数据模型（运行时设置，不从JSON获取）
+  /// KML 文件 URL
+  @JsonKey(name: 'kml_url')
+  final String? kmlUrl;
+
+  /// GPX 文件 URL
+  @JsonKey(name: 'gpx_url')
+  final String? gpxUrl;
+
+  /// 轨迹点数据(从 API 获取)
+  @JsonKey(name: 'track_points', defaultValue: <TrackPointVO>[])
+  final List<TrackPointVO> trackPoints;
+
+  /// 当前地图数据模型（运行时设置，不从 JSON 获取）
   @JsonKey(includeFromJson: false, includeToJson: false)
   final TrackModel? defaultMap;
 
@@ -130,6 +143,9 @@ class RouteModel extends BaseModel {
     required this.regionId,
     this.region = "未知区域",
     this.defaultMapId = "",
+    this.kmlUrl,
+    this.gpxUrl,
+    this.trackPoints = const <TrackPointVO>[],
     this.defaultMap,
     this.ratings,
     this.tags,
@@ -222,6 +238,9 @@ class RouteModel extends BaseModel {
     String? regionId,
     String? region,
     String? defaultMapId,
+    String? kmlUrl,
+    String? gpxUrl,
+    List<TrackPointVO>? trackPoints,
     TrackModel? defaultMap,
     RouteRatingsVO? ratings,
     List<String>? tags,
@@ -252,6 +271,9 @@ class RouteModel extends BaseModel {
       regionId: regionId ?? this.regionId,
       region: region ?? this.region,
       defaultMapId: defaultMapId ?? this.defaultMapId,
+      kmlUrl: kmlUrl ?? this.kmlUrl,
+      gpxUrl: gpxUrl ?? this.gpxUrl,
+      trackPoints: trackPoints ?? this.trackPoints,
       defaultMap: defaultMap,
       ratings: ratings ?? this.ratings,
       tags: tags ?? this.tags,

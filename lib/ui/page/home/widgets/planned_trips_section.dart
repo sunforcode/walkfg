@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
+import 'package:walk/theme/tokens/tokens.dart';
 import 'package:walk/ui/page/trip/trip_detail_screen.dart';
 import '../../trip/trip_list_screen.dart';
 import '../../common/section_header.dart';
@@ -56,7 +57,6 @@ class PlannedTripsSection extends StatelessWidget {
                 subtitle: '开始规划你的第一个行程吧',
               );
             }
-            print('plannedTrips: $plannedTrips');
             return _buildPlannedTripsList(context, plannedTrips);
           },
         ),
@@ -65,18 +65,7 @@ class PlannedTripsSection extends StatelessWidget {
   }
 
   /// 构建规划行程列表
-  Widget _buildPlannedTripsList(
-      BuildContext context, List<TripModel> plannedTrips) {
-    // 绿色系颜色列表
-    final List<Color> greenColors = [
-      const Color(0xFF388E3C), // 深绿色
-      const Color(0xFF4CAF50), // 绿色
-      const Color(0xFF66BB6A), // 浅绿色
-      const Color(0xFF81C784), // 更浅的绿色
-      const Color(0xFF1B5E20), // 深邃绿色
-      const Color(0xFF00C853), // 亮绿色
-    ];
-
+  Widget _buildPlannedTripsList(BuildContext context, List<TripModel> plannedTrips) {
     return SizedBox(
       height: 120,
       child: ListView.builder(
@@ -84,14 +73,14 @@ class PlannedTripsSection extends StatelessWidget {
         itemCount: plannedTrips.length,
         itemBuilder: (context, index) {
           final trip = plannedTrips[index];
-          final color = greenColors[index % greenColors.length];
+          final color = AppColors.getTripColor(index);
 
           // 计算行程天数
           final tripDays = trip.endDate.difference(trip.startDate).inDays + 1;
 
           return Padding(
             padding: EdgeInsets.only(
-              right: index == plannedTrips.length - 1 ? 0 : 12,
+              right: index == plannedTrips.length - 1 ? 0 : AppSpacing.sm,
             ),
             child: CupertinoButton(
               padding: EdgeInsets.zero,
@@ -100,20 +89,20 @@ class PlannedTripsSection extends StatelessWidget {
                 width: 200,
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppRadius.borderLg,
                   border: Border.all(
                     color: color.withOpacity(0.3),
                     width: 1,
                   ),
                 ),
-                padding: const EdgeInsets.all(12),
+                padding: AppSpacing.allSm,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: AppSpacing.allXs,
                           decoration: BoxDecoration(
                             color: color.withOpacity(0.2),
                             shape: BoxShape.circle,
@@ -124,7 +113,7 @@ class PlannedTripsSection extends StatelessWidget {
                             size: 16,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: Text(
                             trip.name,
@@ -138,12 +127,12 @@ class PlannedTripsSection extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: AppSpacing.sm),
                     Text(
                       trip.description,
                       style: TextStyle(
                         fontSize: 12,
-                        color: CupertinoColors.systemGrey.darkColor,
+                        color: AppColors.textSecondary,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

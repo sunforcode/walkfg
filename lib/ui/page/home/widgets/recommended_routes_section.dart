@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/theme/tokens/tokens.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import '../../../../model/route/route_model.dart';
 import '../../route/route_discovery_screen.dart';
@@ -65,18 +66,7 @@ class RecommendedRoutesSection extends StatelessWidget {
   }
 
   /// 构建推荐路线列表
-  Widget _buildRecommendedRoutesList(
-      BuildContext context, List<RouteModel> recommendedRoutes) {
-    // 蓝色系颜色列表
-    final List<Color> blueColors = [
-      const Color(0xFF1976D2), // 深蓝色
-      const Color(0xFF2196F3), // 蓝色
-      const Color(0xFF42A5F5), // 浅蓝色
-      const Color(0xFF64B5F6), // 更浅的蓝色
-      const Color(0xFF0D47A1), // 深邃蓝色
-      const Color(0xFF0288D1), // 亮蓝色
-    ];
-
+  Widget _buildRecommendedRoutesList(BuildContext context, List<RouteModel> recommendedRoutes) {
     return SizedBox(
       height: 220,
       child: ListView.builder(
@@ -84,11 +74,11 @@ class RecommendedRoutesSection extends StatelessWidget {
         itemCount: recommendedRoutes.length,
         itemBuilder: (context, index) {
           final route = recommendedRoutes[index];
-          final color = blueColors[index % blueColors.length];
+          final color = AppColors.getBlueColor(index);
 
           return Padding(
             padding: EdgeInsets.only(
-              right: index == recommendedRoutes.length - 1 ? 0 : 16,
+              right: index == recommendedRoutes.length - 1 ? 0 : AppSpacing.md,
             ),
             child: _buildRouteCard(context, route, color),
           );
@@ -104,10 +94,10 @@ class RecommendedRoutesSection extends StatelessWidget {
       child: Container(
         width: 280,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderLg,
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.2),
+              color: AppColors.shadow,
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -119,7 +109,7 @@ class RecommendedRoutesSection extends StatelessWidget {
             // 路线图片
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
+                top: Radius.circular(AppRadius.lg),
               ),
               child: route.coverUrl != null
                   ? NetworkImageWithFallback(
@@ -148,10 +138,10 @@ class RecommendedRoutesSection extends StatelessWidget {
               decoration: const BoxDecoration(
                 color: CupertinoColors.white,
                 borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(12),
+                  bottom: Radius.circular(AppRadius.lg),
                 ),
               ),
-              padding: const EdgeInsets.all(12),
+              padding: AppSpacing.allSm,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
