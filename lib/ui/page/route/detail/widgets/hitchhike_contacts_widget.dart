@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:walk/model/route/hitchhike_contact_model.dart';
 
-/// 搭车联系方式Widget
-class HitchhikeContactsWidget extends StatefulWidget {
+/// 搭车联系方式Widget（横向滑动）
+class HitchhikeContactsWidget extends StatelessWidget {
   final List<HitchhikeContactModel> contacts;
 
   const HitchhikeContactsWidget({
@@ -12,27 +12,11 @@ class HitchhikeContactsWidget extends StatefulWidget {
   });
 
   @override
-  State<HitchhikeContactsWidget> createState() =>
-      _HitchhikeContactsWidgetState();
-}
-
-class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
-  bool _showAll = false;
-  static const int _maxDisplayCount = 3;
-
-  @override
   Widget build(BuildContext context) {
-    if (widget.contacts.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if (contacts.isEmpty) return const SizedBox.shrink();
 
-    final displayContacts = _showAll
-        ? widget.contacts
-        : widget.contacts.take(_maxDisplayCount).toList();
-    final hasMore = widget.contacts.length > _maxDisplayCount;
-
-    return Container(
-      margin: const EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -41,27 +25,27 @@ class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
             children: [
               const Icon(
                 CupertinoIcons.car,
-                size: 20,
+                size: 16,
                 color: CupertinoColors.systemPurple,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               const Text(
-                '搭车联系方式',
+                '搭车联系',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: CupertinoColors.label,
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: CupertinoColors.systemPurple.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${widget.contacts.length}个',
+                  '${contacts.length}个',
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.systemPurple,
@@ -71,91 +55,48 @@ class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
-          // 联系方式列表
-          ...displayContacts.map((contact) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _buildContactCard(contact),
-            );
-          }).toList(),
-
-          // 更多按钮
-          if (hasMore && !_showAll)
-            CupertinoButton(
+          // 横向列表
+          SizedBox(
+            height: 160,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
               padding: EdgeInsets.zero,
-              onPressed: () {
-                setState(() {
-                  _showAll = true;
-                });
-              },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.systemGrey6,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: CupertinoColors.separator,
-                    width: 0.5,
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      '查看更多联系方式',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: CupertinoColors.systemPurple,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '(${widget.contacts.length - _maxDisplayCount}个)',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: CupertinoColors.systemGrey,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(
-                      CupertinoIcons.chevron_down,
-                      size: 16,
-                      color: CupertinoColors.systemPurple,
-                    ),
-                  ],
-                ),
-              ),
+              itemCount: contacts.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, index) => _buildCard(context, contacts[index]),
             ),
+          ),
         ],
       ),
     );
   }
 
-  /// 构建联系方式卡片
-  Widget _buildContactCard(HitchhikeContactModel contact) {
+  Widget _buildCard(BuildContext context, HitchhikeContactModel contact) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: 210,
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: CupertinoColors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: CupertinoColors.separator,
-          width: 0.5,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: CupertinoColors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题行
+          // 头像图标 + 名称 + 认证
           Row(
             children: [
               const Icon(
-                CupertinoIcons.person_circle,
-                size: 20,
+                CupertinoIcons.person_circle_fill,
+                size: 28,
                 color: CupertinoColors.systemPurple,
               ),
               const SizedBox(width: 8),
@@ -163,14 +104,16 @@ class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
                 child: Text(
                   contact.name,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: CupertinoColors.label,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                 decoration: BoxDecoration(
                   color: CupertinoColors.systemGreen.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -178,11 +121,8 @@ class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      CupertinoIcons.checkmark_seal,
-                      size: 12,
-                      color: CupertinoColors.systemGreen,
-                    ),
+                    Icon(CupertinoIcons.checkmark_seal,
+                        size: 10, color: CupertinoColors.systemGreen),
                     SizedBox(width: 2),
                     Text(
                       '已认证',
@@ -197,54 +137,47 @@ class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
               ),
             ],
           ),
+          const SizedBox(height: 8),
 
-          if (contact.description != null) ...[
-            const SizedBox(height: 8),
+          // 描述
+          if (contact.description != null)
             Text(
               contact.description!,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
 
-          const SizedBox(height: 12),
+          const Spacer(),
 
-          // 联系信息
+          // 电话 + 复制
           Row(
             children: [
-              // 电话号码
+              const Icon(CupertinoIcons.phone,
+                  size: 13, color: CupertinoColors.systemBlue),
+              const SizedBox(width: 4),
               Expanded(
-                child: Row(
-                  children: [
-                    const Icon(
-                      CupertinoIcons.phone,
-                      size: 14,
-                      color: CupertinoColors.systemBlue,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        contact.phone,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: CupertinoColors.systemBlue,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  contact.phone,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: CupertinoColors.systemBlue,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              // 复制按钮
               CupertinoButton(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.zero,
                 minSize: 0,
-                onPressed: () => _copyPhone(contact.phone),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: contact.phone));
+                },
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: CupertinoColors.systemBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -252,7 +185,7 @@ class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
                   child: const Text(
                     '复制',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       color: CupertinoColors.systemBlue,
                       fontWeight: FontWeight.w500,
                     ),
@@ -262,39 +195,35 @@ class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
             ],
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
 
-          // 位置和价格信息
+          // 位置 + 价格
           Row(
             children: [
               if (contact.location != null) ...[
-                const Icon(
-                  CupertinoIcons.location,
-                  size: 14,
-                  color: CupertinoColors.systemGrey,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  contact.location!,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: CupertinoColors.label,
+                const Icon(CupertinoIcons.location,
+                    size: 11, color: CupertinoColors.systemGrey),
+                const SizedBox(width: 2),
+                Expanded(
+                  child: Text(
+                    contact.location!,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: CupertinoColors.secondaryLabel,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
-              if (contact.location != null && contact.price != null)
-                const SizedBox(width: 16),
               if (contact.price != null) ...[
-                const Icon(
-                  CupertinoIcons.money_yen_circle,
-                  size: 14,
-                  color: CupertinoColors.systemOrange,
-                ),
-                const SizedBox(width: 4),
+                const Icon(CupertinoIcons.money_yen_circle,
+                    size: 11, color: CupertinoColors.systemOrange),
+                const SizedBox(width: 2),
                 Text(
                   '¥${contact.price!.toStringAsFixed(0)}',
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: CupertinoColors.systemOrange,
                     fontWeight: FontWeight.w500,
                   ),
@@ -302,44 +231,8 @@ class _HitchhikeContactsWidgetState extends State<HitchhikeContactsWidget> {
               ],
             ],
           ),
-
-          // 提醒信息
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: CupertinoColors.systemYellow.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  CupertinoIcons.exclamationmark_triangle,
-                  size: 14,
-                  color: CupertinoColors.systemYellow,
-                ),
-                SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    '请注意安全，建议多人同行，提前确认价格和路线',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: CupertinoColors.label,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
-  }
-
-  /// 复制电话号码
-  void _copyPhone(String phone) {
-    Clipboard.setData(ClipboardData(text: phone));
-    // 这里可以添加Toast提示
   }
 }

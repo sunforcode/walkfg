@@ -135,7 +135,7 @@ class AppConfig {
             defaultValue: 'https://staging-api.walkapp.com');
       case AppEnvironment.development:
         return const String.fromEnvironment('DEV_BASE_URL',
-            defaultValue: 'http://127.0.0.1:8080'); // 修改为你的后台地址
+            defaultValue: 'http://192.168.31.127:8080'); // 局域网地址，方便真机调试
     }
   }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/route/supply_point_model.dart';
 
-/// 补给点资源Widget
-class SupplyPointsWidget extends StatefulWidget {
+/// 补给点Widget（横向滑动）
+class SupplyPointsWidget extends StatelessWidget {
   final List<SupplyPointModel> supplyPoints;
 
   const SupplyPointsWidget({
@@ -11,26 +11,11 @@ class SupplyPointsWidget extends StatefulWidget {
   });
 
   @override
-  State<SupplyPointsWidget> createState() => _SupplyPointsWidgetState();
-}
-
-class _SupplyPointsWidgetState extends State<SupplyPointsWidget> {
-  bool _showAll = false;
-  static const int _maxDisplayCount = 3;
-
-  @override
   Widget build(BuildContext context) {
-    if (widget.supplyPoints.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if (supplyPoints.isEmpty) return const SizedBox.shrink();
 
-    final displayPoints = _showAll
-        ? widget.supplyPoints
-        : widget.supplyPoints.take(_maxDisplayCount).toList();
-    final hasMore = widget.supplyPoints.length > _maxDisplayCount;
-
-    return Container(
-      margin: const EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -39,27 +24,27 @@ class _SupplyPointsWidgetState extends State<SupplyPointsWidget> {
             children: [
               const Icon(
                 CupertinoIcons.bag,
-                size: 20,
+                size: 16,
                 color: CupertinoColors.systemOrange,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               const Text(
-                '补给点详解',
+                '补给点',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: CupertinoColors.label,
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: CupertinoColors.systemOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${widget.supplyPoints.length}个',
+                  '${supplyPoints.length}个',
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.systemOrange,
@@ -69,212 +54,113 @@ class _SupplyPointsWidgetState extends State<SupplyPointsWidget> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
-          // 补给点列表
-          ...displayPoints.map((supplyPoint) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _buildSupplyPointCard(supplyPoint),
-            );
-          }).toList(),
-
-          // 更多按钮
-          if (hasMore && !_showAll)
-            CupertinoButton(
+          // 横向列表
+          SizedBox(
+            height: 140,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
               padding: EdgeInsets.zero,
-              onPressed: () {
-                setState(() {
-                  _showAll = true;
-                });
-              },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.systemGrey6,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: CupertinoColors.separator,
-                    width: 0.5,
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      '查看更多补给点',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: CupertinoColors.systemOrange,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '(${widget.supplyPoints.length - _maxDisplayCount}个)',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: CupertinoColors.systemGrey,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(
-                      CupertinoIcons.chevron_down,
-                      size: 16,
-                      color: CupertinoColors.systemOrange,
-                    ),
-                  ],
-                ),
-              ),
+              itemCount: supplyPoints.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, index) => _buildCard(supplyPoints[index]),
             ),
+          ),
         ],
       ),
     );
   }
 
-  /// 构建补给点卡片
-  Widget _buildSupplyPointCard(SupplyPointModel supplyPoint) {
+  Widget _buildCard(SupplyPointModel supplyPoint) {
+    final typeColor = _getTypeColor(supplyPoint.supplyType);
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: 190,
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: CupertinoColors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: CupertinoColors.separator,
-          width: 0.5,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: CupertinoColors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题行
+          // 图标 + 名称 + 类型标签
           Row(
             children: [
-              Text(
-                supplyPoint.typeIcon,
-                style: const TextStyle(fontSize: 20),
-              ),
-              const SizedBox(width: 8),
+              Text(supplyPoint.typeIcon,
+                  style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   supplyPoint.name ?? '未命名补给点',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: CupertinoColors.label,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getTypeColor(supplyPoint.supplyType).withOpacity(0.1),
+                  color: typeColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   supplyPoint.typeText,
                   style: TextStyle(
-                    fontSize: 12,
-                    color: _getTypeColor(supplyPoint.supplyType),
-                    fontWeight: FontWeight.w500,
+                    fontSize: 10,
+                    color: typeColor,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 6),
 
-          if (supplyPoint.description != null) ...[
-            const SizedBox(height: 8),
+          // 描述
+          if (supplyPoint.description != null)
             Text(
               supplyPoint.description!,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
 
-          const SizedBox(height: 12),
+          const Spacer(),
 
-          // 位置和海拔信息
-          Row(
-            children: [
-              const Icon(
-                CupertinoIcons.location,
-                size: 14,
-                color: CupertinoColors.systemGrey,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '${supplyPoint.latitude.toStringAsFixed(4)}, ${supplyPoint.longitude.toStringAsFixed(4)}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: CupertinoColors.systemGrey,
-                ),
-              ),
-              const Spacer(),
-              const Icon(
-                CupertinoIcons.arrow_up,
-                size: 14,
-                color: CupertinoColors.systemGrey,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '海拔${supplyPoint.elevation.toInt()}m',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: CupertinoColors.systemGrey,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          // 补给点特性
-          Row(
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    CupertinoIcons.bag,
-                    size: 14,
-                    color: CupertinoColors.systemOrange,
+          // 距离（若有）
+          if (supplyPoint.distanceFromStart != null &&
+              supplyPoint.distanceFromStart! > 0)
+            Row(
+              children: [
+                const Icon(CupertinoIcons.location,
+                    size: 11, color: CupertinoColors.systemGrey),
+                const SizedBox(width: 2),
+                Text(
+                  '距起点 ${supplyPoint.distanceFromStart!.toStringAsFixed(1)}km',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: CupertinoColors.systemGrey,
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    supplyPoint.typeText,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: CupertinoColors.label,
-                    ),
-                  ),
-                ],
-              ),
-              if (supplyPoint.distanceFromStart != null &&
-                  supplyPoint.distanceFromStart! > 0) ...[
-                const SizedBox(width: 16),
-                Row(
-                  children: [
-                    const Icon(
-                      CupertinoIcons.location,
-                      size: 14,
-                      color: CupertinoColors.systemGrey,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${supplyPoint.distanceFromStart!.toStringAsFixed(1)}km处',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: CupertinoColors.label,
-                      ),
-                    ),
-                  ],
                 ),
               ],
-            ],
-          ),
+            ),
         ],
       ),
     );

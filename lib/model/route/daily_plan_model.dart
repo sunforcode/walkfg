@@ -21,7 +21,7 @@ class DailyPlanModel {
 
   /// 距离（公里）
   @JsonKey(defaultValue: 0)
-  final double? distance;
+  final double distance;
 
   /// 预计时间（小时数）
   @JsonKey(name: 'estimated_time')
@@ -29,15 +29,15 @@ class DailyPlanModel {
 
   /// 爬升（米）
   @JsonKey(name: 'elevation_gain', defaultValue: 0)
-  final int? elevationGain;
+  final int elevationGain;
 
   /// 下降（米）
   @JsonKey(name: 'elevation_loss')
-  final double? elevationLoss;
+  final double elevationLoss;
 
   /// 最高海拔
   @JsonKey(name: 'max_elevation')
-  final double? maxElevation;
+  final double maxElevation;
 
   /// 最低海拔
   @JsonKey(name: 'min_elevation')
@@ -62,8 +62,8 @@ class DailyPlanModel {
     this.distance = 0,
     this.estimatedTime = 8.0, // 默认8小时
     this.elevationGain = 0,
-    this.elevationLoss,
-    this.maxElevation,
+    this.elevationLoss = 0,
+    this.maxElevation = 0,
     this.minElevation,
     this.segments = const <SegmentModel>[],
     this.accommodation,

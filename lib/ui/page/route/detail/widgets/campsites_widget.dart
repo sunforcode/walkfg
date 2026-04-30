@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/route/campsite_model.dart';
 
-/// 营地资源Widget
-class CampsitesWidget extends StatefulWidget {
+/// 营地资源Widget（横向滑动）
+class CampsitesWidget extends StatelessWidget {
   final List<CampsiteModel> campsites;
 
   const CampsitesWidget({
@@ -11,26 +11,11 @@ class CampsitesWidget extends StatefulWidget {
   });
 
   @override
-  State<CampsitesWidget> createState() => _CampsitesWidgetState();
-}
-
-class _CampsitesWidgetState extends State<CampsitesWidget> {
-  bool _showAll = false;
-  static const int _maxDisplayCount = 3;
-
-  @override
   Widget build(BuildContext context) {
-    if (widget.campsites.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if (campsites.isEmpty) return const SizedBox.shrink();
 
-    final displayCampsites = _showAll
-        ? widget.campsites
-        : widget.campsites.take(_maxDisplayCount).toList();
-    final hasMore = widget.campsites.length > _maxDisplayCount;
-
-    return Container(
-      margin: const EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -39,27 +24,27 @@ class _CampsitesWidgetState extends State<CampsitesWidget> {
             children: [
               const Icon(
                 CupertinoIcons.house,
-                size: 20,
+                size: 16,
                 color: CupertinoColors.systemGreen,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               const Text(
                 '营地资源',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: CupertinoColors.label,
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: CupertinoColors.systemGreen.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${widget.campsites.length}个',
+                  '${campsites.length}个',
                   style: const TextStyle(
                     fontSize: 12,
                     color: CupertinoColors.systemGreen,
@@ -69,271 +54,131 @@ class _CampsitesWidgetState extends State<CampsitesWidget> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          // 营地列表
-          ...displayCampsites.map((campsite) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _buildCampsiteCard(campsite),
-            );
-          }).toList(),
+          const SizedBox(height: 12),
 
-          // 更多按钮
-          if (hasMore && !_showAll)
-            CupertinoButton(
+          // 横向列表
+          SizedBox(
+            height: 150,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
               padding: EdgeInsets.zero,
-              onPressed: () {
-                setState(() {
-                  _showAll = true;
-                });
-              },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.systemGrey6,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: CupertinoColors.separator,
-                    width: 0.5,
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      '查看更多营地',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: CupertinoColors.systemGreen,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '(${widget.campsites.length - _maxDisplayCount}个)',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: CupertinoColors.systemGrey,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(
-                      CupertinoIcons.chevron_down,
-                      size: 16,
-                      color: CupertinoColors.systemGreen,
-                    ),
-                  ],
-                ),
-              ),
+              itemCount: campsites.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, index) => _buildCard(campsites[index]),
             ),
+          ),
         ],
       ),
     );
   }
 
-  /// 构建营地卡片
-  Widget _buildCampsiteCard(CampsiteModel campsite) {
+  Widget _buildCard(CampsiteModel campsite) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: 200,
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: CupertinoColors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: CupertinoColors.separator,
-          width: 0.5,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: CupertinoColors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题行
+          // 图标 + 名称
           Row(
             children: [
-              Text(
-                campsite.campsiteTypeIcon,
-                style: const TextStyle(fontSize: 20),
-              ),
-              const SizedBox(width: 8),
+              Text(campsite.campsiteTypeIcon,
+                  style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   campsite.name ?? '未命名营地',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: CupertinoColors.label,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 6),
 
-          if (campsite.description != null) ...[
-            const SizedBox(height: 8),
+          // 描述
+          if (campsite.description != null)
             Text(
               campsite.description!,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
 
-          const SizedBox(height: 12),
+          const Spacer(),
 
-          // 位置和海拔信息
+          // 类型 + 容量
           Row(
             children: [
-              const Icon(
-                CupertinoIcons.location,
-                size: 14,
-                color: CupertinoColors.systemGrey,
+              _tag(
+                CupertinoIcons.house,
+                campsite.campsiteTypeText,
+                CupertinoColors.systemGreen,
               ),
-              const SizedBox(width: 4),
-              Text(
-                '${campsite.latitude.toStringAsFixed(4)}, ${campsite.longitude.toStringAsFixed(4)}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: CupertinoColors.systemGrey,
-                ),
+              const SizedBox(width: 8),
+              _tag(
+                CupertinoIcons.person_2,
+                campsite.capacityText,
+                CupertinoColors.systemPurple,
               ),
-              const Spacer(),
-              const Icon(
-                CupertinoIcons.arrow_up,
-                size: 14,
-                color: CupertinoColors.systemGrey,
-              ),
-              const SizedBox(width: 4),
+            ],
+          ),
+
+          const SizedBox(height: 6),
+          // 海拔
+          Row(
+            children: [
+              const Icon(CupertinoIcons.arrow_up,
+                  size: 11, color: CupertinoColors.systemGrey),
+              const SizedBox(width: 2),
               Text(
                 '海拔${campsite.elevation.toInt()}m',
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: CupertinoColors.systemGrey,
                 ),
               ),
             ],
           ),
-
-          const SizedBox(height: 8),
-
-          // 营地特性
-          Row(
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    CupertinoIcons.house,
-                    size: 14,
-                    color: CupertinoColors.systemGreen,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    campsite.campsiteTypeText,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: CupertinoColors.label,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 16),
-              Row(
-                children: [
-                  const Icon(
-                    CupertinoIcons.person_2,
-                    size: 14,
-                    color: CupertinoColors.systemPurple,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    campsite.capacityText,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: CupertinoColors.label,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          if (campsite.notes.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: CupertinoColors.systemYellow.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    CupertinoIcons.info_circle,
-                    size: 14,
-                    color: CupertinoColors.systemYellow,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      campsite.notes,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: CupertinoColors.label,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     );
   }
 
-  /// 构建特性标签
-  Widget _buildFeatureTag(String text, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 12,
+  Widget _tag(IconData icon, String label, Color color) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 11, color: color),
+        const SizedBox(width: 2),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
             color: color,
+            fontWeight: FontWeight.w500,
           ),
-          const SizedBox(width: 3),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 10,
-              color: color,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
-  }
-
-  Color _getFacilityColor(CampsiteFacility facility) {
-    switch (facility) {
-      case CampsiteFacility.excellent:
-        return CupertinoColors.systemGreen;
-      case CampsiteFacility.good:
-        return CupertinoColors.systemBlue;
-      case CampsiteFacility.fair:
-        return CupertinoColors.systemOrange;
-      case CampsiteFacility.none:
-        return CupertinoColors.systemRed;
-      case CampsiteFacility.unknown:
-        return CupertinoColors.systemGrey;
-    }
   }
 }
