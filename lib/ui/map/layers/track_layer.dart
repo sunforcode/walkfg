@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:walk/model/map/track_point_model.dart';
+import 'package:walk/model/route/segment_model.dart';
 import 'package:walk/ui/map/core/map_enum.dart';
 
 /// 轨迹渲染配置
@@ -21,6 +22,12 @@ class TrackRenderConfig {
   
   /// 箭头间距（米）
   final double arrowSpacing;
+  
+  /// 选中分段的线条宽度倍率
+  final double selectedStrokeWidthMultiplier;
+  
+  /// 未选中分段的透明度
+  final double unselectedOpacity;
 
   const TrackRenderConfig({
     this.renderMode = TrackRenderMode.normal,
@@ -28,6 +35,8 @@ class TrackRenderConfig {
     this.defaultColor = Colors.blue,
     this.showDirectionArrows = false,
     this.arrowSpacing = 1000.0,
+    this.selectedStrokeWidthMultiplier = 1.5,
+    this.unselectedOpacity = 0.5,
   });
 }
 
@@ -45,14 +54,26 @@ class TrackLayer extends StatelessWidget {
   /// 渲染配置
   final TrackRenderConfig config;
   
+  /// 分段数据
+  final List<SegmentModel> segments;
+  
+  /// 当前选中的分段ID
+  final String? selectedSegmentId;
+  
   /// 轨迹点击回调
   final void Function(int index, TrackPointVO point)? onTrackPointTap;
+  
+  /// 分段点击回调
+  final void Function(SegmentModel segment)? onSegmentTap;
 
   const TrackLayer({
     super.key,
     required this.trackPoints,
     this.config = const TrackRenderConfig(),
+    this.segments = const <SegmentModel>[],
+    this.selectedSegmentId,
     this.onTrackPointTap,
+    this.onSegmentTap,
   });
 
   /// 计算两点之间的距离（米）
@@ -149,12 +170,46 @@ class TrackLayer extends StatelessWidget {
     return Colors.red;
   }
 
+  /// 解析颜色字符串（如 #FF5722）
+  Color? _parseColor(String? colorStr) {
+    if (colorStr == null || colorStr.isEmpty) return null;
+    try {
+      final hexStr = colorStr.replaceAll('#', '');
+      if (hexStr.length == 6) {
+        return Color(int.parse('FF$hexStr', radix: 16));
+      } else if (hexStr.length == 8) {
+        return Color(int.parse(hexStr, radix: 16));
+      }
+    } catch (e) {
+      print('TrackLayer: 解析颜色失败: $e');
+    }
+    return null;
+  }
+
+  /// 根据索引获取对应的分段
+  SegmentModel? _getSegmentForIndex(int index) {
+    for (final segment in segments) {
+      final start = segment.trackStartIndex ?? 0;
+      final end = segment.trackEndIndex ?? trackPoints.length - 1;
+      if (index >= start && index <= end) {
+        return segment;
+      }
+    }
+    return null;
+  }
+
   /// 构建轨迹线
   List<Polyline> _buildPolylines() {
     if (trackPoints.length < 2) return [];
 
     final polylines = <Polyline>[];
 
+    // 如果有分段数据，按分段渲染
+    if (segments.isNotEmpty && config.renderMode == TrackRenderMode.normal) {
+      return _buildPolylinesWithSegments();
+    }
+
+    // 原有逻辑
     // 根据渲染模式决定是否分段
     if (config.renderMode == TrackRenderMode.normal) {
       // 普通模式：单条线
@@ -184,6 +239,55 @@ class TrackLayer extends StatelessWidget {
           ),
         );
       }
+    }
+
+    return polylines;
+  }
+
+  /// 按分段构建轨迹线
+  List<Polyline> _buildPolylinesWithSegments() {
+    final polylines = <Polyline>[];
+
+    // 按顺序处理每个分段
+    for (final segment in segments) {
+      final start = segment.trackStartIndex ?? 0;
+      final end = segment.trackEndIndex ?? trackPoints.length - 1;
+
+      // 确保索引有效
+      if (start < 0 || end >= trackPoints.length || start >= end) {
+        print('TrackLayer: 分段 ${segment.name} 索引无效: $start-$end');
+        continue;
+      }
+
+      // 获取分段的点（包含end）
+      final segmentPoints = trackPoints.sublist(start, end + 1);
+
+      // 判断是否选中
+      final isSelected = selectedSegmentId == segment.id;
+
+      // 获取颜色
+      Color color = _parseColor(segment.color) ?? config.defaultColor;
+
+      // 未选中的分段降低透明度
+      if (!isSelected && selectedSegmentId != null) {
+        color = color.withOpacity(config.unselectedOpacity);
+      }
+
+      // 选中的分段增加宽度
+      final strokeWidth = isSelected
+          ? config.strokeWidth * config.selectedStrokeWidthMultiplier
+          : config.strokeWidth;
+
+      // 创建折线
+      polylines.add(
+        Polyline(
+          points: segmentPoints
+              .map((p) => LatLng(p.latitude, p.longitude))
+              .toList(),
+          strokeWidth: strokeWidth,
+          color: color,
+        ),
+      );
     }
 
     return polylines;

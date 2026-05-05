@@ -30,41 +30,38 @@ class RouteActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          // 规划行程按钮
-          Expanded(
-            child: CupertinoButton.filled(
-              onPressed: onPlanTrip,
-              child: const Text('规划行程'),
-            ),
+    return Row(
+      children: [
+        // 规划行程按钮
+        Expanded(
+          child: CupertinoButton.filled(
+            onPressed: onPlanTrip,
+            child: const Text('规划行程'),
           ),
+        ),
 
-          const SizedBox(width: 12),
+        const SizedBox(width: 12),
 
-          // 收藏按钮
-          CupertinoButton(
-            color: isFavorite
-                ? CupertinoColors.systemRed
-                : CupertinoColors.systemGrey,
-            onPressed: onToggleFavorite,
-            child: Icon(
-              isFavorite ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
-            ),
+        // 收藏按钮
+        CupertinoButton(
+          color: isFavorite
+              ? CupertinoColors.systemRed
+              : CupertinoColors.systemGrey,
+          onPressed: onToggleFavorite,
+          child: Icon(
+            isFavorite ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
           ),
+        ),
 
-          const SizedBox(width: 8),
+        const SizedBox(width: 8),
 
-          // 地图按钮
-          CupertinoButton(
-            color: CupertinoColors.systemBlue,
-            onPressed: onMapAction,
-            child: const Icon(CupertinoIcons.map),
-          ),
-        ],
-      ),
+        // 地图按钮
+        CupertinoButton(
+          color: CupertinoColors.systemBlue,
+          onPressed: onMapAction,
+          child: const Icon(CupertinoIcons.map),
+        ),
+      ],
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/ui/page/trip/trip_detail_screen.dart';
 import 'package:walk/theme/tokens/colors.dart';
 import '../../trip/my_trip_plans_screen.dart';
-import '../../../../service/recommendation_service.dart';
+import '../../../../service/route_service.dart';
 
 /// 行程规划入口组件
 class TripPlanningEntries extends StatelessWidget {
@@ -152,18 +152,31 @@ class TripPlanningEntries extends StatelessWidget {
   void _navigateToTripPlanning(BuildContext context) async {
     // 获取默认路线
     try {
-      final route = await RecommendationService.getPersonalizedRecommendations();
+      final routes = await RouteService.getPopularRoutes(limit: 5);
+      if (routes.isEmpty) {
+        // 如果没有推荐路线，直接创建空白行程
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (context) => const TripDetailScreen(),
+          ),
+        );
+        return;
+      }
       Navigator.of(context).push(
         CupertinoPageRoute(
           builder: (context) => TripDetailScreen(
-            routeId: route.first.id,
-            isReadOnly: true,
+            routeId: routes.first.id,
           ),
         ),
       );
     } catch (e) {
       print('获取推荐路线失败: $e');
-      _showNoRoutesAlert(context);
+      // 如果获取路线失败，直接创建空白行程
+      Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (context) => const TripDetailScreen(),
+        ),
+      );
     }
   }
 

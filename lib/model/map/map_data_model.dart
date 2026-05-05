@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:walk/model/route/segment_model.dart';
 import 'map_bounds.dart';
 import 'track_point_model.dart';
 
@@ -89,6 +90,10 @@ class MapDataModel {
   /// 段数量
   final int segmentCount;
 
+  /// 分段列表
+  @JsonKey(defaultValue: <SegmentModel>[])
+  final List<SegmentModel> segments;
+
   /// 记录时间
   final DateTime recordedAt;
 
@@ -117,6 +122,7 @@ class MapDataModel {
     required this.endPoint,
     required this.pointCount,
     required this.segmentCount,
+    this.segments = const <SegmentModel>[],
     required this.recordedAt,
     required this.processingStatus,
   });

@@ -146,20 +146,38 @@ class SegmentModel {
   /// 描述
   final String? description;
 
+  /// 序号（用于排序）
+  @JsonKey(name: 'sequence_number', defaultValue: 0)
+  final int sequenceNumber;
+
   /// 距离（公里）
-  final double distance;
+  final double? distance;
 
   /// 预计时长（分钟）
   @JsonKey(name: 'estimated_time')
-  final double estimatedTime;
+  final double? estimatedTime;
 
   /// 爬升（米）
   @JsonKey(name: 'elevation_gain', defaultValue: 0)
-  final int elevationGain;
+  final double? elevationGain;
 
   /// 下降（米）
   @JsonKey(name: 'elevation_loss', defaultValue: 0)
-  final int? elevationLoss;
+  final double? elevationLoss;
+
+  /// 难度（1-5）
+  final int? difficulty;
+
+  /// 轨迹点起始索引
+  @JsonKey(name: 'track_start_index')
+  final int? trackStartIndex;
+
+  /// 轨迹点结束索引
+  @JsonKey(name: 'track_end_index')
+  final int? trackEndIndex;
+
+  /// 显示颜色（如 #FF5722）
+  final String? color;
 
   /// 起点
   @JsonKey(name: 'start_point')
@@ -183,22 +201,32 @@ class SegmentModel {
     fromJson: _routeTypeFromJson,
     toJson: _routeTypeToJson,
   )
-  final RouteType type;
+  final RouteType? type;
+
+  /// 是否选中（运行时状态）
+  @JsonKey(ignore: true)
+  final bool isSelected;
 
   /// 构造函数
   SegmentModel({
     required this.id,
     required this.name,
     this.description,
-    required this.distance,
-    required this.estimatedTime,
-    required this.elevationGain,
+    this.sequenceNumber = 0,
+    this.distance,
+    this.estimatedTime,
+    this.elevationGain,
     this.elevationLoss,
+    this.difficulty,
+    this.trackStartIndex,
+    this.trackEndIndex,
+    this.color,
     this.startWaypoint,
     this.endWaypoint,
     this.keyPoints = const <TrackPointVO>[],
     this.notes,
-    this.type = RouteType.trail,
+    this.type,
+    this.isSelected = false,
   });
 
   /// 从JSON创建
@@ -213,35 +241,47 @@ class SegmentModel {
     String? id,
     String? name,
     String? description,
+    int? sequenceNumber,
     double? distance,
-    double? duration,
-    int? elevationGain,
-    int? elevationLoss,
+    double? estimatedTime,
+    double? elevationGain,
+    double? elevationLoss,
+    int? difficulty,
+    int? trackStartIndex,
+    int? trackEndIndex,
+    String? color,
     TrackPointVO? startWaypoint,
     TrackPointVO? endWaypoint,
     List<TrackPointVO>? keyPoints,
-    String? note,
+    String? notes,
     RouteType? type,
+    bool? isSelected,
   }) {
     return SegmentModel(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
+      sequenceNumber: sequenceNumber ?? this.sequenceNumber,
       distance: distance ?? this.distance,
-      estimatedTime: duration ?? this.estimatedTime,
+      estimatedTime: estimatedTime ?? this.estimatedTime,
       elevationGain: elevationGain ?? this.elevationGain,
       elevationLoss: elevationLoss ?? this.elevationLoss,
+      difficulty: difficulty ?? this.difficulty,
+      trackStartIndex: trackStartIndex ?? this.trackStartIndex,
+      trackEndIndex: trackEndIndex ?? this.trackEndIndex,
+      color: color ?? this.color,
       startWaypoint: startWaypoint ?? this.startWaypoint,
       endWaypoint: endWaypoint ?? this.endWaypoint,
       keyPoints: keyPoints ?? this.keyPoints,
-      notes: note ?? this.notes,
+      notes: notes ?? this.notes,
       type: type ?? this.type,
+      isSelected: isSelected ?? this.isSelected,
     );
   }
 
   @override
   String toString() {
-    return 'SegmentModel(id: $id, name: $name, distance: $distance, type: $type)';
+    return 'SegmentModel(id: $id, name: $name, sequence: $sequenceNumber, distance: $distance, color: $color, trackRange: $trackStartIndex-$trackEndIndex)';
   }
 
   @override
@@ -260,7 +300,7 @@ class SegmentModel {
   }
 
   /// 自定义RouteType转JSON
-  static int _routeTypeToJson(RouteType type) {
-    return type.intValue;
+  static int _routeTypeToJson(RouteType? type) {
+    return type?.intValue ?? RouteType.trail.intValue;
   }
 }

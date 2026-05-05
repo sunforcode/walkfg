@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
+import 'package:walk/service/route_service.dart';
 import 'package:walk/theme/tokens/tokens.dart';
 import 'package:walk/ui/page/trip/trip_detail_screen.dart';
 import '../../trip/trip_list_screen.dart';
@@ -51,10 +52,12 @@ class PlannedTripsSection extends StatelessWidget {
 
             final plannedTrips = snapshot.data;
             if (plannedTrips == null || plannedTrips.isEmpty) {
-              return const EmptyContentWidget(
+              return EmptyContentWidget(
                 icon: CupertinoIcons.calendar,
                 title: '暂无规划行程',
                 subtitle: '开始规划你的第一个行程吧',
+                actionText: '规划一个行程',
+                onAction: () => _navigateToTripPlanning(context),
               );
             }
             return _buildPlannedTripsList(context, plannedTrips);
@@ -200,6 +203,54 @@ class PlannedTripsSection extends StatelessWidget {
         builder: (context) => TripDetailScreen(
           tripModel: trip,
         ),
+      ),
+    );
+  }
+
+  /// 导航到行程规划页面
+  void _navigateToTripPlanning(BuildContext context) async {
+    try {
+      final routes = await RouteService.getPopularRoutes(limit: 5);
+      if (routes.isEmpty) {
+        // 如果没有推荐路线，直接创建空白行程
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (context) => const TripDetailScreen(),
+          ),
+        );
+        return;
+      }
+      Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (context) => TripDetailScreen(
+            routeId: routes.first.id,
+          ),
+        ),
+      );
+    } catch (e) {
+      print('获取推荐路线失败: $e');
+      // 如果获取路线失败，直接创建空白行程
+      Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (context) => const TripDetailScreen(),
+        ),
+      );
+    }
+  }
+
+  /// 显示没有路线的提示
+  void _showNoRoutesAlert(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('无法加载路线'),
+        content: const Text('暂时无法获取推荐路线，请稍后再试。'),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('确定'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
       ),
     );
   }

@@ -11,6 +11,7 @@ import 'app.dart';
 import 'core/network/api_client.dart';
 import 'core/config/app_config.dart';
 import 'core/network/network_manager.dart';
+import 'core/state/auth_notifier.dart';
 
 void main() async {
   // 确保Flutter绑定初始化
@@ -34,6 +35,12 @@ void main() async {
   await ApiClient.instance.initialize(
     baseUrl: AppConfig.instance.baseUrl,
   );
+
+  // 从本地存储恢复登录状态
+  // 注意：必须在 ApiClient.initialize() 之后调用
+  // 1. ApiClient.initialize() 先调用 _restoreAuthToken() 恢复 token 到请求头
+  // 2. AuthNotifier.initializeFromStorage() 再读取 AuthInterceptor.isLoggedIn() 设置状态
+  await AuthNotifier().initializeFromStorage();
 
   // 预加载JSON数据
   await _preloadJsonData();

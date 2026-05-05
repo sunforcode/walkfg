@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'auth/register_screen.dart';
 import 'auth/forgot_password_screen.dart';
+import '../../../service/user_service.dart';
 
 /// 登录屏幕
 class LoginScreen extends StatefulWidget {
@@ -13,8 +15,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  /// 邮箱控制器
-  final TextEditingController _emailController = TextEditingController();
+  /// 用户名控制器
+  final TextEditingController _usernameController = TextEditingController();
 
   /// 密码控制器
   final TextEditingController _passwordController = TextEditingController();
@@ -27,19 +29,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   /// 处理登录
-  void _handleLogin() {
-    final email = _emailController.text.trim();
+  Future<void> _handleLogin() async {
+    final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
 
+    debugPrint('LoginScreen: _handleLogin called');
+    debugPrint('LoginScreen: username: $username');
+    debugPrint('LoginScreen: password: ${password.isNotEmpty ? '***' : 'empty'}');
+
     // 简单的表单验证
-    if (email.isEmpty) {
-      _showErrorDialog('请输入电子邮件');
+    if (username.isEmpty) {
+      _showErrorDialog('请输入用户名');
       return;
     }
 
@@ -53,15 +59,44 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoggingIn = true;
     });
 
-    // 模拟登录过程
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isLoggingIn = false;
-      });
+    try {
+      debugPrint('LoginScreen: Calling UserService.login...');
+      
+      // 调用实际的登录API
+      final user = await UserService.login(username, password);
+      
+      debugPrint('LoginScreen: Login successful, user: ${user.username}');
 
       // 登录成功，返回个人主页
-      Navigator.of(context).pop(true); // 返回true表示登录成功
-    });
+      if (mounted) {
+        setState(() {
+          _isLoggingIn = false;
+        });
+        Navigator.of(context).pop(true); // 返回true表示登录成功
+      }
+    } catch (e) {
+      debugPrint('LoginScreen: Login error: $e');
+      
+      if (mounted) {
+        setState(() {
+          _isLoggingIn = false;
+        });
+        
+        // 显示错误信息
+        String errorMessage = '登录失败';
+        if (e.toString().contains('用户名或密码错误')) {
+          errorMessage = '用户名或密码错误';
+        } else if (e.toString().contains('401') || e.toString().contains('Unauthorized')) {
+          errorMessage = '用户名或密码错误';
+        } else if (e.toString().contains('404')) {
+          errorMessage = '服务器连接失败';
+        } else if (e.toString().contains('SocketException') || e.toString().contains('Connection')) {
+          errorMessage = '网络连接失败，请检查网络';
+        }
+        
+        _showErrorDialog(errorMessage);
+      }
+    }
   }
 
   /// 显示错误对话框
@@ -137,13 +172,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 40),
               CupertinoTextField(
-                controller: _emailController,
-                placeholder: '电子邮件',
-                keyboardType: TextInputType.emailAddress,
+                controller: _usernameController,
+                placeholder: '用户名',
+                keyboardType: TextInputType.text,
                 prefix: const Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
-                    CupertinoIcons.mail,
+                    CupertinoIcons.person,
                     color: CupertinoColors.systemGrey,
                   ),
                 ),

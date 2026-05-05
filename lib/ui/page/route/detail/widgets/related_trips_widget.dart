@@ -25,53 +25,50 @@ class RelatedTripsWidget extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题
-          Row(
-            children: [
-              Icon(
-                CupertinoIcons.calendar_badge_plus,
-                size: 20,
-                color: CupertinoColors.systemIndigo,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 标题
+        Row(
+          children: [
+            Icon(
+              CupertinoIcons.calendar_badge_plus,
+              size: 20,
+              color: CupertinoColors.systemIndigo,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              '相关规划',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: CupertinoColors.label,
               ),
-              const SizedBox(width: 8),
-              const Text(
-                '相关规划',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: CupertinoColors.label,
-                ),
+            ),
+            const Spacer(),
+            Text(
+              '${relatedTrips.length}个行程',
+              style: const TextStyle(
+                fontSize: 14,
+                color: CupertinoColors.systemGrey,
               ),
-              const Spacer(),
-              Text(
-                '${relatedTrips.length}个行程',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: CupertinoColors.systemGrey,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
+        ),
 
-          const SizedBox(height: 16),
+        const SizedBox(height: 16),
 
-          // 行程列表
-          ...relatedTrips.asMap().entries.map((entry) {
-            final index = entry.key;
-            final trip = entry.value;
-            return Padding(
-              padding: EdgeInsets.only(
-                  bottom: index < relatedTrips.length - 1 ? 12 : 0),
-              child: _buildTripCard(trip),
-            );
-          }).toList(),
-        ],
-      ),
+        // 行程列表
+        ...relatedTrips.asMap().entries.map((entry) {
+          final index = entry.key;
+          final trip = entry.value;
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: index < relatedTrips.length - 1 ? 12 : 0),
+            child: _buildTripCard(trip),
+          );
+        }).toList(),
+      ],
     );
   }
 

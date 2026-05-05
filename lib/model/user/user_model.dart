@@ -9,8 +9,16 @@ class UserModel extends BaseModel {
   /// 用户名
   final String username;
 
+  /// 邮箱
+  @JsonKey(name: 'email', defaultValue: '')
+  final String email;
+
   /// 昵称
   final String nickname;
+
+  /// 手机号
+  @JsonKey(name: 'phone')
+  final String? phone;
 
   /// 头像URL
   @JsonKey(name: 'avatar_url')
@@ -34,7 +42,9 @@ class UserModel extends BaseModel {
     super.createdAt,
     super.updatedAt,
     required this.username,
+    this.email = '',
     required this.nickname,
+    this.phone,
     this.avatarUrl,
     this.completedRoutes = 0,
     this.equipmentLists = 0,

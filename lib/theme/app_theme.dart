@@ -15,7 +15,7 @@ class AppTheme {
   // ============ Cupertino 主题 (主要使用) ============
 
   /// 浅色 Cupertino 主题
-  static CupertinoThemeData get cupertinoLight => const CupertinoThemeData(
+  static CupertinoThemeData get cupertinoLight => CupertinoThemeData(
         primaryColor: AppColors.primary,
         primaryContrastingColor: AppColors.onPrimary,
         brightness: Brightness.light,
@@ -24,24 +24,29 @@ class AppTheme {
         textTheme: CupertinoTextThemeData(
           primaryColor: AppColors.primary,
           textStyle: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             color: AppColors.textPrimary,
             fontSize: 14,
           ),
           actionTextStyle: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             color: AppColors.primary,
             fontSize: 14,
           ),
           navTitleTextStyle: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             color: AppColors.textPrimary,
             fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
           navLargeTitleTextStyle: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             color: AppColors.textPrimary,
             fontSize: 34,
             fontWeight: FontWeight.w700,
           ),
           tabLabelTextStyle: TextStyle(
+            fontFamily: AppTypography.fontFamily,
             color: AppColors.textSecondary,
             fontSize: 10,
           ),
@@ -52,6 +57,7 @@ class AppTheme {
 
   /// 浅色 Material 主题
   static ThemeData get materialLight => ThemeData(
+        fontFamily: AppTypography.fontFamily,
         useMaterial3: true,
         brightness: Brightness.light,
 
@@ -86,7 +92,7 @@ class AppTheme {
         ),
 
         // 卡片主题
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 0,
           color: AppColors.card,
           shape: RoundedRectangleBorder(
@@ -196,7 +202,7 @@ class AppTheme {
         ),
 
         // Dialog 主题
-        dialogTheme: DialogTheme(
+        dialogTheme: DialogThemeData(
           backgroundColor: AppColors.surface,
           elevation: 24,
           shape: RoundedRectangleBorder(

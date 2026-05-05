@@ -15,61 +15,58 @@ class HitchhikeContactsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (contacts.isEmpty) return const SizedBox.shrink();
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题行
-          Row(
-            children: [
-              const Icon(
-                CupertinoIcons.car,
-                size: 16,
-                color: CupertinoColors.systemPurple,
-              ),
-              const SizedBox(width: 6),
-              const Text(
-                '搭车联系',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: CupertinoColors.label,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.systemPurple.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  '${contacts.length}个',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: CupertinoColors.systemPurple,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // 横向列表
-          SizedBox(
-            height: 160,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.zero,
-              itemCount: contacts.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
-              itemBuilder: (context, index) => _buildCard(context, contacts[index]),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 标题行
+        Row(
+          children: [
+            const Icon(
+              CupertinoIcons.car,
+              size: 16,
+              color: CupertinoColors.systemPurple,
             ),
+            const SizedBox(width: 6),
+            const Text(
+              '搭车联系',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: CupertinoColors.label,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: CupertinoColors.systemPurple.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '${contacts.length}个',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: CupertinoColors.systemPurple,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // 横向列表
+        SizedBox(
+          height: 160,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.zero,
+            itemCount: contacts.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            itemBuilder: (context, index) => _buildCard(context, contacts[index]),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

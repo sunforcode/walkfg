@@ -7,6 +7,87 @@ import 'package:walk/model/route/route_comment_model.dart';
 import 'package:walk/model/trip/trip_filter_model.dart';
 import 'package:walk/model/route/route_enums.dart';
 
+/// 路线查询参数映射工具
+/// 提供统一的参数抽象，将前端的抽象参数映射到后端的具体查询条件
+class RouteQueryParamMapper {
+  /// 路线类别到英文 category 的映射
+  static const Map<String, String?> _categoryMap = {
+    '全部': null,
+    '徒步': 'hiking',
+    '骑行': 'cycling',
+    '露营': 'camping',
+    '攀岩': 'climbing',
+    '城市': 'urban',
+    '山地': 'mountain',
+    '海滨': 'coastal',
+  };
+
+  /// 难度到字符串的映射
+  static const Map<String, String> _difficultyMap = {
+    '简单': 'easy',
+    '中等': 'medium',
+    '困难': 'hard',
+  };
+
+  /// 路线类型到字符串的映射
+  static const Map<String, String> _routeTypeMap = {
+    '往返': 'roundtrip',
+    '环线': 'loop',
+    '单程': 'oneway',
+    '多日': 'multiday',
+  };
+
+  /// 排序方式映射
+  static const Map<String, String> _sortMap = {
+    '热门': 'popular',
+    '最新': 'new',
+    '距离': 'distance',
+  };
+
+  /// 将中文类别转换为英文 category
+  static String? mapCategory(String? category) {
+    if (category == null) return null;
+    return _categoryMap[category] ?? category;
+  }
+
+  /// 将难度转换为统一格式
+  static String? mapDifficulty(dynamic difficulty) {
+    if (difficulty == null) return null;
+    if (difficulty is int) return difficulty.toString();
+    if (difficulty is String) {
+      return _difficultyMap[difficulty] ?? difficulty;
+    }
+    return difficulty.toString();
+  }
+
+  /// 将路线类型转换为统一格式
+  static String? mapRouteType(dynamic routeType) {
+    if (routeType == null) return null;
+    if (routeType is int) return routeType.toString();
+    if (routeType is String) {
+      return _routeTypeMap[routeType] ?? routeType;
+    }
+    return routeType.toString();
+  }
+
+  /// 将排序方式转换为统一格式
+  static String mapSort(String? sort) {
+    if (sort == null) return 'popular';
+    return _sortMap[sort] ?? sort;
+  }
+
+  /// 将标签列表转换为逗号分隔的字符串
+  static String? mapTags(List<String>? tags) {
+    if (tags == null || tags.isEmpty) return null;
+    return tags.join(',');
+  }
+
+  /// 获取所有支持的中文类别
+  static List<String> getChineseCategories() {
+    return _categoryMap.keys.where((k) => k != '全部').toList();
+  }
+}
+
 /// 路线服务
 ///
 /// 使用静态方法，无需实例化
@@ -17,14 +98,49 @@ class RouteService {
   /// 默认缓存时间
   static const Duration _defaultCacheTTL = Duration(hours: 1);
 
-  /// 获取路线列表
-  static Future<List<RouteModel>> getRoutes({String? season, int? limit}) async {
+  /// 获取路线列表（支持统一参数）
+  ///
+  /// 支持抽象参数：
+  /// - [category]: 路线类别（中文：徒步/骑行/露营/攀岩/城市/山地/海滨 或英文）
+  /// - [tags]: 标签列表
+  /// - [difficulty]: 难度（数字 1-5 或字符串 easy/medium/hard）
+  /// - [routeType]: 路线类型（数字 0-3 或字符串 roundtrip/loop/oneway/multiday）
+  /// - [sort]: 排序方式（popular/new/distance 或 热门/最新/距离）
+  static Future<List<RouteModel>> getRoutes({
+    String? keyword,
+    String? category,
+    List<String>? tags,
+    String? regionId,
+    dynamic difficulty,
+    dynamic routeType,
+    double? minDistance,
+    double? maxDistance,
+    String? userId,
+    String? sort,
+    int page = 0,
+    int size = 20,
+    int? limit,
+  }) async {
     try {
       final response = await ApiClient.instance.get(
         ApiEndpoints.routes,
         queryParameters: {
-          if (season != null) 'season': season,
-          if (limit != null) 'limit': limit,
+          if (keyword != null) 'keyword': keyword,
+          if (category != null)
+            'category': RouteQueryParamMapper.mapCategory(category),
+          if (tags != null && tags.isNotEmpty)
+            'tags': RouteQueryParamMapper.mapTags(tags),
+          if (regionId != null) 'regionId': regionId,
+          if (difficulty != null)
+            'difficulty': RouteQueryParamMapper.mapDifficulty(difficulty),
+          if (routeType != null)
+            'routeType': RouteQueryParamMapper.mapRouteType(routeType),
+          if (minDistance != null) 'minDistance': minDistance,
+          if (maxDistance != null) 'maxDistance': maxDistance,
+          if (userId != null) 'userId': userId,
+          'sort': RouteQueryParamMapper.mapSort(sort),
+          'page': page,
+          'size': limit ?? size,
         },
       );
 
@@ -273,10 +389,37 @@ class RouteService {
   }
 
   /// 根据筛选条件获取路线
-  static Future<List<RouteModel>> getRoutesByFilter(TripFilterModel filter,
-      {int limit = 20}) async {
-    // TODO: 实现按筛选条件获取路线的API调用
-    throw UnimplementedError('getRoutesByFilter not implemented yet');
+  static Future<List<RouteModel>> getRoutesByFilter(
+    TripFilterModel filter, {
+    int limit = 20,
+  }) async {
+    return getRoutes(
+      keyword: filter.keyword,
+      difficulty: filter.difficulty,
+      minDistance: filter.minDistance,
+      maxDistance: filter.maxDistance,
+      sort: filter.sortBy,
+      limit: limit,
+    );
+  }
+
+  /// 按类别获取路线（简化方法）
+  static Future<List<RouteModel>> getRoutesByCategory(
+    String category, {
+    int limit = 20,
+    String? sort,
+  }) async {
+    if (category == '全部' || category == 'all') {
+      return getRoutes(
+        limit: limit,
+        sort: sort,
+      );
+    }
+    return getRoutes(
+      category: category,
+      limit: limit,
+      sort: sort,
+    );
   }
 
   /// 获取收藏路线

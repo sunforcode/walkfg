@@ -314,10 +314,8 @@ class RouteModel extends BaseModel {
       return defaultMap!.elevationGain;
     }
     // 如果没有地图数据，则从分段计算
-    return segments
-            ?.fold(0, (sum, segment) => sum + segment.elevationGain)
-            .toDouble() ??
-        0.0;
+    if (segments == null) return 0.0;
+    return segments!.fold<double>(0.0, (sum, segment) => sum + (segment.elevationGain ?? 0.0));
   }
 
   /// 获取路线下降（米）

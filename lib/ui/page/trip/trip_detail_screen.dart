@@ -3,7 +3,7 @@ import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/service/route_service.dart';
 import 'package:walk/service/trip_service.dart';
-import 'package:walk/ui/map/components/enhanced_daily_map_widget.dart';
+import 'package:walk/ui/map/map_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_map_header_widget.dart';
 import 'package:walk/ui/page/trip/widget/display/trip_overview_display_widget.dart';
 import 'package:walk/ui/page/trip/widget/display/trip_itinerary_display_widget.dart';
@@ -85,11 +85,18 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         await _loadRelatedRoutes(_trip!);
       } else if (widget.routeId != null) {
         // 通过routeId加载RouteModel并构造临时TripModel
-        final route = await RouteService.getRouteById(widget.routeId!);
-        _relatedRoutes = [route];
-        _trip = _buildTripModelFromRoute(route);
+        try {
+          final route = await RouteService.getRouteById(widget.routeId!);
+          _relatedRoutes = [route];
+          _trip = _buildTripModelFromRoute(route);
+        } catch (e) {
+          // 如果路线不存在，创建一个空白行程
+          print('路线不存在，创建空白行程: $e');
+          _trip = _buildNewTripModel();
+        }
       } else {
-        throw Exception('未指定routeId或tripModel');
+        // 没有指定任何参数，创建一个全新的空白行程
+        _trip = _buildNewTripModel();
       }
       setState(() {
         _loading = false;
@@ -146,6 +153,39 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       privacySetting: 'private',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+    );
+  }
+
+  /// 创建一个全新的空白行程
+  TripModel _buildNewTripModel() {
+    final now = DateTime.now();
+    return TripModel(
+      id: 'new_trip_${now.millisecondsSinceEpoch}',
+      name: '新行程',
+      description: '开始规划你的新行程',
+      startDate: now,
+      endDate: now.add(const Duration(days: 1)),
+      status: TripStatus.planning,
+      routeIds: [],
+      primaryRouteId: null,
+      participants: [],
+      participantCount: 1,
+      organizerId: _currentUserId,
+      equipmentListId: null,
+      equipmentList: null,
+      mealPlanId: null,
+      mealPlan: null,
+      waterPlanId: null,
+      waterPlan: null,
+      itinerary: [],
+      coverUrl: null,
+      imageUrls: [],
+      budget: null,
+      actualCost: null,
+      notes: null,
+      privacySetting: 'private',
+      createdAt: now,
+      updatedAt: now,
     );
   }
 
@@ -265,11 +305,25 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
           SliverToBoxAdapter(
             child: _relatedRoutes.isNotEmpty &&
                     _relatedRoutes.first.defaultMap != null
-                ? EnhancedDailyMapWidget(
+                ? MapWidget(
                     trackPoints: _relatedRoutes.first.defaultMap!.trackPoints,
-                    markers: const [], // TrackModel没有waypoints，使用空列表
+                    markers: _relatedRoutes.first.markerPoints ?? [],
                     days: 3,
-                    height: 400,
+                    config: MapWidgetConfig(
+                      height: 400,
+                      enabledFeatures: {
+                        MapFeature.track,
+                        MapFeature.startEndMarkers,
+                        MapFeature.poiMarkers,
+                        MapFeature.elevationChart,
+                        MapFeature.mapControls,
+                        MapFeature.routeInfo,
+                      },
+                    ),
+                    routeName: _relatedRoutes.first.name,
+                    routeDistance: _relatedRoutes.first.distance,
+                    routeElevationGain: _relatedRoutes.first.elevationGain,
+                    routeDifficulty: _relatedRoutes.first.difficulty.getName(),
                   )
                 : TripMapHeaderWidget(
                     route:

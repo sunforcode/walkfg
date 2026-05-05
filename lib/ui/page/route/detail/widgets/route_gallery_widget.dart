@@ -20,46 +20,43 @@ class RouteGalleryWidget extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题
-          Row(
-            children: [
-              Icon(
-                CupertinoIcons.photo,
-                size: 18,
-                color: CupertinoColors.activeBlue,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 标题
+        Row(
+          children: [
+            Icon(
+              CupertinoIcons.photo,
+              size: 18,
+              color: CupertinoColors.activeBlue,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              '路线图片',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.label,
               ),
-              const SizedBox(width: 8),
-              const Text(
-                '路线图片',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: CupertinoColors.label,
+            ),
+            const Spacer(),
+            if (imageUrls.length > 3)
+              Text(
+                '共${imageUrls.length}张',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: CupertinoColors.secondaryLabel,
                 ),
               ),
-              const Spacer(),
-              if (imageUrls.length > 3)
-                Text(
-                  '共${imageUrls.length}张',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: CupertinoColors.secondaryLabel,
-                  ),
-                ),
-            ],
-          ),
+          ],
+        ),
 
-          const SizedBox(height: 12),
+        const SizedBox(height: 12),
 
-          // 图片网格
-          _buildImageGrid(),
-        ],
-      ),
+        // 图片网格
+        _buildImageGrid(),
+      ],
     );
   }
 

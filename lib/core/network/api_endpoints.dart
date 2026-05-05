@@ -169,20 +169,70 @@ class ApiEndpoints {
       '$apiPrefix/weather/marker-point/$pointId';
 
   // ==================== 装备相关 ====================
-  /// 装备列表
-  static const String equipment = '$apiPrefix/equipment';
+  static const String apiV1Prefix = '/walkbg/api/v1';
 
-  /// 装备详情
-  static String equipmentDetail(String equipmentId) =>
-      '$apiPrefix/equipment/$equipmentId';
+  /// 装备物品列表
+  static const String equipmentItems = '$apiV1Prefix/equipment/items';
 
-  /// 装备分类
-  static const String equipmentCategories = '$apiPrefix/equipment/categories';
+  /// 装备物品详情
+  static String equipmentItemDetail(String itemId) =>
+      '$apiV1Prefix/equipment/items/$itemId';
+
+  /// 装备物品搜索
+  static const String equipmentSearch = '$apiV1Prefix/equipment/search';
+
+  /// 装备分类统计
+  static const String equipmentCategoryStats = '$apiV1Prefix/equipment/category-stats';
 
   /// 装备推荐
-  static const String recommendedEquipment = '$apiPrefix/equipment/recommended';
+  static const String recommendedEquipment = '$apiV1Prefix/equipment/recommended';
 
-  /// 用户装备清单
+  /// 装备清单列表
+  static const String equipmentLists = '$apiV1Prefix/equipment-lists';
+
+  /// 装备清单详情
+  static String equipmentListDetail(String listId) =>
+      '$apiV1Prefix/equipment-lists/$listId';
+
+  /// 装备清单的装备列表
+  static String equipmentListItems(String listId) =>
+      '$apiV1Prefix/equipment-lists/$listId/items';
+
+  /// 装备清单重量统计
+  static String equipmentListWeightStats(String listId) =>
+      '$apiV1Prefix/equipment-lists/$listId/weight-stats';
+
+  /// 装备清单状态更新
+  static String equipmentListStatus(String listId) =>
+      '$apiV1Prefix/equipment-lists/$listId/status';
+
+  /// 装备模板列表
+  static const String equipmentTemplates = '$apiV1Prefix/equipment-templates';
+
+  /// 装备模板详情
+  static String equipmentTemplateDetail(String templateId) =>
+      '$apiV1Prefix/equipment-templates/$templateId';
+
+  /// 官方装备模板
+  static const String officialEquipmentTemplates =
+      '$apiV1Prefix/equipment-templates/official';
+
+  /// 用户装备库列表
+  static const String userEquipmentInventories =
+      '$apiV1Prefix/user-equipment-inventories';
+
+  /// 用户装备库详情
+  static String userEquipmentInventoryDetail(String inventoryId) =>
+      '$apiV1Prefix/user-equipment-inventories/$inventoryId';
+
+  /// 用户装备库的装备列表
+  static String userEquipmentInventoryItems(String inventoryId) =>
+      '$apiV1Prefix/user-equipment-inventories/$inventoryId/items';
+
+  /// 装备分类
+  static const String equipmentCategories = '$apiV1Prefix/equipment/categories';
+
+  /// 用户装备清单 (旧路径，向后兼容)
   static const String userEquipmentList = '$apiPrefix/user/equipment-list';
 
   // ==================== 攻略相关 ====================

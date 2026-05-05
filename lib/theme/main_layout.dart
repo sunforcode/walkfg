@@ -3,7 +3,7 @@ import '../ui/page/home/home_screen.dart';
 import '../ui/page/route/route_discovery_screen.dart';
 import '../ui/page/equipment/equipment_screen.dart';
 import '../ui/page/profile/profile_screen.dart';
-import '../ui/page/search/route_search_page.dart';
+import '../ui/page/navigation/navigation_screen.dart';
 import 'tokens/tokens.dart';
 
 /// 主布局页面，包含底部导航栏和内容区域
@@ -31,12 +31,11 @@ class _MainLayoutState extends State<MainLayout> {
     _currentIndex = widget.initialIndex;
   }
 
-  /// 导航到行程规划页面
-  void _navigateToTripPlanning(BuildContext context) {
-    // 直接导航到路线搜索页面
+  /// 导航到导航页面
+  void _navigateToNavigation(BuildContext context) {
     Navigator.of(context).push(
       CupertinoPageRoute(
-        builder: (context) => const RouteSearchPage(),
+        builder: (context) => const NavigationScreen(),
       ),
     );
   }
@@ -75,7 +74,7 @@ class _MainLayoutState extends State<MainLayout> {
             onTap: (index) {
               // 如果点击的是中间的加号按钮
               if (index == 2) {
-                _navigateToTripPlanning(context);
+                _navigateToNavigation(context);
                 return;
               }
 
@@ -123,7 +122,7 @@ class _MainLayoutState extends State<MainLayout> {
           right: 0,
           child: Center(
             child: GestureDetector(
-              onTap: () => _navigateToTripPlanning(context),
+              onTap: () => _navigateToNavigation(context),
               child: Container(
                 width: 60,
                 height: 60,

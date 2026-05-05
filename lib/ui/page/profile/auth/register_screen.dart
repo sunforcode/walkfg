@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:walk/service/user_service.dart';
 import '../login_screen.dart';
 
 /// 注册屏幕
@@ -43,16 +45,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  /// 检查用户名格式（只能包含字母、数字和下划线）
+  bool _isValidUsername(String username) {
+    final regex = RegExp(r'^[a-zA-Z0-9_]+$');
+    return regex.hasMatch(username);
+  }
+
   /// 处理注册
-  void _handleRegister() {
+  Future<void> _handleRegister() async {
     final username = _usernameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
 
-    // 简单的表单验证
+    debugPrint('RegisterScreen: _handleRegister called');
+    debugPrint('RegisterScreen: username: $username');
+    debugPrint('RegisterScreen: email: $email');
+    debugPrint('RegisterScreen: password: ${password.isNotEmpty ? '***' : 'empty'}');
+
+    // 表单验证
     if (username.isEmpty) {
       _showErrorDialog('请输入用户名');
+      return;
+    }
+
+    // 用户名格式验证（重要：后端要求只能包含字母、数字和下划线）
+    if (username.length < 3) {
+      _showErrorDialog('用户名长度不能少于3个字符');
+      return;
+    }
+
+    if (username.length > 50) {
+      _showErrorDialog('用户名长度不能超过50个字符');
+      return;
+    }
+
+    if (!_isValidUsername(username)) {
+      _showErrorDialog('用户名只能包含字母、数字和下划线');
       return;
     }
 
@@ -61,8 +90,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    // 简单邮箱格式验证
+    if (!email.contains('@')) {
+      _showErrorDialog('邮箱格式不正确');
+      return;
+    }
+
     if (password.isEmpty) {
       _showErrorDialog('请输入密码');
+      return;
+    }
+
+    // 密码长度验证
+    if (password.length < 6) {
+      _showErrorDialog('密码长度不能少于6个字符');
       return;
     }
 
@@ -81,15 +122,50 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isRegistering = true;
     });
 
-    // 模拟注册过程
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isRegistering = false;
-      });
+    try {
+      debugPrint('RegisterScreen: Calling UserService.register...');
+      
+      // 调用实际的注册API（后端会自动登录并返回token）
+      final user = await UserService.register(
+        username: username,
+        password: password,
+        email: email,
+      );
+      
+      debugPrint('RegisterScreen: Registration successful, user: ${user.username}');
 
       // 注册成功，返回个人主页
-      Navigator.of(context).pop(true); // 返回true表示注册成功
-    });
+      if (mounted) {
+        setState(() {
+          _isRegistering = false;
+        });
+        Navigator.of(context).pop(true); // 返回true表示注册成功
+      }
+    } catch (e) {
+      debugPrint('RegisterScreen: Registration error: $e');
+      
+      if (mounted) {
+        setState(() {
+          _isRegistering = false;
+        });
+        
+        // 显示错误信息
+        String errorMessage = '注册失败';
+        if (e.toString().contains('用户名已存在') || e.toString().contains('username')) {
+          errorMessage = '用户名已存在';
+        } else if (e.toString().contains('邮箱已被注册') || e.toString().contains('email')) {
+          errorMessage = '该邮箱已被注册';
+        } else if (e.toString().contains('409') || e.toString().contains('Conflict')) {
+          errorMessage = '用户名或邮箱已存在';
+        } else if (e.toString().contains('404')) {
+          errorMessage = '服务器连接失败';
+        } else if (e.toString().contains('SocketException') || e.toString().contains('Connection')) {
+          errorMessage = '网络连接失败，请检查网络';
+        }
+        
+        _showErrorDialog(errorMessage);
+      }
+    }
   }
 
   /// 显示错误对话框

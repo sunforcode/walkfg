@@ -18,42 +18,39 @@ class SeasonalEquipmentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final equipmentData = _getSeasonalEquipment();
     
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题
-          Row(
-            children: [
-              Icon(
-                CupertinoIcons.bag,
-                size: 20,
-                color: CupertinoColors.systemOrange,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 标题
+        Row(
+          children: [
+            Icon(
+              CupertinoIcons.bag,
+              size: 20,
+              color: CupertinoColors.systemOrange,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '$currentSeason装备推荐',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: CupertinoColors.label,
               ),
-              const SizedBox(width: 8),
-              Text(
-                '$currentSeason装备推荐',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: CupertinoColors.label,
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // 装备分类
-          ...equipmentData.entries.map((entry) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildEquipmentCategory(entry.key, entry.value),
-            );
-          }).toList(),
-        ],
-      ),
+            ),
+          ],
+        ),
+        
+        const SizedBox(height: 16),
+        
+        // 装备分类
+        ...equipmentData.entries.map((entry) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _buildEquipmentCategory(entry.key, entry.value),
+          );
+        }).toList(),
+      ],
     );
   }
 

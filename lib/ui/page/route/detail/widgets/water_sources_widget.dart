@@ -14,61 +14,58 @@ class WaterSourcesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (waterSources.isEmpty) return const SizedBox.shrink();
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题行
-          Row(
-            children: [
-              const Icon(
-                CupertinoIcons.drop,
-                size: 16,
-                color: CupertinoColors.systemBlue,
-              ),
-              const SizedBox(width: 6),
-              const Text(
-                '水源点',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: CupertinoColors.label,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.systemBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  '${waterSources.length}个',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: CupertinoColors.systemBlue,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // 横向列表
-          SizedBox(
-            height: 150,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.zero,
-              itemCount: waterSources.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
-              itemBuilder: (context, index) => _buildCard(waterSources[index]),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 标题行
+        Row(
+          children: [
+            const Icon(
+              CupertinoIcons.drop,
+              size: 16,
+              color: CupertinoColors.systemBlue,
             ),
+            const SizedBox(width: 6),
+            const Text(
+              '水源点',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: CupertinoColors.label,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: CupertinoColors.systemBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '${waterSources.length}个',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: CupertinoColors.systemBlue,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // 横向列表
+        SizedBox(
+          height: 150,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.zero,
+            itemCount: waterSources.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            itemBuilder: (context, index) => _buildCard(waterSources[index]),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

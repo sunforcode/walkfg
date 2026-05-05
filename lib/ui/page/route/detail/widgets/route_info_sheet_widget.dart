@@ -98,7 +98,7 @@ class RouteInfoSheetWidgetState extends State<RouteInfoSheetWidget> {
 
                 // 内容卡片列表
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 40),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => _buildSectionCard(index),
@@ -114,11 +114,26 @@ class RouteInfoSheetWidgetState extends State<RouteInfoSheetWidget> {
   }
 
 
+  /// 检测 widget 是否是空的（如 SizedBox.shrink()）
+  bool _isEmptyWidget(Widget widget) {
+    if (widget is SizedBox) {
+      return widget.width == 0.0 && widget.height == 0.0;
+    }
+    return false;
+  }
+
   /// 构建单个 section 卡片
   Widget _buildSectionCard(int index) {
+    final sectionWidget = widget.sections[index];
+    final isFirstCard = index == 0;
+    
+    if (!isFirstCard && _isEmptyWidget(sectionWidget)) {
+      return const SizedBox.shrink();
+    }
+    
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(16),
@@ -132,7 +147,12 @@ class RouteInfoSheetWidgetState extends State<RouteInfoSheetWidget> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: widget.sections[index],
+        child: isFirstCard
+            ? sectionWidget
+            : Padding(
+                padding: const EdgeInsets.all(16),
+                child: sectionWidget,
+              ),
       ),
     );
   }

@@ -13,16 +13,12 @@ class RouteDiscoveryConstants {
   /// 默认过滤器
   static const String defaultFilter = '全部';
 
-  /// 过滤器列表
+  /// 过滤器列表（仅保留与徒步相关的类别）
   static const List<String> filters = [
     '全部',
-    '徒步',
-    '骑行',
-    '露营',
-    '攀岩',
-    '城市',
-    '山地',
-    '海滨',
+    '山地徒步',
+    '城市徒步',
+    '海滨徒步',
   ];
 
   // ==================== 动画配置 ====================

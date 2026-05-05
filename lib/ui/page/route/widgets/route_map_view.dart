@@ -1,24 +1,32 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/model/map/marker_point_model.dart';
+import 'package:walk/model/map/track_point_model.dart';
+import 'package:walk/ui/map/map_widget.dart';
 
 /// 路线地图视图组件
 ///
 /// 显示地图、搜索栏、快捷操作按钮等功能
+/// 用于路线发现页面，展示多条路线的概览
 class RouteMapView extends StatelessWidget {
-  /// 是否展开状态
   final bool isExpanded;
-
-  /// 高度动画
   final Animation<double> animation;
-
-  /// 展开/收起回调
   final VoidCallback onToggle;
+  final List<MapRouteMarker> routeMarkers;
+  final VoidCallback? onSearchTap;
+  final VoidCallback? onLocationTap;
+  final double collapsedHeight;
+  final double expandedHeight;
 
-  /// 构造函数
   const RouteMapView({
     super.key,
     required this.isExpanded,
     required this.animation,
     required this.onToggle,
+    this.routeMarkers = const [],
+    this.onSearchTap,
+    this.onLocationTap,
+    this.collapsedHeight = 200.0,
+    this.expandedHeight = 400.0,
   });
 
   @override
@@ -29,7 +37,7 @@ class RouteMapView extends StatelessWidget {
         return Column(
           children: [
             Container(
-              height: isExpanded ? animation.value : 200,
+              height: animation.value,
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               decoration: BoxDecoration(
                 color: CupertinoColors.white,
@@ -45,25 +53,13 @@ class RouteMapView extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  // 地图占位符
-                  _buildMapPlaceholder(),
-
-                  // 地图标记点
-                  ..._buildMapMarkers(),
-
-                  // 搜索栏
+                  _buildMap(),
                   _buildSearchBar(),
-
-                  // 展开/收起按钮
                   _buildToggleButton(),
-
-                  // 定位按钮
                   _buildLocationButton(),
                 ],
               ),
             ),
-
-            // 快捷操作栏
             _buildQuickActions(),
           ],
         );
@@ -71,122 +67,68 @@ class RouteMapView extends StatelessWidget {
     );
   }
 
-  /// 构建地图占位符
-  Widget _buildMapPlaceholder() {
+  Widget _buildMap() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Container(
-        color: const Color(0xFFE5E5EA),
-        child: Center(
-          child: Icon(
-            CupertinoIcons.map,
-            size: 48,
-            color: CupertinoColors.systemGrey.withOpacity(0.5),
-          ),
+      child: MapWidget(
+        trackPoints: const [],
+        markers: routeMarkers.map((m) => m.toMarkerPointModel()).toList(),
+        config: MapWidgetConfig(
+          height: double.infinity,
+          enabledFeatures: {
+            MapFeature.track,
+            MapFeature.poiMarkers,
+          },
         ),
       ),
     );
   }
 
-  /// 构建地图标记点
-  List<Widget> _buildMapMarkers() {
-    return [
-      Positioned(
-        top: 60,
-        left: 100,
-        child: _buildMapMarker('黄山徒步', CupertinoColors.activeOrange),
-      ),
-      Positioned(
-        top: 120,
-        left: 180,
-        child: _buildMapMarker('莫干山骑行', CupertinoColors.activeBlue),
-      ),
-      Positioned(
-        top: 80,
-        right: 70,
-        child: _buildMapMarker('千岛湖环湖', CupertinoColors.activeGreen),
-      ),
-    ];
-  }
-
-  /// 构建地图标记
-  Widget _buildMapMarker(String label, Color color) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: CupertinoColors.white,
-            shape: BoxShape.circle,
-            border: Border.all(color: color, width: 2),
-          ),
-        ),
-        const SizedBox(height: 2),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: CupertinoColors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// 构建搜索栏
   Widget _buildSearchBar() {
     return Positioned(
       top: 10,
       left: 10,
       right: 10,
-      child: Container(
-        height: 36,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          color: CupertinoColors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.systemGrey4.withOpacity(0.3),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(
-              CupertinoIcons.search,
-              color: CupertinoColors.systemGrey,
-              size: 16,
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: Text(
-                '搜索路线、地点或关键词',
-                style: TextStyle(
-                  color: CupertinoColors.systemGrey,
-                  fontSize: 14,
+      child: GestureDetector(
+        onTap: onSearchTap,
+        child: Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: CupertinoColors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                CupertinoIcons.search,
+                color: CupertinoColors.systemGrey,
+                size: 16,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  '搜索路线、地点或关键词',
+                  style: TextStyle(
+                    color: CupertinoColors.systemGrey,
+                    fontSize: 14,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  /// 构建展开/收起按钮
   Widget _buildToggleButton() {
     return Positioned(
       bottom: 10,
@@ -219,35 +161,36 @@ class RouteMapView extends StatelessWidget {
     );
   }
 
-  /// 构建定位按钮
   Widget _buildLocationButton() {
     return Positioned(
       bottom: 10,
       left: 10,
-      child: Container(
-        width: 30,
-        height: 30,
-        decoration: BoxDecoration(
-          color: CupertinoColors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.systemGrey4.withOpacity(0.3),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Icon(
-          CupertinoIcons.location,
-          color: CupertinoColors.activeBlue,
-          size: 16,
+      child: GestureDetector(
+        onTap: onLocationTap,
+        child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: CupertinoColors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: const Icon(
+            CupertinoIcons.location,
+            color: CupertinoColors.activeBlue,
+            size: 16,
+          ),
         ),
       ),
     );
   }
 
-  /// 构建快捷操作栏
   Widget _buildQuickActions() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -258,40 +201,31 @@ class RouteMapView extends StatelessWidget {
             icon: CupertinoIcons.location_circle,
             label: '附近路线',
             color: CupertinoColors.activeBlue,
-            onTap: () {
-              // 查看附近路线
-            },
+            onTap: () {},
           ),
           _buildQuickActionButton(
             icon: CupertinoIcons.star,
             label: '精选路线',
             color: CupertinoColors.activeOrange,
-            onTap: () {
-              // 查看精选路线
-            },
+            onTap: () {},
           ),
           _buildQuickActionButton(
             icon: CupertinoIcons.heart,
             label: '收藏路线',
             color: CupertinoColors.systemRed,
-            onTap: () {
-              // 查看收藏路线
-            },
+            onTap: () {},
           ),
           _buildQuickActionButton(
             icon: CupertinoIcons.clock,
             label: '历史记录',
             color: CupertinoColors.systemGrey,
-            onTap: () {
-              // 查看历史记录
-            },
+            onTap: () {},
           ),
         ],
       ),
     );
   }
 
-  /// 构建快捷操作按钮
   Widget _buildQuickActionButton({
     required IconData icon,
     required String label,
@@ -335,5 +269,50 @@ class RouteMapView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class MapRouteMarker {
+  final String id;
+  final String name;
+  final double latitude;
+  final double longitude;
+  final Color color;
+  final String? type;
+
+  const MapRouteMarker({
+    required this.id,
+    required this.name,
+    required this.latitude,
+    required this.longitude,
+    this.color = CupertinoColors.activeBlue,
+    this.type,
+  });
+
+  MarkerPointModel toMarkerPointModel() {
+    return MarkerPointModel(
+      id: id,
+      latitude: latitude,
+      longitude: longitude,
+      elevation: 0,
+      name: name,
+      markerType: _mapType(type),
+      color: _colorToHex(color),
+    );
+  }
+
+  MarkerPointType _mapType(String? type) {
+    switch (type) {
+      case 'hiking':
+        return MarkerPointType.landmark;
+      case 'cycling':
+        return MarkerPointType.poi;
+      default:
+        return MarkerPointType.poi;
+    }
+  }
+
+  String _colorToHex(Color color) {
+    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
   }
 }

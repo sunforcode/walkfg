@@ -21,64 +21,58 @@ class RelatedRoutesWidget extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      margin: const EdgeInsets.only(top: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Icon(
-                  CupertinoIcons.map_pin_ellipse,
-                  size: 18,
-                  color: CupertinoColors.systemGrey,
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  '相关路线',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: CupertinoColors.label,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '${relatedRoutes.length}条',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: CupertinoColors.systemGrey,
-                  ),
-                ),
-              ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 标题
+        Row(
+          children: [
+            Icon(
+              CupertinoIcons.map_pin_ellipse,
+              size: 18,
+              color: CupertinoColors.systemGrey,
             ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // 横滑路线列表
-          SizedBox(
-            height: 146,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: relatedRoutes.length,
-              itemBuilder: (context, index) {
-                final route = relatedRoutes[index];
-                return Padding(
-                  padding: EdgeInsets.only(
-                    right: index < relatedRoutes.length - 1 ? 12 : 0,
-                  ),
-                  child: _buildRouteCard(route),
-                );
-              },
+            const SizedBox(width: 8),
+            const Text(
+              '相关路线',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.label,
+              ),
             ),
+            const Spacer(),
+            Text(
+              '${relatedRoutes.length}条',
+              style: const TextStyle(
+                fontSize: 12,
+                color: CupertinoColors.systemGrey,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        // 横滑路线列表
+        SizedBox(
+          height: 146,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.zero,
+            itemCount: relatedRoutes.length,
+            itemBuilder: (context, index) {
+              final route = relatedRoutes[index];
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: index < relatedRoutes.length - 1 ? 12 : 0,
+                ),
+                child: _buildRouteCard(route),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

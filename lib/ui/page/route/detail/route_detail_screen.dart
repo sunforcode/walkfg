@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/model/map/map_data_model.dart';
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/route/route_model.dart';
+import 'package:walk/model/route/segment_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
+import 'package:walk/service/kml_cache_service.dart';
 import 'package:walk/service/route_service.dart';
-import 'package:walk/ui/map/components/enhanced_daily_map_widget.dart';
+import 'package:walk/ui/map/map_widget.dart';
 import 'package:walk/ui/map/utils/kml_business_parser.dart';
 import 'package:walk/ui/page/common/error_view.dart';
 import 'package:walk/ui/page/common/loading_view.dart';
@@ -54,6 +57,12 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   /// 轨迹点数据
   List<TrackPointVO> _kmlTrackPoints = [];
 
+  /// 完整的地图数据模型（包含segments）
+  MapDataModel? _mapData;
+
+  /// 当前选中的分段ID
+  String? _selectedSegmentId;
+
   /// 相关路线列表
   List<RouteModel> _relatedRoutes = [];
 
@@ -103,39 +112,44 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   }
 
   /// 从路线数据或KML文件加载轨迹数据
+  ///
+  /// 注意：API 返回的 trackpoints 暂时不处理，优先使用 KML 数据
   void _loadKmlData(RouteModel route) async {
     try {
       print('开始加载轨迹数据...');
-      
-      // 优先使用 API 提供的轨迹点数据
-      if (route.trackPoints.isNotEmpty) {
-        print('使用 API 返回的轨迹点: ${route.trackPoints.length} 个');
-        setState(() {
-          _kmlTrackPoints = route.trackPoints;
-        });
-        return;
-      }
-      
-      // 其次使用 KML URL
+
+      // 1. 使用 KmlCacheService 从缓存或网络获取 KML（自动处理缓存逻辑）
+      // 注意：API 返回的 trackpoints 暂时不处理
       if (route.kmlUrl != null && route.kmlUrl!.isNotEmpty) {
-        print('开始下载KML文件: ${route.kmlUrl}');
-        final mapData = await KmlBusinessParser.parseFromPath(route.kmlUrl!);
-        print('KML数据加载成功: 轨迹点${mapData.trackPoints.length}个');
-        
-        setState(() {
-          _kmlTrackPoints = mapData.trackPoints;
-        });
-        return;
+        try {
+          print('通过 KmlCacheService 加载 KML 数据, kmlUrl: ${route.kmlUrl}');
+          // 获取 MapDataModel（内部会缓存 KML 原始字符串）
+          final mapData = await KmlCacheService.instance.getMapData(
+            route.kmlUrl!,
+            routeId: route.id,
+          );
+          print('KML数据加载成功: 轨迹点${mapData.trackPoints.length}个, 路标点${mapData.waypoints.length}个, 分段${mapData.segments.length}个');
+
+          setState(() {
+            _mapData = mapData;
+            _kmlTrackPoints = mapData.trackPoints;
+          });
+          return;
+        } catch (e) {
+          // 网络下载失败，继续回退到本地 assets
+          print('KML缓存/网络加载失败: $e，将尝试回退到本地 assets');
+        }
       }
-      
-      // 最后使用本地 assets KML 文件作为备用
-      print('使用本地 assets KML 文件');
+
+      // 2. 最后使用本地 assets KML 文件作为最终回退
+      print('使用本地 assets KML 文件（最终回退）');
       final mapData =
           await KmlBusinessParser.parseFromPath('assets/maps/wutai.kml');
       print(
-          'KML数据加载成功: 轨迹点${mapData.trackPoints.length}个, 路标点${mapData.waypoints.length}个');
+          'KML数据加载成功: 轨迹点${mapData.trackPoints.length}个, 路标点${mapData.waypoints.length}个, 分段${mapData.segments.length}个');
 
       setState(() {
+        _mapData = mapData;
         _kmlTrackPoints = mapData.trackPoints;
       });
     } catch (e) {
@@ -208,6 +222,95 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   /// 处理日程点击
   void _handleDayTap(int dayIndex) {
     print('点击第${dayIndex + 1}天');
+  }
+
+  /// 处理分段点击
+  void _handleSegmentTap(SegmentModel segment) {
+    print('点击分段: ${segment.name}');
+    setState(() {
+      // 如果点击的是当前选中的分段，则取消选中
+      if (_selectedSegmentId == segment.id) {
+        _selectedSegmentId = null;
+      } else {
+        _selectedSegmentId = segment.id;
+      }
+    });
+  }
+
+  /// 获取测试分段数据（用于开发/测试，当API返回数据为空时使用）
+  ///
+  /// 基于KML时间分布分析：
+  /// - 轨迹点总数：6954个
+  /// - 时间范围：2025-03-18 到 2025-03-21（约3天）
+  List<SegmentModel> _getTestSegments() {
+    return [
+      SegmentModel(
+        id: '1',
+        name: '第一天',
+        sequenceNumber: 1,
+        trackStartIndex: 0,
+        trackEndIndex: 3476,
+        color: '#FF5722',
+        distance: 36.0,
+        elevationGain: 2500,
+        elevationLoss: 2000,
+      ),
+      SegmentModel(
+        id: '2',
+        name: '第二天',
+        sequenceNumber: 2,
+        trackStartIndex: 3477,
+        trackEndIndex: 6953,
+        color: '#2196F3',
+        distance: 37.22,
+        elevationGain: 2000,
+        elevationLoss: 2500,
+      ),
+    ];
+  }
+
+  /// 获取分段数据（优先使用API返回的，其次使用测试数据）
+  List<SegmentModel> _getSegments(RouteModel route) {
+    // 优先使用 route.segments（从API返回的），这是方案B的正确方式
+    if (route.segments?.isNotEmpty ?? false) {
+      return route.segments!;
+    }
+
+    // 其次使用 KML 解析的 segments
+    if (_mapData?.segments.isNotEmpty ?? false) {
+      return _mapData!.segments;
+    }
+
+    // 最后使用测试数据（用于开发/测试）
+    return _getTestSegments();
+  }
+
+  /// 构建分段Widget
+  Widget _buildSegmentsWidget(RouteModel route) {
+    // 优先使用 route.segments（从API返回的），这是方案B的正确方式
+    final segments = _getSegments(route);
+
+    if (segments.isEmpty) return const SizedBox.shrink();
+
+    // 为每个分段添加选中状态
+    final segmentsWithSelection = segments.map((s) {
+      return s.copyWith(isSelected: _selectedSegmentId == s.id);
+    }).toList();
+
+    return GestureDetector(
+      onTap: () {
+        // 点击空白区域取消选中
+        if (_selectedSegmentId != null) {
+          setState(() {
+            _selectedSegmentId = null;
+          });
+        }
+      },
+      child: RouteSegmentsWidget(
+        segments: segmentsWithSelection,
+        onSegmentTap: _handleSegmentTap,
+      ),
+    );
   }
 
   /// 处理图片点击
@@ -295,26 +398,28 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                       // Section 2: 路线概览
                       RouteOverviewWidget(route: route),
                       // Section 3: 每日行程
-                      DailyItineraryListWidget(
-                        dailyPlans: route.dailyPlans ?? [],
-                        onDayTap: _handleDayTap,
-                      ),
+                      if (route.dailyPlans?.isNotEmpty ?? false)
+                        DailyItineraryListWidget(
+                          dailyPlans: route.dailyPlans ?? [],
+                          onDayTap: _handleDayTap,
+                        ),
                       // Section 4: 营地
-                      CampsitesWidget(
-                        campsites: route.campsites ?? [],
-                      ),
+                      if (route.campsites?.isNotEmpty ?? false)
+                        CampsitesWidget(
+                          campsites: route.campsites ?? [],
+                        ),
                       // Section 5: 水源
-                      WaterSourcesWidget(
-                        waterSources: route.waterSources ?? [],
-                      ),
+                      if (route.waterSources?.isNotEmpty ?? false)
+                        WaterSourcesWidget(
+                          waterSources: route.waterSources ?? [],
+                        ),
                       // Section 6: 补给点
-                      SupplyPointsWidget(
-                        supplyPoints: route.supplyPoints ?? [],
-                      ),
+                      if (route.supplyPoints?.isNotEmpty ?? false)
+                        SupplyPointsWidget(
+                          supplyPoints: route.supplyPoints ?? [],
+                        ),
                       // Section 7: 路线分段
-                      RouteSegmentsWidget(
-                        segments: route.segments ?? [],
-                      ),
+                      _buildSegmentsWidget(route),
                       // Section 8: 装备建议
                       if (currentTrack != null)
                         SeasonalEquipmentWidget(
@@ -322,25 +427,29 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                           difficulty: route.difficulty.name,
                         ),
                       // Section 9: 搭车联系
-                      HitchhikeContactsWidget(
-                        contacts: route.hitchhikeContacts ?? [],
-                      ),
+                      if (route.hitchhikeContacts?.isNotEmpty ?? false)
+                        HitchhikeContactsWidget(
+                          contacts: route.hitchhikeContacts ?? [],
+                        ),
                       // Section 10: 相关路线
-                      RelatedRoutesWidget(
-                        relatedRoutes: _relatedRoutes,
-                        onRouteTap: _handleRelatedRouteTap,
-                      ),
+                      if (_relatedRoutes.isNotEmpty)
+                        RelatedRoutesWidget(
+                          relatedRoutes: _relatedRoutes,
+                          onRouteTap: _handleRelatedRouteTap,
+                        ),
                       // Section 11: 相关行程
-                      RelatedTripsWidget(
-                        routeId: route.id,
-                        relatedTrips: _relatedTrips,
-                        onTripTap: _handleRelatedTripTap,
-                      ),
+                      if (_relatedTrips.isNotEmpty)
+                        RelatedTripsWidget(
+                          routeId: route.id,
+                          relatedTrips: _relatedTrips,
+                          onTripTap: _handleRelatedTripTap,
+                        ),
                       // Section 12: 图片库
-                      RouteGalleryWidget(
-                        imageUrls: route.imageUrls ?? [],
-                        onImageTap: _handleImageTap,
-                      ),
+                      if (route.imageUrls?.isNotEmpty ?? false)
+                        RouteGalleryWidget(
+                          imageUrls: route.imageUrls ?? [],
+                          onImageTap: _handleImageTap,
+                        ),
                       // Section 13: 操作按钮
                       RouteActionButtons(
                         route: route,
@@ -472,11 +581,30 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   /// 构建2D地图
   Widget _build2DMap(RouteModel route, [double? height]) {
-    return EnhancedDailyMapWidget(
+    // 优先使用 route.segments（从API返回的），这是方案B的正确方式
+    final segments = _getSegments(route);
+
+    return MapWidget(
       trackPoints: _kmlTrackPoints,
       markers: route.markerPoints ?? [],
-      days: route.dailyPlans?.length ?? 1,
-      height: height ?? 400,
+      days: route.dailyPlans?.length,
+      segments: segments,
+      selectedSegmentId: _selectedSegmentId,
+      config: MapWidgetConfig(
+        height: height ?? double.infinity,
+        enabledFeatures: {
+          MapFeature.track,
+          MapFeature.startEndMarkers,
+          MapFeature.poiMarkers,
+          MapFeature.elevationChart,
+          MapFeature.mapControls,
+          MapFeature.routeInfo,
+        },
+      ),
+      routeName: route.name,
+      routeDistance: route.distance,
+      routeElevationGain: route.elevationGain,
+      routeDifficulty: route.difficulty.getName(),
     );
   }
 

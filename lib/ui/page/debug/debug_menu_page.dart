@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import '../../map/examples/opensource_map_test_page.dart';
 
 /// 调试菜单页面
 class DebugMenuPage extends StatelessWidget {
@@ -16,7 +15,6 @@ class DebugMenuPage extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // 地图测试区域
             _buildSection(
               context,
               '地图测试',
@@ -24,23 +22,19 @@ class DebugMenuPage extends StatelessWidget {
                 _buildDebugItem(
                   context,
                   icon: CupertinoIcons.map_fill,
-                  title: '开源3D地图测试',
-                  subtitle: '测试基于MapLibre GL的开源3D地图功能',
+                  title: '地图组件测试',
+                  subtitle: '测试基于FlutterMap的统一地图组件',
                   onTap: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => const OpenSourceMapTestPage(),
-                      ),
-                    );
+                    _showToast(context, '地图组件测试功能开发中...');
                   },
                 ),
                 _buildDebugItem(
                   context,
-                  icon: CupertinoIcons.cube_box,
-                  title: '3D地图组件测试',
-                  subtitle: '测试3D地图组件的各种配置和功能',
+                  icon: CupertinoIcons.layers_alt,
+                  title: '图层配置测试',
+                  subtitle: '测试不同地图类型和图层配置',
                   onTap: () {
-                    _showToast(context, '3D地图组件测试功能开发中...');
+                    _showToast(context, '图层配置测试功能开发中...');
                   },
                 ),
               ],
@@ -48,7 +42,6 @@ class DebugMenuPage extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // 数据源信息
             _buildSection(
               context,
               '数据源信息',
@@ -56,28 +49,27 @@ class DebugMenuPage extends StatelessWidget {
                 _buildInfoItem('标准地图', 'OpenStreetMap (开源)'),
                 _buildInfoItem('卫星图像', 'Esri World Imagery (免费)'),
                 _buildInfoItem('地形数据', 'Wikimedia Labs (开源)'),
-                _buildInfoItem('3D引擎', 'MapLibre GL (开源)'),
+                _buildInfoItem('地图引擎', 'FlutterMap (开源)'),
               ],
             ),
 
             const SizedBox(height: 24),
 
-            // 功能状态
             _buildSection(
               context,
               '功能状态',
               [
-                _buildStatusItem('3D地图渲染', true),
+                _buildStatusItem('地图渲染', true),
                 _buildStatusItem('轨迹显示', true),
-                _buildStatusItem('地形效果', true),
-                _buildStatusItem('3D建筑', false, note: '需要数据支持'),
+                _buildStatusItem('标记点显示', true),
+                _buildStatusItem('多日行程', true),
+                _buildStatusItem('海拔图表', true),
                 _buildStatusItem('交互控制', true),
               ],
             ),
 
             const SizedBox(height: 24),
 
-            // 快速操作
             _buildSection(
               context,
               '快速操作',
@@ -128,7 +120,6 @@ class DebugMenuPage extends StatelessWidget {
     );
   }
 
-  /// 构建区域
   Widget _buildSection(
       BuildContext context, String title, List<Widget> children) {
     return Column(
@@ -165,7 +156,6 @@ class DebugMenuPage extends StatelessWidget {
     );
   }
 
-  /// 构建调试项目
   Widget _buildDebugItem(
     BuildContext context, {
     required IconData icon,
@@ -236,7 +226,6 @@ class DebugMenuPage extends StatelessWidget {
     );
   }
 
-  /// 构建信息项目
   Widget _buildInfoItem(String label, String value) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -271,7 +260,6 @@ class DebugMenuPage extends StatelessWidget {
     );
   }
 
-  /// 构建状态项目
   Widget _buildStatusItem(String label, bool isEnabled, {String? note}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -324,7 +312,6 @@ class DebugMenuPage extends StatelessWidget {
     );
   }
 
-  /// 构建操作按钮
   Widget _buildActionButton(
     BuildContext context,
     String title,
@@ -367,7 +354,6 @@ class DebugMenuPage extends StatelessWidget {
     );
   }
 
-  /// 显示提示
   void _showToast(BuildContext context, String message) {
     showCupertinoDialog(
       context: context,
@@ -383,7 +369,6 @@ class DebugMenuPage extends StatelessWidget {
     );
   }
 
-  /// 显示确认对话框
   void _showConfirmDialog(
     BuildContext context,
     String title,

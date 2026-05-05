@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:walk/model/map/map_bounds.dart';
 import 'package:walk/model/map/map_data_model.dart';
 import 'package:walk/model/map/map_statistics.dart';
 import 'package:walk/model/map/track_point_model.dart';
+import 'package:walk/model/route/segment_model.dart';
 import 'kml_models.dart';
 
 /// KML到MapDataModel的转换器
@@ -23,6 +25,9 @@ class KmlToMapConverter {
     if (trackPoints.isEmpty) {
       throw Exception('未找到有效的轨迹点');
     }
+
+    // 解析分段数据
+    final List<SegmentModel> segments = _parseSegments(kmlDocument);
 
     // 计算边界和统计信息
     final bounds = _calculateBounds(trackPoints);
@@ -53,10 +58,63 @@ class KmlToMapConverter {
       startPoint: trackPoints.first,
       endPoint: trackPoints.last,
       pointCount: trackPoints.length,
-      segmentCount: 1,
+      segmentCount: segments.isNotEmpty ? segments.length : 1,
+      segments: segments,
       recordedAt: DateTime.now(),
       processingStatus: 'completed',
     );
+  }
+
+  /// 从KML文档解析分段数据
+  static List<SegmentModel> _parseSegments(KmlDocument kmlDocument) {
+    final segments = <SegmentModel>[];
+
+    // 从ExtendedData中获取segments
+    final segmentsJson = kmlDocument.extendedData['segments'];
+    if (segmentsJson == null || segmentsJson.isEmpty) {
+      return segments;
+    }
+
+    try {
+      final List<dynamic> parsedList = json.decode(segmentsJson);
+      for (final item in parsedList) {
+        if (item is Map<String, dynamic>) {
+          // 将id转换为字符串（KML中的id可能是数字）
+          final id = item['id']?.toString() ?? 'segment_${segments.length + 1}';
+          final name = item['name'] ?? '分段 ${segments.length + 1}';
+          final sequenceNumber = item['sequence_number'] ?? segments.length + 1;
+          final trackStartIndex = item['track_start_index'] as int?;
+          final trackEndIndex = item['track_end_index'] as int?;
+          final color = item['color'] as String?;
+          final distance = item['distance'] as double?;
+          final elevationGain = item['elevation_gain'] as double?;
+          final elevationLoss = item['elevation_loss'] as double?;
+          final difficulty = item['difficulty'] as int?;
+
+          segments.add(SegmentModel(
+            id: id,
+            name: name,
+            sequenceNumber: sequenceNumber,
+            trackStartIndex: trackStartIndex,
+            trackEndIndex: trackEndIndex,
+            color: color,
+            distance: distance,
+            elevationGain: elevationGain,
+            elevationLoss: elevationLoss,
+            difficulty: difficulty,
+          ));
+        }
+      }
+
+      // 按sequenceNumber排序
+      segments.sort((a, b) => a.sequenceNumber.compareTo(b.sequenceNumber));
+
+      print('KmlToMapConverter: 解析到 ${segments.length} 个分段');
+    } catch (e) {
+      print('KmlToMapConverter: 解析分段数据失败: $e');
+    }
+
+    return segments;
   }
 
   /// 从KML文档提取轨迹数据

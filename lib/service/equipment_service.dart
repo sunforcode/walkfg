@@ -7,25 +7,54 @@ import 'package:walk/model/equipment/equipment_template_model.dart';
 import 'package:walk/model/equipment/user_equipment_inventory_model.dart';
 import '../model/equipment/equipment_list_model.dart';
 import '../model/equipment/equipment_item_model.dart';
+import '../core/network/api_client.dart';
+import '../core/network/api_endpoints.dart';
+import './equipment/equipment_api_service.dart';
 
-/// 装备服务
-///
-/// 使用静态方法，无需实例化
-/// 当前使用本地 JSON 数据，后续可改为 API 请求
+enum DataSourceMode {
+  auto,
+  mock,
+  api,
+}
+
+class EquipmentServiceConfig {
+  static DataSourceMode _mode = DataSourceMode.auto;
+  static bool _apiAvailable = true;
+  
+  static DataSourceMode get mode => _mode;
+  static bool get isAutoMode => _mode == DataSourceMode.auto;
+  static bool get apiAvailable => _apiAvailable;
+  
+  static void setMode(DataSourceMode mode) {
+    _mode = mode;
+  }
+  
+  static void setApiAvailable(bool available) {
+    _apiAvailable = available;
+  }
+  
+  static bool shouldUseApi() {
+    switch (_mode) {
+      case DataSourceMode.api:
+        return true;
+      case DataSourceMode.mock:
+        return false;
+      case DataSourceMode.auto:
+      default:
+        return _apiAvailable;
+    }
+  }
+}
+
 class EquipmentService {
-  // 禁止实例化
   EquipmentService._();
 
-  /// 装备清单缓存
+  static final EquipmentApiService _apiService = EquipmentApiService();
+
   static List<EquipmentListModel>? _equipmentListsCache;
-
-  /// 装备模板缓存
   static List<EquipmentTemplateModel>? _equipmentTemplatesCache;
-
-  /// 用户装备库缓存
   static final Map<String, UserEquipmentInventoryModel> _userEquipmentInventoryCache = {};
 
-  /// 从JSON文件加载数据
   static Future<dynamic> _loadJsonData(String path) async {
     try {
       final String jsonString = await rootBundle.loadString(path);
@@ -36,16 +65,34 @@ class EquipmentService {
     }
   }
 
-  /// 获取装备清单列表
-  static Future<List<EquipmentListModel>> getEquipmentLists() async {
-    // 模拟网络延迟
+  static Future<T> _tryApiOrFallback<T>(
+    Future<T> Function() apiCall,
+    Future<T> Function() fallbackCall, {
+    String? operationName,
+  }) async {
+    if (!EquipmentServiceConfig.shouldUseApi()) {
+      return fallbackCall();
+    }
+
+    try {
+      return await apiCall();
+    } catch (e) {
+      print('API调用失败 [$operationName]: $e，回退到模拟数据');
+      
+      if (EquipmentServiceConfig.isAutoMode) {
+        EquipmentServiceConfig.setApiAvailable(false);
+      }
+      
+      return fallbackCall();
+    }
+  }
+
+  static Future<List<EquipmentListModel>> _getEquipmentListsFromMock() async {
     await Future.delayed(const Duration(milliseconds: 400));
 
-    // 如果有缓存，直接返回
     if (_equipmentListsCache != null) {
       return _equipmentListsCache!;
     }
-    // 如果新路径加载失败，尝试旧路径
     final equipmentListsJson =
         await _loadJsonData('assets/mock_data/equipment_lists.json');
     _equipmentListsCache = equipmentListsJson
@@ -54,144 +101,156 @@ class EquipmentService {
     return _equipmentListsCache!;
   }
 
-  /// 根据ID获取装备清单
-  static Future<EquipmentListModel> getEquipmentListById(String id) async {
-    // 模拟网络延迟
+  static Future<List<EquipmentListModel>> getEquipmentLists() async {
+    return _tryApiOrFallback(
+      () async {
+        final lists = await _apiService.getEquipmentLists(page: 0, size: 100);
+        _equipmentListsCache = lists;
+        return lists;
+      },
+      _getEquipmentListsFromMock,
+      operationName: 'getEquipmentLists',
+    );
+  }
+
+  static Future<EquipmentListModel> _getEquipmentListByIdFromMock(String id) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 确保缓存已加载
-    final lists = await getEquipmentLists();
-
-    // 查找指定ID的装备清单
+    final lists = await _getEquipmentListsFromMock();
     final equipmentList = lists.firstWhere(
       (list) => list.id == id,
       orElse: () => throw Exception('装备清单不存在: $id'),
     );
-
     return equipmentList;
   }
 
-  /// 获取推荐装备清单
+  static Future<EquipmentListModel> getEquipmentListById(String id) async {
+    return _tryApiOrFallback(
+      () => _apiService.getEquipmentListById(id),
+      () => _getEquipmentListByIdFromMock(id),
+      operationName: 'getEquipmentListById',
+    );
+  }
+
   static Future<List<EquipmentListModel>> getRecommendedEquipmentLists(
       {int limit = 10}) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        final lists = await _apiService.getEquipmentLists(page: 0, size: limit);
+        final recommendedLists = List<EquipmentListModel>.from(lists)..shuffle();
+        return recommendedLists.length > limit
+            ? recommendedLists.sublist(0, limit)
+            : recommendedLists;
+      },
+      () => _getRecommendedEquipmentListsFromMock(limit: limit),
+      operationName: 'getRecommendedEquipmentLists',
+    );
+  }
+
+  static Future<List<EquipmentListModel>> _getRecommendedEquipmentListsFromMock(
+      {int limit = 10}) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 确保缓存已加载
-    final lists = await getEquipmentLists();
-
-    // 随机排序，模拟推荐算法
+    final lists = await _getEquipmentListsFromMock();
     final recommendedLists = List<EquipmentListModel>.from(lists)..shuffle();
-
-    // 限制数量
     if (recommendedLists.length > limit) {
       return recommendedLists.sublist(0, limit);
     }
-
     return recommendedLists;
   }
 
-  /// 获取官方装备清单
   static Future<List<EquipmentListModel>> getOfficialEquipmentLists(
       {int limit = 10}) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        final templates = await _apiService.getOfficialTemplates(page: 0, size: limit);
+        final now = DateTime.now();
+        return templates.map((t) => t.createEquipmentList(
+          id: 'official_${t.id}_${now.millisecondsSinceEpoch}',
+          creatorId: 'official',
+          creatorName: '官方',
+          tripDays: 1,
+        )).toList();
+      },
+      () => _getOfficialEquipmentListsFromMock(limit: limit),
+      operationName: 'getOfficialEquipmentLists',
+    );
+  }
+
+  static Future<List<EquipmentListModel>> _getOfficialEquipmentListsFromMock(
+      {int limit = 10}) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 确保缓存已加载
-    final lists = await getEquipmentLists();
-
-    // 筛选官方装备清单
+    final lists = await _getEquipmentListsFromMock();
     final officialLists = lists.where((list) => list.isOfficial).toList();
-
-    // 限制数量
     if (officialLists.length > limit) {
       return officialLists.sublist(0, limit);
     }
-
     return officialLists;
   }
 
-  /// 获取用户创建的装备清单
   static Future<List<EquipmentListModel>> getUserEquipmentLists(
       {int limit = 10}) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        final lists = await _apiService.getEquipmentLists(
+          page: 0, 
+          size: limit,
+          type: 0,
+        );
+        return lists;
+      },
+      () => _getUserEquipmentListsFromMock(limit: limit),
+      operationName: 'getUserEquipmentLists',
+    );
+  }
+
+  static Future<List<EquipmentListModel>> _getUserEquipmentListsFromMock(
+      {int limit = 10}) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 确保缓存已加载
-    final lists = await getEquipmentLists();
-
-    // 筛选用户创建的装备清单（非官方的）
+    final lists = await _getEquipmentListsFromMock();
     final userLists = lists.where((list) => !list.isOfficial).toList();
-
-    // 限制数量
     if (userLists.length > limit) {
       return userLists.sublist(0, limit);
     }
-
     return userLists;
   }
 
-  /// 根据季节获取装备清单
-  static Future<List<EquipmentListModel>> getEquipmentListsBySeason(
-      List<SeasonSuitability> seasons,
-      {int limit = 10}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 确保缓存已加载
-    final lists = await getEquipmentLists();
-
-    // 筛选符合季节的装备清单
-    final seasonalLists = lists.where((list) {
-      return list.seasons.any((season) => seasons.contains(season));
-    }).toList();
-
-    // 限制数量
-    if (seasonalLists.length > limit) {
-      return seasonalLists.sublist(0, limit);
-    }
-
-    return seasonalLists;
-  }
-
-  /// 根据行程天数获取装备清单
-  static Future<List<EquipmentListModel>> getEquipmentListsByTripDays(
-      int minDays, int maxDays,
-      {int limit = 10}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 确保缓存已加载
-    final lists = await getEquipmentLists();
-
-    // 筛选符合行程天数的装备清单
-    final filteredLists = lists.where((list) {
-      return list.tripDays >= minDays && list.tripDays <= maxDays;
-    }).toList();
-
-    // 限制数量
-    if (filteredLists.length > limit) {
-      return filteredLists.sublist(0, limit);
-    }
-
-    return filteredLists;
-  }
-
-  /// 搜索装备清单
   static Future<List<EquipmentListModel>> searchEquipmentLists(String keyword,
       {int limit = 10}) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        final lists = await _apiService.getEquipmentLists(
+          page: 0, 
+          size: limit,
+        );
+        
+        if (keyword.isEmpty) {
+          return lists.length > limit ? lists.sublist(0, limit) : lists;
+        }
+
+        final searchResults = lists.where((list) {
+          return list.name.toLowerCase().contains(keyword.toLowerCase()) ||
+              list.description.toLowerCase().contains(keyword.toLowerCase()) ||
+              list.tags
+                  .any((tag) => tag.toLowerCase().contains(keyword.toLowerCase()));
+        }).toList();
+
+        return searchResults.length > limit
+            ? searchResults.sublist(0, limit)
+            : searchResults;
+      },
+      () => _searchEquipmentListsFromMock(keyword, limit: limit),
+      operationName: 'searchEquipmentLists',
+    );
+  }
+
+  static Future<List<EquipmentListModel>> _searchEquipmentListsFromMock(String keyword,
+      {int limit = 10}) async {
     await Future.delayed(const Duration(milliseconds: 400));
+    final lists = await _getEquipmentListsFromMock();
 
-    // 确保缓存已加载
-    final lists = await getEquipmentLists();
-
-    // 如果关键词为空，返回所有装备清单
     if (keyword.isEmpty) {
       return lists.length > limit ? lists.sublist(0, limit) : lists;
     }
 
-    // 搜索匹配的装备清单
     final searchResults = lists.where((list) {
       return list.name.toLowerCase().contains(keyword.toLowerCase()) ||
           list.description.toLowerCase().contains(keyword.toLowerCase()) ||
@@ -199,32 +258,24 @@ class EquipmentService {
               .any((tag) => tag.toLowerCase().contains(keyword.toLowerCase()));
     }).toList();
 
-    // 限制数量
     if (searchResults.length > limit) {
       return searchResults.sublist(0, limit);
     }
-
     return searchResults;
   }
 
-  /// 创建装备清单
-  static Future<EquipmentListModel> createEquipmentList(
+  static Future<EquipmentListModel> _createEquipmentListFromMock(
       EquipmentListModel equipmentList) async {
-    // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 生成新ID
     final now = DateTime.now();
     final newId = 'equipment_${now.millisecondsSinceEpoch}';
 
-    // 创建新装备清单
     final newEquipmentList = equipmentList.copyWith(
       id: newId,
       createdAt: now,
       updatedAt: now,
     );
 
-    // 更新缓存
     if (_equipmentListsCache != null) {
       _equipmentListsCache = [..._equipmentListsCache!, newEquipmentList];
     }
@@ -232,18 +283,34 @@ class EquipmentService {
     return newEquipmentList;
   }
 
-  /// 更新装备清单
-  static Future<EquipmentListModel> updateEquipmentList(
+  static Future<EquipmentListModel> createEquipmentList(
       EquipmentListModel equipmentList) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
+    return _tryApiOrFallback(
+      () async {
+        final created = await _apiService.createEquipmentList(
+          name: equipmentList.name,
+          type: equipmentList.type.index,
+          personCount: equipmentList.personCount,
+          description: equipmentList.description,
+        );
+        
+        if (_equipmentListsCache != null) {
+          _equipmentListsCache = [..._equipmentListsCache!, created];
+        }
+        return created;
+      },
+      () => _createEquipmentListFromMock(equipmentList),
+      operationName: 'createEquipmentList',
+    );
+  }
 
-    // 更新时间戳
+  static Future<EquipmentListModel> _updateEquipmentListFromMock(
+      EquipmentListModel equipmentList) async {
+    await Future.delayed(const Duration(milliseconds: 400));
     final updatedEquipmentList = equipmentList.copyWith(
       updatedAt: DateTime.now(),
     );
 
-    // 更新缓存
     if (_equipmentListsCache != null) {
       _equipmentListsCache = _equipmentListsCache!
           .map((list) =>
@@ -254,39 +321,75 @@ class EquipmentService {
     return updatedEquipmentList;
   }
 
-  /// 删除装备清单
-  static Future<bool> deleteEquipmentList(String id) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
+  static Future<EquipmentListModel> updateEquipmentList(
+      EquipmentListModel equipmentList) async {
+    return _tryApiOrFallback(
+      () async {
+        final updates = <String, dynamic>{
+          'name': equipmentList.name,
+          'description': equipmentList.description,
+          'personCount': equipmentList.personCount,
+          'status': equipmentList.status.index,
+        };
+        
+        final updated = await _apiService.updateEquipmentList(equipmentList.id, updates);
+        return updated;
+      },
+      () => _updateEquipmentListFromMock(equipmentList),
+      operationName: 'updateEquipmentList',
+    );
+  }
 
-    // 更新缓存
+  static Future<bool> _deleteEquipmentListFromMock(String id) async {
+    await Future.delayed(const Duration(milliseconds: 400));
     if (_equipmentListsCache != null) {
       _equipmentListsCache =
           _equipmentListsCache!.where((list) => list.id != id).toList();
     }
-
     return true;
   }
 
-  /// 添加装备项目到装备清单
+  static Future<bool> deleteEquipmentList(String id) async {
+    return _tryApiOrFallback(
+      () async {
+        await _apiService.deleteEquipmentList(id);
+        if (_equipmentListsCache != null) {
+          _equipmentListsCache =
+              _equipmentListsCache!.where((list) => list.id != id).toList();
+        }
+        return true;
+      },
+      () => _deleteEquipmentListFromMock(id),
+      operationName: 'deleteEquipmentList',
+    );
+  }
+
   static Future<EquipmentListModel> addEquipmentItem(
       String equipmentListId, EquipmentItemModel item) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        await _apiService.addItemToList(
+          listId: equipmentListId,
+          equipmentItemId: item.id,
+          quantity: item.quantity,
+        );
+        return getEquipmentListById(equipmentListId);
+      },
+      () => _addEquipmentItemFromMock(equipmentListId, item),
+      operationName: 'addEquipmentItem',
+    );
+  }
+
+  static Future<EquipmentListModel> _addEquipmentItemFromMock(
+      String equipmentListId, EquipmentItemModel item) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 添加装备项目
+    final equipmentList = await _getEquipmentListByIdFromMock(equipmentListId);
     final updatedEquipments = [...equipmentList.equipments, item];
-
-    // 更新装备清单
     final updatedEquipmentList = equipmentList.copyWith(
       equipments: updatedEquipments,
       updatedAt: DateTime.now(),
     );
 
-    // 更新缓存
     if (_equipmentListsCache != null) {
       _equipmentListsCache = _equipmentListsCache!
           .map((list) =>
@@ -297,27 +400,36 @@ class EquipmentService {
     return updatedEquipmentList;
   }
 
-  /// 更新装备清单中的装备项目
   static Future<EquipmentListModel> updateEquipmentItem(
       String equipmentListId, EquipmentItemModel item) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        final updates = <String, dynamic>{
+          'name': item.name,
+          'quantity': item.quantity,
+          'weight': item.weight,
+          'prepared': item.prepared,
+        };
+        
+        return getEquipmentListById(equipmentListId);
+      },
+      () => _updateEquipmentItemFromMock(equipmentListId, item),
+      operationName: 'updateEquipmentItem',
+    );
+  }
+
+  static Future<EquipmentListModel> _updateEquipmentItemFromMock(
+      String equipmentListId, EquipmentItemModel item) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 更新装备项目
+    final equipmentList = await _getEquipmentListByIdFromMock(equipmentListId);
     final updatedEquipments = equipmentList.equipments
         .map((existingItem) => existingItem.id == item.id ? item : existingItem)
         .toList();
-
-    // 更新装备清单
     final updatedEquipmentList = equipmentList.copyWith(
       equipments: updatedEquipments,
       updatedAt: DateTime.now(),
     );
 
-    // 更新缓存
     if (_equipmentListsCache != null) {
       _equipmentListsCache = _equipmentListsCache!
           .map((list) =>
@@ -328,26 +440,29 @@ class EquipmentService {
     return updatedEquipmentList;
   }
 
-  /// 从装备清单中删除装备项目
   static Future<EquipmentListModel> removeEquipmentItem(
       String equipmentListId, String itemId) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        await _apiService.removeItemFromList(equipmentListId, itemId);
+        return getEquipmentListById(equipmentListId);
+      },
+      () => _removeEquipmentItemFromMock(equipmentListId, itemId),
+      operationName: 'removeEquipmentItem',
+    );
+  }
+
+  static Future<EquipmentListModel> _removeEquipmentItemFromMock(
+      String equipmentListId, String itemId) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 移除装备项目
+    final equipmentList = await _getEquipmentListByIdFromMock(equipmentListId);
     final updatedEquipments =
         equipmentList.equipments.where((item) => item.id != itemId).toList();
-
-    // 更新装备清单
     final updatedEquipmentList = equipmentList.copyWith(
       equipments: updatedEquipments,
       updatedAt: DateTime.now(),
     );
 
-    // 更新缓存
     if (_equipmentListsCache != null) {
       _equipmentListsCache = _equipmentListsCache!
           .map((list) =>
@@ -358,134 +473,26 @@ class EquipmentService {
     return updatedEquipmentList;
   }
 
-  /// 获取装备项目列表
   static Future<List<EquipmentItemModel>> getEquipmentItems(
       String equipmentListId) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () => _apiService.getListItems(equipmentListId, page: 0, size: 100),
+      () => _getEquipmentItemsFromMock(equipmentListId),
+      operationName: 'getEquipmentItems',
+    );
+  }
+
+  static Future<List<EquipmentItemModel>> _getEquipmentItemsFromMock(
+      String equipmentListId) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
+    final equipmentList = await _getEquipmentListByIdFromMock(equipmentListId);
     return equipmentList.equipments;
   }
 
-  /// 获取装备项目详情
-  static Future<EquipmentItemModel> getEquipmentItemById(
-      String equipmentListId, String itemId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 查找指定ID的装备项目
-    final item = equipmentList.equipments.firstWhere(
-      (item) => item.id == itemId,
-      orElse: () => throw Exception('装备项目不存在: $itemId'),
-    );
-
-    return item;
-  }
-
-  /// 获取装备分类列表
-  static Future<List<EquipmentCategory>> getEquipmentCategories() async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取所有装备清单
-    final lists = await getEquipmentLists();
-
-    // 提取所有装备项目的分类
-    final categories = <EquipmentCategory>{};
-    for (final list in lists) {
-      for (final item in list.equipments) {
-        categories.add(item.category);
-      }
-    }
-
-    return categories.toList();
-  }
-
-  /// 复制装备清单
-  static Future<EquipmentListModel> cloneEquipmentList(String equipmentListId,
-      {String? newName}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 生成新ID
-    final now = DateTime.now();
-    final newId = 'equipment_${now.millisecondsSinceEpoch}';
-
-    // 创建副本
-    final clonedEquipmentList = equipmentList.copyWith(
-      id: newId,
-      name: newName ?? '${equipmentList.name} (副本)',
-      createdAt: now,
-      updatedAt: now,
-      isOfficial: false, // 副本不是官方的
-    );
-
-    // 更新缓存
-    if (_equipmentListsCache != null) {
-      _equipmentListsCache = [..._equipmentListsCache!, clonedEquipmentList];
-    }
-
-    return clonedEquipmentList;
-  }
-
-  /// 根据类型获取装备清单
-  static Future<List<EquipmentListModel>> getEquipmentListsByType(
-      EquipmentListType type,
+  static Future<List<EquipmentTemplateModel>> _getEquipmentTemplatesFromMock(
       {int limit = 10}) async {
-    // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 400));
 
-    // 确保缓存已加载
-    final lists = await getEquipmentLists();
-
-    // 筛选符合类型的装备清单
-    final filteredLists = lists.where((list) => list.type == type).toList();
-
-    // 限制数量
-    if (filteredLists.length > limit) {
-      return filteredLists.sublist(0, limit);
-    }
-
-    return filteredLists;
-  }
-
-  /// 根据状态获取装备清单
-  static Future<List<EquipmentListModel>> getEquipmentListsByStatus(
-      EquipmentListStatus status,
-      {int limit = 10}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 确保缓存已加载
-    final lists = await getEquipmentLists();
-
-    // 筛选符合状态的装备清单
-    final filteredLists = lists.where((list) => list.status == status).toList();
-
-    // 限制数量
-    if (filteredLists.length > limit) {
-      return filteredLists.sublist(0, limit);
-    }
-
-    return filteredLists;
-  }
-
-  /// 获取装备模板列表
-  static Future<List<EquipmentTemplateModel>> getEquipmentTemplates(
-      {int limit = 10}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 如果有缓存，直接返回
     if (_equipmentTemplatesCache != null) {
       final templates = _equipmentTemplatesCache!;
       return templates.length > limit ? templates.sublist(0, limit) : templates;
@@ -507,422 +514,68 @@ class EquipmentService {
     }
   }
 
-  /// 根据ID获取装备模板
-  static Future<EquipmentTemplateModel> getEquipmentTemplateById(String id) async {
-    // 模拟网络延迟
+  static Future<List<EquipmentTemplateModel>> getEquipmentTemplates(
+      {int limit = 10}) async {
+    return _tryApiOrFallback(
+      () async {
+        final templates = await _apiService.getEquipmentTemplates(
+          page: 0, 
+          size: limit,
+        );
+        _equipmentTemplatesCache = templates;
+        return templates;
+      },
+      () => _getEquipmentTemplatesFromMock(limit: limit),
+      operationName: 'getEquipmentTemplates',
+    );
+  }
+
+  static Future<EquipmentTemplateModel> _getEquipmentTemplateByIdFromMock(String id) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 确保缓存已加载
-    final templates = await getEquipmentTemplates(limit: 1000);
-
-    // 查找指定ID的装备模板
+    final templates = await _getEquipmentTemplatesFromMock(limit: 1000);
     final template = templates.firstWhere(
       (template) => template.id == id,
       orElse: () => throw Exception('装备模板不存在: $id'),
     );
-
     return template;
   }
 
-  /// 根据类型获取装备模板
-  static Future<List<EquipmentTemplateModel>> getEquipmentTemplatesByType(
-      EquipmentListType type,
-      {int limit = 10}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 确保缓存已加载
-    final templates = await getEquipmentTemplates(limit: 1000);
-
-    // 筛选符合类型的装备模板
-    final filteredTemplates =
-        templates.where((template) => template.type == type).toList();
-
-    // 限制数量
-    if (filteredTemplates.length > limit) {
-      return filteredTemplates.sublist(0, limit);
-    }
-
-    return filteredTemplates;
-  }
-
-  /// 创建装备模板
-  static Future<EquipmentTemplateModel> createEquipmentTemplate(
-      EquipmentTemplateModel template) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 生成新ID
-    final now = DateTime.now();
-    final newId = 'template_${now.millisecondsSinceEpoch}';
-
-    // 创建新装备模板
-    final newTemplate = template.copyWith(
-      id: newId,
-      createdAt: now,
-      updatedAt: now,
+  static Future<EquipmentTemplateModel> getEquipmentTemplateById(String id) async {
+    return _tryApiOrFallback(
+      () => _apiService.getEquipmentTemplateById(id),
+      () => _getEquipmentTemplateByIdFromMock(id),
+      operationName: 'getEquipmentTemplateById',
     );
-
-    // 更新缓存
-    if (_equipmentTemplatesCache != null) {
-      _equipmentTemplatesCache = [..._equipmentTemplatesCache!, newTemplate];
-    }
-
-    return newTemplate;
   }
 
-  /// 更新装备模板
-  static Future<EquipmentTemplateModel> updateEquipmentTemplate(
-      EquipmentTemplateModel template) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 更新时间戳
-    final updatedTemplate = template.copyWith(
-      updatedAt: DateTime.now(),
-    );
-
-    // 更新缓存
-    if (_equipmentTemplatesCache != null) {
-      _equipmentTemplatesCache = _equipmentTemplatesCache!
-          .map((t) => t.id == updatedTemplate.id ? updatedTemplate : t)
-          .toList();
-    }
-
-    return updatedTemplate;
-  }
-
-  /// 删除装备模板
-  static Future<bool> deleteEquipmentTemplate(String id) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 更新缓存
-    if (_equipmentTemplatesCache != null) {
-      _equipmentTemplatesCache = _equipmentTemplatesCache!
-          .where((template) => template.id != id)
-          .toList();
-    }
-
-    return true;
-  }
-
-  /// 从模板创建装备清单
-  static Future<EquipmentListModel> createEquipmentListFromTemplate(
-    String templateId, {
-    required String name,
-    String? description,
-    String? routeId,
-    String? routeName,
-    String? tripId,
-    required int tripDays,
-    int personCount = 1,
-  }) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取模板
-    final template = await getEquipmentTemplateById(templateId);
-
-    // 生成新ID
-    final now = DateTime.now();
-    final newId = 'equipment_${now.millisecondsSinceEpoch}';
-
-    // 从模板创建装备清单
-    final equipmentList = template.createEquipmentList(
-      id: newId,
-      creatorId: 'current_user',
-      creatorName: '当前用户',
-      routeId: routeId,
-      routeName: routeName,
-      tripId: tripId,
-      tripDays: tripDays,
-      personCount: personCount,
-    );
-
-    // 更新名称和描述
-    final customizedList = equipmentList.copyWith(
-      name: name,
-      description: description ?? equipmentList.description,
-    );
-
-    // 更新缓存
-    if (_equipmentListsCache != null) {
-      _equipmentListsCache = [..._equipmentListsCache!, customizedList];
-    }
-
-    return customizedList;
-  }
-
-  /// 获取用户装备库
-  static Future<UserEquipmentInventoryModel> getUserEquipmentInventory(
-      String userId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 如果有缓存，直接返回
-    if (_userEquipmentInventoryCache.containsKey(userId)) {
-      return _userEquipmentInventoryCache[userId]!;
-    }
-
-    try {
-      final inventoriesJson =
-          await _loadJsonData('assets/mock_data/user_equipment_inventory.json');
-      final inventories = inventoriesJson
-          .map<UserEquipmentInventoryModel>(
-              (json) => UserEquipmentInventoryModel.fromJson(json))
-          .toList();
-
-      // 查找指定用户的装备库
-      final inventory = inventories.firstWhere(
-        (inventory) => inventory.userId == userId,
-        orElse: () {
-          // 如果找不到，创建一个空的装备库
-          final now = DateTime.now();
-          return UserEquipmentInventoryModel(
-            id: 'inventory_${now.millisecondsSinceEpoch}',
-            userId: userId,
-            equipments: [],
-            lastUpdatedAt: now,
-            createdAt: now,
-            updatedAt: now,
-          );
-        },
-      );
-
-      // 更新缓存
-      _userEquipmentInventoryCache[userId] = inventory;
-
-      return inventory;
-    } catch (e) {
-      print('加载用户装备库失败: $e');
-
-      // 如果加载失败，创建一个空的装备库
-      final now = DateTime.now();
-      final inventory = UserEquipmentInventoryModel(
-        id: 'inventory_${now.millisecondsSinceEpoch}',
-        userId: userId,
-        equipments: [],
-        lastUpdatedAt: now,
-        createdAt: now,
-        updatedAt: now,
-      );
-
-      // 更新缓存
-      _userEquipmentInventoryCache[userId] = inventory;
-
-      return inventory;
-    }
-  }
-
-  /// 添加装备到用户装备库
-  static Future<UserEquipmentInventoryModel> addEquipmentToInventory(
-      String userId, EquipmentItemModel item) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    // 生成新ID
-    final now = DateTime.now();
-    final newItemId = '${inventory.id}_${now.millisecondsSinceEpoch}';
-
-    // 创建新装备项目
-    final newItem = item.copyWith(
-      id: newItemId,
-      createdAt: now,
-      updatedAt: now,
-    );
-
-    // 添加装备项目
-    final updatedEquipments = [...inventory.equipments, newItem];
-
-    // 更新装备库
-    final updatedInventory = inventory.copyWith(
-      equipments: updatedEquipments,
-      lastUpdatedAt: now,
-      updatedAt: now,
-    );
-
-    // 更新缓存
-    _userEquipmentInventoryCache[userId] = updatedInventory;
-
-    return updatedInventory;
-  }
-
-  /// 更新用户装备库中的装备
-  static Future<UserEquipmentInventoryModel> updateEquipmentInInventory(
-      String userId, EquipmentItemModel item) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    // 更新装备项目
-    final now = DateTime.now();
-    final updatedEquipments = inventory.equipments
-        .map((existingItem) => existingItem.id == item.id
-            ? item.copyWith(updatedAt: now)
-            : existingItem)
-        .toList();
-
-    // 更新装备库
-    final updatedInventory = inventory.copyWith(
-      equipments: updatedEquipments,
-      lastUpdatedAt: now,
-      updatedAt: now,
-    );
-
-    // 更新缓存
-    _userEquipmentInventoryCache[userId] = updatedInventory;
-
-    return updatedInventory;
-  }
-
-  /// 从用户装备库中删除装备
-  static Future<UserEquipmentInventoryModel> removeEquipmentFromInventory(
-      String userId, String itemId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    // 移除装备项目
-    final now = DateTime.now();
-    final updatedEquipments =
-        inventory.equipments.where((item) => item.id != itemId).toList();
-
-    // 更新装备库
-    final updatedInventory = inventory.copyWith(
-      equipments: updatedEquipments,
-      lastUpdatedAt: now,
-      updatedAt: now,
-    );
-
-    // 更新缓存
-    _userEquipmentInventoryCache[userId] = updatedInventory;
-
-    return updatedInventory;
-  }
-
-  /// 获取用户装备库中的装备
-  static Future<List<EquipmentItemModel>> getUserEquipmentItems(String userId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    return inventory.equipments;
-  }
-
-  /// 获取用户装备库中的装备详情
-  static Future<EquipmentItemModel> getUserEquipmentItemById(
-      String userId, String itemId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    // 查找指定ID的装备项目
-    final item = inventory.equipments.firstWhere(
-      (item) => item.id == itemId,
-      orElse: () => throw Exception('装备项目不存在: $itemId'),
-    );
-
-    return item;
-  }
-
-  /// 搜索用户装备库
-  static Future<List<EquipmentItemModel>> searchUserEquipment(
-      String userId, String keyword) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    // 如果关键词为空，返回所有装备
-    if (keyword.isEmpty) {
-      return inventory.equipments;
-    }
-
-    // 搜索匹配的装备
-    return inventory.searchItems(keyword);
-  }
-
-  /// 根据分类获取用户装备
-  static Future<List<EquipmentItemModel>> getUserEquipmentByCategory(
-      String userId, EquipmentCategory category) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    // 筛选符合分类的装备
-    return inventory.getItemsByCategory(category);
-  }
-
-  /// 获取用户装备分类统计
-  static Future<List<CategoryDistribution>> getUserEquipmentCategoryDistribution(
-      String userId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    // 获取分类分布
-    return inventory.getCategoryDistribution();
-  }
-
-  /// 获取用户装备状态统计
-  static Future<List<ConditionDistribution>> getUserEquipmentConditionDistribution(
-      String userId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    // 获取状态分布
-    return inventory.getConditionDistribution();
-  }
-
-  /// 获取需要维护的装备
-  static Future<List<EquipmentItemModel>> getEquipmentNeedingMaintenance(
-      String userId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取用户装备库
-    final inventory = await getUserEquipmentInventory(userId);
-
-    // 获取需要维护的装备
-    return inventory.getItemsNeedingMaintenance();
-  }
-
-  /// 更新装备清单状态
   static Future<EquipmentListModel> updateEquipmentListStatus(
       String equipmentListId, EquipmentListStatus status) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        final response = await _apiClient.dio.patch(
+          ApiEndpoints.equipmentListStatus(equipmentListId),
+          data: {'status': status.index},
+        );
+        
+        if (response.statusCode == 200) {
+          return getEquipmentListById(equipmentListId);
+        }
+        throw Exception('更新状态失败');
+      },
+      () => _updateEquipmentListStatusFromMock(equipmentListId, status),
+      operationName: 'updateEquipmentListStatus',
+    );
+  }
+
+  static Future<EquipmentListModel> _updateEquipmentListStatusFromMock(
+      String equipmentListId, EquipmentListStatus status) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 更新状态
+    final equipmentList = await _getEquipmentListByIdFromMock(equipmentListId);
     final updatedEquipmentList = equipmentList.copyWith(
       status: status,
       updatedAt: DateTime.now(),
     );
 
-    // 更新缓存
     if (_equipmentListsCache != null) {
       _equipmentListsCache = _equipmentListsCache!
           .map((list) =>
@@ -933,16 +586,41 @@ class EquipmentService {
     return updatedEquipmentList;
   }
 
-  /// 更新装备准备状态
   static Future<EquipmentListModel> updateEquipmentPreparedStatus(
       String equipmentListId, String itemId, bool prepared) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        final equipmentList = await getEquipmentListById(equipmentListId);
+        final updatedEquipments = equipmentList.equipments.map((item) {
+          if (item.id == itemId) {
+            return item.copyWith(prepared: prepared);
+          }
+          return item;
+        }).toList();
+
+        final updatedEquipmentList = equipmentList.copyWith(
+          equipments: updatedEquipments,
+          updatedAt: DateTime.now(),
+        );
+
+        if (_equipmentListsCache != null) {
+          _equipmentListsCache = _equipmentListsCache!
+              .map((list) =>
+                  list.id == equipmentListId ? updatedEquipmentList : list)
+              .toList();
+        }
+
+        return updatedEquipmentList;
+      },
+      () => _updateEquipmentPreparedStatusFromMock(equipmentListId, itemId, prepared),
+      operationName: 'updateEquipmentPreparedStatus',
+    );
+  }
+
+  static Future<EquipmentListModel> _updateEquipmentPreparedStatusFromMock(
+      String equipmentListId, String itemId, bool prepared) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 更新装备准备状态
+    final equipmentList = await _getEquipmentListByIdFromMock(equipmentListId);
     final updatedEquipments = equipmentList.equipments.map((item) {
       if (item.id == itemId) {
         return item.copyWith(prepared: prepared);
@@ -950,13 +628,11 @@ class EquipmentService {
       return item;
     }).toList();
 
-    // 更新装备清单
     final updatedEquipmentList = equipmentList.copyWith(
       equipments: updatedEquipments,
       updatedAt: DateTime.now(),
     );
 
-    // 更新缓存
     if (_equipmentListsCache != null) {
       _equipmentListsCache = _equipmentListsCache!
           .map((list) =>
@@ -967,50 +643,39 @@ class EquipmentService {
     return updatedEquipmentList;
   }
 
-  /// 批量更新装备准备状态
-  static Future<EquipmentListModel> batchUpdateEquipmentPreparedStatus(
-      String equipmentListId, List<String> itemIds, bool prepared) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 批量更新装备准备状态
-    final updatedEquipments = equipmentList.equipments.map((item) {
-      if (itemIds.contains(item.id)) {
-        return item.copyWith(prepared: prepared);
-      }
-      return item;
-    }).toList();
-
-    // 更新装备清单
-    final updatedEquipmentList = equipmentList.copyWith(
-      equipments: updatedEquipments,
-      updatedAt: DateTime.now(),
-    );
-
-    // 更新缓存
-    if (_equipmentListsCache != null) {
-      _equipmentListsCache = _equipmentListsCache!
-          .map((list) =>
-              list.id == equipmentListId ? updatedEquipmentList : list)
-          .toList();
-    }
-
-    return updatedEquipmentList;
-  }
-
-  /// 获取装备清单统计信息
   static Future<EquipmentListStats> getEquipmentListStats(
       String equipmentListId) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        final stats = await _apiService.getListWeightStats(equipmentListId);
+        final equipmentList = await getEquipmentListById(equipmentListId);
+        
+        return EquipmentListStats(
+          totalItems: equipmentList.totalItems,
+          essentialItems: equipmentList.essentialItems,
+          recommendedItems: equipmentList.recommendedItems,
+          optionalItems: equipmentList.optionalItems,
+          preparedItems: equipmentList.preparedItems,
+          totalWeight: (stats['total_weight'] as num?)?.toDouble() ?? equipmentList.totalWeight,
+          baseWeight: (stats['base_weight'] as num?)?.toDouble() ?? equipmentList.baseWeight,
+          consumableWeight: (stats['consumable_weight'] as num?)?.toDouble() ?? equipmentList.consumableWeight,
+          wornWeight: (stats['worn_weight'] as num?)?.toDouble() ?? equipmentList.wornWeight,
+          weightPerPersonPerDay: (stats['weight_per_person_per_day'] as num?)?.toDouble() ?? equipmentList.weightPerPersonPerDay,
+          totalValue: equipmentList.totalValue,
+          ownedItems: equipmentList.ownedItems,
+          itemsToBuy: equipmentList.itemsToBuy,
+          valueToBuy: equipmentList.valueToBuy,
+        );
+      },
+      () => _getEquipmentListStatsFromMock(equipmentListId),
+      operationName: 'getEquipmentListStats',
+    );
+  }
+
+  static Future<EquipmentListStats> _getEquipmentListStatsFromMock(
+      String equipmentListId) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 计算统计信息
+    final equipmentList = await _getEquipmentListByIdFromMock(equipmentListId);
     return EquipmentListStats(
       totalItems: equipmentList.totalItems,
       essentialItems: equipmentList.essentialItems,
@@ -1029,65 +694,346 @@ class EquipmentService {
     );
   }
 
-  /// 获取装备清单准备进度
   static Future<double> getEquipmentListPreparationProgress(
       String equipmentListId) async {
-    // 模拟网络延迟
+    return _tryApiOrFallback(
+      () async {
+        final equipmentList = await getEquipmentListById(equipmentListId);
+        return equipmentList.preparationPercentage;
+      },
+      () => _getEquipmentListPreparationProgressFromMock(equipmentListId),
+      operationName: 'getEquipmentListPreparationProgress',
+    );
+  }
+
+  static Future<double> _getEquipmentListPreparationProgressFromMock(
+      String equipmentListId) async {
     await Future.delayed(const Duration(milliseconds: 400));
-
-    // 获取装备清单
-    final equipmentList = await getEquipmentListById(equipmentListId);
-
-    // 计算准备进度
+    final equipmentList = await _getEquipmentListByIdFromMock(equipmentListId);
     return equipmentList.preparationPercentage;
   }
+
+  static Future<List<EquipmentListModel>> getEquipmentListsByType(
+      EquipmentListType type, {int limit = 10}) async {
+    return _tryApiOrFallback(
+      () async {
+        final lists = await getEquipmentLists();
+        final filteredLists = lists.where((list) => list.type == type).toList();
+        return filteredLists.length > limit ? filteredLists.sublist(0, limit) : filteredLists;
+      },
+      () => _getEquipmentListsByTypeFromMock(type, limit: limit),
+      operationName: 'getEquipmentListsByType',
+    );
+  }
+
+  static Future<List<EquipmentListModel>> _getEquipmentListsByTypeFromMock(
+      EquipmentListType type, {int limit = 10}) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    final lists = await _getEquipmentListsFromMock();
+    final filteredLists = lists.where((list) => list.type == type).toList();
+    return filteredLists.length > limit ? filteredLists.sublist(0, limit) : filteredLists;
+  }
+
+  static Future<List<EquipmentListModel>> getEquipmentListsByStatus(
+      EquipmentListStatus status, {int limit = 10}) async {
+    return _tryApiOrFallback(
+      () async {
+        final lists = await getEquipmentLists();
+        final filteredLists = lists.where((list) => list.status == status).toList();
+        return filteredLists.length > limit ? filteredLists.sublist(0, limit) : filteredLists;
+      },
+      () => _getEquipmentListsByStatusFromMock(status, limit: limit),
+      operationName: 'getEquipmentListsByStatus',
+    );
+  }
+
+  static Future<List<EquipmentListModel>> _getEquipmentListsByStatusFromMock(
+      EquipmentListStatus status, {int limit = 10}) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    final lists = await _getEquipmentListsFromMock();
+    final filteredLists = lists.where((list) => list.status == status).toList();
+    return filteredLists.length > limit ? filteredLists.sublist(0, limit) : filteredLists;
+  }
+
+  static Future<EquipmentListModel> cloneEquipmentList(
+      String equipmentListId, {String? newName}) async {
+    return _tryApiOrFallback(
+      () async {
+        final equipmentList = await getEquipmentListById(equipmentListId);
+        final now = DateTime.now();
+        final newId = 'equipment_${now.millisecondsSinceEpoch}';
+        final clonedEquipmentList = equipmentList.copyWith(
+          id: newId,
+          name: newName ?? '${equipmentList.name} (副本)',
+          createdAt: now,
+          updatedAt: now,
+          isOfficial: false,
+        );
+        if (_equipmentListsCache != null) {
+          _equipmentListsCache = [..._equipmentListsCache!, clonedEquipmentList];
+        }
+        return clonedEquipmentList;
+      },
+      () => _cloneEquipmentListFromMock(equipmentListId, newName: newName),
+      operationName: 'cloneEquipmentList',
+    );
+  }
+
+  static Future<EquipmentListModel> _cloneEquipmentListFromMock(
+      String equipmentListId, {String? newName}) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    final equipmentList = await _getEquipmentListByIdFromMock(equipmentListId);
+    final now = DateTime.now();
+    final newId = 'equipment_${now.millisecondsSinceEpoch}';
+    final clonedEquipmentList = equipmentList.copyWith(
+      id: newId,
+      name: newName ?? '${equipmentList.name} (副本)',
+      createdAt: now,
+      updatedAt: now,
+      isOfficial: false,
+    );
+    if (_equipmentListsCache != null) {
+      _equipmentListsCache = [..._equipmentListsCache!, clonedEquipmentList];
+    }
+    return clonedEquipmentList;
+  }
+
+  static Future<List<EquipmentTemplateModel>> getEquipmentTemplatesByType(
+      EquipmentListType type, {int limit = 10}) async {
+    return _tryApiOrFallback(
+      () async {
+        final templates = await getEquipmentTemplates(limit: 1000);
+        final filteredTemplates = templates.where((template) => template.type == type).toList();
+        return filteredTemplates.length > limit ? filteredTemplates.sublist(0, limit) : filteredTemplates;
+      },
+      () => _getEquipmentTemplatesByTypeFromMock(type, limit: limit),
+      operationName: 'getEquipmentTemplatesByType',
+    );
+  }
+
+  static Future<List<EquipmentTemplateModel>> _getEquipmentTemplatesByTypeFromMock(
+      EquipmentListType type, {int limit = 10}) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    final templates = await _getEquipmentTemplatesFromMock(limit: 1000);
+    final filteredTemplates = templates.where((template) => template.type == type).toList();
+    return filteredTemplates.length > limit ? filteredTemplates.sublist(0, limit) : filteredTemplates;
+  }
+
+  static Future<EquipmentListModel> createEquipmentListFromTemplate(
+    String templateId, {
+    required String name,
+    String? description,
+    String? routeId,
+    String? routeName,
+    String? tripId,
+    required int tripDays,
+    int personCount = 1,
+  }) async {
+    return _tryApiOrFallback(
+      () async {
+        final template = await getEquipmentTemplateById(templateId);
+        final now = DateTime.now();
+        final newId = 'equipment_${now.millisecondsSinceEpoch}';
+        final equipmentList = template.createEquipmentList(
+          id: newId,
+          creatorId: 'current_user',
+          creatorName: '当前用户',
+          routeId: routeId,
+          routeName: routeName,
+          tripId: tripId,
+          tripDays: tripDays,
+          personCount: personCount,
+        );
+        if (_equipmentListsCache != null) {
+          _equipmentListsCache = [..._equipmentListsCache!, equipmentList];
+        }
+        return equipmentList;
+      },
+      () => _createEquipmentListFromTemplateFromMock(
+        templateId,
+        name: name,
+        description: description,
+        routeId: routeId,
+        routeName: routeName,
+        tripId: tripId,
+        tripDays: tripDays,
+        personCount: personCount,
+      ),
+      operationName: 'createEquipmentListFromTemplate',
+    );
+  }
+
+  static Future<EquipmentListModel> _createEquipmentListFromTemplateFromMock(
+    String templateId, {
+    required String name,
+    String? description,
+    String? routeId,
+    String? routeName,
+    String? tripId,
+    required int tripDays,
+    int personCount = 1,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    final template = await _getEquipmentTemplateByIdFromMock(templateId);
+    final now = DateTime.now();
+    final newId = 'equipment_${now.millisecondsSinceEpoch}';
+    final equipmentList = template.createEquipmentList(
+      id: newId,
+      creatorId: 'current_user',
+      creatorName: '当前用户',
+      routeId: routeId,
+      routeName: routeName,
+      tripId: tripId,
+      tripDays: tripDays,
+      personCount: personCount,
+    );
+    if (_equipmentListsCache != null) {
+      _equipmentListsCache = [..._equipmentListsCache!, equipmentList];
+    }
+    return equipmentList;
+  }
+
+  static Future<UserEquipmentInventoryModel> getUserEquipmentInventory(
+      String userId) async {
+    return _tryApiOrFallback(
+      () async {
+        if (_userEquipmentInventoryCache.containsKey(userId)) {
+          return _userEquipmentInventoryCache[userId]!;
+        }
+        try {
+          final inventoriesJson = await _loadJsonData('assets/mock_data/user_equipment_inventory.json');
+          final inventories = inventoriesJson
+              .map<UserEquipmentInventoryModel>(
+                  (json) => UserEquipmentInventoryModel.fromJson(json))
+              .toList();
+          final inventory = inventories.firstWhere(
+            (inventory) => inventory.userId == userId,
+            orElse: () {
+              final now = DateTime.now();
+              return UserEquipmentInventoryModel(
+                id: 'inventory_${now.millisecondsSinceEpoch}',
+                userId: userId,
+                equipments: [],
+                lastUpdatedAt: now,
+                createdAt: now,
+                updatedAt: now,
+              );
+            },
+          );
+          _userEquipmentInventoryCache[userId] = inventory;
+          return inventory;
+        } catch (e) {
+          final now = DateTime.now();
+          return UserEquipmentInventoryModel(
+            id: 'inventory_${now.millisecondsSinceEpoch}',
+            userId: userId,
+            equipments: [],
+            lastUpdatedAt: now,
+            createdAt: now,
+            updatedAt: now,
+          );
+        }
+      },
+      () => _getUserEquipmentInventoryFromMock(userId),
+      operationName: 'getUserEquipmentInventory',
+    );
+  }
+
+  static Future<UserEquipmentInventoryModel> _getUserEquipmentInventoryFromMock(
+      String userId) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    if (_userEquipmentInventoryCache.containsKey(userId)) {
+      return _userEquipmentInventoryCache[userId]!;
+    }
+    try {
+      final inventoriesJson = await _loadJsonData('assets/mock_data/user_equipment_inventory.json');
+      final inventories = inventoriesJson
+          .map<UserEquipmentInventoryModel>(
+              (json) => UserEquipmentInventoryModel.fromJson(json))
+          .toList();
+      final inventory = inventories.firstWhere(
+        (inventory) => inventory.userId == userId,
+        orElse: () {
+          final now = DateTime.now();
+          return UserEquipmentInventoryModel(
+            id: 'inventory_${now.millisecondsSinceEpoch}',
+            userId: userId,
+            equipments: [],
+            lastUpdatedAt: now,
+            createdAt: now,
+            updatedAt: now,
+          );
+        },
+      );
+      _userEquipmentInventoryCache[userId] = inventory;
+      return inventory;
+    } catch (e) {
+      final now = DateTime.now();
+      return UserEquipmentInventoryModel(
+        id: 'inventory_${now.millisecondsSinceEpoch}',
+        userId: userId,
+        equipments: [],
+        lastUpdatedAt: now,
+        createdAt: now,
+        updatedAt: now,
+      );
+    }
+  }
+
+  static Future<UserEquipmentInventoryModel> removeEquipmentFromInventory(
+      String userId, String itemId) async {
+    return _tryApiOrFallback(
+      () async {
+        final inventory = await getUserEquipmentInventory(userId);
+        final now = DateTime.now();
+        final updatedEquipments = inventory.equipments.where((item) => item.id != itemId).toList();
+        final updatedInventory = inventory.copyWith(
+          equipments: updatedEquipments,
+          lastUpdatedAt: now,
+          updatedAt: now,
+        );
+        _userEquipmentInventoryCache[userId] = updatedInventory;
+        return updatedInventory;
+      },
+      () => _removeEquipmentFromInventoryFromMock(userId, itemId),
+      operationName: 'removeEquipmentFromInventory',
+    );
+  }
+
+  static Future<UserEquipmentInventoryModel> _removeEquipmentFromInventoryFromMock(
+      String userId, String itemId) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    final inventory = await _getUserEquipmentInventoryFromMock(userId);
+    final now = DateTime.now();
+    final updatedEquipments = inventory.equipments.where((item) => item.id != itemId).toList();
+    final updatedInventory = inventory.copyWith(
+      equipments: updatedEquipments,
+      lastUpdatedAt: now,
+      updatedAt: now,
+    );
+    _userEquipmentInventoryCache[userId] = updatedInventory;
+    return updatedInventory;
+  }
+
+  static ApiClient get _apiClient => ApiClient.instance;
 }
 
-/// 装备清单统计信息
 class EquipmentListStats {
-  /// 总装备数
   final int totalItems;
-
-  /// 必需装备数
   final int essentialItems;
-
-  /// 推荐装备数
   final int recommendedItems;
-
-  /// 可选装备数
   final int optionalItems;
-
-  /// 已准备装备数
   final int preparedItems;
-
-  /// 总重量(g)
   final double totalWeight;
-
-  /// 基础重量(g)
   final double baseWeight;
-
-  /// 消耗品重量(g)
   final double consumableWeight;
-
-  /// 穿着重量(g)
   final double wornWeight;
-
-  /// 每人每日平均重量(g)
   final double weightPerPersonPerDay;
-
-  /// 装备总价值(元)
   final double totalValue;
-
-  /// 已拥有装备数量
   final int ownedItems;
-
-  /// 需要购买的装备数量
   final int itemsToBuy;
-
-  /// 需要购买的装备总价值(元)
   final double valueToBuy;
 
-  /// 构造函数
   EquipmentListStats({
     required this.totalItems,
     required this.essentialItems,

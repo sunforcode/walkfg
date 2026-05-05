@@ -75,7 +75,25 @@ class ApiClient {
     // 初始化缓存
     await _cache.initialize();
 
+    // 恢复已保存的认证token
+    await _restoreAuthToken();
+
     debugPrint('ApiClient initialized with baseUrl: $baseUrl');
+  }
+
+  /// 恢复已保存的认证token
+  Future<void> _restoreAuthToken() async {
+    try {
+      final token = await AuthInterceptor.getCurrentToken();
+      if (token != null && token.isNotEmpty) {
+        _dio.options.headers['Authorization'] = 'Bearer $token';
+        debugPrint('ApiClient: Restored auth token from storage (token length: ${token.length})');
+      } else {
+        debugPrint('ApiClient: No saved auth token found');
+      }
+    } catch (e) {
+      debugPrint('ApiClient: Error restoring auth token: $e');
+    }
   }
 
   /// 添加拦截器

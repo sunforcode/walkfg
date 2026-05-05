@@ -8,11 +8,11 @@ class AppTypography {
   AppTypography._();
 
   // ============ 字体族 ============
-  /// 默认字体族 (系统字体)
-  static const String fontFamily = '.SF Pro Text';
+  /// 默认字体族 (本地字体 NotoSansSC)
+  static const String fontFamily = 'NotoSansSC';
 
   /// 等宽字体 (用于数据展示)
-  static const String fontFamilyMono = '.SF Mono';
+  static const String fontFamilyMono = 'NotoSansSC';
 
   // ============ 字重 ============
   static const FontWeight regular = FontWeight.w400;
@@ -39,6 +39,7 @@ class AppTypography {
   // ============ Display 样式 (大标题) ============
   /// Display Large - 32px
   static const TextStyle displayLarge = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeDisplayXl,
     fontWeight: bold,
     height: lineHeightTight,
@@ -47,6 +48,7 @@ class AppTypography {
 
   /// Display Medium - 28px
   static const TextStyle displayMedium = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeDisplayLg,
     fontWeight: bold,
     height: lineHeightTight,
@@ -55,6 +57,7 @@ class AppTypography {
 
   /// Display Small - 24px
   static const TextStyle displaySmall = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeDisplay,
     fontWeight: bold,
     height: lineHeightTight,
@@ -64,6 +67,7 @@ class AppTypography {
   // ============ Headline 样式 (标题) ============
   /// Headline Large - 22px
   static const TextStyle headlineLarge = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeXxl + 2,
     fontWeight: semiBold,
     height: lineHeightTight,
@@ -72,6 +76,7 @@ class AppTypography {
 
   /// Headline Medium - 20px
   static const TextStyle headlineMedium = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeXxl,
     fontWeight: semiBold,
     height: lineHeightTight,
@@ -80,6 +85,7 @@ class AppTypography {
 
   /// Headline Small - 18px
   static const TextStyle headlineSmall = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeXl,
     fontWeight: semiBold,
     height: lineHeightTight,
@@ -89,6 +95,7 @@ class AppTypography {
   // ============ Title 样式 (副标题) ============
   /// Title Large - 16px semibold
   static const TextStyle titleLarge = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeLg,
     fontWeight: semiBold,
     height: lineHeightNormal,
@@ -97,6 +104,7 @@ class AppTypography {
 
   /// Title Medium - 14px semibold
   static const TextStyle titleMedium = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeMd,
     fontWeight: semiBold,
     height: lineHeightNormal,
@@ -105,6 +113,7 @@ class AppTypography {
 
   /// Title Small - 12px semibold
   static const TextStyle titleSmall = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeSm,
     fontWeight: semiBold,
     height: lineHeightNormal,
@@ -114,6 +123,7 @@ class AppTypography {
   // ============ Body 样式 (正文) ============
   /// Body Large - 16px
   static const TextStyle bodyLarge = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeLg,
     fontWeight: regular,
     height: lineHeightNormal,
@@ -122,6 +132,7 @@ class AppTypography {
 
   /// Body Medium - 14px
   static const TextStyle bodyMedium = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeMd,
     fontWeight: regular,
     height: lineHeightNormal,
@@ -130,6 +141,7 @@ class AppTypography {
 
   /// Body Small - 12px
   static const TextStyle bodySmall = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeSm,
     fontWeight: regular,
     height: lineHeightNormal,
@@ -139,6 +151,7 @@ class AppTypography {
   // ============ Label 样式 (标签) ============
   /// Label Large - 14px medium
   static const TextStyle labelLarge = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeMd,
     fontWeight: medium,
     height: lineHeightTight,
@@ -147,6 +160,7 @@ class AppTypography {
 
   /// Label Medium - 12px medium
   static const TextStyle labelMedium = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeSm,
     fontWeight: medium,
     height: lineHeightTight,
@@ -155,6 +169,7 @@ class AppTypography {
 
   /// Label Small - 10px medium
   static const TextStyle labelSmall = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeXs,
     fontWeight: medium,
     height: lineHeightTight,
@@ -164,6 +179,7 @@ class AppTypography {
   // ============ 特殊样式 ============
   /// 按钮文字
   static const TextStyle button = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeMd,
     fontWeight: semiBold,
     height: lineHeightTight,
@@ -172,6 +188,7 @@ class AppTypography {
 
   /// 大按钮文字
   static const TextStyle buttonLarge = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeLg,
     fontWeight: semiBold,
     height: lineHeightTight,
@@ -180,6 +197,7 @@ class AppTypography {
 
   /// 链接文字
   static const TextStyle link = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeMd,
     fontWeight: regular,
     height: lineHeightNormal,
@@ -189,6 +207,7 @@ class AppTypography {
 
   /// 数据数字 (等宽字体)
   static const TextStyle dataNumber = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeXxl,
     fontWeight: bold,
     height: lineHeightTight,
@@ -198,6 +217,7 @@ class AppTypography {
 
   /// 大数据数字
   static const TextStyle dataNumberLarge = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeDisplayLg,
     fontWeight: bold,
     height: lineHeightTight,
@@ -207,6 +227,7 @@ class AppTypography {
 
   /// 单位文字
   static const TextStyle unit = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeSm,
     fontWeight: regular,
     height: lineHeightTight,
@@ -215,6 +236,7 @@ class AppTypography {
 
   /// 导航栏标题
   static const TextStyle navTitle = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeLg + 1,
     fontWeight: semiBold,
     height: lineHeightTight,
@@ -223,6 +245,7 @@ class AppTypography {
 
   /// Tab 标签
   static const TextStyle tab = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeXs,
     fontWeight: medium,
     height: lineHeightTight,
@@ -231,6 +254,7 @@ class AppTypography {
   // ============ 数据展示样式 (用于统计卡片和指标) ============
   /// 统计卡片数值 - 28px bold
   static const TextStyle statValue = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeDisplayLg,
     fontWeight: bold,
     height: lineHeightTight,
@@ -240,6 +264,7 @@ class AppTypography {
 
   /// 统计卡片单位 - 12px regular
   static const TextStyle statUnit = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeSm,
     fontWeight: regular,
     height: lineHeightTight,
@@ -248,6 +273,7 @@ class AppTypography {
 
   /// 统计卡片标签 - 10px regular
   static const TextStyle statLabel = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeXs,
     fontWeight: regular,
     height: lineHeightTight,
@@ -256,6 +282,7 @@ class AppTypography {
 
   /// 指标数值 - 14px semibold
   static const TextStyle metricValue = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeMd,
     fontWeight: semiBold,
     height: lineHeightTight,
@@ -265,6 +292,7 @@ class AppTypography {
 
   /// 指标标签 - 12px regular
   static const TextStyle metricLabel = TextStyle(
+    fontFamily: fontFamily,
     fontSize: fontSizeSm,
     fontWeight: regular,
     height: lineHeightTight,

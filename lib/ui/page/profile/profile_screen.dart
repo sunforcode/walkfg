@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:walk/core/network/interceptors/auth_interceptor.dart';
+import 'package:walk/core/state/auth_notifier.dart';
 import 'package:walk/service/user_service.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import '../../../model/user/user_model.dart';
@@ -7,7 +9,6 @@ import '../../page/home/widgets/stats_card.dart';
 import 'login_screen.dart';
 import 'auth/register_screen.dart';
 import 'package:walk/utils/toast_utils.dart';
-import '../../map/examples/opensource_map_test_page.dart';
 import '../debug/debug_menu_page.dart';
 
 /// 个人页面
@@ -20,13 +21,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  /// API服务
-
   /// 用户数据
   UserModel? _user;
 
   /// 用户统计数据Future
-  late Future<UserModel> _userStatsFuture;
+  Future<UserModel>? _userStatsFuture;
 
   /// 是否正在加载
   bool _isLoading = true;
@@ -38,8 +37,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     print('ProfileScreen - initState');
-    _loadUserData();
-    _userStatsFuture = _loadUserStatsData();
+    _checkLoginStatusAndLoadData();
+    
+    // 监听登录状态变化
+    AuthNotifier().addListener(_onAuthStateChanged);
+    print('ProfileScreen - Listening to AuthNotifier');
+  }
+
+  @override
+  void dispose() {
+    // 移除登录状态监听
+    AuthNotifier().removeListener(_onAuthStateChanged);
+    print('ProfileScreen - Stopped listening to AuthNotifier');
+    super.dispose();
+  }
+
+  /// 登录状态变化回调
+  void _onAuthStateChanged() {
+    print('ProfileScreen - Auth state changed, isLoggedIn: ${AuthNotifier().isLoggedIn}');
+    
+    if (mounted) {
+      setState(() {
+        _isLoggedIn = AuthNotifier().isLoggedIn;
+        _isLoading = false;
+      });
+      
+      // 如果已登录，重新加载用户数据
+      if (AuthNotifier().isLoggedIn) {
+        _loadUserData();
+        _userStatsFuture = _loadUserStatsData();
+      } else {
+        // 如果已登出，清除用户数据
+        setState(() {
+          _user = null;
+          _userStatsFuture = null;
+        });
+      }
+    }
+  }
+
+  /// 检查登录状态并加载数据
+  void _checkLoginStatusAndLoadData() {
+    print('ProfileScreen - 检查登录状态');
+    // 使用 AuthNotifier 的状态（已在 main() 中从本地存储初始化）
+    final isLoggedIn = AuthNotifier().isLoggedIn;
+    print('ProfileScreen - AuthNotifier.isLoggedIn: $isLoggedIn');
+    
+    if (mounted) {
+      setState(() {
+        _isLoggedIn = isLoggedIn;
+      });
+    }
+    
+    if (isLoggedIn) {
+      print('ProfileScreen - 已登录，尝试加载用户数据');
+      _loadUserData();
+      _userStatsFuture = _loadUserStatsData();
+    } else {
+      print('ProfileScreen - 未登录，设置为未登录状态');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   /// 加载用户数据
@@ -57,10 +118,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch (e) {
       print('ProfileScreen - 加载用户数据失败: $e');
+      // 获取用户数据失败，清除 token 并通知登出
+      await AuthInterceptor.clearAuthTokens();
       if (mounted) {
         setState(() {
           _isLoading = false;
           _isLoggedIn = false;
+          _user = null;
+          _userStatsFuture = null;
         });
       }
     }
@@ -68,7 +133,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   /// 加载用户统计数据
   Future<UserModel> _loadUserStatsData() async {
-    return UserService.getUserStats();
+    try {
+      return await UserService.getUserStats();
+    } catch (e) {
+      print('ProfileScreen - 加载用户统计数据失败: $e');
+      rethrow;
+    }
   }
 
   /// 导航到已完成路线页面
@@ -91,6 +161,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   /// 刷新用户统计数据
   void _refreshUserStats() {
+    if (!_isLoggedIn) {
+      ToastUtils.showToast(context, '请先登录');
+      return;
+    }
+    
     setState(() {
       _userStatsFuture = _loadUserStatsData();
     });
@@ -117,6 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _isLoggedIn = true;
         });
         _loadUserData();
+        _userStatsFuture = _loadUserStatsData();
       }
     });
   }
@@ -137,6 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _isLoggedIn = true;
         });
         _loadUserData();
+        _userStatsFuture = _loadUserStatsData();
       }
     });
   }
@@ -159,14 +236,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             CupertinoDialogAction(
               isDestructiveAction: true,
               child: const Text('退出'),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                // TODO: 实现退出登录逻辑
-                setState(() {
-                  _user = null;
-                  _isLoggedIn = false;
-                });
-                ToastUtils.showToast(context, '已退出登录');
+
+                try {
+                  await UserService.logout();
+                  if (mounted) {
+                    setState(() {
+                      _user = null;
+                      _isLoggedIn = false;
+                    });
+                    ToastUtils.showToast(context, '已退出登录');
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ToastUtils.showToast(context, '退出登录失败：$e');
+                  }
+                }
               },
             ),
           ],
@@ -257,16 +343,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 20),
 
             // 我的统计
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0),
-              child: StatsCard(
-                userStatsFuture: _userStatsFuture,
-                onCompletedRoutesPressed: _navigateToCompletedRoutes,
-                onEquipmentListPressed: _navigateToEquipmentList,
-                onFavoriteRoutesPressed: _navigateToFavoriteRoutes,
-                onRefreshPressed: _refreshUserStats,
+            if (_userStatsFuture != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: StatsCard(
+                  userStatsFuture: _userStatsFuture!,
+                  onCompletedRoutesPressed: _navigateToCompletedRoutes,
+                  onEquipmentListPressed: _navigateToEquipmentList,
+                  onFavoriteRoutesPressed: _navigateToFavoriteRoutes,
+                  onRefreshPressed: _refreshUserStats,
+                ),
               ),
-            ),
 
             const SizedBox(height: 20),
 
@@ -563,18 +650,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           '隐私设置',
           onTap: () {
             _showFeatureNotImplementedDialog(context);
-          },
-        ),
-        _buildListTile(
-          context,
-          CupertinoIcons.map_fill,
-          '开源3D地图测试',
-          onTap: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) => const OpenSourceMapTestPage(),
-              ),
-            );
           },
         ),
       ],
