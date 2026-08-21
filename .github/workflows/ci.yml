@@ -46,6 +46,11 @@ jobs:
       - name: Pub get
         run: flutter pub get
 
+      - name: Generate code (build_runner)
+        # *.g.dart 被 gitignore，CI 全新 checkout 无生成文件，
+        # 不先跑 build_runner 则 analyze/build 必报 missing part 错误。
+        run: dart run build_runner build --delete-conflicting-outputs
+
       - name: Analyze
         # 全部 196 条均为 info 级（弃用提示等），无 error/warning。
         # --no-fatal-infos：info 不挡构建，error/warning 仍然挡，与本地日常行为一致。
@@ -77,6 +82,11 @@ jobs:
       - name: Pub get
         run: flutter pub get
 
+      - name: Generate code (build_runner)
+        # *.g.dart 被 gitignore，CI 全新 checkout 无生成文件，
+        # 不先跑 build_runner 则 analyze/build 必报 missing part 错误。
+        run: dart run build_runner build --delete-conflicting-outputs
+
       - name: Build debug APK
         run: flutter build apk --debug
 
@@ -104,6 +114,11 @@ jobs:
       - name: Pub get
         run: flutter pub get
 
+      - name: Generate code (build_runner)
+        # *.g.dart 被 gitignore，CI 全新 checkout 无生成文件，
+        # 不先跑 build_runner 则 analyze/build 必报 missing part 错误。
+        run: dart run build_runner build --delete-conflicting-outputs
+
       - name: Build iOS (no codesign)
         run: flutter build ios --release --no-codesign
 
@@ -130,6 +145,11 @@ jobs:
 
       - name: Pub get
         run: flutter pub get
+
+      - name: Generate code (build_runner)
+        # *.g.dart 被 gitignore，CI 全新 checkout 无生成文件，
+        # 不先跑 build_runner 则 analyze/build 必报 missing part 错误。
+        run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Build Web (base-href /app/)
         # vialu.cn 的 Flutter Web 挂在 /app/ 子路径下，与 Admin 前端共用 nginx。
