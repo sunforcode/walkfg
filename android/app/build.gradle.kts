@@ -10,11 +10,7 @@ plugins {
 
 android {
     namespace = "com.example.walk"
-    // 钉在 35 而非 flutter.compileSdkVersion（当前解析为 36）：
-    // flutter_local_notifications 16.x 调用 bigLargeIcon(null)，在 compileSdk 36
-    // 下 BigPictureStyle 同时存在 Bitmap/Icon 两个重载，null 引用二义性直接编译失败。
-    // 插件升级到 19.x 才适配 SDK 36，届时可恢复 flutter.compileSdkVersion。
-    compileSdk = 35
+    compileSdk = flutter.compileSdkVersion
     // 固定使用本机已完整安装的 NDK 27。
     // Flutter SDK 默认指向的 28.2.13676358 在本机是一次失败的下载
     // （目录仅剩 .installer，缺 source.properties），会导致配置阶段直接失败。
@@ -40,9 +36,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        // 与上方 compileSdk=35 配套：flutter.targetSdkVersion 当前解析为 36，
-        // 超过 compileSdk 会直接构建失败。
-        targetSdk = 35
+        targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
