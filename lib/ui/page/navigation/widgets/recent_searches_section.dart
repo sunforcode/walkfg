@@ -65,7 +65,7 @@ class RecentSearchesSection extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
-                        minSize: 30,
+                        minimumSize: const Size.fromHeight(30),
                         onPressed: () {
                           onSearchTap(recentSearches[index]);
                         },

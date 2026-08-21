@@ -100,7 +100,7 @@ class _InlineEditFieldState extends State<InlineEditField> {
             : Border.all(color: CupertinoColors.separator, width: 0.5),
         borderRadius: BorderRadius.circular(8),
         color: _isEditing 
-            ? CupertinoColors.systemBlue.withOpacity(0.05)
+            ? CupertinoColors.systemBlue.withValues(alpha: 0.05)
             : CupertinoColors.systemBackground,
       ),
       child: Row(

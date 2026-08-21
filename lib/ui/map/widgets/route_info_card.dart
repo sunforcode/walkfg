@@ -23,7 +23,7 @@ class RouteInfoCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: CupertinoColors.black.withOpacity(0.7),
+          color: CupertinoColors.black.withValues(alpha: 0.7),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(

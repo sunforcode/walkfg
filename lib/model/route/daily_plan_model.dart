@@ -94,10 +94,10 @@ class DailyPlanModel {
   /// 格式化统计信息
   String get formattedStats {
     final List<String> stats = [];
-    if (distance != null && distance! > 0) {
-      stats.add('徒步${distance!.toStringAsFixed(1)}km');
+    if (distance > 0) {
+      stats.add('徒步${distance.toStringAsFixed(1)}km');
     }
-    if (elevationGain != null && elevationGain! > 0) {
+    if (elevationGain > 0) {
       stats.add('爬升${elevationGain}m');
     }
     final hours = estimatedTime.floor();
@@ -127,8 +127,8 @@ class DailyPlanModel {
 
   /// 获取海拔变化描述
   String get elevationDescription {
-    if (maxElevation != null && minElevation != null) {
-      return '海拔${minElevation!.toInt()}m - ${maxElevation!.toInt()}m';
+    if (minElevation != null) {
+      return '海拔${minElevation!.toInt()}m - ${maxElevation.toInt()}m';
     }
     return '';
   }
@@ -169,9 +169,9 @@ class DailyPlanModel {
       dayNumber: dayNumber ?? this.dayNumber,
       title: title ?? this.title,
       description: description ?? this.description,
-      distance: distance ?? this.distance ?? 0,
+      distance: distance ?? this.distance,
       estimatedTime: estimatedTime ?? this.estimatedTime,
-      elevationGain: elevationGain ?? this.elevationGain ?? 0,
+      elevationGain: elevationGain ?? this.elevationGain,
       elevationLoss: elevationLoss ?? this.elevationLoss,
       maxElevation: maxElevation ?? this.maxElevation,
       minElevation: minElevation ?? this.minElevation,

@@ -1,14 +1,213 @@
 import 'package:flutter/cupertino.dart';
-import '../../../../../model/route/route_model.dart';
+import 'package:walk/model/route/route_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
-/// 路线概览组件
-class RouteOverviewWidget extends StatelessWidget {
-  /// 路线数据
+/// 段 2：路线概览 (PRD §3.3.2)
+///
+/// 段标题"📍 路线概览"；评分行；标签行；描述（3行折叠/展开）；
+/// 实用信息（交通·信号）；指标摘要
+class RouteOverviewWidget extends StatefulWidget {
   final RouteModel route;
 
-  const RouteOverviewWidget({
-    super.key,
-    required this.route,
+  const RouteOverviewWidget({super.key, required this.route});
+
+  @override
+  State<RouteOverviewWidget> createState() => _RouteOverviewWidgetState();
+}
+
+class _RouteOverviewWidgetState extends State<RouteOverviewWidget> {
+  bool _descriptionExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 段标题 "📍 路线概览"
+        const _SectionTitle(),
+
+        const SizedBox(height: 12),
+
+        // 评分行 (⭐ + 评分值 + 评价人数)
+        _RatingRow(rating: widget.route.rating, reviewCount: widget.route.ratings?.ratingCount ?? 0),
+
+        const SizedBox(height: 10),
+
+        // 标签行 (圆角药丸, 12px, rgba(0,0,0,.05)底, #555字)
+        _TagChips(tags: widget.route.tags),
+
+        const SizedBox(height: 12),
+
+        // 指标摘要行 (距离·用时·爬升·下降)
+        _MetricsSummary(route: widget.route),
+
+        // 路线描述 (14px, #555, 行高1.7, 超3行截断+展开)
+        if (widget.route.description.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _DescriptionBlock(
+            text: widget.route.description,
+            expanded: _descriptionExpanded,
+            onToggle: () => setState(() => _descriptionExpanded = !_descriptionExpanded),
+          ),
+        ],
+
+        // 实用信息行 (交通 + 信号)
+        if (_hasPracticalInfo()) ...[
+          const SizedBox(height: 12),
+          _PracticalInfoRow(route: widget.route),
+        ],
+      ],
+    );
+  }
+
+  bool _hasPracticalInfo() {
+    final r = widget.route;
+    return (r.trafficInfo != null && r.trafficInfo!.isNotEmpty) ||
+        (r.signalInfo != null && r.signalInfo!.isNotEmpty);
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  段标题 "📍 路线概览"
+// ---------------------------------------------------------------------------
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+      '📍 路线概览',
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: AppColors.sheetTextPrimary,
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  评分行: ⭐ 4.8 (128)
+// ---------------------------------------------------------------------------
+
+class _RatingRow extends StatelessWidget {
+  final double rating;
+  final int reviewCount;
+
+  const _RatingRow({required this.rating, required this.reviewCount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Text('⭐', style: TextStyle(fontSize: 14)),
+        const SizedBox(width: 4),
+        Text(
+          rating.toStringAsFixed(1),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.sheetTextPrimary,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          '($reviewCount)',
+          style: const TextStyle(
+            fontSize: 14,
+            color: AppColors.sheetTextSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  标签行: 圆角药丸 12px, rgba(0,0,0,.05) 底, #555 字
+// ---------------------------------------------------------------------------
+
+class _TagChips extends StatelessWidget {
+  final List<String> tags;
+  const _TagChips({required this.tags});
+
+  @override
+  Widget build(BuildContext context) {
+    if (tags.isEmpty) return const SizedBox.shrink();
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: tags.take(6).map((tag) => _TagPill(text: tag)).toList(),
+    );
+  }
+}
+
+class _TagPill extends StatelessWidget {
+  final String text;
+  const _TagPill({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.sheetTagBg,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          color: AppColors.sheetTextTag,
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  指标摘要行: 距离 · 用时 · 爬升 · 下降
+// ---------------------------------------------------------------------------
+
+class _MetricsSummary extends StatelessWidget {
+  final RouteModel route;
+  const _MetricsSummary({required this.route});
+
+  @override
+  Widget build(BuildContext context) {
+    final parts = <String>[
+      '${route.distance.toStringAsFixed(1)}km',
+      route.durationText,
+      '↑${route.elevationGain.toInt()}m',
+      '↓${route.elevationLoss.toInt()}m',
+    ];
+
+    return Text(
+      parts.join(' · '),
+      style: const TextStyle(
+        fontSize: 13,
+        color: AppColors.sheetTextSecondary,
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  描述折叠/展开 (PRD: 14px, #555, 行高1.7, 超3行截断+"展开")
+// ---------------------------------------------------------------------------
+
+class _DescriptionBlock extends StatelessWidget {
+  final String text;
+  final bool expanded;
+  final VoidCallback onToggle;
+
+  const _DescriptionBlock({
+    required this.text,
+    required this.expanded,
+    required this.onToggle,
   });
 
   @override
@@ -16,276 +215,161 @@ class RouteOverviewWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 标题区域（路线名称 + 地区评分）
-        _buildTitleSection(),
-
-        const SizedBox(height: 12),
-
-        // 标签云（紧贴标题下方）
-        _buildTagsSection(),
-
-        const SizedBox(height: 16),
-
-        // 轨迹基本信息（文字版）
-        _buildTrackBasicInfo(),
-        const SizedBox(height: 16),
-
-        // 整合描述（路线简介 + 实用信息 + 安全提醒）
-        _buildIntegratedDescription(),
-      ],
-    );
-  }
-
-  /// 构建标题部分（现在只显示地区和评分，不显示路线名称）
-  Widget _buildTitleSection() {
-    return Row(
-      children: [
-        Icon(
-          CupertinoIcons.location,
-          size: 16,
-          color: CupertinoColors.systemGrey,
-        ),
-        const SizedBox(width: 4),
-        Text(
-          route.region,
-          style: const TextStyle(
-            fontSize: 16,
-            color: CupertinoColors.systemGrey,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Icon(
-          CupertinoIcons.star_fill,
-          size: 16,
-          color: CupertinoColors.systemYellow,
-        ),
-        const SizedBox(width: 4),
-        Text(
-          route.rating.toStringAsFixed(1),
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: CupertinoColors.label,
-          ),
-        ),
-        Text(
-          ' (${route.ratings?.ratingCount ?? 'null'})',
-          style: const TextStyle(
-            fontSize: 14,
-            color: CupertinoColors.systemGrey,
-          ),
+        AnimatedCrossFade(
+          firstChild: _CollapsedText(text: text, onExpand: onToggle),
+          secondChild: _ExpandedText(text: text, onCollapse: onToggle),
+          crossFadeState:
+              expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          duration: const Duration(milliseconds: 250),
+          sizeCurve: Curves.easeOut,
         ),
       ],
     );
   }
+}
 
-  /// 构建标签部分（精简版）
-  Widget _buildTagsSection() {
-    final displayTags = _getDisplayTags();
+/// 折叠态：最多 3 行，尾部"展开"按钮
+class _CollapsedText extends StatelessWidget {
+  final String text;
+  final VoidCallback onExpand;
+  const _CollapsedText({required this.text, required this.onExpand});
 
-    if (displayTags.isEmpty) return const SizedBox.shrink();
-
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: displayTags
-          .map((tagInfo) => _buildTag(
-                tagInfo['text'],
-                tagInfo['color'],
-                tagInfo['backgroundColor'],
-              ))
-          .toList(),
-    );
-  }
-
-  /// 获取要显示的标签（最多6个，优先级排序）
-  List<Map<String, dynamic>> _getDisplayTags() {
-    final tags = <Map<String, dynamic>>[];
-
-    // 1. 最佳季节（最高优先级，带emoji）
-    if (route.weatherInfo?.bestSeasons != null &&
-        !route.weatherInfo!.bestSeasons.isEmpty) {
-      for (final season in route.weatherInfo!.bestSeasons.take(2)) {
-        final emoji = _getSeasonEmoji(season);
-        tags.add({
-          'text': '$emoji$season',
-          'color': CupertinoColors.systemGreen,
-          'backgroundColor': CupertinoColors.systemGreen.withOpacity(0.1),
-        });
-      }
-    }
-
-    // 2. 特色标签（高优先级）
-    final featureTags = route.tags?.take(2) ?? [];
-    for (final tag in featureTags) {
-      tags.add({
-        'text': tag,
-        'color': CupertinoColors.systemOrange,
-        'backgroundColor': CupertinoColors.systemOrange.withOpacity(0.1),
-      });
-    }
-
-    // 3. 路线标签（补充，最多2个）
-    final remainingSlots = 6 - tags.length;
-    if (remainingSlots > 0) {
-      final routeTags = route.tags?.take(remainingSlots) ?? [];
-      for (final tag in routeTags) {
-        tags.add({
-          'text': tag,
-          'color': CupertinoColors.activeBlue,
-          'backgroundColor': CupertinoColors.activeBlue.withOpacity(0.1),
-        });
-      }
-    }
-
-    return tags.take(6).toList();
-  }
-
-  /// 获取季节emoji
-  String _getSeasonEmoji(String season) {
-    switch (season) {
-      case '春季':
-        return '🌸';
-      case '夏季':
-        return '☀️';
-      case '秋季':
-        return '🍂';
-      case '冬季':
-        return '❄️';
-      default:
-        return '🌿';
-    }
-  }
-
-  /// 构建标签
-  Widget _buildTag(String text, Color textColor, Color backgroundColor) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: textColor.withOpacity(0.3),
-          width: 0.5,
-        ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12,
-          color: textColor,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
-  /// 构建轨迹基本信息（文字版）
-  Widget _buildTrackBasicInfo() {
-    final track = route.defaultMap;
-
-    if (track == null) {
-      // 回退方案：使用route对象的计算属性
-      return Text(
-        '距离 ${route.distance.toStringAsFixed(1)}km · '
-        '用时 ${route.durationText} · '
-        '爬升 ${route.elevationGain.toInt()}m · '
-        '下降 ${route.elevationLoss.toInt()}m',
-        style: const TextStyle(
-          fontSize: 14,
-          color: CupertinoColors.secondaryLabel,
-          fontWeight: FontWeight.w500,
-        ),
-      );
-    }
-
-    return Text(
-      '距离 ${track.distance.toStringAsFixed(1)}km · '
-      '用时 ${track.getEstimatedTimeText()} · '
-      '爬升 ${track.elevationGain.toInt()}m · '
-      '下降 ${track.elevationLoss.toInt()}m',
-      style: const TextStyle(
-        fontSize: 14,
-        color: CupertinoColors.secondaryLabel,
-        fontWeight: FontWeight.w500,
-      ),
-    );
-  }
-
-  /// 构建整合描述
-  Widget _buildIntegratedDescription() {
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '路线描述',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: CupertinoColors.label,
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        // 路线简介段落
         Text(
-          route.description,
+          text,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontSize: 14,
-            color: CupertinoColors.secondaryLabel,
-            height: 1.5,
+            color: AppColors.sheetTextTag,
+            height: 1.7,
           ),
         ),
+        // 仅当文本可能超3行时才显示"展开"
+        if (text.length > 80)
+          GestureDetector(
+            onTap: onExpand,
+            child: const Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(
+                '展开',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.brandStart,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
 
-        const SizedBox(height: 12),
+/// 展开态：全文 + "收起"
+class _ExpandedText extends StatelessWidget {
+  final String text;
+  final VoidCallback onCollapse;
+  const _ExpandedText({required this.text, required this.onCollapse});
 
-        // 实用信息段落（自然语言描述）
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         Text(
-          _buildPracticalInfoText(),
+          text,
           style: const TextStyle(
             fontSize: 14,
-            color: CupertinoColors.secondaryLabel,
-            height: 1.5,
+            color: AppColors.sheetTextTag,
+            height: 1.7,
+          ),
+        ),
+        GestureDetector(
+          onTap: onCollapse,
+          child: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text(
+              '收起',
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.brandStart,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ),
       ],
     );
   }
+}
 
-  /// 构建实用信息文本
-  String _buildPracticalInfoText() {
-    final buffer = StringBuffer();
+// ---------------------------------------------------------------------------
+//  实用信息行: 交通信息 · 信号信息
+// ---------------------------------------------------------------------------
 
-    // 行程安排信息
-    if (route.dailyPlans != null) {
-      final totalTime =
-          route.dailyPlans!.fold(0.0, (sum, plan) => sum + plan.estimatedTime);
-      final avgTimePerDay = totalTime / route.dailyPlans!.length;
+class _PracticalInfoRow extends StatelessWidget {
+  final RouteModel route;
+  const _PracticalInfoRow({required this.route});
 
-      buffer.write('行程安排：从${route.defaultMap?.startPoint}出发，');
-      buffer.write('平均每天徒步${avgTimePerDay.toStringAsFixed(1)}小时，');
+  @override
+  Widget build(BuildContext context) {
+    final items = <_InfoItem>[];
 
-      if (route.dailyPlans!.length > 1) {
-        buffer.write(
-            '${route.dailyPlans!.length}天行程最终在${route.defaultMap?.endPoint}结束。');
-      } else {
-        buffer.write('当天在${route.defaultMap?.endPoint}结束。');
-      }
+    if (route.trafficInfo != null && route.trafficInfo!.isNotEmpty) {
+      items.add(_InfoItem(icon: CupertinoIcons.bus, text: route.trafficInfo!));
+    }
+    if (route.signalInfo != null && route.signalInfo!.isNotEmpty) {
+      items.add(_InfoItem(icon: CupertinoIcons.antenna_radiowaves_left_right, text: route.signalInfo!));
     }
 
-    // 住宿信息
-    final accommodations = route.dailyPlans ??
-        []
-            .where((plan) =>
-                plan.accommodation != null && plan.accommodation!.isNotEmpty)
-            .map((plan) => plan.accommodation!)
-            .toSet()
-            .toList();
+    if (items.isEmpty) return const SizedBox.shrink();
 
-    if (accommodations.isNotEmpty) {
-      buffer.write('沿途有${accommodations.join('、')}等住宿点，建议提前预订。');
-    }
+    return Row(
+      children: items
+          .expand((item) => [
+                _InfoChip(item: item),
+                const SizedBox(width: 10),
+              ])
+          .toList()
+        ..removeLast(),
+    );
+  }
+}
 
-    return buffer.toString();
+class _InfoItem {
+  final IconData icon;
+  final String text;
+  const _InfoItem({required this.icon, required this.text});
+}
+
+class _InfoChip extends StatelessWidget {
+  final _InfoItem item;
+  const _InfoChip({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(item.icon, size: 14, color: AppColors.sheetTextSecondary),
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            item.text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.sheetTextSecondary,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

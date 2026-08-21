@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/trip/trip_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 参与者展示组件
 class TripParticipantsDisplayWidget extends StatefulWidget {
@@ -35,40 +36,7 @@ class _TripParticipantsDisplayWidgetState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 标题行
-          Row(
-            children: [
-              const Icon(
-                CupertinoIcons.person_2,
-                size: 20,
-                color: CupertinoColors.systemPurple,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                '参与者',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: CupertinoColors.label,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.systemPurple.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${widget.trip.participantCount}人',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: CupertinoColors.systemPurple,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          _buildSectionHeader(mockParticipants),
           const SizedBox(height: 16),
 
           // 参与者列表
@@ -82,56 +50,97 @@ class _TripParticipantsDisplayWidgetState
 
             // 更多按钮
             if (hasMore && !_showAll)
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  setState(() {
-                    _showAll = true;
-                  });
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: CupertinoColors.systemGrey6,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: CupertinoColors.separator,
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        '查看更多参与者',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: CupertinoColors.systemPurple,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '(${mockParticipants.length - _maxDisplayCount}人)',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: CupertinoColors.systemGrey,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(
-                        CupertinoIcons.chevron_down,
-                        size: 16,
-                        color: CupertinoColors.systemPurple,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _buildShowMoreButton(mockParticipants),
           ] else
             _buildEmptyState(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(List<Map<String, dynamic>> participants) {
+    return Row(
+      children: [
+        const Icon(
+          CupertinoIcons.person_2,
+          size: 20,
+          color: AppColors.statusPreparingText,
+        ),
+        const SizedBox(width: 8),
+        const Text(
+          '参与者',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const Spacer(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppColors.statusPreparingBg,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            '${widget.trip.participantCount}人',
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.statusPreparingText,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShowMoreButton(List<Map<String, dynamic>> participants) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: () {
+        setState(() {
+          _showAll = true;
+        });
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.sheetCardBg,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.sheetDivider,
+            width: 0.5,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              '查看更多参与者',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.statusPreparingText,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '(${participants.length - _maxDisplayCount}人)',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.textSubtitle,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(
+              CupertinoIcons.chevron_down,
+              size: 16,
+              color: AppColors.statusPreparingText,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -144,143 +153,154 @@ class _TripParticipantsDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.sheetCardBg,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: CupertinoColors.separator,
+          color: AppColors.sheetDivider,
           width: 0.5,
         ),
       ),
       child: Row(
         children: [
           // 头像
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: isOrganizer
-                  ? CupertinoColors.systemBlue.withOpacity(0.2)
-                  : CupertinoColors.systemGrey5,
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Center(
-              child: Text(
-                participant['avatar'] as String,
-                style: const TextStyle(fontSize: 24),
-              ),
-            ),
-          ),
+          _buildAvatar(isOrganizer, participant),
           const SizedBox(width: 12),
 
           // 信息
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      participant['name'] as String,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: CupertinoColors.label,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    if (isOrganizer)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: CupertinoColors.systemBlue,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          '组织者',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: CupertinoColors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(
-                      CupertinoIcons.star,
-                      size: 12,
-                      color: CupertinoColors.systemYellow,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      participant['experience'] as String,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: CupertinoColors.secondaryLabel,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Icon(
-                      CupertinoIcons.calendar,
-                      size: 12,
-                      color: CupertinoColors.systemGrey,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      participant['joinDate'] as String,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: CupertinoColors.tertiaryLabel,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            child: _buildParticipantInfo(participant, isOrganizer, isConfirmed),
           ),
 
           // 状态
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 4,
+          _buildStatusBadge(isConfirmed, participant),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar(bool isOrganizer, Map<String, dynamic> participant) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: isOrganizer
+            ? AppColors.interactiveAccent.withValues(alpha: 0.2)
+            : AppColors.sheetDivider,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Center(
+        child: Text(
+          participant['avatar'] as String,
+          style: const TextStyle(fontSize: 24),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildParticipantInfo(
+    Map<String, dynamic> participant,
+    bool isOrganizer,
+    bool isConfirmed,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              participant['name'] as String,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
             ),
-            decoration: BoxDecoration(
-              color: isConfirmed
-                  ? CupertinoColors.systemGreen.withOpacity(0.1)
-                  : CupertinoColors.systemOrange.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  isConfirmed
-                      ? CupertinoIcons.checkmark_circle_fill
-                      : CupertinoIcons.clock_fill,
-                  size: 12,
-                  color: isConfirmed
-                      ? CupertinoColors.systemGreen
-                      : CupertinoColors.systemOrange,
+            const SizedBox(width: 8),
+            if (isOrganizer)
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 2,
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  participant['status'] as String,
+                decoration: BoxDecoration(
+                  color: AppColors.badgeBlueBg,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Text(
+                  '组织者',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 10,
+                    color: AppColors.badgeBlueText,
                     fontWeight: FontWeight.w500,
-                    color: isConfirmed
-                        ? CupertinoColors.systemGreen
-                        : CupertinoColors.systemOrange,
                   ),
                 ),
-              ],
+              ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            const Icon(
+              CupertinoIcons.star,
+              size: 12,
+              color: AppColors.statusPlanningText,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              participant['experience'] as String,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textBody,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Icon(
+              CupertinoIcons.calendar,
+              size: 12,
+              color: AppColors.textSubtitle,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              participant['joinDate'] as String,
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.textSubtitle,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge(bool isConfirmed, Map<String, dynamic> participant) {
+    final Color statusBg =
+        isConfirmed ? AppColors.badgeVerifiedBg : AppColors.badgeRecommendedBg;
+    final Color statusText =
+        isConfirmed ? AppColors.badgeVerifiedText : AppColors.badgeRecommendedText;
+    final IconData statusIcon =
+        isConfirmed ? CupertinoIcons.checkmark_circle_fill : CupertinoIcons.clock_fill;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        color: statusBg,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(statusIcon, size: 12, color: statusText),
+          const SizedBox(width: 4),
+          Text(
+            participant['status'] as String,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: statusText,
             ),
           ),
         ],
@@ -292,10 +312,10 @@ class _TripParticipantsDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.sheetCardBg,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: CupertinoColors.separator,
+          color: AppColors.sheetDivider,
           width: 0.5,
         ),
       ),
@@ -304,7 +324,7 @@ class _TripParticipantsDisplayWidgetState
           Icon(
             CupertinoIcons.person_2,
             size: 48,
-            color: CupertinoColors.systemGrey,
+            color: AppColors.textSubtitle,
           ),
           SizedBox(height: 16),
           Text(
@@ -312,7 +332,7 @@ class _TripParticipantsDisplayWidgetState
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textBody,
             ),
           ),
           SizedBox(height: 8),
@@ -320,7 +340,7 @@ class _TripParticipantsDisplayWidgetState
             '邀请朋友一起参加这次徒步之旅',
             style: TextStyle(
               fontSize: 14,
-              color: CupertinoColors.tertiaryLabel,
+              color: AppColors.textSubtitle,
             ),
             textAlign: TextAlign.center,
           ),

@@ -43,9 +43,6 @@ class LocationService {
   /// 私有构造函数
   LocationService._internal();
 
-  /// 位置权限状态缓存
-  LocationPermission? _lastPermissionStatus;
-
   /// 最后获取的位置
   Position? _lastKnownPosition;
 
@@ -90,7 +87,6 @@ class LocationService {
         permission = await Geolocator.requestPermission();
       }
 
-      _lastPermissionStatus = permission;
       return permission;
     } catch (e) {
       debugPrint('检查或请求位置权限失败: $e');
@@ -188,13 +184,11 @@ class LocationService {
 
     _positionStreamController = StreamController<Position>.broadcast();
 
-    final locationSettings = LocationSettings(
-      accuracy: accuracy,
-      distanceFilter: distanceFilter,
-    );
-
     _positionStream = Geolocator.getPositionStream(
-      locationSettings: locationSettings,
+      locationSettings: LocationSettings(
+        accuracy: accuracy,
+        distanceFilter: distanceFilter,
+      ),
     ).handleError((error) {
       debugPrint('位置流错误: $error');
       _positionStreamController?.addError(error);
@@ -285,11 +279,6 @@ class LocationService {
     // 用于存储海拔样本的列表
     List<double> altitudeSamples = [];
     List<double> accuracySamples = [];
-
-    final locationSettings = LocationSettings(
-      accuracy: accuracy,
-      distanceFilter: distanceFilter,
-    );
 
     // 创建定时器，定期获取位置信息
     Timer.periodic(intervalDuration, (timer) async {
@@ -426,7 +415,6 @@ class LocationService {
   /// 清除缓存的位置信息
   void clearCache() {
     _lastKnownPosition = null;
-    _lastPermissionStatus = null;
   }
 
   /// 释放资源

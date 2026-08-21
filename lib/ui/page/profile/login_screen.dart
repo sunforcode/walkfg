@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'auth/register_screen.dart';
 import 'auth/forgot_password_screen.dart';
 import '../../../service/user_service.dart';
@@ -62,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       // 调用实际的登录API
-      final user = await UserService.login(username, password);
+      await UserService.login(username, password);
       
       // 登录成功，返回个人主页
       if (mounted) {
@@ -147,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const Icon(
                 CupertinoIcons.person_crop_circle_fill,
                 size: 80,
-                color: CupertinoColors.activeBlue,
+                color: AppColors.interactiveAccent,
               ),
               const SizedBox(height: 40),
               const Text(
@@ -163,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 '徒步旅行助手',
                 style: TextStyle(
                   fontSize: 16,
-                  color: CupertinoColors.systemGrey,
+                  color: AppColors.textSubtitle,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -176,13 +175,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.person,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                 decoration: BoxDecoration(
-                  border: Border.all(color: CupertinoColors.systemGrey4),
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -195,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.lock,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
                 suffix: CupertinoButton(
@@ -204,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     _obscurePassword
                         ? CupertinoIcons.eye
                         : CupertinoIcons.eye_slash,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                   onPressed: () {
                     setState(() {
@@ -215,16 +214,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                 decoration: BoxDecoration(
-                  border: Border.all(color: CupertinoColors.systemGrey4),
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
               const SizedBox(height: 24),
               CupertinoButton(
-                color: CupertinoColors.activeBlue,
+                color: AppColors.interactiveAccent,
                 child: _isLoggingIn
                     ? const CupertinoActivityIndicator(
-                        color: CupertinoColors.white)
+                        color: AppColors.bgBase)
                     : const Text('登录'),
                 onPressed: _isLoggingIn ? null : _handleLogin,
               ),

@@ -53,11 +53,11 @@ class _FloatingElevationChart extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground.withOpacity(0.95),
+        color: CupertinoColors.systemBackground.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.black.withOpacity(0.1),
+            color: CupertinoColors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -88,7 +88,7 @@ class _FloatingElevationChart extends StatelessWidget {
                 const Spacer(),
                 CupertinoButton(
                   padding: EdgeInsets.zero,
-                  minSize: 0,
+                  minSize: 0, // ignore: deprecated_member_use
                   onPressed: onClose,
                   child: const Icon(
                     CupertinoIcons.xmark,

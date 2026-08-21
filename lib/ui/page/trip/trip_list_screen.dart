@@ -95,7 +95,7 @@ class _TripListScreenState extends State<TripListScreen> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: CupertinoColors.systemGrey5.withOpacity(0.5),
+              color: CupertinoColors.systemGrey5.withValues(alpha: 0.5),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -238,9 +238,9 @@ class _TripListScreenState extends State<TripListScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,

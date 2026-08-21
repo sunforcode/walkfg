@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/trip/widget/trip_info_row_widget.dart';
@@ -64,7 +63,7 @@ class TripBasicInfoCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey5.withOpacity(0.5),
+            color: CupertinoColors.systemGrey5.withValues(alpha: 0.5),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -176,7 +175,7 @@ class TripBasicInfoCardWidget extends StatelessWidget {
                   Center(
                     child: CupertinoButton(
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

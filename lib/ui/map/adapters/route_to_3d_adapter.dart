@@ -47,7 +47,7 @@ class RouteTo3DAdapter {
         route.defaultMap!.maxElevation! > 2000;
     final bool isMountainRoute = route.region.contains('山') ||
         route.region.contains('峰') ||
-        route.tags?.any((tag) => tag.contains('登山') || tag.contains('高海拔')) ==
+        route.tags.any((tag) => tag.contains('登山') || tag.contains('高海拔')) ==
             true;
 
     if (isMountainRoute || isHighAltitude) return 60.0;

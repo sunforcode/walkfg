@@ -25,14 +25,14 @@ class WeatherDetailItem extends StatelessWidget {
       children: [
         Icon(
           icon,
-          color: AppColors.textOnDark.withOpacity(0.9),
+          color: AppColors.textOnDark.withValues(alpha: 0.9),
           size: 20,
         ),
         const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
-            color: AppColors.textOnDark.withOpacity(0.9),
+            color: AppColors.textOnDark.withValues(alpha: 0.9),
             fontSize: 12,
           ),
         ),

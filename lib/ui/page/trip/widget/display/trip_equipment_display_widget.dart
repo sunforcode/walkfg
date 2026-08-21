@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/service/equipment_service.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/equipment/equipment_list_create_screen.dart';
 import 'package:walk/ui/page/equipment/equipment_list_detail_screen.dart';
 import 'package:walk/ui/page/equipment/equipment_list_list_screen.dart';
@@ -59,7 +60,7 @@ class _TripEquipmentDisplayWidgetState
     });
     try {
       // 优先直接用行程详情已经解析好的 equipment_list_id 拉取摘要，
-      // 避免多一次列表查询；同时查询关联清单总数用于展示“查看全部”。
+      // 避免多一次列表查询；同时查询关联清单总数用于展示"查看全部"。
       final pageResult = await EquipmentService.getEquipmentListsByTrip(
         widget.trip.id,
         page: 0,
@@ -170,37 +171,7 @@ class _TripEquipmentDisplayWidgetState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(
-                CupertinoIcons.bag,
-                size: 20,
-                color: CupertinoColors.systemPurple,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                '装备清单',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: CupertinoColors.label,
-                ),
-              ),
-              const Spacer(),
-              if (_linkedListCount > 1)
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: _viewAllLinkedLists,
-                  child: Text(
-                    '查看全部($_linkedListCount)',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: CupertinoColors.systemPurple,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+          _buildSectionHeader(),
           const SizedBox(height: 12),
           if (_isLoading)
             const Center(
@@ -220,11 +191,45 @@ class _TripEquipmentDisplayWidgetState
     );
   }
 
+  Widget _buildSectionHeader() {
+    return Row(
+      children: [
+        const Icon(
+          CupertinoIcons.bag,
+          size: 20,
+          color: AppColors.statusPreparingText,
+        ),
+        const SizedBox(width: 8),
+        const Text(
+          '装备清单',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const Spacer(),
+        if (_linkedListCount > 1)
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: _viewAllLinkedLists,
+            child: Text(
+              '查看全部($_linkedListCount)',
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.statusPreparingText,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _buildErrorState() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.sheetCardBg,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -233,7 +238,7 @@ class _TripEquipmentDisplayWidgetState
             _errorMessage!,
             style: const TextStyle(
               fontSize: 13,
-              color: CupertinoColors.systemRed,
+              color: AppColors.error,
             ),
             textAlign: TextAlign.center,
           ),
@@ -254,53 +259,17 @@ class _TripEquipmentDisplayWidgetState
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemGrey6,
+          color: AppColors.sheetCardBg,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: CupertinoColors.separator,
+            color: AppColors.sheetDivider,
             width: 0.5,
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    list.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: CupertinoColors.label,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: CupertinoColors.systemPurple.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    list.typeName,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: CupertinoColors.systemPurple,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                const Icon(
-                  CupertinoIcons.chevron_right,
-                  size: 16,
-                  color: CupertinoColors.tertiaryLabel,
-                ),
-              ],
-            ),
+            _buildListCardHeader(list),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -308,7 +277,7 @@ class _TripEquipmentDisplayWidgetState
                   child: _buildStatCard(
                     title: '总重量',
                     value: list.totalWeightText,
-                    color: CupertinoColors.systemBlue,
+                    color: AppColors.interactiveAccent,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -316,7 +285,7 @@ class _TripEquipmentDisplayWidgetState
                   child: _buildStatCard(
                     title: '装备数',
                     value: '${list.itemCount}',
-                    color: CupertinoColors.systemGreen,
+                    color: AppColors.statusCompletedText,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -324,7 +293,7 @@ class _TripEquipmentDisplayWidgetState
                   child: _buildStatCard(
                     title: '状态',
                     value: list.statusName,
-                    color: CupertinoColors.systemOrange,
+                    color: AppColors.statusPlanningText,
                   ),
                 ),
               ],
@@ -332,6 +301,46 @@ class _TripEquipmentDisplayWidgetState
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildListCardHeader(EquipmentListModel list) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            list.name,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: AppColors.statusPreparingBg,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            list.typeName,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.statusPreparingText,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        const SizedBox(width: 6),
+        const Icon(
+          CupertinoIcons.chevron_right,
+          size: 16,
+          color: AppColors.textSubtitle,
+        ),
+      ],
     );
   }
 
@@ -362,7 +371,7 @@ class _TripEquipmentDisplayWidgetState
             title,
             style: const TextStyle(
               fontSize: 11,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textBody,
             ),
           ),
         ],
@@ -374,10 +383,10 @@ class _TripEquipmentDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.sheetCardBg,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: CupertinoColors.separator,
+          color: AppColors.sheetDivider,
           width: 0.5,
         ),
       ),
@@ -386,7 +395,7 @@ class _TripEquipmentDisplayWidgetState
           const Icon(
             CupertinoIcons.bag,
             size: 48,
-            color: CupertinoColors.systemGrey,
+            color: AppColors.textSubtitle,
           ),
           const SizedBox(height: 16),
           const Text(
@@ -394,7 +403,7 @@ class _TripEquipmentDisplayWidgetState
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textBody,
             ),
           ),
           const SizedBox(height: 8),
@@ -402,7 +411,7 @@ class _TripEquipmentDisplayWidgetState
             '制定装备清单，确保行程安全',
             style: TextStyle(
               fontSize: 14,
-              color: CupertinoColors.tertiaryLabel,
+              color: AppColors.textSubtitle,
             ),
             textAlign: TextAlign.center,
           ),
@@ -413,24 +422,24 @@ class _TripEquipmentDisplayWidgetState
               CupertinoButton(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: CupertinoColors.systemPurple,
+                color: AppColors.statusPreparingText,
                 borderRadius: BorderRadius.circular(8),
                 onPressed: _createList,
                 child: const Text(
                   '新建清单',
-                  style: TextStyle(fontSize: 14, color: CupertinoColors.white),
+                  style: TextStyle(fontSize: 14, color: AppColors.bgBase),
                 ),
               ),
               const SizedBox(width: 12),
               CupertinoButton(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: CupertinoColors.systemGrey5,
+                color: AppColors.sheetDivider,
                 borderRadius: BorderRadius.circular(8),
                 onPressed: _linkExistingList,
                 child: const Text(
                   '关联已有清单',
-                  style: TextStyle(fontSize: 14, color: CupertinoColors.label),
+                  style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
                 ),
               ),
             ],

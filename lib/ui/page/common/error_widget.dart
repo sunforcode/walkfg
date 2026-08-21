@@ -27,9 +27,9 @@ class ErrorMessageWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: displayColor.withOpacity(0.1),
+        color: displayColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: displayColor.withOpacity(0.3)),
+        border: Border.all(color: displayColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -43,14 +43,14 @@ class ErrorMessageWidget extends StatelessWidget {
           Text(
             errorMessage,
             textAlign: TextAlign.center,
-            style: TextStyle(color: displayColor.withOpacity(0.8)),
+            style: TextStyle(color: displayColor.withValues(alpha: 0.8)),
           ),
           const SizedBox(height: 8),
           TextButton(
             onPressed: onRetry,
             style: TextButton.styleFrom(
               foregroundColor: displayColor,
-              backgroundColor: displayColor.withOpacity(0.1),
+              backgroundColor: displayColor.withValues(alpha: 0.1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/theme/tokens/colors.dart';
 
 /// 行程卡片模板
@@ -52,7 +51,7 @@ class TripCardTemplate extends StatelessWidget {
     // 根据usePrimaryHeader确定颜色
     final Color headerColor = usePrimaryHeader 
         ? AppColors.primary 
-        : AppColors.primary.withOpacity(0.1);
+        : AppColors.primary.withValues(alpha: 0.1);
     
     final Color headerTextColor = usePrimaryHeader 
         ? CupertinoColors.white 
@@ -72,7 +71,7 @@ class TripCardTemplate extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey5.withOpacity(0.5),
+            color: CupertinoColors.systemGrey5.withValues(alpha: 0.5),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -135,7 +134,7 @@ class TripCardTemplate extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemYellow.withOpacity(0.1),
+                      color: CupertinoColors.systemYellow.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -165,7 +164,7 @@ class TripCardTemplate extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemBlue.withOpacity(0.1),
+                      color: CupertinoColors.systemBlue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(

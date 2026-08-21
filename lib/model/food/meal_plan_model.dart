@@ -21,6 +21,28 @@ import 'food_item_model.dart';
 
 part 'meal_plan_model.g.dart';
 
+/// 食物计划状态枚举
+enum MealPlanStatus {
+  /// 草稿
+  draft,
+  /// 已确认
+  confirmed,
+}
+
+MealPlanStatus _parseMealPlanStatus(dynamic value) {
+  if (value is String) {
+    switch (value.toLowerCase()) {
+      case 'draft': return MealPlanStatus.draft;
+      case 'confirmed': return MealPlanStatus.confirmed;
+    }
+  }
+  return MealPlanStatus.draft;
+}
+
+String _mealPlanStatusToJson(MealPlanStatus status) {
+  return status.name;
+}
+
 /// 膳食计划模型
 @JsonSerializable()
 class MealPlanModel extends BaseModel {
@@ -53,6 +75,14 @@ class MealPlanModel extends BaseModel {
   @JsonKey(name: 'creator_name')
   final String creatorName;
 
+  /// 计划状态
+  @JsonKey(fromJson: _parseMealPlanStatus, toJson: _mealPlanStatusToJson)
+  final MealPlanStatus status;
+
+  /// 每日餐数
+  @JsonKey(name: 'meals_per_day')
+  final int? mealsPerDay;
+
   /// 构造函数
   MealPlanModel({
     required super.id,
@@ -66,6 +96,8 @@ class MealPlanModel extends BaseModel {
     this.tags = const [],
     required this.creatorId,
     required this.creatorName,
+    this.status = MealPlanStatus.draft,
+    this.mealsPerDay,
   });
 
   /// 从JSON创建
@@ -173,6 +205,8 @@ class MealPlanModel extends BaseModel {
     List<String>? tags,
     String? creatorId,
     String? creatorName,
+    MealPlanStatus? status,
+    int? mealsPerDay,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -186,6 +220,8 @@ class MealPlanModel extends BaseModel {
       tags: tags ?? this.tags,
       creatorId: creatorId ?? this.creatorId,
       creatorName: creatorName ?? this.creatorName,
+      status: status ?? this.status,
+      mealsPerDay: mealsPerDay ?? this.mealsPerDay,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

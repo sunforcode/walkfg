@@ -25,3 +25,5 @@ export 'spacing.dart';
 export 'typography.dart';
 export 'radius.dart';
 export 'shadows.dart';
+export 'motion.dart';
+export 'sizes.dart';

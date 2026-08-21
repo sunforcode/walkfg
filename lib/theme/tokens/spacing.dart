@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 class AppSpacing {
   AppSpacing._();
 
-  // ============ 基础间距值 ============
+  // ============ 基础间距值 (保留现有值，避免 breaking change) ============
   /// 极小间距 - 4px (图标与文字间距)
   static const double xs = 4.0;
 
@@ -25,6 +25,41 @@ class AppSpacing {
   /// 特大间距 - 48px (区域分隔)
   static const double xxl = 48.0;
 
+  // ============ PRD §8.1.4 间距别名 Token ============
+  /// PRD --space-md = 12px
+  static const double spaceMd = 12.0;
+
+  /// PRD --space-base = 16px
+  static const double base = 16.0;
+
+  /// PRD --space-lg = 20px
+  static const double spaceLg = 20.0;
+
+  /// PRD --space-xl = 24px
+  static const double spaceXl = 24.0;
+
+  /// PRD --space-2xl = 32px
+  static const double space2xl = 32.0;
+
+  /// PRD --space-3xl = 48px
+  static const double space3xl = 48.0;
+
+  /// PRD --space-4xl = 80px
+  static const double space4xl = 80.0;
+
+  // ============ 安全区域 Token (PRD §8.1.4) ============
+  /// 顶部安全区域高度 - 52px
+  static const double safeTop = 52.0;
+
+  /// 顶部安全区域高度（备用）- 56px
+  static const double safeTopAlt = 56.0;
+
+  /// 底部安全区域高度 - 34px
+  static const double safeBottom = 34.0;
+
+  /// 底部安全区域高度（表单）- 40px
+  static const double safeBottomForm = 40.0;
+
   // ============ 特殊间距 ============
   /// 页面水平边距
   static const double pageHorizontal = 16.0;
@@ -35,16 +70,16 @@ class AppSpacing {
   /// 卡片内边距
   static const double cardPadding = 16.0;
 
-  /// 列表项间距
+  /// 列表项间距 (PRD --space-md = 12px)
   static const double listItemSpacing = 12.0;
 
-  /// 区块间距
+  /// 区块间距 (PRD --space-xl = 24px)
   static const double sectionSpacing = 24.0;
 
   /// 导航栏高度
   static const double navBarHeight = 44.0;
 
-  /// 底部安全区域
+  /// 底部安全区域 (deprecated: use safeBottom)
   static const double bottomSafeArea = 34.0;
 
   // ============ EdgeInsets 快捷方式 ============

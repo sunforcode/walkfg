@@ -5,6 +5,7 @@ import 'package:walk/model/equipment/equipment_item_model.dart';
 import 'package:walk/model/equipment/equipment_list_item_model.dart';
 import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/service/equipment_service.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
 import 'package:walk/ui/page/equipment/equipment_item_picker_screen.dart';
@@ -221,11 +222,7 @@ class _EquipmentListDetailScreenState
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        Navigator.of(context).pop(_hasChanged);
-      },
+      canPop: true,
       child: CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           middle: Text(_list?.name ?? '清单详情'),
@@ -275,6 +272,7 @@ class _EquipmentListDetailScreenState
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
               ),
             ),
           ),
@@ -286,7 +284,7 @@ class _EquipmentListDetailScreenState
               child: Center(
                 child: Text(
                   '暂无装备，点击右上角"+"添加',
-                  style: TextStyle(color: CupertinoColors.systemGrey),
+                  style: TextStyle(color: AppColors.textSubtitle),
                 ),
               ),
             ),
@@ -310,11 +308,11 @@ class _EquipmentListDetailScreenState
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
           sliver: SliverToBoxAdapter(
             child: CupertinoButton(
-              color: CupertinoColors.systemRed.withValues(alpha: 0.1),
+              color: AppColors.statusCancelledBg,
               onPressed: _deleteList,
               child: const Text(
                 '删除清单',
-                style: TextStyle(color: CupertinoColors.systemRed),
+                style: TextStyle(color: AppColors.statusCancelledText),
               ),
             ),
           ),
@@ -329,9 +327,9 @@ class _EquipmentListDetailScreenState
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemBackground,
+          color: AppColors.bgPanel,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: CupertinoColors.systemGrey5),
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,38 +342,13 @@ class _EquipmentListDetailScreenState
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
-                GestureDetector(
+                _StatusBadge(
+                  status: list.status,
                   onTap: _changeStatus,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.activeBlue.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          list.statusName,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: CupertinoColors.activeBlue,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 2),
-                        const Icon(
-                          CupertinoIcons.chevron_down,
-                          size: 12,
-                          color: CupertinoColors.activeBlue,
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -399,13 +372,13 @@ class _EquipmentListDetailScreenState
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: CupertinoColors.systemGrey),
+        Icon(icon, size: 14, color: AppColors.textSubtitle),
         const SizedBox(width: 4),
         Text(
           label,
           style: const TextStyle(
             fontSize: 12,
-            color: CupertinoColors.systemGrey,
+            color: AppColors.textSubtitle,
           ),
         ),
       ],
@@ -429,7 +402,7 @@ class _EquipmentListDetailScreenState
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemGrey6,
+          color: AppColors.surfaceCard,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
@@ -437,7 +410,11 @@ class _EquipmentListDetailScreenState
           children: [
             const Text(
               '重量统计',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
             ),
             const SizedBox(height: 10),
             Row(
@@ -469,17 +446,101 @@ class _EquipmentListDetailScreenState
       children: [
         Text(
           value,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
         ),
         const SizedBox(height: 2),
         Text(
           label,
           style: const TextStyle(
             fontSize: 12,
-            color: CupertinoColors.systemGrey,
+            color: AppColors.textSubtitle,
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Status badge with dropdown indicator, tappable to change status.
+class _StatusBadge extends StatelessWidget {
+  final EquipmentListStatus status;
+  final VoidCallback onTap;
+
+  const _StatusBadge({required this.status, required this.onTap});
+
+  Color get _bgColor {
+    switch (status) {
+      case EquipmentListStatus.planning:
+        return AppColors.badgeRecommendedBg;
+      case EquipmentListStatus.preparing:
+        return AppColors.badgeBlueBg;
+      case EquipmentListStatus.completed:
+        return AppColors.badgeVerifiedBg;
+      case EquipmentListStatus.archived:
+        return AppColors.surfaceCard;
+    }
+  }
+
+  Color get _textColor {
+    switch (status) {
+      case EquipmentListStatus.planning:
+        return AppColors.badgeRecommendedText;
+      case EquipmentListStatus.preparing:
+        return AppColors.badgeBlueText;
+      case EquipmentListStatus.completed:
+        return AppColors.badgeVerifiedText;
+      case EquipmentListStatus.archived:
+        return AppColors.textSubtitle;
+    }
+  }
+
+  String get _statusName {
+    switch (status) {
+      case EquipmentListStatus.planning:
+        return '计划中';
+      case EquipmentListStatus.preparing:
+        return '准备中';
+      case EquipmentListStatus.completed:
+        return '已完成';
+      case EquipmentListStatus.archived:
+        return '已归档';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: _bgColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _statusName,
+              style: TextStyle(
+                fontSize: 12,
+                color: _textColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 2),
+            Icon(
+              CupertinoIcons.chevron_down,
+              size: 12,
+              color: _textColor,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -496,9 +557,9 @@ class _ListItemCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
+        color: AppColors.bgPanel,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: CupertinoColors.systemGrey5),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
@@ -511,6 +572,7 @@ class _ListItemCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -522,7 +584,7 @@ class _ListItemCard extends StatelessWidget {
                       : '数量${entry.relation.quantity}',
                   style: const TextStyle(
                     fontSize: 12,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
                 if (entry.relation.notes != null &&
@@ -532,7 +594,7 @@ class _ListItemCard extends StatelessWidget {
                     entry.relation.notes!,
                     style: const TextStyle(
                       fontSize: 12,
-                      color: CupertinoColors.systemGrey2,
+                      color: AppColors.textTertiary,
                     ),
                   ),
                 ],
@@ -544,7 +606,7 @@ class _ListItemCard extends StatelessWidget {
             onPressed: onRemove,
             child: const Icon(
               CupertinoIcons.minus_circle,
-              color: CupertinoColors.systemRed,
+              color: AppColors.statusCancelledText,
             ),
           ),
         ],

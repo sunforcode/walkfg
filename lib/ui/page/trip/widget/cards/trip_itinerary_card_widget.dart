@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/route/daily_plan_model.dart';
 import 'package:walk/theme/tokens/colors.dart';
@@ -113,7 +112,7 @@ class TripItineraryCardWidget extends StatelessWidget {
             const SizedBox(height: 16),
             CupertinoButton(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -159,7 +158,7 @@ class TripItineraryCardWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(

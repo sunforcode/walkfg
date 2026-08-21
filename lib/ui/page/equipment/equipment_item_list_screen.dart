@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:walk/model/equipment/equipment_item_model.dart';
 import 'package:walk/service/equipment_service.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/empty_content_widget.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
@@ -192,9 +193,9 @@ class _EquipmentItemCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemBackground,
+          color: AppColors.bgPanel,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: CupertinoColors.systemGrey5),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           children: [
@@ -202,12 +203,12 @@ class _EquipmentItemCard extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: CupertinoColors.systemGrey6,
+                color: AppColors.surfaceCard,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 CupertinoIcons.bag_fill,
-                color: CupertinoColors.systemGrey,
+                color: AppColors.textSubtitle,
               ),
             ),
             const SizedBox(width: 12),
@@ -220,6 +221,7 @@ class _EquipmentItemCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -229,7 +231,7 @@ class _EquipmentItemCard extends StatelessWidget {
                     '${item.categoryName} · ${item.weightText} · 数量${item.quantity}',
                     style: const TextStyle(
                       fontSize: 13,
-                      color: CupertinoColors.systemGrey,
+                      color: AppColors.textSubtitle,
                     ),
                   ),
                 ],
@@ -238,7 +240,7 @@ class _EquipmentItemCard extends StatelessWidget {
             const Icon(
               CupertinoIcons.chevron_right,
               size: 18,
-              color: CupertinoColors.systemGrey3,
+              color: AppColors.textTertiary,
             ),
           ],
         ),

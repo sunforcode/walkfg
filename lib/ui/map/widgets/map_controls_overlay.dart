@@ -25,9 +25,9 @@ class MapControlButton extends StatelessWidget {
 
     return CupertinoButton(
       padding: const EdgeInsets.all(12),
-      color: buttonColor.withOpacity(0.9),
+      color: buttonColor.withValues(alpha: 0.9),
       borderRadius: BorderRadius.circular(25),
-      minSize: 0,
+      minSize: 0, // ignore: deprecated_member_use
       onPressed: onPressed,
       child: Icon(
         icon,

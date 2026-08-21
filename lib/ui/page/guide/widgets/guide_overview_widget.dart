@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/guide/guide_model.dart';
 import 'package:walk/utils/toast_utils.dart';
 import 'guide_detail_constants.dart';
@@ -87,13 +86,21 @@ class GuideOverviewWidget extends StatelessWidget {
 
   /// 构建作者头像
   Widget _buildAuthorAvatar() {
-    return CircleAvatar(
-      radius: _OverviewConstants.avatarRadius,
-      backgroundImage: guide.authorAvatarUrl != null
-          ? NetworkImage(guide.authorAvatarUrl!)
-          : null,
-      backgroundColor: CupertinoColors.systemBlue
-          .withOpacity(_OverviewConstants.avatarBackgroundOpacity),
+    final double diameter = _OverviewConstants.avatarRadius * 2;
+    return Container(
+      width: diameter,
+      height: diameter,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: CupertinoColors.systemBlue
+            .withValues(alpha: _OverviewConstants.avatarBackgroundOpacity),
+        image: guide.authorAvatarUrl != null
+            ? DecorationImage(
+                image: NetworkImage(guide.authorAvatarUrl!),
+                fit: BoxFit.cover,
+              )
+            : null,
+      ),
       child: guide.authorAvatarUrl == null
           ? Icon(
               CupertinoIcons.person,
@@ -245,10 +252,10 @@ class GuideOverviewWidget extends StatelessWidget {
           horizontal: _OverviewConstants.quickActionButtonPaddingHorizontal,
           vertical: _OverviewConstants.quickActionButtonPaddingVertical,
         ),
-        color: color.withOpacity(_OverviewConstants.quickActionButtonOpacity),
+        color: color.withValues(alpha: _OverviewConstants.quickActionButtonOpacity),
         borderRadius: BorderRadius.circular(
             _OverviewConstants.quickActionButtonBorderRadius),
-        minSize: 0,
+        minSize: 0, // ignore: deprecated_member_use
         onPressed: onPressed,
         child: Row(
           mainAxisSize: MainAxisSize.min,

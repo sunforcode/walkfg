@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/route/track_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 路线详细信息组件
 class RouteDetailInfoWidget extends StatelessWidget {
@@ -15,7 +16,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.sheetCardBg,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -26,7 +27,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: CupertinoColors.label,
+              color: AppColors.sheetTextPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -39,7 +40,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
                   icon: CupertinoIcons.location,
                   label: '总距离',
                   value: '${currentTrack.distance.toStringAsFixed(1)} km',
-                  color: CupertinoColors.systemBlue,
+                  color: AppColors.badgeBlueText,
                 ),
               ),
               Expanded(
@@ -47,7 +48,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
                   icon: CupertinoIcons.arrow_up,
                   label: '总爬升',
                   value: '${currentTrack.elevationGain} m',
-                  color: CupertinoColors.systemGreen,
+                  color: AppColors.statusCompletedText,
                 ),
               ),
             ],
@@ -63,7 +64,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
                   icon: CupertinoIcons.arrow_down,
                   label: '总下降',
                   value: '${currentTrack.elevationLoss} m',
-                  color: CupertinoColors.systemOrange,
+                  color: AppColors.statusPlanningText,
                 ),
               ),
               Expanded(
@@ -71,7 +72,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
                   icon: CupertinoIcons.time,
                   label: '预计耗时',
                   value: currentTrack.getEstimatedTimeText(),
-                  color: CupertinoColors.systemPurple,
+                  color: AppColors.badgeBlueText,
                 ),
               ),
             ],
@@ -87,7 +88,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
                   icon: CupertinoIcons.triangle,
                   label: '最高海拔',
                   value: '${currentTrack.maxElevation ?? 0} m',
-                  color: CupertinoColors.systemTeal,
+                  color: AppColors.interactiveAccent,
                 ),
               ),
               Expanded(
@@ -95,7 +96,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
                   icon: CupertinoIcons.chart_bar,
                   label: '难度等级',
                   value: currentTrack.getDifficultyName(),
-                  color: CupertinoColors.systemRed,
+                  color: AppColors.statusCancelledText,
                 ),
               ),
             ],
@@ -128,7 +129,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
                 label,
                 style: const TextStyle(
                   fontSize: 12,
-                  color: CupertinoColors.systemGrey,
+                  color: AppColors.sheetTextSecondary,
                 ),
               ),
               Text(
@@ -136,7 +137,7 @@ class RouteDetailInfoWidget extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: CupertinoColors.label,
+                  color: AppColors.sheetTextPrimary,
                 ),
               ),
             ],

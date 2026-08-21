@@ -40,7 +40,7 @@ class WeatherHeader extends StatelessWidget {
             Text(
               _getGreetingByTime(),
               style: TextStyle(
-                color: AppColors.textOnDark.withOpacity(0.9),
+                color: AppColors.textOnDark.withValues(alpha: 0.9),
                 fontSize: 14,
               ),
             ),

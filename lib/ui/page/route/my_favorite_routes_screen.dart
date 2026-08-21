@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import '../../../model/route/route_model.dart';
 import '../../../service/route_service.dart';
 import '../common/loading_indicator.dart';
@@ -97,7 +96,7 @@ class _MyFavoriteRoutesScreenState extends State<MyFavoriteRoutesScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: CupertinoColors.systemGrey.withOpacity(0.1),
+                color: CupertinoColors.systemGrey.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -121,7 +120,7 @@ class _MyFavoriteRoutesScreenState extends State<MyFavoriteRoutesScreen> {
                     : Container(
                         height: 150,
                         width: double.infinity,
-                        color: CupertinoColors.systemGrey.withOpacity(0.2),
+                        color: CupertinoColors.systemGrey.withValues(alpha: 0.2),
                         child: const Icon(
                           CupertinoIcons.photo,
                           size: 48,
@@ -148,7 +147,7 @@ class _MyFavoriteRoutesScreenState extends State<MyFavoriteRoutesScreen> {
                       children: [
                         _buildInfoChip(
                           CupertinoIcons.location_solid,
-                          route.region!,
+                          route.region,
                         ),
                         const SizedBox(width: 12),
                         _buildInfoChip(

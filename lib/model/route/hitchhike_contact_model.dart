@@ -42,6 +42,10 @@ class HitchhikeContactModel {
   @JsonKey(name: 'last_verified')
   final bool isVerified;
 
+  /// 路线方向
+  @JsonKey(name: 'route')
+  final String? route;
+
   /// 构造函数
   const HitchhikeContactModel({
     required this.id,
@@ -53,6 +57,7 @@ class HitchhikeContactModel {
     this.createdAt,
     this.updatedAt,
     this.isVerified = false,
+    this.route,
   });
 
   /// 从JSON创建

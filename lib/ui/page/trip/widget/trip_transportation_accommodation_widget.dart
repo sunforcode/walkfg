@@ -103,7 +103,7 @@ class TripTransportationAccommodationWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: (transport['color'] as Color).withOpacity(0.1),
+          color: (transport['color'] as Color).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -222,7 +222,7 @@ class TripTransportationAccommodationWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: (accommodation['color'] as Color).withOpacity(0.1),
+          color: (accommodation['color'] as Color).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(

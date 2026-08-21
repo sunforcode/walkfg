@@ -39,9 +39,9 @@ class EmptyContentWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: displayColor.withOpacity(0.1),
+        color: displayColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: displayColor.withOpacity(0.3)),
+        border: Border.all(color: displayColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -57,7 +57,7 @@ class EmptyContentWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: displayColor.withOpacity(0.8),
+              color: displayColor.withValues(alpha: 0.8),
             ),
           ),
           if (subtitle != null) ...[
@@ -65,7 +65,7 @@ class EmptyContentWidget extends StatelessWidget {
             Text(
               subtitle!,
               style: TextStyle(
-                color: displayColor.withOpacity(0.6),
+                color: displayColor.withValues(alpha: 0.6),
               ),
             ),
           ],

@@ -183,7 +183,7 @@ class TripDetailsContentWidget extends StatelessWidget {
                         CupertinoButton(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 8),
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -264,7 +264,7 @@ class TripDetailsContentWidget extends StatelessWidget {
                           CupertinoButton(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 8),
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -313,7 +313,7 @@ class TripDetailsContentWidget extends StatelessWidget {
                           CupertinoButton(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 8),
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,

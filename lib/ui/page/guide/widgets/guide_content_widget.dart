@@ -226,7 +226,7 @@ class GuideContentWidget extends StatelessWidget {
             BorderRadius.circular(_ContentConstants.imageBorderRadius),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey.withOpacity(0.3),
+            color: CupertinoColors.systemGrey.withValues(alpha: 0.3),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -319,11 +319,11 @@ class GuideContentWidget extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: CupertinoColors.activeBlue
-            .withOpacity(_ContentConstants.tagBackgroundOpacity),
+            .withValues(alpha: _ContentConstants.tagBackgroundOpacity),
         borderRadius: BorderRadius.circular(_ContentConstants.tagBorderRadius),
         border: Border.all(
           color: CupertinoColors.activeBlue
-              .withOpacity(_ContentConstants.tagBorderOpacity),
+              .withValues(alpha: _ContentConstants.tagBorderOpacity),
           width: _ContentConstants.tagBorderWidth,
         ),
       ),
@@ -347,10 +347,10 @@ class _HighlightBuilder extends MarkdownElementBuilder {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemBlue.withOpacity(0.1),
+        color: CupertinoColors.systemBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: CupertinoColors.systemBlue.withOpacity(0.3),
+          color: CupertinoColors.systemBlue.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -387,10 +387,10 @@ class _WarningBuilder extends MarkdownElementBuilder {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemYellow.withOpacity(0.1),
+        color: CupertinoColors.systemYellow.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: CupertinoColors.systemYellow.withOpacity(0.3),
+          color: CupertinoColors.systemYellow.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -427,10 +427,10 @@ class _TipBuilder extends MarkdownElementBuilder {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGreen.withOpacity(0.1),
+        color: CupertinoColors.systemGreen.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: CupertinoColors.systemGreen.withOpacity(0.3),
+          color: CupertinoColors.systemGreen.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

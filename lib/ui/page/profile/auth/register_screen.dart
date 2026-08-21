@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/service/user_service.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import '../login_screen.dart';
 
 /// 注册屏幕
@@ -119,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       // 调用实际的注册 API（后端会自动登录并返回 token）
-      final user = await UserService.register(
+      await UserService.register(
         username: username,
         password: password,
         email: email,
@@ -199,7 +198,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const Icon(
                 CupertinoIcons.person_add,
                 size: 80,
-                color: CupertinoColors.activeBlue,
+                color: AppColors.interactiveAccent,
               ),
               const SizedBox(height: 40),
               const Text(
@@ -215,7 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 '开始您的徒步旅行',
                 style: TextStyle(
                   fontSize: 16,
-                  color: CupertinoColors.systemGrey,
+                  color: AppColors.textSubtitle,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -227,13 +226,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.person,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                 decoration: BoxDecoration(
-                  border: Border.all(color: CupertinoColors.systemGrey4),
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -246,13 +245,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.mail,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                 decoration: BoxDecoration(
-                  border: Border.all(color: CupertinoColors.systemGrey4),
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -265,7 +264,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.lock,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
                 suffix: CupertinoButton(
@@ -274,7 +273,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _obscurePassword
                         ? CupertinoIcons.eye
                         : CupertinoIcons.eye_slash,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                   onPressed: () {
                     setState(() {
@@ -285,7 +284,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                 decoration: BoxDecoration(
-                  border: Border.all(color: CupertinoColors.systemGrey4),
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -298,7 +297,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.lock,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
                 suffix: CupertinoButton(
@@ -307,7 +306,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _obscureConfirmPassword
                         ? CupertinoIcons.eye
                         : CupertinoIcons.eye_slash,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                   onPressed: () {
                     setState(() {
@@ -318,16 +317,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                 decoration: BoxDecoration(
-                  border: Border.all(color: CupertinoColors.systemGrey4),
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
               const SizedBox(height: 24),
               CupertinoButton(
-                color: CupertinoColors.activeBlue,
+                color: AppColors.interactiveAccent,
                 child: _isRegistering
                     ? const CupertinoActivityIndicator(
-                        color: CupertinoColors.white)
+                        color: AppColors.bgBase)
                     : const Text('注册'),
                 onPressed: _isRegistering ? null : _handleRegister,
               ),

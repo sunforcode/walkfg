@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/service/route_service.dart';
 import 'package:walk/theme/tokens/tokens.dart';
@@ -91,10 +90,10 @@ class PlannedTripsSection extends StatelessWidget {
               child: Container(
                 width: 200,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: AppRadius.borderLg,
                   border: Border.all(
-                    color: color.withOpacity(0.3),
+                    color: color.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -107,7 +106,7 @@ class PlannedTripsSection extends StatelessWidget {
                         Container(
                           padding: AppSpacing.allXs,
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.2),
+                            color: color.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -175,15 +174,15 @@ class PlannedTripsSection extends StatelessWidget {
   Color _getStatusColor(TripStatus status) {
     switch (status) {
       case TripStatus.completed:
-        return CupertinoColors.systemGreen;
+        return AppColors.statusCompletedText;
       case TripStatus.inProgress:
-        return CupertinoColors.systemBlue;
+        return AppColors.interactiveAccent;
       case TripStatus.planning:
-        return CupertinoColors.activeOrange;
+        return AppColors.statusPlanningText;
       case TripStatus.cancelled:
-        return CupertinoColors.systemGrey;
+        return AppColors.textHint;
       case TripStatus.confirmed:
-        return CupertinoColors.systemGrey;
+        return AppColors.textHint;
     }
   }
 
@@ -238,20 +237,4 @@ class PlannedTripsSection extends StatelessWidget {
     }
   }
 
-  /// 显示没有路线的提示
-  void _showNoRoutesAlert(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('无法加载路线'),
-        content: const Text('暂时无法获取推荐路线，请稍后再试。'),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('确定'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    );
-  }
 }

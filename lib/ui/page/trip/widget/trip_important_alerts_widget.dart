@@ -48,10 +48,10 @@ class TripImportantAlertsWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: (alert['color'] as Color).withOpacity(0.1),
+          color: (alert['color'] as Color).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: (alert['color'] as Color).withOpacity(0.3),
+            color: (alert['color'] as Color).withValues(alpha: 0.3),
             width: 1,
           ),
         ),

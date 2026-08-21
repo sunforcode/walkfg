@@ -86,6 +86,13 @@ class CampsiteModel extends TrackPointVO {
   @JsonKey(name: 'verified_by')
   final String? verifiedBy;
 
+  /// 设施列表
+  @JsonKey(defaultValue: <String>[])
+  final List<String> facilities;
+
+  /// 容量（人数）
+  final int? capacity;
+
   /// 构造函数
   CampsiteModel({
     required this.id,
@@ -101,6 +108,8 @@ class CampsiteModel extends TrackPointVO {
     this.campsiteType = CampsiteType.other,
     this.notes = '',
     this.verifiedBy,
+    this.facilities = const <String>[],
+    this.capacity,
   });
 
   /// 从JSON创建
@@ -131,6 +140,8 @@ class CampsiteModel extends TrackPointVO {
     CampsiteType? campsiteType,
     String? notes,
     String? verifiedBy,
+    List<String>? facilities,
+    int? capacity,
   }) {
     return CampsiteModel(
       id: id ?? this.id,
@@ -146,6 +157,8 @@ class CampsiteModel extends TrackPointVO {
       campsiteType: campsiteType ?? this.campsiteType,
       notes: notes ?? this.notes,
       verifiedBy: verifiedBy ?? this.verifiedBy,
+      facilities: facilities ?? this.facilities,
+      capacity: capacity ?? this.capacity,
     );
   }
 
@@ -173,12 +186,12 @@ class CampsiteModel extends TrackPointVO {
 
   /// 获取设施等级显示文本
   String get facilityLevelText {
-    return '未知'; // 默认返回未知
+    return facilities.isEmpty ? '未知' : facilities.join('、');
   }
 
   /// 获取容量等级显示文本
   String get capacityText {
-    return '未知'; // 默认返回未知
+    return capacity != null ? '$capacity人' : '未知';
   }
 
   /// 获取营地类型图标

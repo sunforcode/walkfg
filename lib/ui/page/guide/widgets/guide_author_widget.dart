@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/guide/guide_model.dart';
 import 'guide_detail_constants.dart';
 
@@ -89,13 +88,21 @@ class GuideAuthorWidget extends StatelessWidget {
 
   /// 构建作者头像
   Widget _buildAuthorAvatar() {
-    return CircleAvatar(
-      radius: _AuthorConstants.avatarRadius,
-      backgroundImage: guide.authorAvatarUrl != null
-          ? NetworkImage(guide.authorAvatarUrl!)
-          : null,
-      backgroundColor: CupertinoColors.systemPurple
-          .withOpacity(_AuthorConstants.avatarBackgroundOpacity),
+    final double diameter = _AuthorConstants.avatarRadius * 2;
+    return Container(
+      width: diameter,
+      height: diameter,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: CupertinoColors.systemPurple
+            .withValues(alpha: _AuthorConstants.avatarBackgroundOpacity),
+        image: guide.authorAvatarUrl != null
+            ? DecorationImage(
+                image: NetworkImage(guide.authorAvatarUrl!),
+                fit: BoxFit.cover,
+              )
+            : null,
+      ),
       child: guide.authorAvatarUrl == null
           ? Icon(
               CupertinoIcons.person,
@@ -141,7 +148,7 @@ class GuideAuthorWidget extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: CupertinoColors.systemPurple
-              .withOpacity(_AuthorConstants.followButtonBackgroundOpacity),
+              .withValues(alpha: _AuthorConstants.followButtonBackgroundOpacity),
           borderRadius:
               BorderRadius.circular(_AuthorConstants.followButtonBorderRadius),
           border: Border.all(
@@ -192,11 +199,11 @@ class GuideAuthorWidget extends StatelessWidget {
       padding: const EdgeInsets.all(_AuthorConstants.tipsContentPadding),
       decoration: BoxDecoration(
         color: CupertinoColors.systemYellow
-            .withOpacity(_AuthorConstants.tipsBackgroundOpacity),
+            .withValues(alpha: _AuthorConstants.tipsBackgroundOpacity),
         borderRadius: BorderRadius.circular(_AuthorConstants.tipsBorderRadius),
         border: Border.all(
           color: CupertinoColors.systemYellow
-              .withOpacity(_AuthorConstants.tipsBorderOpacity),
+              .withValues(alpha: _AuthorConstants.tipsBorderOpacity),
           width: _AuthorConstants.tipsBorderWidth,
         ),
       ),

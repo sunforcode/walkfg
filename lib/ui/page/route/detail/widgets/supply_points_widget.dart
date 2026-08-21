@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/route/supply_point_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
-/// 补给点Widget（横向滑动）
+/// 补给点组件 (PRD §3.3.6)
+///
+/// 横滑卡片：名称 + 类型标签 + 描述 + 距起点
 class SupplyPointsWidget extends StatelessWidget {
   final List<SupplyPointModel> supplyPoints;
 
@@ -17,44 +20,8 @@ class SupplyPointsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 标题行
-        Row(
-          children: [
-            const Icon(
-              CupertinoIcons.bag,
-              size: 16,
-              color: CupertinoColors.systemOrange,
-            ),
-            const SizedBox(width: 6),
-            const Text(
-              '补给点',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: CupertinoColors.label,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: CupertinoColors.systemOrange.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '${supplyPoints.length}个',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: CupertinoColors.systemOrange,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
-        ),
+        const _SectionHeader(),
         const SizedBox(height: 12),
-
-        // 横向列表
         SizedBox(
           height: 140,
           child: ListView.separated(
@@ -62,29 +29,54 @@ class SupplyPointsWidget extends StatelessWidget {
             padding: EdgeInsets.zero,
             itemCount: supplyPoints.length,
             separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, index) => _buildCard(supplyPoints[index]),
+            itemBuilder: (context, index) => _SupplyCard(supplyPoint: supplyPoints[index]),
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildCard(SupplyPointModel supplyPoint) {
-    final typeColor = _getTypeColor(supplyPoint.supplyType);
+// ---------------------------------------------------------------------------
+//  段标题："🏪 补给点"
+// ---------------------------------------------------------------------------
 
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      children: [
+        Text(
+          '🏪 补给点',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: AppColors.sheetTextPrimary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  补给点卡片：180px 宽，圆角 12px 浅底
+// ---------------------------------------------------------------------------
+
+class _SupplyCard extends StatelessWidget {
+  final SupplyPointModel supplyPoint;
+  const _SupplyCard({required this.supplyPoint});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      width: 190,
+      width: 180,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: CupertinoColors.white,
+        color: AppColors.sheetCardBg,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,39 +84,26 @@ class SupplyPointsWidget extends StatelessWidget {
           // 图标 + 名称 + 类型标签
           Row(
             children: [
-              Text(supplyPoint.typeIcon,
-                  style: const TextStyle(fontSize: 18)),
+              Text(supplyPoint.typeIcon, style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   supplyPoint.name ?? '未命名补给点',
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: CupertinoColors.label,
+                    color: AppColors.sheetTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: typeColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  supplyPoint.typeText,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: typeColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
             ],
           ),
+          const SizedBox(height: 4),
+
+          // 类型徽标
+          _TypeBadge(type: supplyPoint.supplyType),
           const SizedBox(height: 6),
 
           // 描述
@@ -133,7 +112,7 @@ class SupplyPointsWidget extends StatelessWidget {
               supplyPoint.description!,
               style: const TextStyle(
                 fontSize: 12,
-                color: CupertinoColors.secondaryLabel,
+                color: AppColors.sheetTextSecondary,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -141,19 +120,18 @@ class SupplyPointsWidget extends StatelessWidget {
 
           const Spacer(),
 
-          // 距离（若有）
+          // 距起点
           if (supplyPoint.distanceFromStart != null &&
               supplyPoint.distanceFromStart! > 0)
             Row(
               children: [
-                const Icon(CupertinoIcons.location,
-                    size: 11, color: CupertinoColors.systemGrey),
+                const Icon(CupertinoIcons.location, size: 11, color: AppColors.sheetTextWeak),
                 const SizedBox(width: 2),
                 Text(
                   '距起点 ${supplyPoint.distanceFromStart!.toStringAsFixed(1)}km',
                   style: const TextStyle(
                     fontSize: 11,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.sheetTextWeak,
                   ),
                 ),
               ],
@@ -162,23 +140,51 @@ class SupplyPointsWidget extends StatelessWidget {
       ),
     );
   }
+}
 
-  Color _getTypeColor(SupplyPointType type) {
+// ---------------------------------------------------------------------------
+//  类型徽标 (蓝色底)
+// ---------------------------------------------------------------------------
+
+class _TypeBadge extends StatelessWidget {
+  final SupplyPointType type;
+  const _TypeBadge({required this.type});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.badgeBlueBg,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        _typeText,
+        style: const TextStyle(
+          fontSize: 10,
+          color: AppColors.badgeBlueText,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  String get _typeText {
     switch (type) {
       case SupplyPointType.store:
-        return CupertinoColors.systemBlue;
+        return '商店';
       case SupplyPointType.shop:
-        return CupertinoColors.systemGreen;
+        return '小卖部';
       case SupplyPointType.restaurant:
-        return CupertinoColors.systemOrange;
+        return '餐厅';
       case SupplyPointType.accommodation:
-        return CupertinoColors.systemPurple;
+        return '住宿';
       case SupplyPointType.gasStation:
-        return CupertinoColors.systemRed;
+        return '加油站';
       case SupplyPointType.medical:
-        return CupertinoColors.systemPink;
+        return '医疗点';
       case SupplyPointType.other:
-        return CupertinoColors.systemGrey;
+        return '其他';
     }
   }
 }

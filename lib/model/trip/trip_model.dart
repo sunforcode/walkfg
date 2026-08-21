@@ -3,6 +3,7 @@ import 'package:walk/model/food/meal_plan_model.dart';
 import 'package:walk/model/route/daily_plan_model.dart';
 import 'package:walk/model/user/user_model.dart';
 import 'package:walk/model/water/water_plan_model.dart';
+import 'package:walk/model/weather/day_weather_model.dart';
 import '../base/base_model.dart';
 
 part 'trip_model.g.dart';
@@ -108,6 +109,22 @@ class TripModel extends BaseModel {
   @JsonKey(name: 'privacy_setting')
   final String privacySetting;
 
+  /// 交通方式
+  @JsonKey(name: 'transport')
+  final String? transport;
+
+  /// 住宿信息
+  @JsonKey(name: 'accommodation')
+  final String? accommodation;
+
+  /// 逐日天气预报
+  @JsonKey(name: 'weather_forecast')
+  final List<DayWeatherModel>? weatherForecast;
+
+  /// 安全提醒
+  @JsonKey(name: 'safety_reminders')
+  final List<String>? safetyReminders;
+
   /// 构造函数
   TripModel({
     required super.id,
@@ -135,6 +152,10 @@ class TripModel extends BaseModel {
     this.actualCost,
     this.notes,
     required this.privacySetting,
+    this.transport,
+    this.accommodation,
+    this.weatherForecast,
+    this.safetyReminders,
   })  : routeIds = routeIds ?? const [],
         this.participants = participants ?? const [],
         this.itinerary = itinerary ?? const [];
@@ -219,6 +240,10 @@ class TripModel extends BaseModel {
     double? actualCost,
     String? notes,
     String? privacySetting,
+    String? transport,
+    String? accommodation,
+    List<DayWeatherModel>? weatherForecast,
+    List<String>? safetyReminders,
   }) {
     return TripModel(
       id: id ?? this.id,
@@ -246,6 +271,10 @@ class TripModel extends BaseModel {
       actualCost: actualCost ?? this.actualCost,
       notes: notes ?? this.notes,
       privacySetting: privacySetting ?? this.privacySetting,
+      transport: transport ?? this.transport,
+      accommodation: accommodation ?? this.accommodation,
+      weatherForecast: weatherForecast ?? this.weatherForecast,
+      safetyReminders: safetyReminders ?? this.safetyReminders,
     );
   }
 

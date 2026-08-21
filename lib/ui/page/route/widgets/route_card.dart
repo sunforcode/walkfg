@@ -31,7 +31,7 @@ class RouteCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: CupertinoColors.systemGrey4.withOpacity(0.3),
+              color: CupertinoColors.systemGrey4.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -88,7 +88,7 @@ class RouteCard extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: CupertinoColors.white.withOpacity(0.9),
+                color: CupertinoColors.white.withValues(alpha: 0.9),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -110,7 +110,7 @@ class RouteCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: CupertinoColors.white.withOpacity(0.9),
+              color: CupertinoColors.white.withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(

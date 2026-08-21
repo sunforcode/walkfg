@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:walk/model/equipment/equipment_item_model.dart';
 import 'package:walk/service/equipment_service.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/empty_content_widget.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
@@ -144,9 +145,9 @@ class _EquipmentItemPickerScreenState
                   child: Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemBackground,
+                      color: AppColors.bgPanel,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: CupertinoColors.systemGrey5),
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: Row(
                       children: [
@@ -168,7 +169,7 @@ class _EquipmentItemPickerScreenState
                                 '${item.categoryName} · ${item.weightText}',
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  color: CupertinoColors.systemGrey,
+                                  color: AppColors.textSubtitle,
                                 ),
                               ),
                             ],
@@ -176,7 +177,7 @@ class _EquipmentItemPickerScreenState
                         ),
                         const Icon(
                           CupertinoIcons.add_circled,
-                          color: CupertinoColors.activeGreen,
+                          color: AppColors.statusCompletedText,
                         ),
                       ],
                     ),

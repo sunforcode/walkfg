@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 个人页面列表项组件
 class ProfileListTile extends StatelessWidget {
@@ -29,7 +30,7 @@ class ProfileListTile extends StatelessWidget {
         decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: CupertinoColors.systemGrey5,
+              color: AppColors.border,
               width: 0.5,
             ),
           ),
@@ -38,7 +39,7 @@ class ProfileListTile extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: CupertinoColors.systemBlue,
+              color: AppColors.interactiveAccent,
               size: 22,
             ),
             const SizedBox(width: 12),
@@ -47,13 +48,13 @@ class ProfileListTile extends StatelessWidget {
                 title,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: CupertinoColors.black,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ),
             const Icon(
               CupertinoIcons.chevron_right,
-              color: CupertinoColors.systemGrey,
+              color: AppColors.textSubtitle,
               size: 18,
             ),
           ],

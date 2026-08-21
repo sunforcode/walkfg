@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:walk/model/equipment/equipment_enums.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/model/equipment/equipment_item_model.dart';
 import 'package:walk/service/equipment_service.dart';
 
@@ -161,12 +162,12 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: CupertinoColors.systemRed.withValues(alpha: 0.1),
+                  color: AppColors.statusCancelledBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   _errorMessage!,
-                  style: const TextStyle(color: CupertinoColors.systemRed),
+                  style: const TextStyle(color: AppColors.statusCancelledText),
                 ),
               ),
               const SizedBox(height: 16),
@@ -204,13 +205,13 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
             if (_isEditMode) ...[
               const SizedBox(height: 32),
               CupertinoButton(
-                color: CupertinoColors.systemRed.withValues(alpha: 0.1),
+                color: AppColors.statusCancelledBg,
                 onPressed: _isDeleting ? null : _delete,
                 child: _isDeleting
                     ? const CupertinoActivityIndicator()
                     : const Text(
                         '删除装备',
-                        style: TextStyle(color: CupertinoColors.systemRed),
+                        style: TextStyle(color: AppColors.statusCancelledText),
                       ),
               ),
             ],
@@ -227,7 +228,7 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
         label,
         style: const TextStyle(
           fontSize: 13,
-          color: CupertinoColors.systemGrey,
+          color: AppColors.textSubtitle,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -245,7 +246,7 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
       keyboardType: keyboardType,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(8),
       ),
     );
@@ -279,7 +280,7 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -289,7 +290,7 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
           const Icon(
             CupertinoIcons.chevron_down,
             size: 16,
-            color: CupertinoColors.systemGrey,
+            color: AppColors.textSubtitle,
           ),
         ],
       ),
@@ -307,7 +308,7 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
       context: context,
       builder: (context) => Container(
         height: 260,
-        color: CupertinoColors.systemBackground,
+        color: AppColors.bgPanel,
         child: Column(
           children: [
             Row(

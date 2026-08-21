@@ -122,7 +122,7 @@ class RecommendedRoutesSection extends StatelessWidget {
                   : Container(
                       height: 140,
                       width: 280,
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       child: const Center(
                         child: Icon(
                           CupertinoIcons.photo,

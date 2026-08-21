@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/route/campsite_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
-/// 营地资源Widget（横向滑动）
+/// 营地资源组件 (PRD §3.3.4)
+///
+/// 横滑卡片（180px 宽），营地名 + 设施描述 + 元信息
 class CampsitesWidget extends StatelessWidget {
   final List<CampsiteModel> campsites;
 
@@ -17,44 +20,8 @@ class CampsitesWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 标题行
-        Row(
-          children: [
-            const Icon(
-              CupertinoIcons.house,
-              size: 16,
-              color: CupertinoColors.systemGreen,
-            ),
-            const SizedBox(width: 6),
-            const Text(
-              '营地资源',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: CupertinoColors.label,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: CupertinoColors.systemGreen.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '${campsites.length}个',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: CupertinoColors.systemGreen,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
-        ),
+        _SectionHeader(count: campsites.length),
         const SizedBox(height: 12),
-
-        // 横向列表
         SizedBox(
           height: 150,
           child: ListView.separated(
@@ -62,27 +29,71 @@ class CampsitesWidget extends StatelessWidget {
             padding: EdgeInsets.zero,
             itemCount: campsites.length,
             separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, index) => _buildCard(campsites[index]),
+            itemBuilder: (context, index) => _CampsiteCard(campsite: campsites[index]),
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildCard(CampsiteModel campsite) {
+// ---------------------------------------------------------------------------
+//  段标题："🏕 营地资源"
+// ---------------------------------------------------------------------------
+
+class _SectionHeader extends StatelessWidget {
+  final int count;
+  const _SectionHeader({required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Text(
+          '🏕 营地资源',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: AppColors.sheetTextPrimary,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: AppColors.badgeBlueBg,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            '$count个',
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.badgeBlueText,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  营地卡片：180px 宽，圆角 12px 浅底
+// ---------------------------------------------------------------------------
+
+class _CampsiteCard extends StatelessWidget {
+  final CampsiteModel campsite;
+  const _CampsiteCard({required this.campsite});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      width: 200,
+      width: 180,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: CupertinoColors.white,
+        color: AppColors.sheetCardBg,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,16 +101,15 @@ class CampsitesWidget extends StatelessWidget {
           // 图标 + 名称
           Row(
             children: [
-              Text(campsite.campsiteTypeIcon,
-                  style: const TextStyle(fontSize: 18)),
+              Text(campsite.campsiteTypeIcon, style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   campsite.name ?? '未命名营地',
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: CupertinoColors.label,
+                    color: AppColors.sheetTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -115,7 +125,7 @@ class CampsitesWidget extends StatelessWidget {
               campsite.description!,
               style: const TextStyle(
                 fontSize: 12,
-                color: CupertinoColors.secondaryLabel,
+                color: AppColors.sheetTextSecondary,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -126,16 +136,14 @@ class CampsitesWidget extends StatelessWidget {
           // 类型 + 容量
           Row(
             children: [
-              _tag(
-                CupertinoIcons.house,
-                campsite.campsiteTypeText,
-                CupertinoColors.systemGreen,
+              _MetaChip(
+                icon: CupertinoIcons.house,
+                label: campsite.campsiteTypeText,
               ),
               const SizedBox(width: 8),
-              _tag(
-                CupertinoIcons.person_2,
-                campsite.capacityText,
-                CupertinoColors.systemPurple,
+              _MetaChip(
+                icon: CupertinoIcons.person_2,
+                label: campsite.capacityText,
               ),
             ],
           ),
@@ -144,14 +152,13 @@ class CampsitesWidget extends StatelessWidget {
           // 海拔
           Row(
             children: [
-              const Icon(CupertinoIcons.arrow_up,
-                  size: 11, color: CupertinoColors.systemGrey),
+              const Icon(CupertinoIcons.arrow_up, size: 11, color: AppColors.sheetTextWeak),
               const SizedBox(width: 2),
               Text(
                 '海拔${campsite.elevation.toInt()}m',
                 style: const TextStyle(
                   fontSize: 11,
-                  color: CupertinoColors.systemGrey,
+                  color: AppColors.sheetTextWeak,
                 ),
               ),
             ],
@@ -160,18 +167,29 @@ class CampsitesWidget extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _tag(IconData icon, String label, Color color) {
+// ---------------------------------------------------------------------------
+//  元信息标签
+// ---------------------------------------------------------------------------
+
+class _MetaChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _MetaChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 11, color: color),
+        Icon(icon, size: 11, color: AppColors.sheetTextSecondary),
         const SizedBox(width: 2),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 11,
-            color: color,
+            color: AppColors.sheetTextSecondary,
             fontWeight: FontWeight.w500,
           ),
         ),

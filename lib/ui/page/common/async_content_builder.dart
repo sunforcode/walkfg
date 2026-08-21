@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'error_widget.dart';
 import 'empty_content_widget.dart';
 

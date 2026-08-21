@@ -46,7 +46,7 @@ class RouteFilterSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(22),
                 boxShadow: [
                   BoxShadow(
-                    color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                    color: CupertinoColors.systemGrey4.withValues(alpha: 0.3),
                     blurRadius: 4,
                     offset: const Offset(0, 1),
                   ),

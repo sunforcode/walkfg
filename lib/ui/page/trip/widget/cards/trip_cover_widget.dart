@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
@@ -45,8 +44,8 @@ class TripCoverWidget extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.7),
+                    CupertinoColors.transparent,
+                    CupertinoColors.black.withValues(alpha: 0.7),
                   ],
                   stops: const [0.6, 1.0],
                 ),
@@ -70,7 +69,7 @@ class TripCoverWidget extends StatelessWidget {
                       shadows: [
                         Shadow(
                           blurRadius: 4,
-                          color: Colors.black,
+                          color: CupertinoColors.black,
                           offset: Offset(0, 1),
                         ),
                       ],
@@ -108,7 +107,7 @@ class TripCoverWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: light
-            ? CupertinoColors.white.withOpacity(0.2)
+            ? CupertinoColors.white.withValues(alpha: 0.2)
             : CupertinoColors.systemGrey6,
         borderRadius: BorderRadius.circular(16),
       ),
@@ -163,7 +162,7 @@ class TripCoverWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(

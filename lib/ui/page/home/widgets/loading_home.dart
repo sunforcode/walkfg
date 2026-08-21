@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'topo_background.dart';
+import '../../../../theme/tokens/colors.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Loading
@@ -12,10 +12,13 @@ class LoadingHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Stack(
+    return Stack(
       children: [
-        Positioned.fill(child: TopoBackground()),
-        Center(child: CupertinoActivityIndicator(color: Colors.white)),
+        // 使用首页空态渐变背景保持视觉一致
+        DecoratedBox(
+          decoration: BoxDecoration(gradient: AppColors.gradientHome),
+        ),
+        const Center(child: CupertinoActivityIndicator(color: Colors.white)),
       ],
     );
   }

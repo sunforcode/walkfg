@@ -34,7 +34,7 @@ class TripPlanningEntries extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
+                    color: AppColors.primary.withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -45,7 +45,7 @@ class TripPlanningEntries extends StatelessWidget {
                   const Icon(
                     CupertinoIcons.map,
                     size: 32,
-                    color: CupertinoColors.white,
+                    color: AppColors.bgLight,
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -57,7 +57,7 @@ class TripPlanningEntries extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: CupertinoColors.white,
+                            color: AppColors.bgLight,
                           ),
                         ),
                         SizedBox(height: 4),
@@ -65,7 +65,7 @@ class TripPlanningEntries extends StatelessWidget {
                           '规划你的下一次徒步旅行',
                           style: TextStyle(
                             fontSize: 14,
-                            color: CupertinoColors.white,
+                            color: AppColors.bgLight,
                           ),
                         ),
                       ],
@@ -73,7 +73,7 @@ class TripPlanningEntries extends StatelessWidget {
                   ),
                   const Icon(
                     CupertinoIcons.chevron_right,
-                    color: CupertinoColors.white,
+                    color: AppColors.bgLight,
                   ),
                 ],
               ),
@@ -91,15 +91,15 @@ class TripPlanningEntries extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: CupertinoColors.white,
+                color: AppColors.bgLight,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha: 0.3),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: CupertinoColors.systemGrey.withOpacity(0.1),
+                    color: AppColors.textHint.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -129,7 +129,7 @@ class TripPlanningEntries extends StatelessWidget {
                           unfinishedPlansCount > 0 ? '你有$unfinishedPlansCount个未完成的行程规划' : '查看你的所有行程规划',
                           style: const TextStyle(
                             fontSize: 14,
-                            color: CupertinoColors.systemGrey,
+                            color: AppColors.textBody,
                           ),
                         ),
                       ],
@@ -137,7 +137,7 @@ class TripPlanningEntries extends StatelessWidget {
                   ),
                   const Icon(
                     CupertinoIcons.chevron_right,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textHint,
                   ),
                 ],
               ),
@@ -153,6 +153,7 @@ class TripPlanningEntries extends StatelessWidget {
     // 获取默认路线
     try {
       final routes = await RouteService.getPopularRoutes(limit: 5);
+      if (!context.mounted) return;
       if (routes.isEmpty) {
         // 如果没有推荐路线，直接创建空白行程
         Navigator.of(context).push(
@@ -171,6 +172,7 @@ class TripPlanningEntries extends StatelessWidget {
       );
     } catch (e) {
       debugPrint('获取推荐路线失败: $e');
+      if (!context.mounted) return;
       // 如果获取路线失败，直接创建空白行程
       Navigator.of(context).push(
         CupertinoPageRoute(
@@ -178,23 +180,6 @@ class TripPlanningEntries extends StatelessWidget {
         ),
       );
     }
-  }
-
-  /// 显示没有路线的提示
-  void _showNoRoutesAlert(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('无法加载路线'),
-        content: const Text('暂时无法获取推荐路线，请稍后再试。'),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('确定'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    );
   }
 
   /// 导航到我的行程规划页面

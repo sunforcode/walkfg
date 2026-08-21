@@ -84,7 +84,7 @@ class HotSearchesSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: backgroundColor,
       borderRadius: BorderRadius.circular(20),
-      minSize: 0,
+      minimumSize: Size.zero,
       onPressed: () {
         onSearchTap(keyword);
       },

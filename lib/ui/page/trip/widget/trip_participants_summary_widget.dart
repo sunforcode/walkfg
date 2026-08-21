@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/user/user_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 参与者管理组件
 class TripParticipantsSummaryWidget extends StatelessWidget {
@@ -35,7 +36,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                   icon: CupertinoIcons.person_2_fill,
                   title: '总人数',
                   value: '$participantCount人',
-                  color: CupertinoColors.systemBlue,
+                  color: AppColors.interactiveAccent,
                 ),
               ),
               const SizedBox(width: 12),
@@ -44,7 +45,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                   icon: CupertinoIcons.checkmark_circle_fill,
                   title: '已确认',
                   value: '${_getConfirmedCount()}人',
-                  color: CupertinoColors.systemGreen,
+                  color: AppColors.statusCompletedText,
                 ),
               ),
               const SizedBox(width: 12),
@@ -53,7 +54,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                   icon: CupertinoIcons.clock_fill,
                   title: '待确认',
                   value: '${_getPendingCount()}人',
-                  color: CupertinoColors.systemOrange,
+                  color: AppColors.statusPlanningText,
                 ),
               ),
             ],
@@ -66,7 +67,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: CupertinoColors.label,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -84,7 +85,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
           const Icon(
             CupertinoIcons.person_2,
             size: 48,
-            color: CupertinoColors.systemGrey,
+            color: AppColors.textHint,
           ),
           const SizedBox(height: 16),
           const Text(
@@ -92,7 +93,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textSubtitle,
             ),
           ),
           const SizedBox(height: 8),
@@ -100,7 +101,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
             '邀请朋友一起参加这次徒步之旅',
             style: TextStyle(
               fontSize: 14,
-              color: CupertinoColors.tertiaryLabel,
+              color: AppColors.textHint,
             ),
           ),
           const SizedBox(height: 16),
@@ -122,7 +123,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -146,7 +147,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
             title,
             style: const TextStyle(
               fontSize: 11,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textSubtitle,
             ),
             textAlign: TextAlign.center,
           ),
@@ -195,7 +196,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemGrey6.withOpacity(0.5),
+          color: AppColors.surfaceCard.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -206,8 +207,8 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
               height: 50,
               decoration: BoxDecoration(
                 color: isOrganizer
-                    ? CupertinoColors.systemBlue.withOpacity(0.2)
-                    : CupertinoColors.systemGrey6,
+                    ? AppColors.interactiveAccent.withValues(alpha: 0.2)
+                    : AppColors.surfaceCard,
                 borderRadius: BorderRadius.circular(25),
               ),
               child: Center(
@@ -231,7 +232,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: CupertinoColors.label,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -242,14 +243,14 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: CupertinoColors.systemBlue,
+                            color: AppColors.interactiveAccent,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Text(
                             '组织者',
                             style: TextStyle(
                               fontSize: 10,
-                              color: CupertinoColors.white,
+                              color: AppColors.bgLight,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -263,7 +264,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                         participant['experience'] as String,
                         style: const TextStyle(
                           fontSize: 13,
-                          color: CupertinoColors.secondaryLabel,
+                          color: AppColors.textSubtitle,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -271,7 +272,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                         '加入: ${participant['joinDate']}',
                         style: const TextStyle(
                           fontSize: 12,
-                          color: CupertinoColors.tertiaryLabel,
+                          color: AppColors.textHint,
                         ),
                       ),
                     ],
@@ -288,8 +289,8 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: isConfirmed
-                    ? CupertinoColors.systemGreen.withOpacity(0.1)
-                    : CupertinoColors.systemOrange.withOpacity(0.1),
+                    ? AppColors.statusCompletedText.withValues(alpha: 0.1)
+                    : AppColors.statusPlanningText.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Row(
@@ -301,8 +302,8 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                         : CupertinoIcons.clock_fill,
                     size: 12,
                     color: isConfirmed
-                        ? CupertinoColors.systemGreen
-                        : CupertinoColors.systemOrange,
+                        ? AppColors.statusCompletedText
+                        : AppColors.statusPlanningText,
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -311,8 +312,8 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: isConfirmed
-                          ? CupertinoColors.systemGreen
-                          : CupertinoColors.systemOrange,
+                          ? AppColors.statusCompletedText
+                          : AppColors.statusPlanningText,
                     ),
                   ),
                 ],

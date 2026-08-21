@@ -24,14 +24,14 @@ class WeatherMainInfo extends StatelessWidget {
               children: [
                 Icon(
                   Icons.location_on,
-                  color: AppColors.textOnDark.withOpacity(0.9),
+                  color: AppColors.textOnDark.withValues(alpha: 0.9),
                   size: 16,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   weather.city,
                   style: TextStyle(
-                    color: AppColors.textOnDark.withOpacity(0.9),
+                    color: AppColors.textOnDark.withValues(alpha: 0.9),
                     fontSize: 14,
                   ),
                 ),
@@ -49,7 +49,7 @@ class WeatherMainInfo extends StatelessWidget {
             Text(
               weather.getWeatherConditionText(),
               style: TextStyle(
-                color: AppColors.textOnDark.withOpacity(0.9),
+                color: AppColors.textOnDark.withValues(alpha: 0.9),
                 fontSize: 16,
               ),
             ),
@@ -70,7 +70,7 @@ class WeatherMainInfo extends StatelessWidget {
                 vertical: 6,
               ),
               decoration: BoxDecoration(
-                color: weather.suitability ? AppColors.success.withOpacity(0.8) : AppColors.error.withOpacity(0.8),
+                color: weather.suitability ? AppColors.success.withValues(alpha: 0.8) : AppColors.error.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(

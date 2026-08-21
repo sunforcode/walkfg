@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:walk/model/route/route_enums.dart';
 
-import '../model/route/route_model.dart';
 import '../model/map/track_point_model.dart';
 
 /// 路线相关工具类

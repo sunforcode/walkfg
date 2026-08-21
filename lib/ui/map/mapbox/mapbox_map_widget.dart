@@ -274,9 +274,10 @@ class _MapboxMapWidgetState extends State<MapboxMapWidget> {
   static String _segmentHexColor(int seq) {
     final h = (seq * 137.508) % 360;
     final color = HSVColor.fromAHSV(1.0, h, 0.8, 0.9).toColor();
-    return '#${color.red.toRadixString(16).padLeft(2, '0')}'
-        '${color.green.toRadixString(16).padLeft(2, '0')}'
-        '${color.blue.toRadixString(16).padLeft(2, '0')}';
+    // ignore: deprecated_member_use
+    return '#${(color.r * 255).round().toRadixString(16).padLeft(2, '0')}'
+        '${(color.g * 255).round().toRadixString(16).padLeft(2, '0')}'
+        '${(color.b * 255).round().toRadixString(16).padLeft(2, '0')}';
   }
 
   /// 按分段分色渲染轨迹线

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/map/map_data_model.dart';
 import 'package:walk/model/map/track_point_model.dart';
@@ -14,6 +16,8 @@ import 'package:walk/ui/page/common/loading_view.dart';
 import 'package:walk/ui/page/route/detail/widgets/route_overview_widget.dart';
 import 'package:walk/ui/page/route/detail/map_info_coordinator.dart';
 import 'package:walk/ui/page/trip/trip_detail_screen.dart';
+import 'package:walk/ui/routes/app_navigator.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/utils/toast_utils.dart';
 
 import 'widgets/route_action_buttons.dart';
@@ -130,6 +134,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
             routeId: route.id,
           );
 
+          if (!mounted) return;
           setState(() {
             _mapData = mapData;
             _kmlTrackPoints = mapData.trackPoints;
@@ -145,6 +150,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
       final mapData =
           await KmlBusinessParser.parseFromPath('assets/maps/wutai.kml');
 
+      if (!mounted) return;
       setState(() {
         _mapData = mapData;
         _kmlTrackPoints = mapData.trackPoints;
@@ -155,20 +161,11 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   }
 
   /// 加载路线相关数据
+  // TODO: 启用 routeDataService / tripService 调用后移除此空实现
   Future<void> _loadRouteData() async {
-    try {
-      final results = await Future.wait([
-        // routeDataService.getRelatedRoutes(widget.routeId),
-        // tripService.getRelatedTrips(widget.routeId),
-      ]);
-      setState(() {
-        _relatedRoutes =
-            results.isNotEmpty ? results[0] as List<RouteModel> : [];
-        _relatedTrips = results.length > 1 ? results[1] as List<TripModel> : [];
-      });
-    } catch (e) {
-      debugPrint('加载路线数据失败: $e');
-    }
+    // 当前服务调用已注释，Future.wait 为空列表，属于死代码
+    // 启用后需加 mounted 检查
+    return;
   }
 
   /// 检查路线是否已收藏
@@ -185,13 +182,9 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
 
   /// 开始规划行程
   void _startPlanning(RouteModel route) {
-    Navigator.of(context).push(
-      CupertinoPageRoute(
-        builder: (context) => TripDetailScreen(
-          routeId: route.id,
-        ),
-      ),
-    );
+    // 进入创建行程页并预填该路线，由用户补全日期等信息后创建新行程。
+    // 此处只做预填，行程与路线的关联事实由后端在创建时落库。
+    AppNavigator.pushTripCreate(context, routeId: route.id);
   }
 
   /// 处理收藏操作
@@ -321,7 +314,6 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
           }
 
           final route = snapshot.data!;
-          final currentTrack = route.defaultMap;
 
           return SizedBox.expand(
             child: Stack(
@@ -384,10 +376,10 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                       // Section 7: 路线分段
                       _buildSegmentsWidget(route),
                       // Section 8: 装备建议
-                      if (currentTrack != null)
+                      if (route.seasonalGear?.isNotEmpty ?? false)
                         SeasonalEquipmentWidget(
-                          currentSeason: '春季',
-                          difficulty: route.difficulty.name,
+                          gearList: route.seasonalGear ?? [],
+                          currentSeason: route.bestSeason ?? '春季',
                         ),
                       // Section 9: 搭车联系
                       if (route.hitchhikeContacts?.isNotEmpty ?? false)
@@ -427,12 +419,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                 ),
 
                 // 第 3 层：悬浮透明导航栏
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: _buildNavigationBar(route),
-                ),
+                _buildNavigationBar(route),
 
                 // 第 4 层：底部触发区（最顶层，抽屉隐藏时吃掉上划手势）
                 if (_sheetHidden)
@@ -452,27 +439,28 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   }
 
   /// 构建导航栏（仅左侧返回按钮，悬浮透明）
+  /// PRD §3.1：40x40px 圆形，rgba(0,0,0,.4) bg，backdrop-filter:blur(10px)
   Widget _buildNavigationBar(RouteModel route) {
-    return SafeArea(
-      bottom: false,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8, top: 4),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: CupertinoButton(
-            padding: EdgeInsets.zero,
-            minSize: 44,
-            onPressed: () => Navigator.of(context).pop(),
+    return Positioned(
+      top: 52,
+      left: 16,
+      child: GestureDetector(
+        onTap: () => Navigator.of(context).pop(),
+        behavior: HitTestBehavior.opaque,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: CupertinoColors.black.withOpacity(0.3),
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: AppColors.navBackBg,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 CupertinoIcons.back,
-                color: CupertinoColors.white,
+                color: AppColors.bgLight,
                 size: 20,
               ),
             ),

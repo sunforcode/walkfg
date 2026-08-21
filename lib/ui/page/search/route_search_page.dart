@@ -5,7 +5,6 @@ import 'package:walk/service/route_service.dart';
 import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import 'package:walk/ui/page/search/search_section.dart';
-import 'package:walk/ui/page/route/route_discovery_screen.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 
@@ -233,7 +232,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: CupertinoColors.systemGrey.withOpacity(0.1),
+              color: CupertinoColors.systemGrey.withValues(alpha: 0.1),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -249,7 +248,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
               child: Container(
                 height: 120,
                 width: double.infinity,
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 child: route.coverUrl != null
                     ? NetworkImageWithFallback(
                         url: route.coverUrl!,
@@ -261,7 +260,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
                     : Container(
                         height: 80,
                         width: 80,
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         child: Center(
                           child: Icon(
                             CupertinoIcons.photo,
@@ -329,7 +328,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(

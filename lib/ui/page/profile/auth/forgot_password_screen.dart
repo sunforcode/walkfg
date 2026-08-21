@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 忘记密码屏幕
 class ForgotPasswordScreen extends StatefulWidget {
@@ -107,7 +107,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const Icon(
                 CupertinoIcons.lock_rotation,
                 size: 80,
-                color: CupertinoColors.activeBlue,
+                color: AppColors.interactiveAccent,
               ),
               const SizedBox(height: 40),
               const Text(
@@ -123,7 +123,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 '请输入您的电子邮件，我们将向您发送重置密码的链接',
                 style: TextStyle(
                   fontSize: 16,
-                  color: CupertinoColors.systemGrey,
+                  color: AppColors.textSubtitle,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -136,13 +136,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.mail,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                 decoration: BoxDecoration(
-                  border: Border.all(color: CupertinoColors.systemGrey4),
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 enabled: !_isSent,
@@ -150,11 +150,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 24),
               CupertinoButton(
                 color: _isSent
-                    ? CupertinoColors.systemGreen
-                    : CupertinoColors.activeBlue,
+                    ? AppColors.badgeVerifiedBg
+                    : AppColors.interactiveAccent,
                 child: _isSending
                     ? const CupertinoActivityIndicator(
-                        color: CupertinoColors.white)
+                        color: AppColors.bgBase)
                     : Text(_isSent ? '已发送' : '发送重置链接'),
                 onPressed:
                     (_isSending || _isSent) ? null : _handleSendResetLink,

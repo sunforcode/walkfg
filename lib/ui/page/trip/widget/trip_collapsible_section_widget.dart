@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 可折叠section组件
 class TripCollapsibleSectionWidget extends StatefulWidget {
@@ -73,10 +74,10 @@ class _TripCollapsibleSectionWidgetState
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8), // 统一间距
       decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
+        color: AppColors.bgPanel,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: CupertinoColors.separator,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -103,7 +104,7 @@ class _TripCollapsibleSectionWidgetState
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: CupertinoColors.label,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -111,7 +112,7 @@ class _TripCollapsibleSectionWidgetState
                         widget.subtitle,
                         style: const TextStyle(
                           fontSize: 13,
-                          color: CupertinoColors.secondaryLabel,
+                          color: AppColors.textBody,
                         ),
                       ),
                     ],
@@ -123,7 +124,7 @@ class _TripCollapsibleSectionWidgetState
                   child: const Icon(
                     CupertinoIcons.chevron_down,
                     size: 16,
-                    color: CupertinoColors.tertiaryLabel,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
               ],
@@ -137,7 +138,7 @@ class _TripCollapsibleSectionWidgetState
               decoration: const BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: CupertinoColors.separator,
+                    color: AppColors.sheetDivider,
                     width: 0.5,
                   ),
                 ),

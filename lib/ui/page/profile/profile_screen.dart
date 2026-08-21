@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/core/network/interceptors/auth_interceptor.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/core/state/auth_notifier.dart';
 import 'package:walk/service/user_service.dart';
 import '../../../model/user/user_model.dart';
@@ -298,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const Icon(
                   CupertinoIcons.exclamationmark_circle,
                   size: 50,
-                  color: CupertinoColors.systemRed,
+                  color: AppColors.statusCancelledText,
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -370,8 +371,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // 退出登录按钮
             CupertinoButton(
-              color: CupertinoColors.systemRed,
-              child: const Text('退出登录'),
+              color: AppColors.statusCancelledBg,
+              child: const Text(
+                '退出登录',
+                style: TextStyle(color: AppColors.statusCancelledText),
+              ),
               onPressed: _logout,
             ),
           ],

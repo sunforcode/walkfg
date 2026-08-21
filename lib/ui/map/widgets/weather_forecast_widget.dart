@@ -39,7 +39,7 @@ class WeatherForecastWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: CupertinoColors.black.withOpacity(0.1),
+              color: CupertinoColors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -123,14 +123,14 @@ class WeatherForecastWidget extends StatelessWidget {
                   _getWeatherDescription(currentWeather.weatherCondition),
                   style: TextStyle(
                     fontSize: 16,
-                    color: CupertinoColors.white.withOpacity(0.9),
+                    color: CupertinoColors.white.withValues(alpha: 0.9),
                   ),
                 ),
                 Text(
                   locationName,
                   style: TextStyle(
                     fontSize: 14,
-                    color: CupertinoColors.white.withOpacity(0.7),
+                    color: CupertinoColors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -148,7 +148,7 @@ class WeatherForecastWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: CupertinoColors.white.withOpacity(0.9),
+                    color: CupertinoColors.white.withValues(alpha: 0.9),
                   ),
                 ),
               const SizedBox(height: 8),
@@ -191,7 +191,7 @@ class WeatherForecastWidget extends StatelessWidget {
                 isToday ? '今天' : _formatWeekday(weather.date),
                 style: TextStyle(
                   fontSize: 12,
-                  color: CupertinoColors.white.withOpacity(0.8),
+                  color: CupertinoColors.white.withValues(alpha: 0.8),
                 ),
               ),
               const SizedBox(height: 8),
@@ -215,7 +215,7 @@ class WeatherForecastWidget extends StatelessWidget {
                   '${weather.minTemperature!.toInt()}°',
                   style: TextStyle(
                     fontSize: 12,
-                    color: CupertinoColors.white.withOpacity(0.7),
+                    color: CupertinoColors.white.withValues(alpha: 0.7),
                   ),
                 ),
             ],
@@ -237,7 +237,7 @@ class WeatherForecastWidget extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: CupertinoColors.white.withOpacity(0.1),
+              color: CupertinoColors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -250,7 +250,7 @@ class WeatherForecastWidget extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: CupertinoColors.white.withOpacity(0.9),
+                      color: CupertinoColors.white.withValues(alpha: 0.9),
                     ),
                   ),
                 ),
@@ -270,7 +270,7 @@ class WeatherForecastWidget extends StatelessWidget {
                     _getWeatherDescription(weather.weatherCondition),
                     style: TextStyle(
                       fontSize: 14,
-                      color: CupertinoColors.white.withOpacity(0.8),
+                      color: CupertinoColors.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ),
@@ -285,14 +285,14 @@ class WeatherForecastWidget extends StatelessWidget {
                         Icon(
                           CupertinoIcons.drop,
                           size: 12,
-                          color: CupertinoColors.white.withOpacity(0.7),
+                          color: CupertinoColors.white.withValues(alpha: 0.7),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '${weather.precipitationProbability}%',
                           style: TextStyle(
                             fontSize: 12,
-                            color: CupertinoColors.white.withOpacity(0.7),
+                            color: CupertinoColors.white.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -326,14 +326,14 @@ class WeatherForecastWidget extends StatelessWidget {
         Icon(
           icon,
           size: 14,
-          color: CupertinoColors.white.withOpacity(0.7),
+          color: CupertinoColors.white.withValues(alpha: 0.7),
         ),
         const SizedBox(width: 4),
         Text(
           value,
           style: TextStyle(
             fontSize: 12,
-            color: CupertinoColors.white.withOpacity(0.7),
+            color: CupertinoColors.white.withValues(alpha: 0.7),
           ),
         ),
       ],

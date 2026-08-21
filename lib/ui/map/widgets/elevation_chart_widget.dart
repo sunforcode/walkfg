@@ -207,7 +207,7 @@ class _ElevationChartWidgetState extends State<ElevationChartWidget> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -452,7 +452,7 @@ class EnhancedElevationChartPainter extends CustomPainter {
 
     // 绘制垂直指示线
     final linePaint = Paint()
-      ..color = config.selectedPointColor.withOpacity(0.5)
+      ..color = config.selectedPointColor.withValues(alpha: 0.5)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 

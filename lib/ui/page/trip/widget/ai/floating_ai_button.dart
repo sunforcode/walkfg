@@ -109,7 +109,7 @@ class _FloatingAIButtonState extends State<FloatingAIButton>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: CupertinoColors.systemPurple.withOpacity(0.3),
+                      color: CupertinoColors.systemPurple.withValues(alpha: 0.3),
                       blurRadius: 12 * _pulseAnimation.value,
                       spreadRadius: 2 * _pulseAnimation.value,
                     ),
@@ -135,7 +135,7 @@ class _FloatingAIButtonState extends State<FloatingAIButton>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: CupertinoColors.white.withOpacity(
+                                color: CupertinoColors.white.withValues(alpha:
                                   0.5 * (2 - _pulseAnimation.value),
                                 ),
                                 width: 2,
@@ -381,7 +381,7 @@ class AIAssistantBottomSheet extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: CupertinoColors.systemBlue.withOpacity(0.1),
+                        color: CupertinoColors.systemBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(

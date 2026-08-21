@@ -106,7 +106,7 @@ class TripWeatherSafetyWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: (weather['color'] as Color).withOpacity(0.1),
+          color: (weather['color'] as Color).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -115,7 +115,7 @@ class TripWeatherSafetyWidget extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: (weather['color'] as Color).withOpacity(0.2),
+                color: (weather['color'] as Color).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(25),
               ),
               child: Center(
@@ -222,7 +222,7 @@ class TripWeatherSafetyWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: (item['color'] as Color).withOpacity(0.1),
+          color: (item['color'] as Color).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(

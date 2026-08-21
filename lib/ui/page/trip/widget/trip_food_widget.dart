@@ -92,7 +92,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey.withOpacity(0.1),
+            color: CupertinoColors.systemGrey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -128,7 +128,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: CupertinoColors.systemGreen.withOpacity(0.1),
+                          color: CupertinoColors.systemGreen.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
@@ -263,7 +263,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: CupertinoColors.systemGreen
-                                      .withOpacity(0.8),
+                                      .withValues(alpha: 0.8),
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -271,7 +271,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
                                 CupertinoIcons.chevron_up,
                                 size: 12,
                                 color: CupertinoColors.systemGreen
-                                    .withOpacity(0.8),
+                                    .withValues(alpha: 0.8),
                               ),
                             ],
                           ),
@@ -421,7 +421,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: CupertinoColors.systemGreen.withOpacity(0.2),
+                          color: CupertinoColors.systemGreen.withValues(alpha: 0.2),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -564,7 +564,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey.withOpacity(0.05),
+            color: CupertinoColors.systemGrey.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -588,7 +588,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemGreen.withOpacity(0.1),
+                      color: CupertinoColors.systemGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -663,7 +663,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
         border: Border.all(color: CupertinoColors.systemGrey5),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey.withOpacity(0.05),
+            color: CupertinoColors.systemGrey.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -676,7 +676,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: CupertinoColors.systemGreen.withOpacity(0.1),
+              color: CupertinoColors.systemGreen.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -709,10 +709,10 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: CupertinoColors.systemGreen.withOpacity(0.1),
+                        color: CupertinoColors.systemGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: CupertinoColors.systemGreen.withOpacity(0.3),
+                          color: CupertinoColors.systemGreen.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -751,7 +751,7 @@ class _TripFoodWidgetState extends State<TripFoodWidget> {
                     item.notes!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: CupertinoColors.systemGrey.withOpacity(0.8),
+                      color: CupertinoColors.systemGrey.withValues(alpha: 0.8),
                       fontStyle: FontStyle.italic,
                     ),
                   ),

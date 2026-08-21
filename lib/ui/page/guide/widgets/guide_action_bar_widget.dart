@@ -54,7 +54,7 @@ class GuideActionBarWidget extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: CupertinoColors.systemBackground
-                .withOpacity(_ActionBarConstants.backgroundOpacity),
+                .withValues(alpha: _ActionBarConstants.backgroundOpacity),
             border: const Border(
               top: BorderSide(
                 color: CupertinoColors.separator,
@@ -156,7 +156,7 @@ class GuideActionBarWidget extends StatelessWidget {
         width: _ActionBarConstants.buttonSize,
         height: _ActionBarConstants.buttonSize,
         decoration: BoxDecoration(
-          color: color.withOpacity(_ActionBarConstants.buttonBackgroundOpacity),
+          color: color.withValues(alpha: _ActionBarConstants.buttonBackgroundOpacity),
           shape: BoxShape.circle,
         ),
         child: Icon(

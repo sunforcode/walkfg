@@ -11,6 +11,8 @@ import 'package:walk/model/route/daily_plan_model.dart';
 import 'package:walk/model/route/weather_info.dart';
 import 'package:walk/model/route/campsite_model.dart';
 import 'package:walk/model/route/hitchhike_contact_model.dart';
+import 'package:walk/model/route/gear_item_model.dart';
+import 'package:walk/model/trip/trip_summary_model.dart';
 import 'package:walk/model/route/poi_point_model.dart';
 import 'package:walk/model/route/segment_scheme_model.dart';
 import 'package:walk/model/user/user_model.dart';
@@ -139,6 +141,34 @@ class RouteModel extends BaseModel {
   @JsonKey(name: 'hitchhike_contacts')
   final List<HitchhikeContactModel>? hitchhikeContacts;
 
+  /// 最高海拔（米）
+  @JsonKey(name: 'max_altitude')
+  final double? maxAltitude;
+
+  /// 最佳季节
+  @JsonKey(name: 'best_season')
+  final String? bestSeason;
+
+  /// 交通信息
+  @JsonKey(name: 'traffic_info')
+  final String? trafficInfo;
+
+  /// 信号覆盖信息
+  @JsonKey(name: 'signal_info')
+  final String? signalInfo;
+
+  /// 季节性装备建议
+  @JsonKey(name: 'seasonal_gear')
+  final List<GearItemModel>? seasonalGear;
+
+  /// 相关路线
+  @JsonKey(name: 'related_routes')
+  final List<RouteModel>? relatedRoutes;
+
+  /// 相关行程摘要
+  @JsonKey(name: 'related_trips')
+  final List<TripSummaryModel>? relatedTrips;
+
   /// 标记点列表
   @JsonKey(name: 'marker_points', defaultValue: <MarkerPointModel>[])
   final List<MarkerPointModel>? markerPoints;
@@ -202,6 +232,13 @@ class RouteModel extends BaseModel {
     this.supplyPoints,
     this.campsites,
     this.hitchhikeContacts,
+    this.maxAltitude,
+    this.bestSeason,
+    this.trafficInfo,
+    this.signalInfo,
+    this.seasonalGear,
+    this.relatedRoutes,
+    this.relatedTrips,
     this.markerPoints = const <MarkerPointModel>[],
   }) : this.status = status ?? RouteStatus.planning;
 
@@ -329,6 +366,13 @@ class RouteModel extends BaseModel {
     List<SupplyPointModel>? supplyPoints,
     List<CampsiteModel>? campsites,
     List<HitchhikeContactModel>? hitchhikeContacts,
+    double? maxAltitude,
+    String? bestSeason,
+    String? trafficInfo,
+    String? signalInfo,
+    List<GearItemModel>? seasonalGear,
+    List<RouteModel>? relatedRoutes,
+    List<TripSummaryModel>? relatedTrips,
     List<MarkerPointModel>? markerPoints,
   }) {
     return RouteModel(
@@ -369,6 +413,13 @@ class RouteModel extends BaseModel {
       supplyPoints: supplyPoints ?? this.supplyPoints,
       campsites: campsites ?? this.campsites,
       hitchhikeContacts: hitchhikeContacts ?? this.hitchhikeContacts,
+      maxAltitude: maxAltitude ?? this.maxAltitude,
+      bestSeason: bestSeason ?? this.bestSeason,
+      trafficInfo: trafficInfo ?? this.trafficInfo,
+      signalInfo: signalInfo ?? this.signalInfo,
+      seasonalGear: seasonalGear ?? this.seasonalGear,
+      relatedRoutes: relatedRoutes ?? this.relatedRoutes,
+      relatedTrips: relatedTrips ?? this.relatedTrips,
       markerPoints: markerPoints ?? this.markerPoints,
     );
   }

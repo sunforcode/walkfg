@@ -20,6 +20,9 @@ import 'package:walk/utils/toast_utils.dart';
 
 /// 行程详情展示页面
 class TripDetailScreen extends StatefulWidget {
+  /// 行程ID（可选）
+  final String? tripId;
+
   /// 路线ID（可选）
   final String? routeId;
 
@@ -32,6 +35,7 @@ class TripDetailScreen extends StatefulWidget {
   /// 构造函数
   const TripDetailScreen({
     super.key,
+    this.tripId,
     this.routeId,
     this.tripModel,
     this.isReadOnly = false,
@@ -52,6 +56,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   final ScrollController _scrollController = ScrollController();
 
   /// 当前用户ID（模拟）
+  // TODO: 替换为真实用户ID from AuthService
   final String _currentUserId = 'current_user';
 
   /// 页面加载状态
@@ -71,7 +76,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   }
 
   /// 初始化数据，根据入口参数加载TripModel或RouteModel
-  void _initData() async {
+  Future<void> _initData() async {
     setState(() {
       _loading = true;
       _error = null;
@@ -97,10 +102,12 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         // 没有指定任何参数，创建一个全新的空白行程
         _trip = _buildNewTripModel();
       }
+      if (!mounted) return;
       setState(() {
         _loading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = e.toString();
         _loading = false;
@@ -187,13 +194,14 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   }
 
   /// 跳转到编辑页面
-  void _navigateToEdit() async {
+  Future<void> _navigateToEdit() async {
     if (_trip == null) return;
     final result = await Navigator.of(context).push<bool>(
       CupertinoPageRoute(
         builder: (context) => TripEditScreen(tripId: _trip!.id),
       ),
     );
+    if (!mounted) return;
     if (result == true) {
       _initData();
     }
@@ -246,7 +254,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         child: const Text(
           '收藏',
           style: TextStyle(
-            color: CupertinoColors.white,
+            color: AppColors.textPrimary,
           ),
         ),
         onPressed: _favoriteTrip,
@@ -259,7 +267,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         child: const Text(
           '编辑',
           style: TextStyle(
-            color: CupertinoColors.white,
+            color: AppColors.textPrimary,
           ),
         ),
         onPressed: _navigateToEdit,
@@ -289,7 +297,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         middle: Text(
           _getPageTitle(trip),
           style: const TextStyle(
-            color: CupertinoColors.white,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),

@@ -36,7 +36,7 @@ class _InlineDatePickerState extends State<InlineDatePicker> {
         ),
         borderRadius: BorderRadius.circular(12),
         color: _isExpanded 
-            ? CupertinoColors.systemBlue.withOpacity(0.05)
+            ? CupertinoColors.systemBlue.withValues(alpha: 0.05)
             : CupertinoColors.systemBackground,
       ),
       child: Column(

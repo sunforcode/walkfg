@@ -1,311 +1,301 @@
 import 'package:flutter/cupertino.dart';
 import 'colors.dart';
 
-/// 应用字体 Token
+/// Walk v1 Design Token — 字体 (PRD §8.1.3)
 ///
-/// 专业运动风格 - 清晰易读，数据展示优先
+/// 字体 Alias Token：展示型 / 标题型 / 正文型 / 标注型。
+/// 所有颜色引用 AppColors，不硬编码。
 class AppTypography {
   AppTypography._();
 
   // ============ 字体族 ============
-  /// 默认字体族 (本地字体 NotoSansSC)
   static const String fontFamily = 'NotoSansSC';
-
-  /// 等宽字体 (用于数据展示)
   static const String fontFamilyMono = 'NotoSansSC';
 
-  // ============ 字重 ============
-  static const FontWeight regular = FontWeight.w400;
-  static const FontWeight medium = FontWeight.w500;
-  static const FontWeight semiBold = FontWeight.w600;
-  static const FontWeight bold = FontWeight.w700;
-
-  // ============ 字体大小 ============
-  static const double fontSizeXs = 10.0;
-  static const double fontSizeSm = 12.0;
-  static const double fontSizeMd = 14.0;
-  static const double fontSizeLg = 16.0;
-  static const double fontSizeXl = 18.0;
-  static const double fontSizeXxl = 20.0;
-  static const double fontSizeDisplay = 24.0;
-  static const double fontSizeDisplayLg = 28.0;
-  static const double fontSizeDisplayXl = 32.0;
-
-  // ============ 行高 ============
-  static const double lineHeightTight = 1.2;
-  static const double lineHeightNormal = 1.5;
-  static const double lineHeightRelaxed = 1.75;
-
-  // ============ Display 样式 (大标题) ============
-  /// Display Large - 32px
-  static const TextStyle displayLarge = TextStyle(
+  // ============ 展示型 ============
+  /// 超大数字（天气温度）— 48px/200
+  static const TextStyle displayHero = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeDisplayXl,
-    fontWeight: bold,
-    height: lineHeightTight,
+    fontSize: 48,
+    fontWeight: FontWeight.w200,
+    height: 1.2,
+    color: AppColors.textPrimary,
+    fontFeatures: [FontFeature.tabularFigures()],
+  );
+
+  /// 品牌名 WALK — 42px/800; letter-spacing: 2px
+  static const TextStyle displayBrand = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 42,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
+    letterSpacing: 2,
     color: AppColors.textPrimary,
   );
 
-  /// Display Medium - 28px
-  static const TextStyle displayMedium = TextStyle(
+  /// 大数字（路线距离）— 32px/800
+  static const TextStyle displayLg = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeDisplayLg,
-    fontWeight: bold,
-    height: lineHeightTight,
+    fontSize: 32,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
+    color: AppColors.textPrimary,
+    fontFeatures: [FontFeature.tabularFigures()],
+  );
+
+  /// 页面主标题 — 28px/800
+  static const TextStyle displayMd = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 28,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
     color: AppColors.textPrimary,
   );
 
-  /// Display Small - 24px
-  static const TextStyle displaySmall = TextStyle(
+  /// 区块主标题 — 26px/800
+  static const TextStyle displaySm = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeDisplay,
-    fontWeight: bold,
-    height: lineHeightTight,
+    fontSize: 26,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
     color: AppColors.textPrimary,
   );
 
-  // ============ Headline 样式 (标题) ============
-  /// Headline Large - 22px
-  static const TextStyle headlineLarge = TextStyle(
+  // ============ 标题型 ============
+  /// 卡片标题 — 22px/700
+  static const TextStyle headline = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeXxl + 2,
-    fontWeight: semiBold,
-    height: lineHeightTight,
+    fontSize: 22,
+    fontWeight: FontWeight.w700,
+    height: 1.2,
     color: AppColors.textPrimary,
   );
 
-  /// Headline Medium - 20px
-  static const TextStyle headlineMedium = TextStyle(
+  /// 大数值 — 20px/700
+  static const TextStyle titleLg = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeXxl,
-    fontWeight: semiBold,
-    height: lineHeightTight,
+    fontSize: 20,
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+    color: AppColors.textPrimary,
+    fontFeatures: [FontFeature.tabularFigures()],
+  );
+
+  /// 统计值、月份标题 — 18px/600
+  static const TextStyle title = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    height: 1.3,
     color: AppColors.textPrimary,
   );
 
-  /// Headline Small - 18px
-  static const TextStyle headlineSmall = TextStyle(
+  /// 导航栏标题 — 17px/600
+  static const TextStyle titleSm = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeXl,
-    fontWeight: semiBold,
-    height: lineHeightTight,
+    fontSize: 17,
+    fontWeight: FontWeight.w600,
+    height: 1.3,
     color: AppColors.textPrimary,
   );
 
-  // ============ Title 样式 (副标题) ============
-  /// Title Large - 16px semibold
-  static const TextStyle titleLarge = TextStyle(
+  // ============ 正文型 ============
+  /// 大正文 — 16px/400
+  static const TextStyle bodyLg = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeLg,
-    fontWeight: semiBold,
-    height: lineHeightNormal,
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
     color: AppColors.textPrimary,
   );
 
-  /// Title Medium - 14px semibold
-  static const TextStyle titleMedium = TextStyle(
+  /// 正文 — 15px/400
+  static const TextStyle body = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeMd,
-    fontWeight: semiBold,
-    height: lineHeightNormal,
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
     color: AppColors.textPrimary,
   );
 
-  /// Title Small - 12px semibold
-  static const TextStyle titleSmall = TextStyle(
+  /// 小正文 — 14px/400
+  static const TextStyle bodySm = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeSm,
-    fontWeight: semiBold,
-    height: lineHeightNormal,
-    color: AppColors.textPrimary,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: AppColors.textBody,
   );
 
-  // ============ Body 样式 (正文) ============
-  /// Body Large - 16px
-  static const TextStyle bodyLarge = TextStyle(
+  /// 说明文字 — 13px/400
+  static const TextStyle caption = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeLg,
-    fontWeight: regular,
-    height: lineHeightNormal,
-    color: AppColors.textPrimary,
+    fontSize: 13,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: AppColors.textBody,
   );
 
-  /// Body Medium - 14px
-  static const TextStyle bodyMedium = TextStyle(
+  // ============ 标注型 ============
+  /// 标签 — 12px/400
+  static const TextStyle label = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeMd,
-    fontWeight: regular,
-    height: lineHeightNormal,
-    color: AppColors.textPrimary,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 1.3,
+    color: AppColors.textSubtitle,
   );
 
-  /// Body Small - 12px
-  static const TextStyle bodySmall = TextStyle(
+  /// 极小标注 — 11px/400
+  static const TextStyle overline = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeSm,
-    fontWeight: regular,
-    height: lineHeightNormal,
-    color: AppColors.textSecondary,
+    fontSize: 11,
+    fontWeight: FontWeight.w400,
+    height: 1.3,
+    color: AppColors.textHint,
   );
 
-  // ============ Label 样式 (标签) ============
-  /// Label Large - 14px medium
-  static const TextStyle labelLarge = TextStyle(
+  /// 微型标注 — 10px/400
+  static const TextStyle micro = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeMd,
-    fontWeight: medium,
-    height: lineHeightTight,
-    color: AppColors.textPrimary,
-  );
-
-  /// Label Medium - 12px medium
-  static const TextStyle labelMedium = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: fontSizeSm,
-    fontWeight: medium,
-    height: lineHeightTight,
-    color: AppColors.textPrimary,
-  );
-
-  /// Label Small - 10px medium
-  static const TextStyle labelSmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: fontSizeXs,
-    fontWeight: medium,
-    height: lineHeightTight,
-    color: AppColors.textSecondary,
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+    height: 1.3,
+    color: AppColors.textHint,
   );
 
   // ============ 特殊样式 ============
-  /// 按钮文字
+  /// 按钮
   static const TextStyle button = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeMd,
-    fontWeight: semiBold,
-    height: lineHeightTight,
-    color: AppColors.textOnDark,
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    height: 1.2,
+    color: AppColors.textPrimary,
   );
 
-  /// 大按钮文字
+  /// 大按钮
   static const TextStyle buttonLarge = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeLg,
-    fontWeight: semiBold,
-    height: lineHeightTight,
-    color: AppColors.textOnDark,
+    fontSize: 17,
+    fontWeight: FontWeight.w600,
+    height: 1.2,
+    color: AppColors.textPrimary,
   );
 
-  /// 链接文字
+  /// 链接
   static const TextStyle link = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeMd,
-    fontWeight: regular,
-    height: lineHeightNormal,
-    color: AppColors.textLink,
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: AppColors.interactiveAccent,
     decoration: TextDecoration.underline,
-  );
-
-  /// 数据数字 (等宽字体)
-  static const TextStyle dataNumber = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: fontSizeXxl,
-    fontWeight: bold,
-    height: lineHeightTight,
-    color: AppColors.textPrimary,
-    fontFeatures: [FontFeature.tabularFigures()],
-  );
-
-  /// 大数据数字
-  static const TextStyle dataNumberLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: fontSizeDisplayLg,
-    fontWeight: bold,
-    height: lineHeightTight,
-    color: AppColors.textPrimary,
-    fontFeatures: [FontFeature.tabularFigures()],
-  );
-
-  /// 单位文字
-  static const TextStyle unit = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: fontSizeSm,
-    fontWeight: regular,
-    height: lineHeightTight,
-    color: AppColors.textSecondary,
   );
 
   /// 导航栏标题
   static const TextStyle navTitle = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeLg + 1,
-    fontWeight: semiBold,
-    height: lineHeightTight,
+    fontSize: 17,
+    fontWeight: FontWeight.w600,
+    height: 1.2,
     color: AppColors.textPrimary,
   );
 
   /// Tab 标签
   static const TextStyle tab = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeXs,
-    fontWeight: medium,
-    height: lineHeightTight,
+    fontSize: 10,
+    fontWeight: FontWeight.w500,
+    height: 1.2,
+    color: AppColors.textSecondary,
   );
 
-  // ============ 数据展示样式 (用于统计卡片和指标) ============
-  /// 统计卡片数值 - 28px bold
+  // ============ 兼容旧 API ============
+  // 保留 TextTheme 名称映射，让现有代码逐步迁移
+  static const TextStyle displayLarge = displayLg;
+  static const TextStyle displayMedium = displayMd;
+  static const TextStyle displaySmall = displaySm;
+  static const TextStyle headlineLarge = headline;
+  static const TextStyle headlineMedium = titleLg;
+  static const TextStyle headlineSmall = title;
+  static const TextStyle titleLarge = title;
+  static const TextStyle titleMedium = body;
+  static const TextStyle titleSmall = bodySm;
+  static const TextStyle bodyLarge = bodyLg;
+  static const TextStyle bodyMedium = body;
+  static const TextStyle bodySmall = bodySm;
+  static const TextStyle labelLarge = label;
+  static const TextStyle labelMedium = label;
+  static const TextStyle labelSmall = micro;
+
+  // 数据展示（保留兼容）
+  static const TextStyle dataNumber = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 28,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
+    color: AppColors.textPrimary,
+    fontFeatures: [FontFeature.tabularFigures()],
+  );
+
+  static const TextStyle dataNumberLarge = displayLg;
+
+  static const TextStyle unit = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 1.2,
+    color: AppColors.textSubtitle,
+  );
+
   static const TextStyle statValue = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeDisplayLg,
-    fontWeight: bold,
-    height: lineHeightTight,
+    fontSize: 28,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
     color: AppColors.textPrimary,
     fontFeatures: [FontFeature.tabularFigures()],
   );
 
-  /// 统计卡片单位 - 12px regular
   static const TextStyle statUnit = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeSm,
-    fontWeight: regular,
-    height: lineHeightTight,
-    color: AppColors.textSecondary,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 1.2,
+    color: AppColors.textSubtitle,
   );
 
-  /// 统计卡片标签 - 10px regular
   static const TextStyle statLabel = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeXs,
-    fontWeight: regular,
-    height: lineHeightTight,
-    color: AppColors.textSecondary,
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+    height: 1.2,
+    color: AppColors.textHint,
   );
 
-  /// 指标数值 - 14px semibold
   static const TextStyle metricValue = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeMd,
-    fontWeight: semiBold,
-    height: lineHeightTight,
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    height: 1.2,
     color: AppColors.textPrimary,
     fontFeatures: [FontFeature.tabularFigures()],
   );
 
-  /// 指标标签 - 12px regular
   static const TextStyle metricLabel = TextStyle(
     fontFamily: fontFamily,
-    fontSize: fontSizeSm,
-    fontWeight: regular,
-    height: lineHeightTight,
-    color: AppColors.textSecondary,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 1.2,
+    color: AppColors.textSubtitle,
   );
 
   // ============ 工具方法 ============
-  /// 获取带颜色的样式
   static TextStyle withColor(TextStyle style, Color color) {
     return style.copyWith(color: color);
   }
 
-  /// 获取带字重的样式
   static TextStyle withWeight(TextStyle style, FontWeight weight) {
     return style.copyWith(fontWeight: weight);
   }

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/model/equipment/equipment_enums.dart';
 import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/service/equipment_service.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/empty_content_widget.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
@@ -198,99 +199,156 @@ class _EquipmentListCard extends StatelessWidget {
 
   const _EquipmentListCard({required this.list, required this.onTap});
 
-  Color _statusColor(EquipmentListStatus status) {
-    switch (status) {
-      case EquipmentListStatus.planning:
-        return CupertinoColors.activeOrange;
-      case EquipmentListStatus.preparing:
-        return CupertinoColors.activeBlue;
-      case EquipmentListStatus.completed:
-        return CupertinoColors.activeGreen;
-      case EquipmentListStatus.archived:
-        return CupertinoColors.systemGrey;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final statusColor = _statusColor(list.status);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemBackground,
+          color: AppColors.bgPanel,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: CupertinoColors.systemGrey5),
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    list.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    list.statusName,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: statusColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            _CardHeader(list: list),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                _buildInfoChip(CupertinoIcons.bag, '${list.itemCount} 件装备'),
-                const SizedBox(width: 8),
-                _buildInfoChip(CupertinoIcons.person_2, '${list.personCount} 人'),
-                const SizedBox(width: 8),
-                _buildInfoChip(
-                    CupertinoIcons.cube_box, list.totalWeightText),
-              ],
-            ),
+            _CardInfoChips(list: list),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildInfoChip(IconData icon, String label) {
+/// Header row with list name and status badge.
+class _CardHeader extends StatelessWidget {
+  const _CardHeader({required this.list});
+
+  final EquipmentListModel list;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            list.name,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        _StatusBadge(status: list.status, statusName: list.statusName),
+      ],
+    );
+  }
+}
+
+/// Status badge pill that maps [EquipmentListStatus] to AppColors badge tokens.
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.status, required this.statusName});
+
+  final EquipmentListStatus status;
+  final String statusName;
+
+  Color get _bgColor {
+    switch (status) {
+      case EquipmentListStatus.planning:
+        return AppColors.badgeRecommendedBg;
+      case EquipmentListStatus.preparing:
+        return AppColors.badgeBlueBg;
+      case EquipmentListStatus.completed:
+        return AppColors.badgeVerifiedBg;
+      case EquipmentListStatus.archived:
+        return AppColors.surfaceCard;
+    }
+  }
+
+  Color get _textColor {
+    switch (status) {
+      case EquipmentListStatus.planning:
+        return AppColors.badgeRecommendedText;
+      case EquipmentListStatus.preparing:
+        return AppColors.badgeBlueText;
+      case EquipmentListStatus.completed:
+        return AppColors.badgeVerifiedText;
+      case EquipmentListStatus.archived:
+        return AppColors.textSubtitle;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: _bgColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        statusName,
+        style: TextStyle(
+          fontSize: 11,
+          color: _textColor,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+/// Row of info chips showing item count, person count, and total weight.
+class _CardInfoChips extends StatelessWidget {
+  const _CardInfoChips({required this.list});
+
+  final EquipmentListModel list;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        _InfoChip(CupertinoIcons.bag, '${list.itemCount} 件装备'),
+        const SizedBox(width: 8),
+        _InfoChip(CupertinoIcons.person_2, '${list.personCount} 人'),
+        const SizedBox(width: 8),
+        _InfoChip(CupertinoIcons.cube_box, list.totalWeightText),
+      ],
+    );
+  }
+}
+
+/// Single info chip with icon and label.
+class _InfoChip extends StatelessWidget {
+  const _InfoChip(this.icon, this.label);
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: CupertinoColors.systemGrey),
+          Icon(icon, size: 13, color: AppColors.textSubtitle),
           const SizedBox(width: 4),
           Text(
             label,
             style: const TextStyle(
               fontSize: 11,
-              color: CupertinoColors.systemGrey,
+              color: AppColors.textSubtitle,
             ),
           ),
         ],

@@ -126,7 +126,7 @@ class TripService {
 
   /// 将状态字符串映射为后端整型值
   ///
-  /// PLANNING=0, IN_PROGRESS=1, COMPLETED=2, CANCELLED=3
+  /// PLANNING=0, IN_PROGRESS=1, COMPLETED=2, CANCELLED=3, CONFIRMED=4
   static int _statusToInt(String status) {
     switch (status.toLowerCase()) {
       case 'planning':
@@ -138,6 +138,8 @@ class TripService {
         return 2;
       case 'cancelled':
         return 3;
+      case 'confirmed':
+        return 4;
       default:
         return 0;
     }

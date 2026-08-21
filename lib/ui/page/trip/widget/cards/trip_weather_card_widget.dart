@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/trip/widget/cards/trip_card_template.dart';
 import 'package:walk/model/trip/weather_info_model.dart';
@@ -123,7 +122,7 @@ class TripWeatherCardWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: CupertinoColors.systemYellow.withOpacity(0.1),
+              color: CupertinoColors.systemYellow.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(

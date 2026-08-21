@@ -112,7 +112,7 @@ class _TripTransportationCardWidgetState
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: CupertinoColors.systemGrey5.withOpacity(0.5),
+                color: CupertinoColors.systemGrey5.withValues(alpha: 0.5),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -225,7 +225,7 @@ class _TripTransportationCardWidgetState
                         CupertinoButton(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 8),
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -283,7 +283,7 @@ class _TripTransportationCardWidgetState
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey.withOpacity(0.1),
+            color: CupertinoColors.systemGrey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -297,8 +297,8 @@ class _TripTransportationCardWidgetState
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isBooked
-                  ? CupertinoColors.activeGreen.withOpacity(0.1)
-                  : CupertinoColors.systemYellow.withOpacity(0.1),
+                  ? CupertinoColors.activeGreen.withValues(alpha: 0.1)
+                  : CupertinoColors.systemYellow.withValues(alpha: 0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),

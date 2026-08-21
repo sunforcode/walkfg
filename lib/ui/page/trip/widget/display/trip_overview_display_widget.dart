@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/route/route_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/utils/date_time_utils.dart';
 
 /// 行程概览展示组件
@@ -24,85 +25,97 @@ class TripOverviewDisplayWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 标题行
-          Row(
-            children: [
-              const Icon(
-                CupertinoIcons.chart_bar,
-                size: 20,
-                color: CupertinoColors.systemBlue,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                _getOverviewTitle().replaceAll('📊 ', ''),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: CupertinoColors.label,
-                ),
-              ),
-              const Spacer(),
-              _buildStatusBadge(),
-            ],
-          ),
+          _buildSectionHeader(),
           const SizedBox(height: 16),
 
           // 基础信息卡片
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: CupertinoColors.systemGrey6,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: CupertinoColors.separator,
-                width: 0.5,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 基础信息
-                ..._buildBasicInfo(),
-
-                // 重要提醒（条件显示）
-                ..._buildImportantAlertsInline(),
-              ],
-            ),
-          ),
+          _buildBasicInfoCard(),
 
           const SizedBox(height: 16),
 
           // 计划现状概览或完成记录
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: CupertinoColors.systemGrey6,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: CupertinoColors.separator,
-                width: 0.5,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _getSectionTitle(),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: CupertinoColors.label,
-                  ),
-                ),
-                const SizedBox(height: 12),
+          _buildPlanningOrCompletedCard(),
+        ],
+      ),
+    );
+  }
 
-                // 根据状态显示不同内容
-                if (trip.status == TripStatus.completed)
-                  ..._buildCompletedSummary()
-                else
-                  ..._buildPlanningStatus(),
-              ],
+  Widget _buildSectionHeader() {
+    return Row(
+      children: [
+        const Icon(
+          CupertinoIcons.chart_bar,
+          size: 20,
+          color: AppColors.interactiveAccent,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          _getOverviewTitle().replaceAll('📊 ', ''),
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const Spacer(),
+        _buildStatusBadge(),
+      ],
+    );
+  }
+
+  Widget _buildBasicInfoCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.sheetCardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.sheetDivider,
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 基础信息
+          ..._buildBasicInfo(),
+
+          // 重要提醒（条件显示）
+          ..._buildImportantAlertsInline(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlanningOrCompletedCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.sheetCardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.sheetDivider,
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _getSectionTitle(),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
             ),
           ),
+          const SizedBox(height: 12),
+
+          // 根据状态显示不同内容
+          if (trip.status == TripStatus.completed)
+            ..._buildCompletedSummary()
+          else
+            ..._buildPlanningStatus(),
         ],
       ),
     );
@@ -146,51 +159,66 @@ class TripOverviewDisplayWidget extends StatelessWidget {
 
   /// 构建状态标识
   Widget _buildStatusBadge() {
-    Color badgeColor;
-    String statusText;
+    Color badgeBg;
+    Color badgeText;
 
     switch (trip.status) {
       case TripStatus.planning:
-        badgeColor = CupertinoColors.systemOrange;
-        statusText = '规划中';
+        badgeBg = AppColors.statusPlanningBg;
+        badgeText = AppColors.statusPlanningText;
         break;
       case TripStatus.confirmed:
-        badgeColor = CupertinoColors.systemBlue;
-        statusText = '已确认';
+        badgeBg = AppColors.statusConfirmedBg;
+        badgeText = AppColors.statusConfirmedText;
         break;
       case TripStatus.inProgress:
-        badgeColor = CupertinoColors.systemGreen;
-        statusText = '进行中';
+        badgeBg = AppColors.statusCompletedBg;
+        badgeText = AppColors.statusCompletedText;
         break;
       case TripStatus.completed:
-        badgeColor = CupertinoColors.systemPurple;
-        statusText = '已完成';
+        badgeBg = AppColors.statusCompletedBg;
+        badgeText = AppColors.statusCompletedText;
         break;
       case TripStatus.cancelled:
-        badgeColor = CupertinoColors.systemRed;
-        statusText = '已取消';
+        badgeBg = AppColors.statusCancelledBg;
+        badgeText = AppColors.statusCancelledText;
         break;
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: badgeColor.withOpacity(0.1),
+        color: badgeBg,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: badgeColor.withOpacity(0.3),
+          color: badgeText.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
       child: Text(
-        statusText,
+        _getStatusText(),
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: badgeColor,
+          color: badgeText,
         ),
       ),
     );
+  }
+
+  String _getStatusText() {
+    switch (trip.status) {
+      case TripStatus.planning:
+        return '规划中';
+      case TripStatus.confirmed:
+        return '已确认';
+      case TripStatus.inProgress:
+        return '进行中';
+      case TripStatus.completed:
+        return '已完成';
+      case TripStatus.cancelled:
+        return '已取消';
+    }
   }
 
   List<Widget> _buildBasicInfo() {
@@ -202,7 +230,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
             const Icon(
               CupertinoIcons.map,
               size: 20,
-              color: CupertinoColors.systemBlue,
+              color: AppColors.interactiveAccent,
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -211,7 +239,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: CupertinoColors.label,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ),
@@ -226,7 +254,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
           const Icon(
             CupertinoIcons.calendar,
             size: 20,
-            color: CupertinoColors.systemGreen,
+            color: AppColors.statusCompletedText,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -234,7 +262,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
               _formatDateRange(),
               style: const TextStyle(
                 fontSize: 14,
-                color: CupertinoColors.label,
+                color: AppColors.textPrimary,
               ),
             ),
           ),
@@ -248,14 +276,14 @@ class TripOverviewDisplayWidget extends StatelessWidget {
           const Icon(
             CupertinoIcons.person_2,
             size: 20,
-            color: CupertinoColors.systemOrange,
+            color: AppColors.statusPlanningText,
           ),
           const SizedBox(width: 8),
           Text(
             '${trip.participantCount}人',
             style: const TextStyle(
               fontSize: 14,
-              color: CupertinoColors.label,
+              color: AppColors.textPrimary,
             ),
           ),
           if (trip.status == TripStatus.completed) ...[
@@ -263,102 +291,19 @@ class TripOverviewDisplayWidget extends StatelessWidget {
             const Icon(
               CupertinoIcons.checkmark_circle_fill,
               size: 20,
-              color: CupertinoColors.systemGreen,
+              color: AppColors.statusCompletedText,
             ),
             const SizedBox(width: 8),
             const Text(
               '圆满完成',
               style: TextStyle(
                 fontSize: 14,
-                color: CupertinoColors.systemGreen,
+                color: AppColors.statusCompletedText,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ],
-      ),
-    ];
-  }
-
-  List<Widget> _buildImportantAlerts() {
-    // 只在规划中和已确认状态显示提醒
-    if (trip.status != TripStatus.planning &&
-        trip.status != TripStatus.confirmed) {
-      return [];
-    }
-
-    final alerts = _getImportantAlerts();
-
-    if (alerts.isEmpty) {
-      return [];
-    }
-
-    return [
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: CupertinoColors.separator,
-              width: 0.5,
-            ),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(
-                  CupertinoIcons.exclamationmark_triangle_fill,
-                  size: 16,
-                  color: CupertinoColors.systemOrange,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  '重要提醒',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: CupertinoColors.systemOrange,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            ...alerts
-                .map((alert) => Container(
-                      margin: const EdgeInsets.only(bottom: 6),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: (alert['color'] as Color).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            alert['icon'] as IconData,
-                            size: 12,
-                            color: alert['color'] as Color,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              alert['message'] as String,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: alert['color'] as Color,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-                .toList(),
-          ],
-        ),
       ),
     ];
   }
@@ -376,7 +321,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
               title: '行程进度',
               value: '${_getCompletedDays()}/${_getTotalDays()}天',
               subtitle: _getProgressStatus(),
-              color: CupertinoColors.systemBlue,
+              color: AppColors.interactiveAccent,
             ),
           ),
           const SizedBox(width: 12),
@@ -387,7 +332,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
               title: '参与者',
               value: '${trip.participantCount}人',
               subtitle: '${_getConfirmedCount()}人已确认',
-              color: CupertinoColors.systemOrange,
+              color: AppColors.statusPlanningText,
             ),
           ),
         ],
@@ -402,7 +347,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
               title: '装备准备',
               value: _getEquipmentSummary(),
               subtitle: '总重量${_getTotalWeight()}kg',
-              color: CupertinoColors.systemPurple,
+              color: AppColors.statusPreparingText,
             ),
           ),
           const SizedBox(width: 12),
@@ -413,7 +358,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
               title: '预算使用',
               value: '${_getBudgetProgress()}%',
               subtitle: _getBudgetStatus(),
-              color: CupertinoColors.systemGreen,
+              color: AppColors.statusCompletedText,
             ),
           ),
         ],
@@ -433,7 +378,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
               title: '完成天数',
               value: '${_getTotalDays()}天',
               subtitle: '全程完成',
-              color: CupertinoColors.systemGreen,
+              color: AppColors.statusCompletedText,
             ),
           ),
           const SizedBox(width: 12),
@@ -443,7 +388,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
               title: '总里程',
               value: '${_getTotalDistance()}km',
               subtitle: '实际完成',
-              color: CupertinoColors.systemBlue,
+              color: AppColors.interactiveAccent,
             ),
           ),
         ],
@@ -457,7 +402,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
               title: '记录照片',
               value: '${_getPhotoCount()}张',
               subtitle: '美好回忆',
-              color: CupertinoColors.systemPurple,
+              color: AppColors.statusPreparingText,
             ),
           ),
           const SizedBox(width: 12),
@@ -467,7 +412,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
               title: '行程评分',
               value: '${_getTripRating()}/5',
               subtitle: '满意度',
-              color: CupertinoColors.systemOrange,
+              color: AppColors.statusPlanningText,
             ),
           ),
         ],
@@ -485,10 +430,10 @@ class TripOverviewDisplayWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -529,7 +474,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
             subtitle,
             style: const TextStyle(
               fontSize: 10,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textSubtitle,
             ),
           ),
         ],
@@ -609,7 +554,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
       alerts.add({
         'message': '明日有雨，注意携带雨具',
         'icon': CupertinoIcons.cloud_rain_fill,
-        'color': CupertinoColors.systemOrange,
+        'color': AppColors.statusPlanningText,
       });
     }
 
@@ -618,7 +563,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
       alerts.add({
         'message': '还有重要装备未准备',
         'icon': CupertinoIcons.checkmark_shield,
-        'color': CupertinoColors.systemPurple,
+        'color': AppColors.statusPreparingText,
       });
     }
 
@@ -628,7 +573,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
       alerts.add({
         'message': '$daysUntil天后出发，请做好准备',
         'icon': CupertinoIcons.time,
-        'color': CupertinoColors.systemBlue,
+        'color': AppColors.interactiveAccent,
       });
     }
 
@@ -687,20 +632,20 @@ class TripOverviewDisplayWidget extends StatelessWidget {
     }
 
     return [
-      const Row(
+      Row(
         children: [
           Icon(
             CupertinoIcons.exclamationmark_triangle_fill,
             size: 16,
-            color: CupertinoColors.systemOrange,
+            color: AppColors.statusPlanningText,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
             '重要提醒',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: CupertinoColors.systemOrange,
+              color: AppColors.statusPlanningText,
             ),
           ),
         ],
@@ -711,7 +656,7 @@ class TripOverviewDisplayWidget extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 6),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (alert['color'] as Color).withOpacity(0.1),
+                  color: (alert['color'] as Color).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(

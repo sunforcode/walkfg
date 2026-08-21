@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/map/marker_point_model.dart';
 import 'package:walk/model/weather/weather_model.dart';
-import 'package:walk/model/weather/weather_condition.dart';
 import 'package:walk/service/location/location_service.dart';
 import 'weather_api_service.dart';
 import 'weather_cache_service.dart';
@@ -129,8 +128,8 @@ class WeatherManager {
         ),
       ]);
 
-      final weatherData = futures[0] as Map<String, dynamic>?;
-      final locationData = futures[1] as Map<String, dynamic>?;
+      final weatherData = futures[0];
+      final locationData = futures[1];
 
       if (weatherData == null) {
         debugPrint('获取天气数据失败');
@@ -208,8 +207,8 @@ class WeatherManager {
         ),
       ]);
 
-      final forecastData = futures[0] as Map<String, dynamic>?;
-      final locationData = futures[1] as Map<String, dynamic>?;
+      final forecastData = futures[0];
+      final locationData = futures[1];
 
       if (forecastData == null) {
         debugPrint('获取天气预报数据失败');

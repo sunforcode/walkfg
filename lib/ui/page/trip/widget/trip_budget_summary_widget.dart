@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 预算概览组件
 class TripBudgetSummaryWidget extends StatelessWidget {
@@ -35,7 +36,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
                   value: '¥${budget!.toStringAsFixed(0)}',
                   subtitle:
                       '人均 ¥${(budget! / participantCount).toStringAsFixed(0)}',
-                  color: CupertinoColors.systemBlue,
+                  color: AppColors.interactiveAccent,
                 ),
               ),
               const SizedBox(width: 12),
@@ -45,7 +46,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
                   value: '¥${(actualCost ?? 0).toStringAsFixed(0)}',
                   subtitle:
                       '人均 ¥${((actualCost ?? 0) / participantCount).toStringAsFixed(0)}',
-                  color: CupertinoColors.systemOrange,
+                  color: AppColors.statusPlanningText,
                 ),
               ),
             ],
@@ -64,7 +65,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: CupertinoColors.label,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   Text(
@@ -81,7 +82,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
               Container(
                 height: 8,
                 decoration: BoxDecoration(
-                  color: CupertinoColors.systemGrey5,
+                  color: AppColors.surfaceDivider,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: FractionallySizedBox(
@@ -114,7 +115,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: CupertinoColors.label,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -132,7 +133,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
           const Icon(
             CupertinoIcons.money_dollar_circle,
             size: 48,
-            color: CupertinoColors.systemGrey,
+            color: AppColors.textHint,
           ),
           const SizedBox(height: 16),
           const Text(
@@ -140,7 +141,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textSubtitle,
             ),
           ),
           const SizedBox(height: 8),
@@ -148,7 +149,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
             '设置预算有助于更好地控制行程费用',
             style: TextStyle(
               fontSize: 14,
-              color: CupertinoColors.tertiaryLabel,
+              color: AppColors.textHint,
             ),
           ),
           const SizedBox(height: 16),
@@ -170,7 +171,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -198,7 +199,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
             subtitle,
             style: const TextStyle(
               fontSize: 12,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textSubtitle,
             ),
           ),
         ],
@@ -214,35 +215,35 @@ class TripBudgetSummaryWidget extends StatelessWidget {
         'budgeted': 800.0,
         'actual': 720.0,
         'icon': CupertinoIcons.car_fill,
-        'color': CupertinoColors.systemBlue,
+        'color': AppColors.interactiveAccent,
       },
       {
         'name': '住宿费用',
         'budgeted': 600.0,
         'actual': 560.0,
         'icon': CupertinoIcons.bed_double_fill,
-        'color': CupertinoColors.systemPurple,
+        'color': AppColors.statusCompletedText,
       },
       {
         'name': '餐饮费用',
         'budgeted': 400.0,
         'actual': 380.0,
         'icon': CupertinoIcons.flame_fill,
-        'color': CupertinoColors.systemOrange,
+        'color': AppColors.statusPlanningText,
       },
       {
         'name': '装备费用',
         'budgeted': 300.0,
         'actual': 250.0,
         'icon': CupertinoIcons.bag_fill,
-        'color': CupertinoColors.systemGreen,
+        'color': AppColors.statusCompletedText,
       },
       {
         'name': '其他费用',
         'budgeted': 200.0,
         'actual': 150.0,
         'icon': CupertinoIcons.ellipsis_circle_fill,
-        'color': CupertinoColors.systemGrey,
+        'color': AppColors.textHint,
       },
     ];
 
@@ -256,7 +257,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemGrey6.withOpacity(0.5),
+          color: AppColors.surfaceCard.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -279,7 +280,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: CupertinoColors.label,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       Text(
@@ -287,8 +288,8 @@ class TripBudgetSummaryWidget extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13,
                           color: isOverBudget
-                              ? CupertinoColors.systemRed
-                              : CupertinoColors.secondaryLabel,
+                              ? AppColors.statusCancelledText
+                              : AppColors.textSubtitle,
                           fontWeight: isOverBudget
                               ? FontWeight.w600
                               : FontWeight.normal,
@@ -300,7 +301,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
                   Container(
                     height: 4,
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemGrey5,
+                      color: AppColors.surfaceDivider,
                       borderRadius: BorderRadius.circular(2),
                     ),
                     child: FractionallySizedBox(
@@ -309,10 +310,10 @@ class TripBudgetSummaryWidget extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color: isOverBudget
-                              ? CupertinoColors.systemRed
+                              ? AppColors.statusCancelledText
                               : progress >= 0.8
-                                  ? CupertinoColors.systemOrange
-                                  : CupertinoColors.systemGreen,
+                                  ? AppColors.statusPlanningText
+                                  : AppColors.statusCompletedText,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -339,9 +340,9 @@ class TripBudgetSummaryWidget extends StatelessWidget {
 
   Color _getBudgetStatusColor() {
     final percentage = _getBudgetUsagePercentage();
-    if (percentage > 100) return CupertinoColors.systemRed;
-    if (percentage >= 80) return CupertinoColors.systemOrange;
-    return CupertinoColors.systemGreen;
+    if (percentage > 100) return AppColors.statusCancelledText;
+    if (percentage >= 80) return AppColors.statusPlanningText;
+    return AppColors.statusCompletedText;
   }
 
   String _getBudgetStatusText() {

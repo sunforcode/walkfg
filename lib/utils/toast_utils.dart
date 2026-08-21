@@ -14,7 +14,7 @@ class ToastUtils {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: CupertinoColors.systemGrey.withOpacity(0.8),
+              color: CupertinoColors.systemGrey.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(24),
             ),
             child: Text(

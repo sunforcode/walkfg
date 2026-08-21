@@ -13,6 +13,28 @@ import 'water_source_model.dart';
 
 part 'water_plan_model.g.dart';
 
+/// 饮水计划状态枚举
+enum WaterPlanStatus {
+  /// 草稿
+  draft,
+  /// 已确认
+  confirmed,
+}
+
+WaterPlanStatus _parseWaterPlanStatus(dynamic value) {
+  if (value is String) {
+    switch (value.toLowerCase()) {
+      case 'draft': return WaterPlanStatus.draft;
+      case 'confirmed': return WaterPlanStatus.confirmed;
+    }
+  }
+  return WaterPlanStatus.draft;
+}
+
+String _waterPlanStatusToJson(WaterPlanStatus status) {
+  return status.name;
+}
+
 /// 饮水计划模型
 @JsonSerializable()
 class WaterPlanModel extends BaseModel {
@@ -49,6 +71,14 @@ class WaterPlanModel extends BaseModel {
   @JsonKey(name: 'creator_name')
   final String creatorName;
 
+  /// 计划状态
+  @JsonKey(fromJson: _parseWaterPlanStatus, toJson: _waterPlanStatusToJson)
+  final WaterPlanStatus status;
+
+  /// 每日饮水量（升）
+  @JsonKey(name: 'liters_per_day')
+  final double? litersPerDay;
+
   /// 构造函数
   WaterPlanModel({
     required super.id,
@@ -63,6 +93,8 @@ class WaterPlanModel extends BaseModel {
     this.tags = const [],
     required this.creatorId,
     required this.creatorName,
+    this.status = WaterPlanStatus.draft,
+    this.litersPerDay,
   });
 
   /// 从JSON创建
@@ -95,6 +127,8 @@ class WaterPlanModel extends BaseModel {
     List<String>? tags,
     String? creatorId,
     String? creatorName,
+    WaterPlanStatus? status,
+    double? litersPerDay,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -109,6 +143,8 @@ class WaterPlanModel extends BaseModel {
       tags: tags ?? this.tags,
       creatorId: creatorId ?? this.creatorId,
       creatorName: creatorName ?? this.creatorName,
+      status: status ?? this.status,
+      litersPerDay: litersPerDay ?? this.litersPerDay,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

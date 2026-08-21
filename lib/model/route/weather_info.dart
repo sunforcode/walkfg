@@ -19,12 +19,22 @@ class WeatherInfoVO {
   /// 注意事项
   final String? precautions;
 
+  /// 风向
+  @JsonKey(name: 'wind_direction')
+  final String? windDirection;
+
+  /// 天气预警
+  @JsonKey(name: 'alert')
+  final String? alert;
+
   /// 构造函数
   WeatherInfoVO({
     required this.description,
     required this.seasonal,
     required this.bestSeasons,
     this.precautions,
+    this.windDirection,
+    this.alert,
   });
 
   /// 从JSON创建

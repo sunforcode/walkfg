@@ -99,7 +99,7 @@ class WelcomeWeatherCard extends StatelessWidget {
               child: Icon(
                 weather != null ? weather!.weatherIcon : Icons.cloud,
                 size: 120,
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
               ),
             ),
 

@@ -140,7 +140,6 @@ class UnifiedMapCore extends StatefulWidget {
 
 class _UnifiedMapCoreState extends State<UnifiedMapCore> {
   late final MapController _mapController;
-  bool _isReady = false;
 
   @override
   void initState() {
@@ -172,10 +171,6 @@ class _UnifiedMapCoreState extends State<UnifiedMapCore> {
         widget.config.initialZoom,
       );
     }
-
-    setState(() {
-      _isReady = true;
-    });
 
     widget.events.onReady?.call();
   }

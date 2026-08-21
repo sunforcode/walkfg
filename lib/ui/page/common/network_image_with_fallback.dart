@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 /// 通用网络图片加载组件（带有占位图和错误处理）
@@ -48,7 +47,7 @@ class NetworkImageWithFallback extends StatelessWidget {
       placeholder: (context, url) => Container(
         width: width,
         height: height,
-        color: fallbackColor.withOpacity(0.1),
+        color: fallbackColor.withValues(alpha: 0.1),
         child: Center(
           child: CupertinoActivityIndicator(
             color: fallbackColor,
@@ -58,7 +57,7 @@ class NetworkImageWithFallback extends StatelessWidget {
       errorWidget: (context, url, error) => Container(
         width: width,
         height: height,
-        color: fallbackColor.withOpacity(0.2),
+        color: fallbackColor.withValues(alpha: 0.2),
         child: Center(
           child: Icon(
             fallbackIcon,

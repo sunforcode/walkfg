@@ -69,6 +69,10 @@ class SupplyPointModel extends TrackPointVO {
   @JsonKey(name: 'updated_by')
   final String? updatedBy;
 
+  /// 可购物品
+  @JsonKey(name: 'available_items')
+  final String? availableItems;
+
   /// 构造函数
   SupplyPointModel({
     required this.id,
@@ -84,6 +88,7 @@ class SupplyPointModel extends TrackPointVO {
     this.lastVerified,
     this.supplyType = SupplyPointType.other,
     this.updatedBy,
+    this.availableItems,
   });
 
   /// 从JSON创建
@@ -114,6 +119,7 @@ class SupplyPointModel extends TrackPointVO {
     String? lastVerified,
     SupplyPointType? supplyType,
     String? updatedBy,
+    String? availableItems,
   }) {
     return SupplyPointModel(
       id: id ?? this.id,
@@ -129,6 +135,7 @@ class SupplyPointModel extends TrackPointVO {
       lastVerified: lastVerified ?? this.lastVerified,
       supplyType: supplyType ?? this.supplyType,
       updatedBy: updatedBy ?? this.updatedBy,
+      availableItems: availableItems ?? this.availableItems,
     );
   }
 

@@ -97,7 +97,7 @@ class GuideTripPlanWidget extends StatelessWidget {
       padding: const EdgeInsets.all(_TripPlanConstants.iconPadding),
       decoration: BoxDecoration(
         color: CupertinoColors.systemOrange
-            .withOpacity(_TripPlanConstants.iconBackgroundOpacity),
+            .withValues(alpha: _TripPlanConstants.iconBackgroundOpacity),
         borderRadius:
             BorderRadius.circular(_TripPlanConstants.iconBorderRadius),
       ),

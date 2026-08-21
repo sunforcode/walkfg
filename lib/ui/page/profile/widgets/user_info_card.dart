@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../../../model/user/user_model.dart';
+import '../../../../theme/tokens/colors.dart';
 import '../../common/network_image_with_fallback.dart';
 
 /// 用户信息卡片组件
@@ -23,11 +24,11 @@ class UserInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: CupertinoColors.white,
+        color: AppColors.bgPanel,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey.withOpacity(0.1),
+            color: AppColors.shadow,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -41,9 +42,9 @@ class UserInfoCard extends StatelessWidget {
             height: 70,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: CupertinoColors.systemBlue.withOpacity(0.1),
+              color: AppColors.interactiveAccentBg,
               border: Border.all(
-                color: CupertinoColors.systemBlue.withOpacity(0.3),
+                color: AppColors.interactiveAccentSoft,
                 width: 2,
               ),
             ),
@@ -60,9 +61,9 @@ class UserInfoCard extends StatelessWidget {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: CupertinoColors.systemBlue.withOpacity(0.1),
-                      border: Border.all(
-                        color: CupertinoColors.systemBlue.withOpacity(0.3),
+                    color: AppColors.interactiveAccentBg,
+                    border: Border.all(
+                        color: AppColors.interactiveAccentSoft,
                         width: 2,
                       ),
                     ),
@@ -70,7 +71,7 @@ class UserInfoCard extends StatelessWidget {
                       child: Icon(
                         CupertinoIcons.person_fill,
                         size: 40,
-                        color: CupertinoColors.systemBlue,
+                        color: AppColors.interactiveAccent,
                       ),
                     ),
                   ),
@@ -93,9 +94,9 @@ class UserInfoCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'ID: ${user?.id ?? '未知'}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
-                    color: CupertinoColors.systemGrey,
+                    color: AppColors.textSubtitle,
                   ),
                 ),
                 if (user?.bio != null && user!.bio!.isNotEmpty) ...[
@@ -104,7 +105,7 @@ class UserInfoCard extends StatelessWidget {
                     user!.bio!,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: CupertinoColors.systemGrey,
+                      color: AppColors.textSubtitle,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

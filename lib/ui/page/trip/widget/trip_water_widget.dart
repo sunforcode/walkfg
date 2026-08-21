@@ -90,7 +90,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
           color: CupertinoColors.systemGrey6,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: CupertinoColors.activeBlue.withOpacity(0.3),
+            color: CupertinoColors.activeBlue.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -179,7 +179,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
                 _isExpanded ? '点击收起详情' : '点击查看详情',
                 style: TextStyle(
                   fontSize: 12,
-                  color: CupertinoColors.activeBlue.withOpacity(0.8),
+                  color: CupertinoColors.activeBlue.withValues(alpha: 0.8),
                 ),
               ),
             ),
@@ -450,7 +450,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: CupertinoColors.activeBlue.withOpacity(0.1),
+              color: CupertinoColors.activeBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -484,7 +484,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: CupertinoColors.systemBlue.withOpacity(0.1),
+                        color: CupertinoColors.systemBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -501,7 +501,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: CupertinoColors.systemTeal.withOpacity(0.1),
+                        color: CupertinoColors.systemTeal.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -574,7 +574,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: CupertinoColors.systemGreen.withOpacity(0.1),
+                        color: CupertinoColors.systemGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -592,7 +592,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: CupertinoColors.systemOrange.withOpacity(0.1),
+                          color: CupertinoColors.systemOrange.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text(
@@ -614,7 +614,7 @@ class _TripWaterWidgetState extends State<TripWaterWidget> {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemYellow.withOpacity(0.1),
+                      color: CupertinoColors.systemYellow.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Row(

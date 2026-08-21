@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 未登录视图组件
 class NotLoggedInView extends StatelessWidget {
@@ -25,36 +25,41 @@ class NotLoggedInView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Icon(
-            Icons.hiking,
+            CupertinoIcons.person_crop_circle_badge_checkmark,
             size: 80,
-            color: Color(0xFF4CAF50),
+            color: AppColors.statusCompletedText,
           ),
           const SizedBox(height: 40),
-          Text(
+          const Text(
             'Walk',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             '徒步旅行助手',
-            style: Theme.of(context).textTheme.titleMedium,
+            style: TextStyle(
+              fontSize: 18,
+              color: AppColors.textSecondary,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 40),
           CupertinoButton(
-            color: CupertinoColors.activeBlue,
+            color: AppColors.interactiveAccent,
             child: const Text('登录'),
             onPressed: onLoginPressed,
           ),
           const SizedBox(height: 16),
           CupertinoButton(
-            color: CupertinoColors.systemGrey5,
+            color: AppColors.surfaceCard,
             child: const Text(
               '注册',
-              style: TextStyle(color: CupertinoColors.activeBlue),
+              style: TextStyle(color: AppColors.interactiveAccent),
             ),
             onPressed: onRegisterPressed,
           ),
@@ -63,7 +68,7 @@ class NotLoggedInView extends StatelessWidget {
             '登录后可以使用更多功能',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: CupertinoColors.systemGrey,
+              color: AppColors.textSubtitle,
               fontSize: 14,
             ),
           ),

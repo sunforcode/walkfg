@@ -207,6 +207,10 @@ class SegmentModel {
   @JsonKey(ignore: true)
   final bool isSelected;
 
+  /// 是否高亮显示
+  @JsonKey(name: 'is_highlighted', defaultValue: false)
+  final bool isHighlighted;
+
   /// 构造函数
   SegmentModel({
     required this.id,
@@ -227,6 +231,7 @@ class SegmentModel {
     this.notes,
     this.type,
     this.isSelected = false,
+    this.isHighlighted = false,
   });
 
   /// 从JSON创建
@@ -256,6 +261,7 @@ class SegmentModel {
     String? notes,
     RouteType? type,
     bool? isSelected,
+    bool? isHighlighted,
   }) {
     return SegmentModel(
       id: id ?? this.id,
@@ -276,6 +282,7 @@ class SegmentModel {
       notes: notes ?? this.notes,
       type: type ?? this.type,
       isSelected: isSelected ?? this.isSelected,
+      isHighlighted: isHighlighted ?? this.isHighlighted,
     );
   }
 

@@ -184,7 +184,7 @@ class GuideRelatedWidget extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: CupertinoColors.systemTeal
-                .withOpacity(_RelatedConstants.difficultyBackgroundOpacity),
+                .withValues(alpha: _RelatedConstants.difficultyBackgroundOpacity),
             borderRadius:
                 BorderRadius.circular(_RelatedConstants.difficultyBorderRadius),
           ),
@@ -205,12 +205,12 @@ class GuideRelatedWidget extends StatelessWidget {
   Widget _buildFallbackImage() {
     return Container(
       color: CupertinoColors.systemTeal
-          .withOpacity(_RelatedConstants.fallbackImageOpacity),
+          .withValues(alpha: _RelatedConstants.fallbackImageOpacity),
       child: Icon(
         CupertinoIcons.photo,
         size: _RelatedConstants.fallbackIconSize,
         color: CupertinoColors.systemTeal
-            .withOpacity(_RelatedConstants.fallbackIconOpacity),
+            .withValues(alpha: _RelatedConstants.fallbackIconOpacity),
       ),
     );
   }

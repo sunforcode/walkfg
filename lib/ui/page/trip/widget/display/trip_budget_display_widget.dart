@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/trip/trip_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 预算展示组件
 class TripBudgetDisplayWidget extends StatelessWidget {
@@ -25,154 +26,162 @@ class TripBudgetDisplayWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 标题行
-          Row(
-            children: [
-              const Icon(
-                CupertinoIcons.money_yen_circle,
-                size: 20,
-                color: CupertinoColors.systemOrange,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                '费用预算',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: CupertinoColors.label,
-                ),
-              ),
-              const Spacer(),
-              if (hasBudget || hasActualCost)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: CupertinoColors.systemOrange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    hasBudget ? '已设置' : '实际花费',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: CupertinoColors.systemOrange,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+          _buildSectionHeader(hasBudget, hasActualCost),
           const SizedBox(height: 16),
 
           // 预算信息卡片
+          _buildBudgetCard(hasBudget, hasActualCost),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(bool hasBudget, bool hasActualCost) {
+    return Row(
+      children: [
+        const Icon(
+          CupertinoIcons.money_yen_circle,
+          size: 20,
+          color: AppColors.statusPlanningText,
+        ),
+        const SizedBox(width: 8),
+        const Text(
+          '费用预算',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const Spacer(),
+        if (hasBudget || hasActualCost)
           Container(
-            padding: const EdgeInsets.all(16),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: CupertinoColors.systemGrey6,
+              color: AppColors.statusPlanningBg,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: CupertinoColors.separator,
-                width: 0.5,
+            ),
+            child: Text(
+              hasBudget ? '已设置' : '实际花费',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.statusPlanningText,
+                fontWeight: FontWeight.w500,
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildBudgetCard(bool hasBudget, bool hasActualCost) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.sheetCardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.sheetDivider,
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (hasBudget) ...[
+            Row(
               children: [
-                if (hasBudget) ...[
-                  Row(
-                    children: [
-                      const Icon(
-                        CupertinoIcons.chart_pie,
-                        size: 16,
-                        color: CupertinoColors.systemBlue,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        '预算金额',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: CupertinoColors.label,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        '¥${trip.budget!.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: CupertinoColors.systemBlue,
-                        ),
-                      ),
-                    ],
+                const Icon(
+                  CupertinoIcons.chart_pie,
+                  size: 16,
+                  color: AppColors.interactiveAccent,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  '预算金额',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary,
                   ),
-                ],
-
-                if (hasBudget && hasActualCost) const SizedBox(height: 12),
-
-                if (hasActualCost) ...[
-                  Row(
-                    children: [
-                      const Icon(
-                        CupertinoIcons.money_dollar_circle,
-                        size: 16,
-                        color: CupertinoColors.systemGreen,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        '实际花费',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: CupertinoColors.label,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        '¥${trip.actualCost!.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: CupertinoColors.systemGreen,
-                        ),
-                      ),
-                    ],
+                ),
+                const Spacer(),
+                Text(
+                  '¥${trip.budget!.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.interactiveAccent,
                   ),
-                ],
-
-                // 预算对比
-                if (hasBudget && hasActualCost) ...[
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: _getBudgetComparisonColor().withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          _getBudgetComparisonIcon(),
-                          size: 14,
-                          color: _getBudgetComparisonColor(),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            _getBudgetComparisonText(),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: _getBudgetComparisonColor(),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ],
             ),
-          ),
+          ],
+
+          if (hasBudget && hasActualCost) const SizedBox(height: 12),
+
+          if (hasActualCost) ...[
+            Row(
+              children: [
+                const Icon(
+                  CupertinoIcons.money_dollar_circle,
+                  size: 16,
+                  color: AppColors.statusCompletedText,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  '实际花费',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '¥${trip.actualCost!.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.statusCompletedText,
+                  ),
+                ),
+              ],
+            ),
+          ],
+
+          // 预算对比
+          if (hasBudget && hasActualCost) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: _getBudgetComparisonColor().withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    _getBudgetComparisonIcon(),
+                    size: 14,
+                    color: _getBudgetComparisonColor(),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      _getBudgetComparisonText(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: _getBudgetComparisonColor(),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -180,15 +189,15 @@ class TripBudgetDisplayWidget extends StatelessWidget {
 
   Color _getBudgetComparisonColor() {
     if (trip.budget == null || trip.actualCost == null) {
-      return CupertinoColors.systemGrey;
+      return AppColors.textSubtitle;
     }
     final difference = trip.actualCost! - trip.budget!;
     if (difference > 0) {
-      return CupertinoColors.systemRed;
+      return AppColors.statusCancelledText;
     } else if (difference < 0) {
-      return CupertinoColors.systemGreen;
+      return AppColors.statusCompletedText;
     } else {
-      return CupertinoColors.systemBlue;
+      return AppColors.interactiveAccent;
     }
   }
 

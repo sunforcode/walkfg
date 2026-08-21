@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'colors.dart';
 
-/// 应用阴影 Token
+/// 应用阴影 Token (暗色主题)
 ///
-/// 专业运动风格 - 轻量阴影
+/// 暗色主题需要使用浅色阴影以保持可见性
 class AppShadows {
   AppShadows._();
 
@@ -14,7 +14,7 @@ class AppShadows {
   /// 小阴影 - 用于悬浮按钮、小卡片
   static const List<BoxShadow> sm = [
     BoxShadow(
-      color: Color(0x0D000000), // 5% 透明度
+      color: Color(0x1AFFFFFF), // 10% 白色
       blurRadius: 4,
       offset: Offset(0, 1),
     ),
@@ -23,7 +23,7 @@ class AppShadows {
   /// 中阴影 - 用于卡片
   static const List<BoxShadow> md = [
     BoxShadow(
-      color: Color(0x14000000), // 8% 透明度
+      color: Color(0x26FFFFFF), // 15% 白色
       blurRadius: 8,
       offset: Offset(0, 2),
     ),
@@ -32,7 +32,7 @@ class AppShadows {
   /// 大阴影 - 用于弹窗、浮层
   static const List<BoxShadow> lg = [
     BoxShadow(
-      color: Color(0x1F000000), // 12% 透明度
+      color: Color(0x33FFFFFF), // 20% 白色
       blurRadius: 16,
       offset: Offset(0, 4),
     ),
@@ -41,7 +41,7 @@ class AppShadows {
   /// 超大阴影 - 用于模态框
   static const List<BoxShadow> xl = [
     BoxShadow(
-      color: Color(0x29000000), // 16% 透明度
+      color: Color(0x40FFFFFF), // 25% 白色
       blurRadius: 24,
       offset: Offset(0, 8),
     ),
@@ -51,7 +51,7 @@ class AppShadows {
   /// 底部导航栏阴影
   static const List<BoxShadow> bottomNav = [
     BoxShadow(
-      color: Color(0x0D000000),
+      color: Color(0x1AFFFFFF),
       blurRadius: 8,
       offset: Offset(0, -2),
     ),
@@ -60,7 +60,7 @@ class AppShadows {
   /// 顶部导航栏阴影
   static const List<BoxShadow> topNav = [
     BoxShadow(
-      color: Color(0x0D000000),
+      color: Color(0x1AFFFFFF),
       blurRadius: 8,
       offset: Offset(0, 2),
     ),
@@ -69,7 +69,7 @@ class AppShadows {
   /// 内阴影效果 (用于输入框)
   static const List<BoxShadow> inset = [
     BoxShadow(
-      color: Color(0x0D000000),
+      color: Color(0x1AFFFFFF),
       blurRadius: 4,
       offset: Offset(0, 1),
       spreadRadius: -1,
@@ -83,7 +83,7 @@ class AppShadows {
   /// 卡片层级 1 - 普通卡片
   static const List<BoxShadow> cardElevation1 = [
     BoxShadow(
-      color: Color(0x0F000000), // 6% 透明度
+      color: Color(0x1AFFFFFF), // 10% 白色
       blurRadius: 3,
       offset: Offset(0, 1),
     ),
@@ -92,7 +92,7 @@ class AppShadows {
   /// 卡片层级 2 - 悬浮卡片
   static const List<BoxShadow> cardElevation2 = [
     BoxShadow(
-      color: Color(0x1A000000), // 10% 透明度
+      color: Color(0x33FFFFFF), // 20% 白色
       blurRadius: 6,
       offset: Offset(0, 2),
     ),
@@ -101,7 +101,7 @@ class AppShadows {
   /// 卡片层级 3 - 弹出层
   static const List<BoxShadow> cardElevation3 = [
     BoxShadow(
-      color: Color(0x26000000), // 15% 透明度
+      color: Color(0x4DFFFFFF), // 30% 白色
       blurRadius: 12,
       offset: Offset(0, 4),
     ),
@@ -110,7 +110,7 @@ class AppShadows {
   /// 强调阴影 (带颜色)
   static List<BoxShadow> primaryGlow = [
     BoxShadow(
-      color: AppColors.primary.withValues(alpha: 0.3),
+      color: AppColors.accentBlue.withValues(alpha: 0.3),
       blurRadius: 12,
       offset: const Offset(0, 4),
     ),
@@ -135,30 +135,30 @@ class AppShadows {
   ];
 
   // ============ BoxDecoration 快捷方式 ============
-  /// 卡片装饰 (白色背景 + 中阴影 + 圆角)
+  /// 卡片装饰 (暗色主题)
   static BoxDecoration cardDecoration = BoxDecoration(
-    color: AppColors.card,
+    color: AppColors.surfaceCard,
     borderRadius: BorderRadius.circular(8),
     boxShadow: md,
   );
 
-  /// 无阴影卡片装饰 (白色背景 + 边框 + 圆角)
+  /// 无阴影卡片装饰 (暗色主题)
   static BoxDecoration cardFlatDecoration = BoxDecoration(
-    color: AppColors.card,
+    color: AppColors.surfaceCard,
     borderRadius: BorderRadius.circular(8),
-    border: Border.all(color: AppColors.border, width: 1),
+    border: Border.all(color: AppColors.surfaceCardBorder, width: 1),
   );
 
-  /// 浮层装饰 (白色背景 + 大阴影 + 圆角)
+  /// 浮层装饰 (暗色主题)
   static BoxDecoration popupDecoration = BoxDecoration(
-    color: AppColors.surface,
+    color: AppColors.bgPanel,
     borderRadius: BorderRadius.circular(12),
     boxShadow: lg,
   );
 
-  /// 底部表单装饰
+  /// 底部表单装饰 (暗色主题)
   static BoxDecoration bottomSheetDecoration = BoxDecoration(
-    color: AppColors.surface,
+    color: AppColors.bgPanel,
     borderRadius: const BorderRadius.only(
       topLeft: Radius.circular(16),
       topRight: Radius.circular(16),

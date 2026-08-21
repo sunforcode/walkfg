@@ -3,27 +3,31 @@ import 'package:flutter/widgets.dart';
 /// 应用圆角 Token
 ///
 /// 专业运动风格 - 方正现代 (小圆角)
+/// PRD §8.1.5 圆角别名 Token
 class AppRadius {
   AppRadius._();
 
-  // ============ 圆角值 ============
+  // ============ 圆角值 (PRD §8.1.5) ============
   /// 无圆角
   static const double none = 0.0;
 
-  /// 极小圆角 - 4px
-  static const double xs = 4.0;
+  /// 极小圆角 - 6px (PRD --radius-xs = 6px)
+  static const double xs = 6.0;
 
-  /// 小圆角 - 6px (标签)
-  static const double sm = 6.0;
+  /// 小圆角 - 8px (PRD --radius-sm = 8px)
+  static const double sm = 8.0;
 
-  /// 中圆角 - 8px (按钮、卡片) - 方正现代风格主要圆角
-  static const double md = 8.0;
+  /// 中圆角 - 10px (PRD --radius-md = 10px)
+  static const double md = 10.0;
 
-  /// 大圆角 - 12px (弹窗、底部表单)
+  /// 大圆角 - 12px (PRD --radius-lg = 12px)
   static const double lg = 12.0;
 
-  /// 超大圆角 - 16px
-  static const double xl = 16.0;
+  /// 超大圆角 - 14px (PRD --radius-xl = 14px)
+  static const double xl = 14.0;
+
+  /// 特大圆角 - 16px (PRD --radius-2xl = 16px)
+  static const double xxl = 16.0;
 
   /// 全圆角 (圆形)
   static const double full = 9999.0;
@@ -46,6 +50,12 @@ class AppRadius {
 
   /// 超大圆角
   static const BorderRadius borderXl = BorderRadius.all(Radius.circular(xl));
+
+  /// 特大圆角
+  static const BorderRadius borderXxl = BorderRadius.all(Radius.circular(xxl));
+
+  /// 特大圆角（兼容旧名 border2xl）
+  static const BorderRadius border2xl = borderXxl;
 
   /// 全圆角
   static const BorderRadius borderFull = BorderRadius.all(Radius.circular(full));
@@ -96,6 +106,9 @@ class AppRadius {
 
   /// 超大 Radius
   static const Radius radiusXl = Radius.circular(xl);
+
+  /// 特大 Radius
+  static const Radius radiusXxl = Radius.circular(xxl);
 
   /// 全圆 Radius
   static const Radius radiusFull = Radius.circular(full);

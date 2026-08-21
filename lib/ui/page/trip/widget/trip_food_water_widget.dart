@@ -139,7 +139,7 @@ class TripFoodWaterWidget extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: CupertinoColors.systemOrange.withOpacity(0.1),
+                color: CupertinoColors.systemOrange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Center(
@@ -212,7 +212,7 @@ class TripFoodWaterWidget extends StatelessWidget {
               margin: EdgeInsets.only(right: isLast ? 0 : 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (info['color'] as Color).withOpacity(0.1),
+                color: (info['color'] as Color).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -252,7 +252,7 @@ class TripFoodWaterWidget extends StatelessWidget {
       Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemYellow.withOpacity(0.1),
+          color: CupertinoColors.systemYellow.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(

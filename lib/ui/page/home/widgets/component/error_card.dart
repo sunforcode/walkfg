@@ -57,7 +57,7 @@ BoxShadow(
                   horizontal: 24,
                   vertical: AppSpacing.xs,
                 ),
-                color: AppColors.textOnDark.withOpacity(0.3),
+                color: AppColors.textOnDark.withValues(alpha: 0.3),
                 child: const Text(
                   '重试',
                   style: TextStyle(

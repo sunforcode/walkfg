@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 路线类型枚举
 enum RouteType {
@@ -79,13 +80,13 @@ enum RouteDifficulty {
   Color getColor() {
     switch (this) {
       case RouteDifficulty.easy:
-        return Colors.green;
+        return AppColors.statusCompletedText;
       case RouteDifficulty.medium:
-        return Colors.orange;
+        return AppColors.statusPlanningText;
       case RouteDifficulty.hard:
-        return Colors.red;
+        return AppColors.statusCancelledText;
       case RouteDifficulty.extreme:
-        return Colors.purple;
+        return AppColors.badgeBlueText;
     }
   }
 

@@ -41,7 +41,7 @@ class _TripParticipantsWidgetState extends State<TripParticipantsWidget> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey.withOpacity(0.1),
+            color: CupertinoColors.systemGrey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -77,7 +77,7 @@ class _TripParticipantsWidgetState extends State<TripParticipantsWidget> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: CupertinoColors.systemPurple.withOpacity(0.1),
+                          color: CupertinoColors.systemPurple.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
@@ -151,7 +151,7 @@ class _TripParticipantsWidgetState extends State<TripParticipantsWidget> {
                               boxShadow: [
                                 BoxShadow(
                                   color: CupertinoColors.systemGrey
-                                      .withOpacity(0.2),
+                                      .withValues(alpha: 0.2),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -216,7 +216,7 @@ class _TripParticipantsWidgetState extends State<TripParticipantsWidget> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: CupertinoColors.systemPurple
-                                      .withOpacity(0.8),
+                                      .withValues(alpha: 0.8),
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -224,7 +224,7 @@ class _TripParticipantsWidgetState extends State<TripParticipantsWidget> {
                                 CupertinoIcons.chevron_up,
                                 size: 12,
                                 color: CupertinoColors.systemPurple
-                                    .withOpacity(0.8),
+                                    .withValues(alpha: 0.8),
                               ),
                             ],
                           ),
@@ -274,7 +274,7 @@ class _TripParticipantsWidgetState extends State<TripParticipantsWidget> {
               : null,
           boxShadow: [
             BoxShadow(
-              color: CupertinoColors.systemGrey.withOpacity(0.2),
+              color: CupertinoColors.systemGrey.withValues(alpha: 0.2),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -380,7 +380,7 @@ class _TripParticipantsWidgetState extends State<TripParticipantsWidget> {
                   : null,
               boxShadow: [
                 BoxShadow(
-                  color: CupertinoColors.systemGrey.withOpacity(0.2),
+                  color: CupertinoColors.systemGrey.withValues(alpha: 0.2),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -452,7 +452,7 @@ class _TripParticipantsWidgetState extends State<TripParticipantsWidget> {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: CupertinoColors.systemPurple.withOpacity(0.1),
+            color: CupertinoColors.systemPurple.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(

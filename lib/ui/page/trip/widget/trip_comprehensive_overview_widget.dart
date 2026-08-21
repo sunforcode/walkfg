@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/utils/date_time_utils.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 综合总览组件
 class TripComprehensiveOverviewWidget extends StatelessWidget {
@@ -29,10 +30,10 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16), // 移除上边距
       decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
+        color: AppColors.bgBase,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: CupertinoColors.separator,
+          color: AppColors.surfaceDivider,
           width: 0.5,
         ),
       ),
@@ -45,7 +46,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
             decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: CupertinoColors.separator,
+                  color: AppColors.surfaceDivider,
                   width: 0.5,
                 ),
               ),
@@ -58,7 +59,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: CupertinoColors.label,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -83,7 +84,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: CupertinoColors.label,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -98,7 +99,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                         title: '行程进度',
                         value: '${_getCompletedDays()}/${days}天',
                         subtitle: _getProgressStatus(),
-                        color: CupertinoColors.systemBlue,
+                        color: AppColors.interactiveAccent,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -109,7 +110,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                         title: '参与者',
                         value: '$participantCount人',
                         subtitle: '${_getConfirmedCount()}人已确认',
-                        color: CupertinoColors.systemOrange,
+                        color: AppColors.statusPlanningText,
                       ),
                     ),
                   ],
@@ -124,7 +125,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                         title: '装备准备',
                         value: _getEquipmentSummary(),
                         subtitle: '总重量${_getTotalWeight()}kg',
-                        color: CupertinoColors.systemPurple,
+                        color: AppColors.statusCompletedText,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -135,7 +136,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                         title: '预算使用',
                         value: '${_getBudgetProgress()}%',
                         subtitle: _getBudgetStatus(),
-                        color: CupertinoColors.systemGreen,
+                        color: AppColors.statusCompletedText,
                       ),
                     ),
                   ],
@@ -157,7 +158,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
             const Icon(
               CupertinoIcons.map,
               size: 20,
-              color: CupertinoColors.systemBlue,
+              color: AppColors.interactiveAccent,
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -166,7 +167,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: CupertinoColors.label,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ),
@@ -181,7 +182,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
           const Icon(
             CupertinoIcons.calendar,
             size: 20,
-            color: CupertinoColors.systemGreen,
+            color: AppColors.statusCompletedText,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -189,7 +190,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
               _formatDateRange(),
               style: const TextStyle(
                 fontSize: 14,
-                color: CupertinoColors.label,
+                color: AppColors.textPrimary,
               ),
             ),
           ),
@@ -203,28 +204,28 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
           const Icon(
             CupertinoIcons.person_2,
             size: 20,
-            color: CupertinoColors.systemOrange,
+            color: AppColors.statusPlanningText,
           ),
           const SizedBox(width: 8),
           Text(
             '$participantCount人',
             style: const TextStyle(
               fontSize: 14,
-              color: CupertinoColors.label,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(width: 16),
           const Icon(
             CupertinoIcons.location,
             size: 20,
-            color: CupertinoColors.systemPurple,
+            color: AppColors.statusCompletedText,
           ),
           const SizedBox(width: 8),
           Text(
             '$departureCity出发',
             style: const TextStyle(
               fontSize: 14,
-              color: CupertinoColors.label,
+              color: AppColors.textPrimary,
             ),
           ),
         ],
@@ -245,7 +246,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
         decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: CupertinoColors.separator,
+              color: AppColors.surfaceDivider,
               width: 0.5,
             ),
           ),
@@ -258,7 +259,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                 Icon(
                   CupertinoIcons.exclamationmark_triangle_fill,
                   size: 16,
-                  color: CupertinoColors.systemOrange,
+                  color: AppColors.statusPlanningText,
                 ),
                 SizedBox(width: 8),
                 Text(
@@ -266,7 +267,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: CupertinoColors.systemOrange,
+                    color: AppColors.statusPlanningText,
                   ),
                 ),
               ],
@@ -278,7 +279,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: (alert['color'] as Color).withOpacity(0.1),
+                        color: (alert['color'] as Color).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Row(
@@ -321,10 +322,10 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -365,7 +366,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
               subtitle,
               style: const TextStyle(
                 fontSize: 10,
-                color: CupertinoColors.secondaryLabel,
+                color: AppColors.textSubtitle,
               ),
             ),
           ],
@@ -443,7 +444,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
       alerts.add({
         'message': '明日有雨，注意携带雨具',
         'icon': CupertinoIcons.cloud_rain_fill,
-        'color': CupertinoColors.systemOrange,
+        'color': AppColors.statusPlanningText,
       });
     }
 
@@ -452,7 +453,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
       alerts.add({
         'message': '还有重要装备未准备',
         'icon': CupertinoIcons.checkmark_shield,
-        'color': CupertinoColors.systemPurple,
+        'color': AppColors.statusCompletedText,
       });
     }
 
@@ -462,7 +463,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
       alerts.add({
         'message': '$daysUntil天后出发，请做好准备',
         'icon': CupertinoIcons.time,
-        'color': CupertinoColors.systemBlue,
+        'color': AppColors.interactiveAccent,
       });
     }
 

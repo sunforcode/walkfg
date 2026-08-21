@@ -8,18 +8,24 @@ import '../../../service/kml_cache_service.dart';
 import '../../../service/route/current_route_selection_service.dart';
 import '../../../service/route_service.dart';
 import '../../../service/weather/weather_manager.dart';
-import '../equipment/equipment_item_list_screen.dart';
-import '../equipment/equipment_list_list_screen.dart';
-import '../route/route_discovery_screen.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/sizes.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../routes/app_navigator.dart';
 import 'widgets/empty_home.dart';
-import 'widgets/equipment_entry_button.dart';
 import 'widgets/error_home.dart';
 import 'widgets/loading_home.dart';
 import 'widgets/route_home.dart';
 
 /// Walk v1 home.
+///
+/// P1 空状态 / P2 有行程，由 _homeFuture 数据驱动。
+/// 顶部右侧小汉堡按钮 → P14 抽屉，日历入口已移至抽屉内。
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  /// 打开抽屉回调（由 MainLayout 提供）
+  final VoidCallback? onOpenDrawer;
+
+  const HomeScreen({super.key, this.onOpenDrawer});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -146,53 +152,19 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<void> _openRoutePicker() async {
-    final selected = await Navigator.of(context).push<RouteModel>(
-      CupertinoPageRoute(builder: (_) => const RouteDiscoveryScreen()),
-    );
+    final selected = await AppNavigator.pushRouteDiscovery<RouteModel>(context);
     if (!mounted || selected == null) return;
     _reload(routeHint: selected);
-  }
-
-  Future<void> _openEquipmentEntry() async {
-    final choice = await showCupertinoModalPopup<int>(
-      context: context,
-      builder: (context) => CupertinoActionSheet(
-        title: const Text('装备管理'),
-        actions: [
-          CupertinoActionSheetAction(
-            onPressed: () => Navigator.of(context).pop(0),
-            child: const Text('装备清单'),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () => Navigator.of(context).pop(1),
-            child: const Text('我的装备'),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('取消'),
-        ),
-      ),
-    );
-    if (!mounted || choice == null) return;
-    if (choice == 0) {
-      Navigator.of(context).push(
-        CupertinoPageRoute(builder: (_) => const EquipmentListListScreen()),
-      );
-    } else {
-      Navigator.of(context).push(
-        CupertinoPageRoute(builder: (_) => const EquipmentItemListScreen()),
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return CupertinoPageScaffold(
-      backgroundColor: const Color(0xFF07130F),
+      backgroundColor: AppColors.bgBase,
       child: Stack(
         children: [
+          // 主内容
           FutureBuilder<HomeData?>(
             future: _homeFuture,
             builder: (context, snapshot) {
@@ -209,16 +181,76 @@ class _HomeScreenState extends State<HomeScreen>
               return RouteHome(data: data, onChangeRoute: _openRoutePicker);
             },
           ),
-          SafeArea(
-            child: Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20, top: 16),
-                child: EquipmentEntryButton(onTap: _openEquipmentEntry),
-              ),
+
+          // 顶部按钮区 (hamburger moved to right, calendar moved to drawer)
+          Positioned(
+            top: AppSpacing.safeTopAlt,
+            right: AppSpacing.base,
+            child: _HamburgerButton(
+              onTap: widget.onOpenDrawer,
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 顶部按钮组件
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// 汉堡按钮（三横线）— PRD P1/P2 Layer 6
+/// 32×32, 透明背景, 三条白色横线 gap 3px, 1.2px 高度
+class _HamburgerButton extends StatefulWidget {
+  final VoidCallback? onTap;
+
+  const _HamburgerButton({this.onTap});
+
+  @override
+  State<_HamburgerButton> createState() => _HamburgerButtonState();
+}
+
+class _HamburgerButtonState extends State<_HamburgerButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final lineColor =
+        _hovered ? const Color(0xFFFFFFFF) : const Color(0x80FFFFFF);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        behavior: HitTestBehavior.opaque,
+        child: SizedBox(
+          width: AppSizes.iconSm,
+          height: AppSizes.iconSm,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildBar(lineColor),
+                _buildBar(lineColor),
+                _buildBar(lineColor),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildBar(Color color) {
+    return Container(
+      width: double.infinity,
+      height: 1.2,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(1),
       ),
     );
   }

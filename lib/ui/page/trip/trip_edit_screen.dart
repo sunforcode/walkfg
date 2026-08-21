@@ -31,6 +31,12 @@ class _TripEditScreenState extends State<TripEditScreen> {
   /// 滚动控制器
   final ScrollController _scrollController = ScrollController();
 
+  /// 行程名称编辑控制器
+  final TextEditingController _nameController = TextEditingController();
+
+  /// 行程描述编辑控制器
+  final TextEditingController _descriptionController = TextEditingController();
+
   /// 是否有未保存的更改
   bool _hasUnsavedChanges = false;
 
@@ -43,6 +49,8 @@ class _TripEditScreenState extends State<TripEditScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _nameController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -53,6 +61,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
     });
 
     _tripFuture.then((trip) {
+      if (!mounted) return;
       setState(() {
         _editingTrip = trip;
       });
@@ -62,7 +71,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
   }
 
   /// 保存行程
-  void _saveTrip() async {
+  Future<void> _saveTrip() async {
     if (_editingTrip == null) return;
 
     // 显示保存中指示器
@@ -152,7 +161,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
         middle: const Text(
           '编辑行程',
           style: TextStyle(
-            color: CupertinoColors.white,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -161,7 +170,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
           child: const Text(
             '取消',
             style: TextStyle(
-              color: CupertinoColors.white,
+              color: AppColors.textBody,
             ),
           ),
           onPressed: _cancelEdit,
@@ -171,7 +180,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
           child: const Text(
             '保存',
             style: TextStyle(
-              color: CupertinoColors.white,
+              color: AppColors.interactiveAccent,
             ),
           ),
           onPressed: _saveTrip,
@@ -209,10 +218,10 @@ class _TripEditScreenState extends State<TripEditScreen> {
                   margin: const EdgeInsets.all(16),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: CupertinoColors.systemBackground,
+                    color: AppColors.bgPanel,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: CupertinoColors.separator,
+                      color: AppColors.border,
                       width: 0.5,
                     ),
                   ),
@@ -224,7 +233,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: CupertinoColors.label,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -235,18 +244,26 @@ class _TripEditScreenState extends State<TripEditScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: CupertinoColors.label,
+                          color: AppColors.textBody,
                         ),
                       ),
                       const SizedBox(height: 8),
                       CupertinoTextField(
                         placeholder: '请输入行程名称',
-                        controller:
-                            TextEditingController(text: displayTrip.name),
+                        controller: _nameController
+                          ..text = displayTrip.name,
                         onChanged: (value) {
                           _updateTrip(displayTrip.copyWith(name: value));
                         },
                       ),
+                      const SizedBox(height: 16),
+
+                      // 出发日期 (PRD §3.2: read-only display)
+                      _DateRow(label: '出发日期', value: _fmtDate(displayTrip.startDate)),
+                      const SizedBox(height: 16),
+
+                      // 返回日期
+                      _DateRow(label: '返回日期', value: _fmtDate(displayTrip.endDate)),
                       const SizedBox(height: 16),
 
                       // 行程描述
@@ -255,14 +272,14 @@ class _TripEditScreenState extends State<TripEditScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: CupertinoColors.label,
+                          color: AppColors.textBody,
                         ),
                       ),
                       const SizedBox(height: 8),
                       CupertinoTextField(
                         placeholder: '请输入行程描述',
-                        controller: TextEditingController(
-                            text: displayTrip.description),
+                        controller: _descriptionController
+                          ..text = displayTrip.description,
                         maxLines: 3,
                         onChanged: (value) {
                           _updateTrip(displayTrip.copyWith(description: value));
@@ -279,11 +296,14 @@ class _TripEditScreenState extends State<TripEditScreen> {
                   title: '📅 每日行程',
                   subtitle: '编辑详细行程安排',
                   icon: CupertinoIcons.calendar_today,
-                  iconColor: CupertinoColors.systemBlue,
+                  iconColor: AppColors.interactiveAccent,
                   initiallyExpanded: false,
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    child: const Text('每日行程编辑功能开发中...'),
+                    child: const Text(
+                      '每日行程编辑功能开发中...',
+                      style: TextStyle(color: AppColors.textSubtitle),
+                    ),
                   ),
                 ),
               ),
@@ -294,11 +314,14 @@ class _TripEditScreenState extends State<TripEditScreen> {
                   title: '👥 参与者',
                   subtitle: '管理参与者信息',
                   icon: CupertinoIcons.person_2_fill,
-                  iconColor: CupertinoColors.systemOrange,
+                  iconColor: AppColors.badgeRecommendedBg,
                   initiallyExpanded: false,
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    child: const Text('参与者管理功能开发中...'),
+                    child: const Text(
+                      '参与者管理功能开发中...',
+                      style: TextStyle(color: AppColors.textSubtitle),
+                    ),
                   ),
                 ),
               ),
@@ -309,11 +332,14 @@ class _TripEditScreenState extends State<TripEditScreen> {
                   title: '🎒 装备清单',
                   subtitle: '管理装备清单',
                   icon: CupertinoIcons.bag_fill,
-                  iconColor: CupertinoColors.systemPurple,
+                  iconColor: AppColors.badgeVerifiedBg,
                   initiallyExpanded: false,
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    child: const Text('装备管理功能开发中...'),
+                    child: const Text(
+                      '装备管理功能开发中...',
+                      style: TextStyle(color: AppColors.textSubtitle),
+                    ),
                   ),
                 ),
               ),
@@ -324,11 +350,14 @@ class _TripEditScreenState extends State<TripEditScreen> {
                   title: '💰 费用预算',
                   subtitle: '管理预算分配',
                   icon: CupertinoIcons.money_dollar_circle_fill,
-                  iconColor: CupertinoColors.systemGreen,
+                  iconColor: AppColors.statusCompletedText,
                   initiallyExpanded: false,
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    child: const Text('预算管理功能开发中...'),
+                    child: const Text(
+                      '预算管理功能开发中...',
+                      style: TextStyle(color: AppColors.textSubtitle),
+                    ),
                   ),
                 ),
               ),
@@ -339,11 +368,14 @@ class _TripEditScreenState extends State<TripEditScreen> {
                   title: '🍽️ 食物饮水',
                   subtitle: '规划餐食和饮水',
                   icon: CupertinoIcons.flame_fill,
-                  iconColor: CupertinoColors.systemOrange,
+                  iconColor: AppColors.statusPlanningText,
                   initiallyExpanded: false,
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    child: const Text('食物饮水规划功能开发中...'),
+                    child: const Text(
+                      '食物饮水规划功能开发中...',
+                      style: TextStyle(color: AppColors.textSubtitle),
+                    ),
                   ),
                 ),
               ),
@@ -354,11 +386,14 @@ class _TripEditScreenState extends State<TripEditScreen> {
                   title: '🚗 交通住宿',
                   subtitle: '预订交通和住宿',
                   icon: CupertinoIcons.car_fill,
-                  iconColor: CupertinoColors.systemBlue,
+                  iconColor: AppColors.interactiveAccent,
                   initiallyExpanded: false,
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    child: const Text('交通住宿预订功能开发中...'),
+                    child: const Text(
+                      '交通住宿预订功能开发中...',
+                      style: TextStyle(color: AppColors.textSubtitle),
+                    ),
                   ),
                 ),
               ),
@@ -369,11 +404,14 @@ class _TripEditScreenState extends State<TripEditScreen> {
                   title: '🌤️ 安全备注',
                   subtitle: '添加安全提醒',
                   icon: CupertinoIcons.cloud_sun_fill,
-                  iconColor: CupertinoColors.systemYellow,
+                  iconColor: AppColors.statusPlanningText,
                   initiallyExpanded: false,
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    child: const Text('安全备注功能开发中...'),
+                    child: const Text(
+                      '安全备注功能开发中...',
+                      style: TextStyle(color: AppColors.textSubtitle),
+                    ),
                   ),
                 ),
               ),
@@ -386,6 +424,47 @@ class _TripEditScreenState extends State<TripEditScreen> {
           );
         },
       ),
+    );
+  }
+
+  /// 格式化日期
+  String _fmtDate(DateTime? date) {
+    if (date == null) return '未设置';
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  日期行：标签 + 日期值
+// ---------------------------------------------------------------------------
+
+class _DateRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _DateRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textBody,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 14,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ],
     );
   }
 }

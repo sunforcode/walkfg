@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+
 import 'theme/main_layout.dart';
 import 'theme/app_theme.dart';
 import 'ui/page/debug/debug_menu_page.dart';
+import 'ui/routes/app_routes.dart';
 
 /// 应用入口组件
 class App extends StatelessWidget {
@@ -12,20 +14,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoApp(
       title: 'Walk - 徒步旅行助手',
-      theme: AppTheme.cupertinoLight,
+      theme: AppTheme.cupertinoDark,
       home: const MainLayout(),
       routes: {
-        '/settings': (context) => const CupertinoPageScaffold(
-              navigationBar: CupertinoNavigationBar(
-                middle: Text('设置'),
-              ),
-              child: SafeArea(
-                child: Center(
-                  child: Text('设置页面'),
-                ),
-              ),
-            ),
-        '/debug': (context) => const DebugMenuPage(),
+        AppRoutes.debug: (context) => const DebugMenuPage(),
       },
     );
   }

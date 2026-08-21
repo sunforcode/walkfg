@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/map/marker_point_model.dart';
-import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/ui/map/map_widget.dart';
 
 /// 路线地图视图组件
@@ -44,7 +43,7 @@ class RouteMapView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: CupertinoColors.systemGrey4.withOpacity(0.5),
+                    color: CupertinoColors.systemGrey4.withValues(alpha: 0.5),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                     spreadRadius: 0,
@@ -99,7 +98,7 @@ class RouteMapView extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                color: CupertinoColors.systemGrey4.withValues(alpha: 0.3),
                 blurRadius: 4,
                 offset: const Offset(0, 1),
               ),
@@ -143,7 +142,7 @@ class RouteMapView extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                color: CupertinoColors.systemGrey4.withValues(alpha: 0.3),
                 blurRadius: 4,
                 offset: const Offset(0, 1),
               ),
@@ -175,7 +174,7 @@ class RouteMapView extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                color: CupertinoColors.systemGrey4.withValues(alpha: 0.3),
                 blurRadius: 4,
                 offset: const Offset(0, 1),
               ),
@@ -245,7 +244,7 @@ class RouteMapView extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                  color: CupertinoColors.systemGrey4.withValues(alpha: 0.3),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
@@ -313,6 +312,6 @@ class MapRouteMarker {
   }
 
   String _colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+    return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
   }
 }

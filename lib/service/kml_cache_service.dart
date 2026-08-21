@@ -5,7 +5,6 @@ import 'package:walk/model/map/map_data_model.dart';
 import 'package:walk/service/cache/hive_service_cache.dart';
 import 'package:walk/service/cache/service_cache.dart';
 import 'package:walk/ui/map/utils/kml_business_parser.dart';
-import 'package:walk/utils/coordinate_transform_utils.dart';
 
 /// KML缓存服务
 ///

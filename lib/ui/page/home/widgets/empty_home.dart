@@ -1,12 +1,12 @@
-import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
-import 'topo_background.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/motion.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Empty
+// P1 首页-空状态 (PRD §3.1)
 // ─────────────────────────────────────────────────────────────────────────────
 
 class EmptyHome extends StatelessWidget {
@@ -17,7 +17,11 @@ class EmptyHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Positioned.fill(child: TopoBackground()),
+        // Layer 1 — 首页空态渐变背景
+        const Positioned.fill(child: _HomeGradientBackground()),
+        // Layer 2 — 山峦剪影
+        const Positioned.fill(child: _MountainSilhouette()),
+        // Layer 3 — 品牌区 + CTA
         SafeArea(
           child: Center(
             child: Padding(
@@ -25,46 +29,53 @@ class EmptyHome extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    height: math.min(
-                        MediaQuery.sizeOf(context).height * 0.34, 280),
-                    child: const RouteSketchBox(),
-                  ),
-                  const SizedBox(height: 18),
-                  const Text(
-                    '这周去哪走？',
-                    textAlign: TextAlign.center,
+                  // "WALK"
+                  Text(
+                    'WALK',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.w900,
-                      height: 1.02,
+                      color: const Color(0xFFFFFFFF),
+                      fontSize: 42,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 2,
+                      height: 1.0,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
+                  // "徒步旅行助手"
                   Text(
-                    '选一条经典路线，首页展示路线封面、轨迹和天气。',
-                    textAlign: TextAlign.center,
+                    '徒步旅行助手',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.62),
+                      color: AppColors.textBody,
                       fontSize: 16,
+                      fontWeight: FontWeight.w400,
                       height: 1.4,
                     ),
                   ),
-                  const SizedBox(height: 28),
-                  CupertinoButton(
-                    color: const Color(0xFFB6FF5C),
-                    borderRadius: BorderRadius.circular(999),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 34, vertical: 15),
-                    onPressed: onFindRoute,
-                    child: const Text(
-                      '找一条路线',
-                      style: TextStyle(
-                        color: Color(0xFF07130F),
-                        fontSize: 17,
-                        fontWeight: FontWeight.w900,
-                      ),
+                  const SizedBox(height: 32),
+                  // "这周去哪徒步？"
+                  Text(
+                    '这周去哪徒步？',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w300,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  // CTA 毛玻璃按钮
+                  _GlassCtaButton(
+                    label: '找路线',
+                    onTap: onFindRoute,
+                  ),
+                  const SizedBox(height: 16),
+                  // 空态提示
+                  Text(
+                    '还没有行程',
+                    style: TextStyle(
+                      color: AppColors.textLabel,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -73,6 +84,229 @@ class EmptyHome extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 首页空态渐变背景 (PRD --gradient-home: 170deg)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _HomeGradientBackground extends StatelessWidget {
+  const _HomeGradientBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: AppColors.gradientHome,
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 山峦剪影 (PRD P1 Layer 2)
+// 两层山形：前景 + 背景，底部 280px 区域
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _MountainSilhouette extends StatelessWidget {
+  const _MountainSilhouette();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _MountainPainter(),
+      child: const SizedBox.expand(),
+    );
+  }
+}
+
+class _MountainPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final mountainHeight = 280.0;
+    final baseY = size.height;
+
+    // 背景层 — rgba(255,255,255,.02)
+    final bgPaint = Paint()..color = const Color(0x05FFFFFF);
+    final bgPath = Path()
+      ..moveTo(0, baseY)
+      ..lineTo(size.width * 0.213, baseY - mountainHeight * 0.429)
+      ..lineTo(size.width * 0.373, baseY - mountainHeight * 0.321)
+      ..lineTo(size.width * 0.587, baseY - mountainHeight * 0.750)
+      ..lineTo(size.width * 0.800, baseY - mountainHeight * 0.464)
+      ..lineTo(size.width, baseY - mountainHeight * 0.571)
+      ..lineTo(size.width, baseY)
+      ..close();
+    canvas.drawPath(bgPath, bgPaint);
+
+    // 前景层 — rgba(255,255,255,.04)
+    final fgPaint = Paint()..color = const Color(0x0AFFFFFF);
+    final fgPath = Path()
+      ..moveTo(0, baseY)
+      ..lineTo(size.width * 0.160, baseY - mountainHeight * 0.571)
+      ..lineTo(size.width * 0.267, baseY - mountainHeight * 0.429)
+      ..lineTo(size.width * 0.480, baseY - mountainHeight * 0.857)
+      ..lineTo(size.width * 0.693, baseY - mountainHeight * 0.500)
+      ..lineTo(size.width * 0.853, baseY - mountainHeight * 0.714)
+      ..lineTo(size.width, baseY - mountainHeight * 0.429)
+      ..lineTo(size.width, baseY)
+      ..close();
+    canvas.drawPath(fgPath, fgPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 毛玻璃 CTA 按钮 (PRD P1 Layer 4)
+// 拆分：_GlassCtaButton → _PressableShell → _FrostedPill → BackdropBlur
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// 入口：管理 hover / pressed 状态，传递背景色给子组件
+class _GlassCtaButton extends StatefulWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _GlassCtaButton({required this.label, required this.onTap});
+
+  @override
+  State<_GlassCtaButton> createState() => _GlassCtaButtonState();
+}
+
+class _GlassCtaButtonState extends State<_GlassCtaButton> {
+  bool _pressed = false;
+  bool _hovered = false;
+  DateTime? _lastTap;
+
+  Color get _bgColor {
+    if (_pressed) return const Color(0x40FFFFFF); // .25
+    if (_hovered) return const Color(0x33FFFFFF); // .20
+    return const Color(0x1FFFFFFF); // .12
+  }
+
+  void _handleTap() {
+    final now = DateTime.now();
+    if (_lastTap != null && now.difference(_lastTap!).inMilliseconds < 300) {
+      return;
+    }
+    _lastTap = now;
+    widget.onTap();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _PressableShell(
+      hovered: _hovered,
+      pressed: _pressed,
+      onHoverChange: (v) => setState(() => _hovered = v),
+      onPressChange: (v) => setState(() => _pressed = v),
+      onTap: _handleTap,
+      child: _FrostedPill(
+        bgColor: _bgColor,
+        child: Text(
+          widget.label,
+          style: const TextStyle(
+            color: Color(0xFFFFFFFF),
+            fontSize: 18,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 交互壳：MouseRegion + GestureDetector + AnimatedScale，只管交互状态和缩放动画
+class _PressableShell extends StatelessWidget {
+  final bool hovered;
+  final bool pressed;
+  final ValueChanged<bool> onHoverChange;
+  final ValueChanged<bool> onPressChange;
+  final VoidCallback onTap;
+  final Widget child;
+
+  const _PressableShell({
+    required this.hovered,
+    required this.pressed,
+    required this.onHoverChange,
+    required this.onPressChange,
+    required this.onTap,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => onHoverChange(true),
+      onExit: (_) => onHoverChange(false),
+      child: GestureDetector(
+        onTapDown: (_) => onPressChange(true),
+        onTapUp: (_) {
+          onPressChange(false);
+          onTap();
+        },
+        onTapCancel: () => onPressChange(false),
+        child: AnimatedScale(
+          scale: pressed ? 0.97 : 1.0,
+          duration: pressed ? AppMotion.instant : AppMotion.normal,
+          curve: Curves.ease,
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+/// 毛玻璃药丸容器：ClipRRect + BackdropBlur + AnimatedContainer 装饰
+class _FrostedPill extends StatelessWidget {
+  final Color bgColor;
+  final Widget child;
+
+  const _FrostedPill({required this.bgColor, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(50),
+      child: BackdropBlur(
+        blur: 20,
+        child: AnimatedContainer(
+          duration: AppMotion.normal,
+          curve: Curves.ease,
+          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(50),
+            border: Border.all(color: AppColors.interactiveCtaBorder, width: 1),
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BackdropBlur — 使用 ImageFilter 实现毛玻璃效果
+// ─────────────────────────────────────────────────────────────────────────────
+
+class BackdropBlur extends StatelessWidget {
+  final double blur;
+  final Widget child;
+
+  const BackdropBlur({super.key, required this.blur, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.zero,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+        child: child,
+      ),
     );
   }
 }

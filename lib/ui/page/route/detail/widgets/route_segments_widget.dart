@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/route/segment_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 路况等级枚举
 enum RoadCondition {
@@ -11,7 +11,10 @@ enum RoadCondition {
   dangerous,
 }
 
-/// 路线分段Widget（横向滑动）
+/// 路段信息组件 (PRD §3.3.7)
+///
+/// 横滑卡片：段序号徽标 + 路况徽标 + 段名 + 指标
+/// 高亮段卡片加 2px 蓝色半透明边框
 class RouteSegmentsWidget extends StatelessWidget {
   final List<SegmentModel> segments;
   final void Function(SegmentModel segment)? onSegmentTap;
@@ -29,42 +32,8 @@ class RouteSegmentsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            const Icon(
-              CupertinoIcons.map,
-              size: 16,
-              color: CupertinoColors.systemTeal,
-            ),
-            const SizedBox(width: 6),
-            const Text(
-              '路线分段',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: CupertinoColors.label,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: CupertinoColors.systemTeal.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '${segments.length}段',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: CupertinoColors.systemTeal,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
-        ),
+        _SectionHeader(count: segments.length),
         const SizedBox(height: 12),
-
         SizedBox(
           height: 180,
           child: ListView.separated(
@@ -73,14 +42,67 @@ class RouteSegmentsWidget extends StatelessWidget {
             itemCount: segments.length,
             separatorBuilder: (_, __) => const SizedBox(width: 10),
             itemBuilder: (context, index) =>
-                _buildCard(segments[index], index + 1),
+                _SegmentCard(segment: segments[index], segmentNumber: index + 1, onSegmentTap: onSegmentTap),
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildCard(SegmentModel segment, int segmentNumber) {
+// ---------------------------------------------------------------------------
+//  段标题："🛤 路段信息"
+// ---------------------------------------------------------------------------
+
+class _SectionHeader extends StatelessWidget {
+  final int count;
+  const _SectionHeader({required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Text(
+          '🛤 路段信息',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: AppColors.sheetTextPrimary,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: AppColors.badgeBlueBg,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            '$count段',
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.badgeBlueText,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  路段卡片：180px 宽，高亮时 2px 蓝色边框
+// ---------------------------------------------------------------------------
+
+class _SegmentCard extends StatelessWidget {
+  final SegmentModel segment;
+  final int segmentNumber;
+  final void Function(SegmentModel segment)? onSegmentTap;
+  const _SegmentCard({required this.segment, required this.segmentNumber, this.onSegmentTap});
+
+  @override
+  Widget build(BuildContext context) {
     final condition = _inferRoadCondition(segment);
     final conditionColor = _getConditionColor(condition);
     final segmentColor = _parseColor(segment.color);
@@ -90,85 +112,52 @@ class RouteSegmentsWidget extends StatelessWidget {
       onTap: () => onSegmentTap?.call(segment),
       behavior: HitTestBehavior.opaque,
       child: Container(
-        width: 210,
+        width: 180,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: CupertinoColors.white,
+          color: AppColors.sheetCardBg,
           borderRadius: BorderRadius.circular(12),
+          // PRD §3.3.7：高亮段 2px 蓝色半透明边框
           border: isSelected
               ? Border.all(
-                  color: segmentColor ?? CupertinoColors.systemTeal,
-                  width: 2.5,
+                  color: segmentColor ?? AppColors.badgeBlueText,
+                  width: 2,
                 )
               : null,
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.black.withOpacity(
-                  isSelected ? 0.15 : 0.06),
-              blurRadius: isSelected ? 12 : 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 段序号徽标 + 路况徽标
             Row(
               children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: segmentColor ?? CupertinoColors.systemTeal,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    '第$segmentNumber段',
-                    style: const TextStyle(
-                      color: CupertinoColors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                _SegmentBadge(
+                  number: segmentNumber,
+                  color: segmentColor ?? AppColors.badgeBlueText,
                 ),
                 const Spacer(),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: conditionColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    _getConditionText(condition),
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: conditionColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                _ConditionBadge(condition: condition, color: conditionColor),
               ],
             ),
             const SizedBox(height: 8),
 
+            // 段名
             Text(
               segment.name,
               style: const TextStyle(
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: CupertinoColors.label,
+                color: AppColors.sheetTextPrimary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-
             const SizedBox(height: 6),
 
+            // 起终点
             Row(
               children: [
-                const Icon(CupertinoIcons.location,
-                    size: 11, color: CupertinoColors.systemGreen),
+                const Icon(CupertinoIcons.location, size: 11, color: AppColors.sheetTextSecondary),
                 const SizedBox(width: 2),
                 Expanded(
                   child: Text(
@@ -178,14 +167,13 @@ class RouteSegmentsWidget extends StatelessWidget {
                             : '-'),
                     style: const TextStyle(
                       fontSize: 11,
-                      color: CupertinoColors.secondaryLabel,
+                      color: AppColors.sheetTextSecondary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const Icon(CupertinoIcons.arrow_right,
-                    size: 10, color: CupertinoColors.systemGrey),
+                const Icon(CupertinoIcons.arrow_right, size: 10, color: AppColors.sheetTextWeak),
                 const SizedBox(width: 2),
                 Expanded(
                   child: Text(
@@ -195,7 +183,7 @@ class RouteSegmentsWidget extends StatelessWidget {
                             : '-'),
                     style: const TextStyle(
                       fontSize: 11,
-                      color: CupertinoColors.secondaryLabel,
+                      color: AppColors.sheetTextSecondary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -207,24 +195,22 @@ class RouteSegmentsWidget extends StatelessWidget {
 
             const Spacer(),
 
+            // 指标行
             Row(
               children: [
-                _miniStat(
-                  CupertinoIcons.location,
-                  '${(segment.distance ?? 0.0).toStringAsFixed(1)}km',
-                  CupertinoColors.systemBlue,
+                _MetricChip(
+                  icon: CupertinoIcons.location,
+                  value: '${(segment.distance ?? 0.0).toStringAsFixed(1)}km',
                 ),
                 const SizedBox(width: 8),
-                _miniStat(
-                  CupertinoIcons.arrow_up,
-                  '${segment.elevationGain?.toInt() ?? 0}m',
-                  CupertinoColors.systemGreen,
+                _MetricChip(
+                  icon: CupertinoIcons.arrow_up,
+                  value: '${segment.elevationGain?.toInt() ?? 0}m',
                 ),
                 const SizedBox(width: 8),
-                _miniStat(
-                  CupertinoIcons.arrow_down,
-                  '${segment.elevationLoss?.toInt() ?? 0}m',
-                  CupertinoColors.systemOrange,
+                _MetricChip(
+                  icon: CupertinoIcons.arrow_down,
+                  value: '${segment.elevationLoss?.toInt() ?? 0}m',
                 ),
               ],
             ),
@@ -249,24 +235,6 @@ class RouteSegmentsWidget extends StatelessWidget {
     return null;
   }
 
-  Widget _miniStat(IconData icon, String value, Color color) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 11, color: color),
-        const SizedBox(width: 2),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
-
   RoadCondition _inferRoadCondition(SegmentModel segment) {
     final elevationGain = segment.elevationGain ?? 0.0;
     final distance = segment.distance ?? 0.0;
@@ -278,7 +246,80 @@ class RouteSegmentsWidget extends StatelessWidget {
     return RoadCondition.excellent;
   }
 
-  String _getConditionText(RoadCondition condition) {
+  Color _getConditionColor(RoadCondition condition) {
+    switch (condition) {
+      case RoadCondition.excellent:
+        return AppColors.badgeVerifiedText;
+      case RoadCondition.good:
+        return AppColors.badgeBlueText;
+      case RoadCondition.fair:
+        return AppColors.badgeRecommendedText;
+      case RoadCondition.poor:
+        return AppColors.badgeEssentialText;
+      case RoadCondition.dangerous:
+        return AppColors.badgeEssentialText;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  段序号徽标 (蓝底圆角)
+// ---------------------------------------------------------------------------
+
+class _SegmentBadge extends StatelessWidget {
+  final int number;
+  final Color color;
+  const _SegmentBadge({required this.number, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        '第$number段',
+        style: const TextStyle(
+          color: CupertinoColors.white,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  路况徽标
+// ---------------------------------------------------------------------------
+
+class _ConditionBadge extends StatelessWidget {
+  final RoadCondition condition;
+  final Color color;
+  const _ConditionBadge({required this.condition, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        _text,
+        style: TextStyle(
+          fontSize: 10,
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  String get _text {
     switch (condition) {
       case RoadCondition.excellent:
         return '优秀';
@@ -292,19 +333,33 @@ class RouteSegmentsWidget extends StatelessWidget {
         return '危险';
     }
   }
+}
 
-  Color _getConditionColor(RoadCondition condition) {
-    switch (condition) {
-      case RoadCondition.excellent:
-        return CupertinoColors.systemGreen;
-      case RoadCondition.good:
-        return CupertinoColors.systemBlue;
-      case RoadCondition.fair:
-        return CupertinoColors.systemYellow;
-      case RoadCondition.poor:
-        return CupertinoColors.systemOrange;
-      case RoadCondition.dangerous:
-        return CupertinoColors.systemRed;
-    }
+// ---------------------------------------------------------------------------
+//  指标标签
+// ---------------------------------------------------------------------------
+
+class _MetricChip extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  const _MetricChip({required this.icon, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 11, color: AppColors.sheetTextSecondary),
+        const SizedBox(width: 2),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: AppColors.sheetTextSecondary,
+          ),
+        ),
+      ],
+    );
   }
 }

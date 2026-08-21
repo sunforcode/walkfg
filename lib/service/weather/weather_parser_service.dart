@@ -58,11 +58,6 @@ class WeatherParserService {
       String temp = now['temp'] ?? '0';
       String windSpeed = now['windSpeed'] ?? '0';
       String humidity = now['humidity'] ?? '0';
-      String feelsLike = now['feelsLike'] ?? temp;
-      String pressure = now['pressure'] ?? '0';
-      String visibility = now['vis'] ?? '0';
-      String windDir = now['windDir'] ?? '';
-      String windScale = now['windScale'] ?? '0';
 
       // 判断是否适合徒步
       final isSuitable = isWeatherSuitableForHiking(weatherText, windSpeed);

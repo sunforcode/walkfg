@@ -31,7 +31,7 @@ class AltitudeButton extends StatelessWidget {
             children: [
               Icon(
                 Icons.terrain,
-                color: AppColors.textOnDark.withOpacity(0.9),
+                color: AppColors.textOnDark.withValues(alpha: 0.9),
                 size: 20,
               ),
               if (isLoadingAltitude)
@@ -41,7 +41,7 @@ class AltitudeButton extends StatelessWidget {
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.textOnDark.withOpacity(0.9),
+                      AppColors.textOnDark.withValues(alpha: 0.9),
                     ),
                   ),
                 ),
@@ -51,7 +51,7 @@ class AltitudeButton extends StatelessWidget {
           Text(
             '海拔',
             style: TextStyle(
-              color: AppColors.textOnDark.withOpacity(0.9),
+              color: AppColors.textOnDark.withValues(alpha: 0.9),
               fontSize: 12,
             ),
           ),
@@ -67,8 +67,8 @@ class AltitudeButton extends StatelessWidget {
             Text(
               '±${altitudeInfo!.accuracy.toInt()}m',
               style: TextStyle(
-                color: AppColors.textOnDark.withOpacity(0.7),
-                fontSize: 10,
+color: AppColors.textOnDark.withValues(alpha: 0.7),
+              fontSize: 10,
               ),
             ),
           ] else ...[

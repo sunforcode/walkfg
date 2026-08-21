@@ -24,7 +24,7 @@ class DaySelectorWidget extends StatelessWidget {
       child: Container(
         height: 40,
         decoration: BoxDecoration(
-          color: CupertinoColors.systemBackground.withOpacity(0.9),
+          color: CupertinoColors.systemBackground.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(

@@ -179,9 +179,9 @@ class _SearchSectionState extends State<SearchSection> {
                       padding: const EdgeInsets.only(right: 8),
                       child: CupertinoButton(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
-                        minSize: 30,
+                        minimumSize: const Size.fromHeight(30),
                         onPressed: () {
                           _performSearch(_recentSearches[index]);
                         },
@@ -241,14 +241,14 @@ class _SearchSectionState extends State<SearchSection> {
 
   /// 构建搜索标签
   Widget _buildSearchTag(String keyword, String? tagColor, bool isHot) {
-    Color backgroundColor = AppColors.primary.withOpacity(0.1);
+    Color backgroundColor = AppColors.primary.withValues(alpha: 0.1);
     Color textColor = AppColors.primary;
 
     // 如果有自定义颜色，使用自定义颜色
     if (tagColor != null) {
       try {
         final color = Color(int.parse(tagColor.replaceAll('#', '0xFF')));
-        backgroundColor = color.withOpacity(0.1);
+        backgroundColor = color.withValues(alpha: 0.1);
         textColor = color;
       } catch (e) {
         // 如果解析失败，使用默认颜色
@@ -259,7 +259,7 @@ class _SearchSectionState extends State<SearchSection> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: backgroundColor,
       borderRadius: BorderRadius.circular(20),
-      minSize: 0,
+      minimumSize: Size.zero,
       onPressed: () {
         _performSearch(keyword);
       },

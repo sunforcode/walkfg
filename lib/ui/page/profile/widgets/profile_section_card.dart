@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:walk/theme/tokens/colors.dart';
 
 /// 个人页面分区容器组件
 class ProfileSectionCard extends StatelessWidget {
@@ -32,11 +33,11 @@ class ProfileSectionCard extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-            color: CupertinoColors.white,
+            color: AppColors.bgPanel,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: CupertinoColors.systemGrey.withOpacity(0.1),
+                color: AppColors.shadow,
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),

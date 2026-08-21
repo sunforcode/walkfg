@@ -101,7 +101,6 @@ class TrackLayer extends StatelessWidget {
       case TrackRenderMode.gradient:
         return _getGradientColor(point, nextPoint);
       case TrackRenderMode.normal:
-      default:
         return config.defaultColor;
     }
   }
@@ -170,39 +169,11 @@ class TrackLayer extends StatelessWidget {
     return Colors.red;
   }
 
-  /// 解析颜色字符串（如 #FF5722）
-  Color? _parseColor(String? colorStr) {
-    if (colorStr == null || colorStr.isEmpty) return null;
-    try {
-      final hexStr = colorStr.replaceAll('#', '');
-      if (hexStr.length == 6) {
-        return Color(int.parse('FF$hexStr', radix: 16));
-      } else if (hexStr.length == 8) {
-        return Color(int.parse(hexStr, radix: 16));
-      }
-    } catch (e) {
-      debugPrint('TrackLayer: 解析颜色失败: $e');
-    }
-    return null;
-  }
-
   /// 根据分段序号生成固定颜色（黄金角旋转，各段颜色均匀分布）
   Color _segmentColor(int seq) {
     // 使用黄金角 137.508° 旋转，确保任意数量的分段颜色均匀分布
     final h = (seq * 137.508) % 360;
     return HSVColor.fromAHSV(1.0, h, 0.8, 0.9).toColor();
-  }
-
-  /// 根据索引获取对应的分段
-  SegmentModel? _getSegmentForIndex(int index) {
-    for (final segment in segments) {
-      final start = segment.trackStartIndex ?? 0;
-      final end = segment.trackEndIndex ?? trackPoints.length - 1;
-      if (index >= start && index <= end) {
-        return segment;
-      }
-    }
-    return null;
   }
 
   /// 构建轨迹线
@@ -277,7 +248,7 @@ class TrackLayer extends StatelessWidget {
 
       // 未选中的分段降低透明度
       if (!isSelected && selectedSegmentId != null) {
-        color = color.withOpacity(config.unselectedOpacity);
+        color = color.withValues(alpha: config.unselectedOpacity);
       }
 
       // 选中的分段增加宽度

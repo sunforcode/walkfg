@@ -94,9 +94,6 @@ class RouteService {
   // 禁止实例化
   RouteService._();
 
-  /// 默认缓存时间
-  static const Duration _defaultCacheTTL = Duration(hours: 1);
-
   /// 获取路线列表（支持统一参数）
   ///
   /// 支持抽象参数：
