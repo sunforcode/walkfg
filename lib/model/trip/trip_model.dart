@@ -34,11 +34,19 @@ class TripModel extends BaseModel {
   String description;
 
   /// 开始日期
-  @JsonKey(name: 'start_date', fromJson: BaseModel.parseTimestamp, toJson: BaseModel.timestampToJson)
+  @JsonKey(
+    name: 'start_date',
+    fromJson: BaseModel.parseTimestamp,
+    toJson: _tripTimestampToJson,
+  )
   DateTime startDate;
 
   /// 结束日期
-  @JsonKey(name: 'end_date', fromJson: BaseModel.parseTimestamp, toJson: BaseModel.timestampToJson)
+  @JsonKey(
+    name: 'end_date',
+    fromJson: BaseModel.parseTimestamp,
+    toJson: _tripTimestampToJson,
+  )
   DateTime endDate;
 
   /// 状态
@@ -198,6 +206,11 @@ class TripModel extends BaseModel {
   /// 状态转JSON
   static int _statusToJson(TripStatus status) {
     return status.index;
+  }
+
+  /// 行程接口使用秒级 Unix 时间戳
+  static int _tripTimestampToJson(DateTime dateTime) {
+    return dateTime.millisecondsSinceEpoch ~/ 1000;
   }
 
   /// 隐私设置转为后端请求使用的整数编码

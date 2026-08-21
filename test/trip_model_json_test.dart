@@ -17,7 +17,10 @@ void main() {
       privacySetting: 'private',
     );
 
-    expect(trip.toJson()['privacy_setting'], 2);
+    final json = trip.toJson();
+    expect(json['privacy_setting'], 2);
+    expect(json['start_date'], 1787313600);
+    expect(json['end_date'], 1787400000);
   });
 
   test('keeps backend privacy string when parsing trip response', () {
