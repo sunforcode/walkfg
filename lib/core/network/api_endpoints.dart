@@ -68,15 +68,11 @@ class ApiEndpoints {
 
   // ==================== 收藏相关 ====================
   /// 收藏路线列表
-  static const String favoriteRoutes = '$apiPrefix/favorites/routes';
+  static const String favoriteRoutes = '$apiPrefix/routes/favorites';
 
   /// 收藏/取消收藏路线
   static String favoriteRoute(String routeId) =>
-      '$apiPrefix/favorites/routes/$routeId';
-
-  /// 检查路线是否已收藏
-  static String checkFavorite(String routeId) =>
-      '$apiPrefix/favorites/routes/$routeId/check';
+      '$apiPrefix/routes/$routeId/favorite';
 
   // ==================== 行程相关 ====================
   /// 行程列表
@@ -94,6 +90,9 @@ class ApiEndpoints {
   /// 删除行程
   static String deleteTrip(String tripId) => '$apiPrefix/trips/$tripId';
 
+  /// 更新行程状态
+  static String tripStatus(String tripId) => '$apiPrefix/trips/$tripId/status';
+
   /// 计划行程
   static const String plannedTrips = '$apiPrefix/trips/planned';
 
@@ -102,6 +101,10 @@ class ApiEndpoints {
 
   /// 正在进行的行程
   static const String ongoingTrips = '$apiPrefix/trips/ongoing';
+
+  /// 行程关联的装备清单列表（分页）
+  static String tripEquipmentLists(String tripId) =>
+      '$apiPrefix/trips/$tripId/equipment-lists';
 
   // ==================== 行程计划相关 ====================
   /// 行程计划列表
@@ -135,9 +138,6 @@ class ApiEndpoints {
   /// 用户统计
   static const String userStats = '$apiPrefix/user/stats';
 
-  /// 用户偏好设置
-  static const String userPreferences = '$apiPrefix/user/preferences';
-
   // ==================== 认证相关 ====================
   /// 登录
   static const String login = '$apiPrefix/auth/login';
@@ -151,89 +151,51 @@ class ApiEndpoints {
   /// 刷新token
   static const String refreshToken = '$apiPrefix/auth/refresh';
 
-  /// 忘记密码
-  static const String forgotPassword = '$apiPrefix/auth/forgot-password';
-
-  /// 重置密码
-  static const String resetPassword = '$apiPrefix/auth/reset-password';
-
-  // ==================== 天气相关 ====================
-  /// 获取天气信息
-  static const String weather = '$apiPrefix/weather';
-
-  /// 获取天气预报
-  static const String weatherForecast = '$apiPrefix/weather/forecast';
-
-  /// 获取标记点天气
-  static String markerPointWeather(String pointId) =>
-      '$apiPrefix/weather/marker-point/$pointId';
-
   // ==================== 装备相关 ====================
-  static const String apiV1Prefix = '/walkbg/api/v1';
+  // 装备单品：对应后端 EquipmentController（/api/v1/equipment）
+  // 装备清单：对应后端 EquipmentListController（/api/v1/equipment-lists）
+  // 注意：装备模板、用户装备库暂未接入客户端（core_only 范围）
 
-  /// 装备物品列表
-  static const String equipmentItems = '$apiV1Prefix/equipment/items';
+  /// 装备单品分页列表
+  static const String equipmentItems = '$apiPrefix/equipment/items';
 
-  /// 装备物品详情
+  /// 装备单品详情 / 更新 / 删除
   static String equipmentItemDetail(String itemId) =>
-      '$apiV1Prefix/equipment/items/$itemId';
+      '$apiPrefix/equipment/items/$itemId';
 
-  /// 装备物品搜索
-  static const String equipmentSearch = '$apiV1Prefix/equipment/search';
+  /// 装备单品多条件搜索
+  static const String equipmentItemSearch = '$apiPrefix/equipment/items/search';
 
-  /// 装备分类统计
-  static const String equipmentCategoryStats = '$apiV1Prefix/equipment/category-stats';
+  /// 装备单品分类统计
+  static const String equipmentCategoryStats =
+      '$apiPrefix/equipment/category-stats';
 
-  /// 装备推荐
-  static const String recommendedEquipment = '$apiV1Prefix/equipment/recommended';
+  /// 装备清单分页列表 / 创建
+  static const String equipmentLists = '$apiPrefix/equipment-lists';
 
-  /// 装备清单列表
-  static const String equipmentLists = '$apiV1Prefix/equipment-lists';
-
-  /// 装备清单详情
+  /// 装备清单详情 / 更新 / 删除
   static String equipmentListDetail(String listId) =>
-      '$apiV1Prefix/equipment-lists/$listId';
+      '$apiPrefix/equipment-lists/$listId';
 
-  /// 装备清单的装备列表
+  /// 装备清单统计信息
+  static String equipmentListStatistics(String listId) =>
+      '$apiPrefix/equipment-lists/$listId/statistics';
+
+  /// 装备清单内的装备条目列表 / 添加装备
   static String equipmentListItems(String listId) =>
-      '$apiV1Prefix/equipment-lists/$listId/items';
+      '$apiPrefix/equipment-lists/$listId/items';
+
+  /// 装备清单内单个装备条目更新 / 移除
+  static String equipmentListItemDetail(String listId, String itemId) =>
+      '$apiPrefix/equipment-lists/$listId/items/$itemId';
 
   /// 装备清单重量统计
   static String equipmentListWeightStats(String listId) =>
-      '$apiV1Prefix/equipment-lists/$listId/weight-stats';
+      '$apiPrefix/equipment-lists/$listId/weight-stats';
 
-  /// 装备清单状态更新
+  /// 装备清单状态更新（专用端点，唯一能生效的状态修改方式）
   static String equipmentListStatus(String listId) =>
-      '$apiV1Prefix/equipment-lists/$listId/status';
-
-  /// 装备模板列表
-  static const String equipmentTemplates = '$apiV1Prefix/equipment-templates';
-
-  /// 装备模板详情
-  static String equipmentTemplateDetail(String templateId) =>
-      '$apiV1Prefix/equipment-templates/$templateId';
-
-  /// 官方装备模板
-  static const String officialEquipmentTemplates =
-      '$apiV1Prefix/equipment-templates/official';
-
-  /// 用户装备库列表
-  static const String userEquipmentInventories =
-      '$apiV1Prefix/user-equipment-inventories';
-
-  /// 用户装备库详情
-  static String userEquipmentInventoryDetail(String inventoryId) =>
-      '$apiV1Prefix/user-equipment-inventories/$inventoryId';
-
-  /// 用户装备库的装备列表
-  static String userEquipmentInventoryItems(String inventoryId) =>
-      '$apiV1Prefix/user-equipment-inventories/$inventoryId/items';
-
-  /// 装备分类
-  static const String equipmentCategories = '$apiV1Prefix/equipment/categories';
-
-  /// 用户装备清单 (旧路径，向后兼容)
-  static const String userEquipmentList = '$apiPrefix/user/equipment-list';
+      '$apiPrefix/equipment-lists/$listId/status';
 
   // ==================== 攻略相关 ====================
   /// 攻略列表
@@ -242,54 +204,16 @@ class ApiEndpoints {
   /// 攻略详情
   static String guideDetail(String guideId) => '$apiPrefix/guides/$guideId';
 
-  /// 攻略分类
-  static const String guideCategories = '$apiPrefix/guides/categories';
+  /// 攻略点赞
+  static String guideLike(String guideId) => '$apiPrefix/guides/$guideId/like';
 
-  /// 热门攻略
-  static const String popularGuides = '$apiPrefix/guides/popular';
-
-  // ==================== 推荐相关 ====================
-  /// 个性化推荐
-  static const String personalizedRecommendations =
-      '$apiPrefix/recommendations/personalized';
-
-  /// 基于位置的推荐
-  static const String locationBasedRecommendations =
-      '$apiPrefix/recommendations/location';
-
-  /// 基于历史的推荐
-  static const String historyBasedRecommendations =
-      '$apiPrefix/recommendations/history';
-
-  // ==================== 搜索相关 ====================
-  /// 全局搜索
-  static const String globalSearch = '$apiPrefix/search';
-
-  /// 搜索历史
-  static const String searchHistory = '$apiPrefix/search/history';
-
-  /// 热门搜索
-  static const String popularSearches = '$apiPrefix/search/popular';
+  /// 攻略取消点赞
+  static String guideUnlike(String guideId) =>
+      '$apiPrefix/guides/$guideId/unlike';
 
   // ==================== 文件上传相关 ====================
-  /// 上传图片
-  static const String uploadImage = '$apiPrefix/upload/image';
-
-  /// 上传GPX文件
-  static const String uploadGpx = '$apiPrefix/upload/gpx';
-
   /// 上传头像
   static const String uploadAvatar = '$apiPrefix/upload/avatar';
-
-  // ==================== 系统相关 ====================
-  /// 应用版本检查
-  static const String versionCheck = '$apiPrefix/system/version';
-
-  /// 系统配置
-  static const String systemConfig = '$apiPrefix/system/config';
-
-  /// 反馈
-  static const String feedback = '$apiPrefix/system/feedback';
 
   // ==================== 工具方法 ====================
 

@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/model/food/meal_plan_model.dart';
 import 'package:walk/model/route/daily_plan_model.dart';
 import 'package:walk/model/user/user_model.dart';
@@ -68,10 +67,6 @@ class TripModel extends BaseModel {
   @JsonKey(name: 'equipment_list_id')
   final String? equipmentListId;
 
-  /// 装备清单
-  @JsonKey(name: 'equipment_list')
-  final EquipmentListModel? equipmentList;
-
   /// 食物计划ID
   @JsonKey(name: 'meal_plan_id')
   final String? mealPlanId;
@@ -129,7 +124,6 @@ class TripModel extends BaseModel {
     required this.participantCount,
     required this.organizerId,
     this.equipmentListId,
-    this.equipmentList,
     this.mealPlanId,
     this.mealPlan,
     this.waterPlanId,
@@ -168,6 +162,8 @@ class TripModel extends BaseModel {
           return TripStatus.completed;
         case 'cancelled':
           return TripStatus.cancelled;
+        case 'confirmed':
+          return TripStatus.confirmed;
         default:
           return TripStatus.planning;
       }
@@ -212,7 +208,6 @@ class TripModel extends BaseModel {
     int? participantCount,
     String? organizerId,
     String? equipmentListId,
-    EquipmentListModel? equipmentList,
     String? mealPlanId,
     MealPlanModel? mealPlan,
     String? waterPlanId,
@@ -240,7 +235,6 @@ class TripModel extends BaseModel {
       participantCount: participantCount ?? this.participantCount,
       organizerId: organizerId ?? this.organizerId,
       equipmentListId: equipmentListId ?? this.equipmentListId,
-      equipmentList: equipmentList ?? this.equipmentList,
       mealPlanId: mealPlanId ?? this.mealPlanId,
       mealPlan: mealPlan ?? this.mealPlan,
       waterPlanId: waterPlanId ?? this.waterPlanId,
@@ -255,11 +249,6 @@ class TripModel extends BaseModel {
     );
   }
 
-  /// 获取装备清单（优先返回完整模型，如果不存在则返回null）
-  EquipmentListModel? getEquipmentList() {
-    return equipmentList;
-  }
-
   /// 获取食物计划（优先返回完整模型，如果不存在则返回null）
   MealPlanModel? getMealPlan() {
     return mealPlan;
@@ -268,11 +257,6 @@ class TripModel extends BaseModel {
   /// 获取饮水计划（优先返回完整模型，如果不存在则返回null）
   WaterPlanModel? getWaterPlan() {
     return waterPlan;
-  }
-
-  /// 检查是否有完整的装备清单
-  bool hasEquipmentList() {
-    return equipmentList != null;
   }
 
   /// 检查是否有完整的食物计划

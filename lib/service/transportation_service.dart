@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../model/transportation/transport_route.dart';
@@ -34,7 +35,7 @@ class TransportationService {
       
       return routes;
     } catch (e) {
-      print('获取路线失败: $e');
+      debugPrint('获取路线失败: $e');
       return [];
     }
   }
@@ -212,7 +213,7 @@ class TransportationService {
         await _launchWebMap(destination, destinationName);
       }
     } catch (e) {
-      print('打开地图应用失败: $e');
+      debugPrint('打开地图应用失败: $e');
       await _launchWebMap(destination, destinationName);
     }
   }

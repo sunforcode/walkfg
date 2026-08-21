@@ -4,8 +4,11 @@ import 'package:walk/core/network/api_client.dart';
 import 'package:walk/core/network/api_endpoints.dart';
 import 'package:walk/core/network/api_exception.dart';
 import 'package:walk/core/network/interceptors/auth_interceptor.dart';
+import 'package:walk/core/network/response_unwrap.dart';
 import 'package:walk/core/state/auth_notifier.dart';
+import 'package:walk/model/base/base_model.dart';
 import 'package:walk/model/user/user_model.dart';
+import 'package:walk/model/user/user_stats_model.dart';
 
 /// 用户服务
 ///
@@ -30,16 +33,8 @@ class UserService {
       // 解析API响应
       final responseData = response.data as Map<String, dynamic>;
 
-      // 检查响应状态
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '获取用户信息失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      // 解析用户数据
-      final userData = responseData['data'] as Map<String, dynamic>;
+      // 解包响应并解析用户数据
+      final userData = unwrapResponse(responseData);
       return UserModel.fromJson(userData);
     } catch (e) {
       if (e is ApiException) {
@@ -50,21 +45,14 @@ class UserService {
   }
 
   /// 获取用户统计数据
-  static Future<UserModel> getUserStats() async {
+  static Future<UserStatsModel> getUserStats() async {
     try {
       final response = await ApiClient.instance.get(ApiEndpoints.userStats);
 
       final responseData = response.data as Map<String, dynamic>;
 
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '获取用户统计数据失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final userData = responseData['data'] as Map<String, dynamic>;
-      return UserModel.fromJson(userData);
+      final statsData = unwrapResponse(responseData);
+      return UserStatsModel.fromJson(statsData);
     } catch (e) {
       if (e is ApiException) {
         rethrow;
@@ -83,14 +71,7 @@ class UserService {
 
       final responseData = response.data as Map<String, dynamic>;
 
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '更新用户信息失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final userData = responseData['data'] as Map<String, dynamic>;
+      final userData = unwrapResponse(responseData);
       return UserModel.fromJson(userData);
     } catch (e) {
       if (e is ApiException) {
@@ -115,14 +96,7 @@ class UserService {
 
       final responseData = response.data as Map<String, dynamic>;
 
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '上传头像失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final data = responseData['data'] as Map<String, dynamic>;
+      final data = unwrapResponse(responseData);
       return data['avatarUrl'] as String;
     } catch (e) {
       if (e is ApiException) {
@@ -155,9 +129,6 @@ class UserService {
   /// 用户登录
   static Future<UserModel> login(String username, String password) async {
     try {
-      debugPrint('UserService: Starting login for username: $username');
-      debugPrint('UserService: Login endpoint: ${ApiEndpoints.login}');
-
       final response = await ApiClient.instance.post(
         ApiEndpoints.login,
         data: {
@@ -166,52 +137,26 @@ class UserService {
         },
       );
 
-      debugPrint('UserService: Login response status: ${response.statusCode}');
-
       final responseData = response.data as Map<String, dynamic>;
-      debugPrint('UserService: Login response code: ${responseData['code']}');
 
-      if (responseData['code'] != 200) {
-        final errorMessage = responseData['message'] ?? '登录失败';
-        debugPrint('UserService: Login failed: $errorMessage');
-        throw BusinessException(
-          errorMessage,
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final data = responseData['data'] as Map<String, dynamic>;
-      debugPrint('UserService: Login response data keys: ${data.keys}');
+      final data = unwrapResponse(responseData);
 
       // 保存token到本地存储
       final token = data['token'] as String?;
       final refreshToken = data['refresh_token'] as String?;
 
-      debugPrint('UserService: Token received: ${token != null}, token length: ${token?.length ?? 0}');
-      debugPrint('UserService: Refresh token received: ${refreshToken != null}');
-
       if (token != null) {
-        debugPrint('UserService: Saving auth tokens...');
         await AuthInterceptor.saveAuthTokens(token, refreshToken);
-        debugPrint('UserService: Tokens saved to SharedPreferences');
-
         ApiClient.instance.setAuthToken(token);
-        debugPrint('UserService: Auth token set in ApiClient headers');
-
-        // 验证token是否正确保存
-        final savedToken = await AuthInterceptor.getCurrentToken();
-        debugPrint('UserService: Token verification - saved: ${savedToken != null}, matches: ${savedToken == token}');
       } else {
         debugPrint('UserService: WARNING - No token in login response!');
       }
 
       // 从响应数据构建用户模型
       final userModel = _buildUserModelFromLoginResponse(data);
-      debugPrint('UserService: Login successful, user: ${userModel.username}, email: ${userModel.email}');
 
       // 通知登录成功
       AuthNotifier().notifyLogin();
-      debugPrint('UserService: AuthNotifier notified login');
 
       return userModel;
     } catch (e) {
@@ -234,9 +179,6 @@ class UserService {
     String? avatarUrl,
   }) async {
     try {
-      debugPrint('UserService: Starting registration for username: $username');
-      debugPrint('UserService: Registration endpoint: ${ApiEndpoints.register}');
-
       final response = await ApiClient.instance.post(
         ApiEndpoints.register,
         data: {
@@ -249,52 +191,26 @@ class UserService {
         },
       );
 
-      debugPrint('UserService: Registration response status: ${response.statusCode}');
-
       final responseData = response.data as Map<String, dynamic>;
-      debugPrint('UserService: Registration response code: ${responseData['code']}');
 
-      if (responseData['code'] != 200) {
-        final errorMessage = responseData['message'] ?? '注册失败';
-        debugPrint('UserService: Registration failed: $errorMessage');
-        throw BusinessException(
-          errorMessage,
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final data = responseData['data'] as Map<String, dynamic>;
-      debugPrint('UserService: Registration response data keys: ${data.keys}');
+      final data = unwrapResponse(responseData);
 
       // 注册成功后保存token（后端现在返回token）
       final token = data['token'] as String?;
       final refreshToken = data['refresh_token'] as String?;
 
-      debugPrint('UserService: Token received: ${token != null}, token length: ${token?.length ?? 0}');
-      debugPrint('UserService: Refresh token received: ${refreshToken != null}');
-
       if (token != null) {
-        debugPrint('UserService: Saving auth tokens from registration...');
         await AuthInterceptor.saveAuthTokens(token, refreshToken);
-        debugPrint('UserService: Tokens saved to SharedPreferences');
-
         ApiClient.instance.setAuthToken(token);
-        debugPrint('UserService: Auth token set in ApiClient headers');
-
-        // 验证token是否正确保存
-        final savedToken = await AuthInterceptor.getCurrentToken();
-        debugPrint('UserService: Token verification - saved: ${savedToken != null}, matches: ${savedToken == token}');
       } else {
         debugPrint('UserService: WARNING - No token in registration response!');
       }
 
       // 从响应数据构建用户模型（使用登录响应解析方法）
       final userModel = _buildUserModelFromLoginResponse(data);
-      debugPrint('UserService: Registration successful, user: ${userModel.username}, email: ${userModel.email}');
 
       // 通知登录成功（注册成功后自动登录）
       AuthNotifier().notifyLogin();
-      debugPrint('UserService: AuthNotifier notified login (from registration)');
 
       return userModel;
     } catch (e) {
@@ -315,19 +231,13 @@ class UserService {
 
       // 通知登出成功
       AuthNotifier().notifyLogout();
-      debugPrint('UserService: AuthNotifier notified logout');
 
       // 调用登出API
       final response = await ApiClient.instance.post(ApiEndpoints.logout);
 
       final responseData = response.data as Map<String, dynamic>;
 
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '登出失败',
-          code: responseData['code']?.toString(),
-        );
-      }
+      unwrapResponse(responseData);
 
       return true;
     } catch (e) {
@@ -358,14 +268,7 @@ class UserService {
 
       final responseData = response.data as Map<String, dynamic>;
 
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '刷新Token失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final data = responseData['data'] as Map<String, dynamic>;
+      final data = unwrapResponse(responseData);
 
       final newToken = data['token'] as String?;
       final newRefreshToken = data['refresh_token'] as String?;
@@ -395,27 +298,9 @@ class UserService {
       phone: data['phone'] as String?,
       avatarUrl: data['avatar_url'] as String?,
       createdAt: data['created_at'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(
-              (data['created_at'] as int) * 1000,
-            )
+          ? BaseModel.parseTimestamp(data['created_at'])
           : null,
     );
   }
 
-  /// 从响应构建用户模型
-  static UserModel _buildUserModelFromResponse(Map<String, dynamic> data) {
-    return UserModel(
-      id: data['id'] as String,
-      username: data['username'] as String,
-      email: data['email'] as String? ?? '',
-      nickname: data['nickname'] as String? ?? data['username'] as String,
-      phone: data['phone'] as String?,
-      avatarUrl: data['avatar_url'] as String?,
-      createdAt: data['created_at'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(
-              (data['created_at'] as int) * 1000,
-            )
-          : null,
-    );
-  }
 }

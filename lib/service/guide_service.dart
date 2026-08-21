@@ -1,15 +1,14 @@
 import 'package:flutter/foundation.dart';
+import 'package:walk/core/network/response_unwrap.dart';
 import '../core/network/api_client.dart';
 import '../core/network/api_endpoints.dart';
 import '../core/network/api_exception.dart';
 import '../model/guide/guide_model.dart';
 import '../model/route/route_model.dart';
 import '../model/trip/trip_model.dart';
-import '../model/equipment/equipment_list_model.dart';
 import '../model/user/user_model.dart';
 import 'route_service.dart';
 import 'trip_service.dart';
-import 'equipment_service.dart';
 import 'user_service.dart';
 
 /// 攻略服务
@@ -43,16 +42,7 @@ class GuideService {
       final response = await ApiClient.instance.get(
         ApiEndpoints.guideDetail(guideId),
       );
-      final responseData = response.data as Map<String, dynamic>;
-
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '获取攻略详情失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final guideData = responseData['data'] as Map<String, dynamic>;
+      final guideData = unwrapResponse(response.data as Map<String, dynamic>);
       return GuideModel.fromJson(guideData);
     } catch (e) {
       if (e is ApiException) {
@@ -64,9 +54,6 @@ class GuideService {
 
   /// 获取包含完整关联数据的攻略详情
   static Future<GuideModel> getGuideWithDetails(String guideId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 600));
-
     // 1. 获取基础攻略数据
     final guide = await getGuideById(guideId);
 
@@ -74,7 +61,6 @@ class GuideService {
     final futures = await Future.wait([
       _loadBaseRoute(guide.baseRouteId),
       _loadBaseTrip(guide.baseTripId),
-      _loadEquipmentList(guide.equipmentListId),
       _loadAuthorProfile(guide.authorId),
       _loadRelatedGuides(guide.relatedGuideIds),
     ]);
@@ -83,9 +69,8 @@ class GuideService {
     return guide.copyWith(
       baseRoute: futures[0] as RouteModel?,
       baseTrip: futures[1] as TripModel?,
-      equipmentList: futures[2] as EquipmentListModel?,
-      authorProfile: futures[3] as UserModel?,
-      relatedGuides: futures[4] as List<GuideModel>?,
+      authorProfile: futures[2] as UserModel?,
+      relatedGuides: futures[3] as List<GuideModel>?,
     );
   }
 
@@ -96,7 +81,7 @@ class GuideService {
     try {
       return await RouteService.getRouteById(routeId);
     } catch (e) {
-      print('加载路线数据失败: $e');
+      debugPrint('加载路线数据失败: $e');
       return null;
     }
   }
@@ -108,20 +93,7 @@ class GuideService {
     try {
       return await TripService.getTripById(tripId);
     } catch (e) {
-      print('加载行程数据失败: $e');
-      return null;
-    }
-  }
-
-  /// 加载装备清单数据
-  static Future<EquipmentListModel?> _loadEquipmentList(
-      String? equipmentListId) async {
-    if (equipmentListId == null || equipmentListId.isEmpty) return null;
-
-    try {
-      return await EquipmentService.getEquipmentListById(equipmentListId);
-    } catch (e) {
-      print('加载装备清单数据失败: $e');
+      debugPrint('加载行程数据失败: $e');
       return null;
     }
   }
@@ -131,7 +103,7 @@ class GuideService {
     try {
       return await UserService.getCurrentUser();
     } catch (e) {
-      print('加载作者信息失败: $e');
+      debugPrint('加载作者信息失败: $e');
       return null;
     }
   }
@@ -146,25 +118,15 @@ class GuideService {
       final guides = await Future.wait(futures);
       return guides;
     } catch (e) {
-      print('加载相关攻略失败: $e');
+      debugPrint('加载相关攻略失败: $e');
       return null;
     }
   }
 
   /// 获取热门攻略
   static Future<List<GuideModel>> getPopularGuides({int? limit}) async {
-    try {
-      final response = await ApiClient.instance.get(
-        ApiEndpoints.popularGuides,
-        queryParameters: {
-          if (limit != null) 'limit': limit,
-        },
-      );
-      return _parseGuidesResponse(response.data);
-    } catch (e) {
-      debugPrint('GuideService: 获取热门攻略失败: $e');
-      return [];
-    }
+    // 后端无独立 /popular 端点，使用 getGuides 替代
+    return getGuides(limit: limit);
   }
 
   /// 获取最新攻略
@@ -184,28 +146,16 @@ class GuideService {
     }
   }
 
-  /// 获取用户收藏的攻略
-  static Future<List<GuideModel>> getFavoriteGuides() async {
-    try {
-      final response = await ApiClient.instance.get(
-        ApiEndpoints.guides,
-        queryParameters: {'filter': 'favorites'},
-      );
-      return _parseGuidesResponse(response.data);
-    } catch (e) {
-      debugPrint('GuideService: 获取收藏攻略失败: $e');
-      return [];
-    }
-  }
-
   /// 点赞攻略
+  ///
+  /// 对应后端 `POST /api/v1/guides/{id}/like`
   static Future<GuideModel> likeGuide(String guideId) async {
     try {
-      await ApiClient.instance.post(
-        ApiEndpoints.guideDetail(guideId),
-        data: {'action': 'like'},
+      final response = await ApiClient.instance.post(
+        ApiEndpoints.guideLike(guideId),
       );
-      return await getGuideById(guideId);
+      final guideData = unwrapResponse(response.data as Map<String, dynamic>);
+      return GuideModel.fromJson(guideData);
     } catch (e) {
       debugPrint('GuideService: 点赞攻略失败: $e');
       rethrow;
@@ -213,44 +163,18 @@ class GuideService {
   }
 
   /// 取消点赞攻略
+  ///
+  /// 对应后端 `POST /api/v1/guides/{id}/unlike`
   static Future<GuideModel> unlikeGuide(String guideId) async {
     try {
-      await ApiClient.instance.post(
-        ApiEndpoints.guideDetail(guideId),
-        data: {'action': 'unlike'},
+      final response = await ApiClient.instance.post(
+        ApiEndpoints.guideUnlike(guideId),
       );
-      return await getGuideById(guideId);
+      final guideData = unwrapResponse(response.data as Map<String, dynamic>);
+      return GuideModel.fromJson(guideData);
     } catch (e) {
       debugPrint('GuideService: 取消点赞攻略失败: $e');
       rethrow;
-    }
-  }
-
-  /// 收藏攻略
-  static Future<bool> favoriteGuide(String guideId) async {
-    try {
-      await ApiClient.instance.post(
-        ApiEndpoints.guideDetail(guideId),
-        data: {'action': 'favorite'},
-      );
-      return true;
-    } catch (e) {
-      debugPrint('GuideService: 收藏攻略失败: $e');
-      return false;
-    }
-  }
-
-  /// 取消收藏攻略
-  static Future<bool> unfavoriteGuide(String guideId) async {
-    try {
-      await ApiClient.instance.delete(
-        ApiEndpoints.guideDetail(guideId),
-        data: {'action': 'unfavorite'},
-      );
-      return true;
-    } catch (e) {
-      debugPrint('GuideService: 取消收藏攻略失败: $e');
-      return false;
     }
   }
 
@@ -261,16 +185,7 @@ class GuideService {
         ApiEndpoints.guides,
         data: guide.toJson(),
       );
-      final responseData = response.data as Map<String, dynamic>;
-
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '创建攻略失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final guideData = responseData['data'] as Map<String, dynamic>;
+      final guideData = unwrapResponse(response.data as Map<String, dynamic>);
       return GuideModel.fromJson(guideData);
     } catch (e) {
       if (e is ApiException) {
@@ -287,16 +202,7 @@ class GuideService {
         ApiEndpoints.guideDetail(guide.id),
         data: guide.toJson(),
       );
-      final responseData = response.data as Map<String, dynamic>;
-
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '更新攻略失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final guideData = responseData['data'] as Map<String, dynamic>;
+      final guideData = unwrapResponse(response.data as Map<String, dynamic>);
       return GuideModel.fromJson(guideData);
     } catch (e) {
       if (e is ApiException) {
@@ -321,38 +227,14 @@ class GuideService {
 
   /// 获取攻略分类
   static Future<List<String>> getGuideCategories() async {
-    try {
-      final response = await ApiClient.instance.get(
-        ApiEndpoints.guideCategories,
-      );
-      final responseData = response.data as Map<String, dynamic>;
-
-      if (responseData['code'] != 200) {
-        return [];
-      }
-
-      final categories = responseData['data'] as List<dynamic>;
-      return List<String>.from(categories);
-    } catch (e) {
-      debugPrint('GuideService: 获取攻略分类失败: $e');
-      return [];
-    }
+    // 后端无独立分类端点，攻略使用 tag 进行分类
+    return ['徒步', '露营', '登山', '穿越', '骑行', '攀岩'];
   }
 
   /// 解析攻略响应数据的通用方法
   static List<GuideModel> _parseGuidesResponse(dynamic responseData) {
-    final data = responseData as Map<String, dynamic>;
-
-    if (data['code'] != 200) {
-      throw BusinessException(
-        data['message'] ?? '获取攻略数据失败',
-        code: data['code']?.toString(),
-      );
-    }
-
-    final guidesData = data['data'] as Map<String, dynamic>;
-    final content = guidesData['content'] as List<dynamic>;
-    debugPrint('GuideService: 成功解析攻略数据，共 ${content.length} 条');
+    final guidesData = unwrapResponse(responseData as Map<String, dynamic>);
+    final content = guidesData['content'] as List<dynamic>? ?? [];
 
     return content.map((json) => GuideModel.fromJson(json)).toList();
   }

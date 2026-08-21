@@ -142,4 +142,57 @@ class MapDataModel {
 
   /// 获取累计下降（米）
   double get elevationLoss => totalDescent;
+
+  /// 创建副本并更新指定字段
+  MapDataModel copyWith({
+    String? id,
+    MapDataType? dataType,
+    String? sourceUrl,
+    String? rawContent,
+    MapBoundsVO? bounds,
+    double? totalDistance,
+    int? totalDuration,
+    double? totalAscent,
+    double? totalDescent,
+    double? maxElevation,
+    double? minElevation,
+    double? averageSpeed,
+    List<TrackPointVO>? trackPoints,
+    List<TrackPointVO>? waypoints,
+    TrackPointVO? highestPoint,
+    TrackPointVO? lowestPoint,
+    TrackPointVO? startPoint,
+    TrackPointVO? endPoint,
+    int? pointCount,
+    int? segmentCount,
+    List<SegmentModel>? segments,
+    DateTime? recordedAt,
+    String? processingStatus,
+  }) {
+    return MapDataModel(
+      id: id ?? this.id,
+      dataType: dataType ?? this.dataType,
+      sourceUrl: sourceUrl ?? this.sourceUrl,
+      rawContent: rawContent ?? this.rawContent,
+      bounds: bounds ?? this.bounds,
+      totalDistance: totalDistance ?? this.totalDistance,
+      totalDuration: totalDuration ?? this.totalDuration,
+      totalAscent: totalAscent ?? this.totalAscent,
+      totalDescent: totalDescent ?? this.totalDescent,
+      maxElevation: maxElevation ?? this.maxElevation,
+      minElevation: minElevation ?? this.minElevation,
+      averageSpeed: averageSpeed ?? this.averageSpeed,
+      trackPoints: trackPoints ?? this.trackPoints,
+      waypoints: waypoints ?? this.waypoints,
+      highestPoint: highestPoint ?? this.highestPoint,
+      lowestPoint: lowestPoint ?? this.lowestPoint,
+      startPoint: startPoint ?? this.startPoint,
+      endPoint: endPoint ?? this.endPoint,
+      pointCount: pointCount ?? this.pointCount,
+      segmentCount: segmentCount ?? this.segmentCount,
+      segments: segments ?? this.segments,
+      recordedAt: recordedAt ?? this.recordedAt,
+      processingStatus: processingStatus ?? this.processingStatus,
+    );
+  }
 }

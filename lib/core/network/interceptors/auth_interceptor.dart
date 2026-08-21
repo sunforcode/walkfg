@@ -207,18 +207,10 @@ class AuthInterceptor extends Interceptor {
       final token = await _getToken();
       final tokenExists = token != null && token.isNotEmpty;
 
-      // 打印调试信息
-      if (kDebugMode) {
-        debugPrint('AuthInterceptor: Request to $path');
-        debugPrint('AuthInterceptor: Token exists: $tokenExists, token length: ${token?.length ?? 0}');
-        debugPrint('AuthInterceptor: Is public endpoint: $isPublic');
-      }
-
       if (tokenExists) {
         // 如果有token，无论是否是公开接口都添加到请求头
         // 这样已登录用户可以获取个性化数据
         options.headers['Authorization'] = 'Bearer $token';
-        debugPrint('AuthInterceptor: Added Bearer token to request header for $path');
       } else if (!isPublic) {
         // 只有非公开接口且没有token时才打印警告
         debugPrint('AuthInterceptor: WARNING - No token found for protected endpoint: $path');
@@ -241,13 +233,10 @@ class AuthInterceptor extends Interceptor {
       if (refreshToken == null || refreshToken.isEmpty) {
         // 没有refresh token，说明用户从未登录或已登出
         // 直接清除token并传递错误，不尝试刷新
-        debugPrint('AuthInterceptor: Received 401 but no refresh token available. User not logged in.');
         await _clearTokens();
         handler.next(err);
         return;
       }
-
-      debugPrint('AuthInterceptor: Received 401, attempting token refresh');
 
       try {
         final newToken = await _refreshToken();
@@ -262,7 +251,6 @@ class AuthInterceptor extends Interceptor {
           return;
         } else {
           // 刷新失败，清除token
-          debugPrint('AuthInterceptor: Token refresh returned null, clearing tokens');
           await _clearTokens();
         }
       } catch (e) {
@@ -324,7 +312,6 @@ class AuthInterceptor extends Interceptor {
           if (newToken != null) {
             // 保存新的token
             await _saveTokens(newToken, newRefreshToken);
-            debugPrint('AuthInterceptor: Token refreshed successfully');
             return newToken;
           }
         }

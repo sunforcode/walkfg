@@ -187,7 +187,7 @@ class RouteCard extends StatelessWidget {
               ),
               _buildInfoChip(
                 CupertinoIcons.time,
-                route.duration,
+                route.durationText,
               ),
             ],
           ),

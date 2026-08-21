@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
 /// 海拔信息类
@@ -69,10 +70,9 @@ class LocationService {
   Future<bool> isLocationServiceEnabled() async {
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      print('位置服务状态: ${serviceEnabled ? "已启用" : "未启用"}');
       return serviceEnabled;
     } catch (e) {
-      print('检查位置服务状态失败: $e');
+      debugPrint('检查位置服务状态失败: $e');
       return false;
     }
   }
@@ -84,19 +84,16 @@ class LocationService {
     try {
       // 检查当前权限状态
       LocationPermission permission = await Geolocator.checkPermission();
-      print('当前位置权限状态: $permission');
 
       // 如果权限被拒绝，尝试请求权限
       if (permission == LocationPermission.denied) {
-        print('位置权限被拒绝，正在请求权限...');
         permission = await Geolocator.requestPermission();
-        print('权限请求结果: $permission');
       }
 
       _lastPermissionStatus = permission;
       return permission;
     } catch (e) {
-      print('检查或请求位置权限失败: $e');
+      debugPrint('检查或请求位置权限失败: $e');
       return LocationPermission.denied;
     }
   }
@@ -122,46 +119,40 @@ class LocationService {
         final difference = now.difference(lastTime).inMinutes;
 
         if (difference < 5) {
-          print(
-              '使用缓存位置: 纬度=${_lastKnownPosition!.latitude}, 经度=${_lastKnownPosition!.longitude}');
           return _lastKnownPosition;
         }
       }
 
       // 检查位置服务是否启用
       if (!await isLocationServiceEnabled()) {
-        print('位置服务未启用，请在设置中开启位置服务');
+        debugPrint('位置服务未启用，请在设置中开启位置服务');
         return await _tryGetLastKnownPosition();
       }
 
       // 检查并请求权限
       final permission = await checkAndRequestPermission();
       if (permission == LocationPermission.denied) {
-        print('位置权限被用户拒绝');
+        debugPrint('位置权限被用户拒绝');
         return await _tryGetLastKnownPosition();
       }
 
       if (permission == LocationPermission.deniedForever) {
-        print('位置权限被永久拒绝，请在设置中手动开启');
+        debugPrint('位置权限被永久拒绝，请在设置中手动开启');
         return await _tryGetLastKnownPosition();
       }
 
       // 获取当前位置
-      print('开始获取当前位置...');
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: accuracy,
         timeLimit: Duration(seconds: timeoutSeconds),
       );
-
-      print(
-          '成功获取位置: 纬度=${position.latitude}, 经度=${position.longitude}, 精度=${position.accuracy}米');
 
       // 缓存位置
       _lastKnownPosition = position;
 
       return position;
     } catch (e) {
-      print('获取当前位置失败: $e');
+      debugPrint('获取当前位置失败: $e');
       return await _tryGetLastKnownPosition();
     }
   }
@@ -169,18 +160,13 @@ class LocationService {
   /// 尝试获取最后已知位置
   Future<Position?> _tryGetLastKnownPosition() async {
     try {
-      print('尝试获取最后已知位置...');
       final lastPosition = await Geolocator.getLastKnownPosition();
       if (lastPosition != null) {
-        print(
-            '获取到最后已知位置: 纬度=${lastPosition.latitude}, 经度=${lastPosition.longitude}');
         _lastKnownPosition = lastPosition;
         return lastPosition;
-      } else {
-        print('没有最后已知位置');
       }
     } catch (e) {
-      print('获取最后已知位置失败: $e');
+      debugPrint('获取最后已知位置失败: $e');
     }
     return null;
   }
@@ -210,7 +196,7 @@ class LocationService {
     _positionStream = Geolocator.getPositionStream(
       locationSettings: locationSettings,
     ).handleError((error) {
-      print('位置流错误: $error');
+      debugPrint('位置流错误: $error');
       _positionStreamController?.addError(error);
     });
 
@@ -236,14 +222,13 @@ class LocationService {
             now.difference(_lastKnownAltitude!.timestamp).inMinutes;
 
         if (difference < 2) {
-          print('使用缓存海拔: ${_lastKnownAltitude!}');
           return _lastKnownAltitude;
         }
       }
 
       // 检查位置服务是否启用
       if (!await isLocationServiceEnabled()) {
-        print('位置服务未启用，无法获取海拔信息');
+        debugPrint('位置服务未启用，无法获取海拔信息');
         return _lastKnownAltitude;
       }
 
@@ -251,12 +236,11 @@ class LocationService {
       final permission = await checkAndRequestPermission();
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        print('位置权限不足，无法获取海拔信息');
+        debugPrint('位置权限不足，无法获取海拔信息');
         return _lastKnownAltitude;
       }
 
       // 获取当前位置（包含海拔信息）
-      print('开始获取当前海拔信息...');
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: accuracy,
         timeLimit: Duration(seconds: timeoutSeconds),
@@ -269,14 +253,12 @@ class LocationService {
         timestamp: DateTime.now(),
       );
 
-      print('成功获取海拔信息: ${altitudeInfo}');
-
       // 缓存海拔信息
       _lastKnownAltitude = altitudeInfo;
 
       return altitudeInfo;
     } catch (e) {
-      print('获取当前海拔失败: $e');
+      debugPrint('获取当前海拔失败: $e');
       return _lastKnownAltitude;
     }
   }
@@ -346,10 +328,8 @@ class LocationService {
 
         // 发送到流
         _altitudeStreamController?.add(altitudeInfo);
-
-        print('海拔流更新: ${altitudeInfo}');
       } catch (e) {
-        print('海拔流获取失败: $e');
+        debugPrint('海拔流获取失败: $e');
         _altitudeStreamController?.addError(e);
       }
     });
@@ -363,7 +343,6 @@ class LocationService {
     _altitudeStreamController?.close();
     _altitudeStreamController = null;
     _altitudeStream = null;
-    print('海拔更新流已停止');
   }
 
   /// 计算两点之间的距离
@@ -429,7 +408,7 @@ class LocationService {
     try {
       return await Geolocator.openLocationSettings();
     } catch (e) {
-      print('打开位置设置失败: $e');
+      debugPrint('打开位置设置失败: $e');
       return false;
     }
   }
@@ -439,7 +418,7 @@ class LocationService {
     try {
       return await Geolocator.openAppSettings();
     } catch (e) {
-      print('打开应用设置失败: $e');
+      debugPrint('打开应用设置失败: $e');
       return false;
     }
   }
@@ -448,7 +427,6 @@ class LocationService {
   void clearCache() {
     _lastKnownPosition = null;
     _lastPermissionStatus = null;
-    print('位置缓存已清除');
   }
 
   /// 释放资源

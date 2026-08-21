@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:walk/model/map/track_point_model.dart';
@@ -9,186 +8,29 @@ import 'package:walk/ui/map/core/map_enum.dart';
 import 'package:walk/ui/map/core/unified_map_core.dart';
 import 'package:walk/ui/map/layers/track_layer.dart';
 import 'package:walk/ui/map/layers/marker_layer.dart';
-import 'package:walk/ui/map/widgets/elevation_chart_widget.dart';
+import 'package:walk/ui/map/map_widget_models.dart';
+import 'package:walk/ui/map/mapbox/mapbox_map_widget.dart';
+import 'package:walk/ui/map/widgets/day_selector_widget.dart';
+import 'package:walk/ui/map/widgets/elevation_chart_overlay.dart';
+import 'package:walk/ui/map/widgets/map_controls_overlay.dart';
+import 'package:walk/ui/map/widgets/route_info_card.dart';
 export 'package:walk/ui/map/core/map_enum.dart';
+export 'package:walk/ui/map/map_widget_models.dart';
 
-enum MapDisplayMode {
-  compact,
-  standard,
-  immersive,
-}
+// ─────────────────────────────────────────────
+// UnifiedMapWidget：对外统一地图组件
+// 通过 mapMode 参数切换 2D（flutter_map）或 3D（Mapbox）渲染
+// ─────────────────────────────────────────────
 
-enum MapFeature {
-  track,
-  startEndMarkers,
-  poiMarkers,
-  kilometerMarkers,
-  currentLocation,
-  elevationChart,
-  mapControls,
-  routeInfo,
-}
+/// 统一地图组件
+///
+/// 通过 [mapMode] 参数选择渲染引擎：
+/// - [MapMode.map2d]：基于 flutter_map 的 2D 地图（默认）
+/// - [MapMode.map3d]：基于 Mapbox 的 3D 地形地图
+class UnifiedMapWidget extends StatelessWidget {
+  /// 地图渲染模式
+  final MapMode mapMode;
 
-class MapWidgetConfig {
-  final double height;
-  final MapType mapType;
-  final MapProviderType mapProvider;
-  final Set<MapFeature> enabledFeatures;
-  final TrackRenderMode trackRenderMode;
-  final Color trackColor;
-  final double trackWidth;
-  final double initialZoom;
-  final LatLng? initialCenter;
-  final EdgeInsets padding;
-  final bool enableInteraction;
-  final bool showDirectionArrows;
-  final double arrowSpacing;
-
-  const MapWidgetConfig({
-    this.height = 400.0,
-    this.mapType = MapType.standard,
-    this.mapProvider = MapProviderType.osm,
-    this.enabledFeatures = const {
-      MapFeature.track,
-      MapFeature.startEndMarkers,
-    },
-    this.trackRenderMode = TrackRenderMode.normal,
-    this.trackColor = const Color(0xFF2196F3),
-    this.trackWidth = 3.0,
-    this.initialZoom = 12.0,
-    this.initialCenter,
-    this.padding = const EdgeInsets.all(50),
-    this.enableInteraction = true,
-    this.showDirectionArrows = false,
-    this.arrowSpacing = 1000.0,
-  });
-
-  MapWidgetConfig copyWith({
-    double? height,
-    MapType? mapType,
-    MapProviderType? mapProvider,
-    Set<MapFeature>? enabledFeatures,
-    TrackRenderMode? trackRenderMode,
-    Color? trackColor,
-    double? trackWidth,
-    double? initialZoom,
-    LatLng? initialCenter,
-    EdgeInsets? padding,
-    bool? enableInteraction,
-    bool? showDirectionArrows,
-    double? arrowSpacing,
-  }) {
-    return MapWidgetConfig(
-      height: height ?? this.height,
-      mapType: mapType ?? this.mapType,
-      mapProvider: mapProvider ?? this.mapProvider,
-      enabledFeatures: enabledFeatures ?? this.enabledFeatures,
-      trackRenderMode: trackRenderMode ?? this.trackRenderMode,
-      trackColor: trackColor ?? this.trackColor,
-      trackWidth: trackWidth ?? this.trackWidth,
-      initialZoom: initialZoom ?? this.initialZoom,
-      initialCenter: initialCenter ?? this.initialCenter,
-      padding: padding ?? this.padding,
-      enableInteraction: enableInteraction ?? this.enableInteraction,
-      showDirectionArrows: showDirectionArrows ?? this.showDirectionArrows,
-      arrowSpacing: arrowSpacing ?? this.arrowSpacing,
-    );
-  }
-
-  bool hasFeature(MapFeature feature) {
-    return enabledFeatures.contains(feature);
-  }
-}
-
-class MapWidgetEvents {
-  final void Function(LatLng position)? onMapTap;
-  final void Function(LatLng position)? onMapLongPress;
-  final void Function(LatLng center, double zoom)? onMapMove;
-  final VoidCallback? onMapReady;
-  final void Function(TrackPointVO point)? onMarkerTap;
-  final void Function(int? day)? onDayChanged;
-  final void Function(MapDisplayMode mode)? onDisplayModeChanged;
-
-  const MapWidgetEvents({
-    this.onMapTap,
-    this.onMapLongPress,
-    this.onMapMove,
-    this.onMapReady,
-    this.onMarkerTap,
-    this.onDayChanged,
-    this.onDisplayModeChanged,
-  });
-}
-
-class MapWidgetPresets {
-  static const MapWidgetConfig basicTrack = MapWidgetConfig(
-    height: 300.0,
-    enabledFeatures: {
-      MapFeature.track,
-      MapFeature.startEndMarkers,
-    },
-  );
-
-  static const MapWidgetConfig detailedTrack = MapWidgetConfig(
-    height: 400.0,
-    enabledFeatures: {
-      MapFeature.track,
-      MapFeature.startEndMarkers,
-      MapFeature.poiMarkers,
-      MapFeature.kilometerMarkers,
-      MapFeature.mapControls,
-    },
-    trackRenderMode: TrackRenderMode.elevation,
-  );
-
-  static const MapWidgetConfig preview = MapWidgetConfig(
-    height: 200.0,
-    enabledFeatures: {
-      MapFeature.track,
-    },
-    enableInteraction: false,
-  );
-
-  static const MapWidgetConfig navigation = MapWidgetConfig(
-    height: 500.0,
-    enabledFeatures: {
-      MapFeature.track,
-      MapFeature.startEndMarkers,
-      MapFeature.poiMarkers,
-      MapFeature.currentLocation,
-      MapFeature.mapControls,
-    },
-    trackColor: Color(0xFF4CAF50),
-    trackWidth: 4.0,
-  );
-
-  static const MapWidgetConfig dailyPlan = MapWidgetConfig(
-    height: 400.0,
-    enabledFeatures: {
-      MapFeature.track,
-      MapFeature.startEndMarkers,
-      MapFeature.poiMarkers,
-      MapFeature.elevationChart,
-      MapFeature.mapControls,
-      MapFeature.routeInfo,
-    },
-  );
-
-  static const MapWidgetConfig immersive = MapWidgetConfig(
-    height: 500.0,
-    enabledFeatures: {
-      MapFeature.track,
-      MapFeature.startEndMarkers,
-      MapFeature.poiMarkers,
-      MapFeature.kilometerMarkers,
-      MapFeature.elevationChart,
-      MapFeature.mapControls,
-    },
-    trackRenderMode: TrackRenderMode.elevation,
-  );
-}
-
-class MapWidget extends StatefulWidget {
   final List<TrackPointVO> trackPoints;
   final List<MarkerPointModel> markers;
   final MapWidgetConfig config;
@@ -201,15 +43,22 @@ class MapWidget extends StatefulWidget {
   final double? routeDistance;
   final double? routeElevationGain;
   final String? routeDifficulty;
-  
-  /// 分段数据（来自KML解析或API）
+
+  /// 分段数据（来自 API 或 KML 解析）
   final List<SegmentModel> segments;
-  
-  /// 当前选中的分段ID
+
+  /// 当前选中的分段 ID
   final String? selectedSegmentId;
 
-  const MapWidget({
+  /// 2D 模式下地图控制器就绪回调
+  final void Function(MapController controller)? onControllerReady;
+
+  /// 额外底部 padding（用于抽屉展开时将轨迹聚焦推向屏幕上方）
+  final double bottomPaddingExtra;
+
+  const UnifiedMapWidget({
     super.key,
+    this.mapMode = MapMode.map2d,
     this.trackPoints = const [],
     this.markers = const [],
     this.config = const MapWidgetConfig(),
@@ -224,13 +73,98 @@ class MapWidget extends StatefulWidget {
     this.routeDifficulty,
     this.segments = const <SegmentModel>[],
     this.selectedSegmentId,
+    this.onControllerReady,
+    this.bottomPaddingExtra = 0.0,
   });
 
   @override
-  State<MapWidget> createState() => _MapWidgetState();
+  Widget build(BuildContext context) {
+    switch (mapMode) {
+      case MapMode.map3d:
+        return MapboxMapWidget(
+          trackPoints: trackPoints,
+          markers: markers,
+          segments: segments,
+          selectedSegmentId: selectedSegmentId,
+          height: config.height,
+        );
+      case MapMode.map2d:
+        return _Map2DWidget(
+          trackPoints: trackPoints,
+          markers: markers,
+          config: config,
+          events: events,
+          days: days,
+          selectedDay: selectedDay,
+          displayMode: displayMode,
+          currentLocation: currentLocation,
+          routeName: routeName,
+          routeDistance: routeDistance,
+          routeElevationGain: routeElevationGain,
+          routeDifficulty: routeDifficulty,
+          segments: segments,
+          selectedSegmentId: selectedSegmentId,
+          onControllerReady: onControllerReady,
+          bottomPaddingExtra: bottomPaddingExtra,
+        );
+    }
+  }
 }
 
-class _MapWidgetState extends State<MapWidget> {
+// ─────────────────────────────────────────────
+// _Map2DWidget：内部 2D 地图实现（原 MapWidget）
+// ─────────────────────────────────────────────
+
+class _Map2DWidget extends StatefulWidget {
+  final List<TrackPointVO> trackPoints;
+  final List<MarkerPointModel> markers;
+  final MapWidgetConfig config;
+  final MapWidgetEvents events;
+  final int? days;
+  final int? selectedDay;
+  final MapDisplayMode? displayMode;
+  final LatLng? currentLocation;
+  final String? routeName;
+  final double? routeDistance;
+  final double? routeElevationGain;
+  final String? routeDifficulty;
+
+  /// 分段数据（来自KML解析或API）
+  final List<SegmentModel> segments;
+
+  /// 当前选中的分段ID
+  final String? selectedSegmentId;
+
+  /// 地图控制器就绪回调，可用于外部缩放等操作
+  final void Function(MapController controller)? onControllerReady;
+
+  /// 额外底部 padding（用于抽屉展开时将轨迹聚焦推向屏幕上方）
+  final double bottomPaddingExtra;
+
+  const _Map2DWidget({
+    this.trackPoints = const [],
+    this.markers = const [],
+    this.config = const MapWidgetConfig(),
+    this.events = const MapWidgetEvents(),
+    this.days,
+    this.selectedDay,
+    this.displayMode,
+    this.currentLocation,
+    this.routeName,
+    this.routeDistance,
+    this.routeElevationGain,
+    this.routeDifficulty,
+    this.segments = const <SegmentModel>[],
+    this.selectedSegmentId,
+    this.onControllerReady,
+    this.bottomPaddingExtra = 0.0,
+  });
+
+  @override
+  State<_Map2DWidget> createState() => _Map2DWidgetState();
+}
+
+class _Map2DWidgetState extends State<_Map2DWidget> {
   int? _selectedDay;
   bool _showElevationChart = false;
   MapType _currentMapType = MapType.standard;
@@ -251,10 +185,23 @@ class _MapWidgetState extends State<MapWidget> {
     _selectedDay = widget.selectedDay;
     _currentMapType = widget.config.mapType;
     _hasTrackPoints = widget.trackPoints.isNotEmpty;
+
+    // 若初始化时已有轨迹点，在下一帧延迟调用 fitBounds（确保 UnifiedMapCore._initializeMap 已执行）
+    // 修复场景：KML 缓存命中时，_hasTrackPoints=true，但 bottomPaddingExtra 未生效于初始 fitBounds
+    if (_hasTrackPoints) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // 再延迟一帧，确保 UnifiedMapCore 的 postFrameCallback 已执行
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _fitBoundsToTrackPoints();
+          }
+        });
+      });
+    }
   }
 
   @override
-  void didUpdateWidget(MapWidget oldWidget) {
+  void didUpdateWidget(_Map2DWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.selectedDay != oldWidget.selectedDay) {
       setState(() {
@@ -263,7 +210,7 @@ class _MapWidgetState extends State<MapWidget> {
     }
 
     // 检测 selectedSegmentId 变化，定位到选中的分段
-    if (widget.selectedSegmentId != null && 
+    if (widget.selectedSegmentId != null &&
         widget.selectedSegmentId != oldWidget.selectedSegmentId) {
       _fitBoundsToSelectedSegment();
     }
@@ -273,12 +220,18 @@ class _MapWidgetState extends State<MapWidget> {
       _hasTrackPoints = true;
       _fitBoundsToTrackPoints();
     }
+
+    // 检测抽屉高度变化，重新定位轨迹
+    if ((widget.bottomPaddingExtra - oldWidget.bottomPaddingExtra).abs() > 1.0 &&
+        widget.trackPoints.isNotEmpty) {
+      _fitBoundsToTrackPoints();
+    }
   }
 
   /// 定位地图到选中的分段
   void _fitBoundsToSelectedSegment() {
-    if (widget.selectedSegmentId == null || 
-        widget.trackPoints.isEmpty || 
+    if (widget.selectedSegmentId == null ||
+        widget.trackPoints.isEmpty ||
         _mapController == null) {
       return;
     }
@@ -321,7 +274,6 @@ class _MapWidgetState extends State<MapWidget> {
       LatLng(maxLat + padding, maxLng + padding),
     );
 
-    debugPrint('MapWidget: 定位地图到选中分段: ${segment.name}, bounds: $bounds');
     _mapController!.fitBounds(
       bounds,
       options: FitBoundsOptions(
@@ -335,11 +287,18 @@ class _MapWidgetState extends State<MapWidget> {
   void _fitBoundsToTrackPoints() {
     final bounds = _calculateBounds();
     if (bounds != null && _mapController != null) {
-      debugPrint('MapWidget: 定位地图到轨迹点，bounds: $bounds');
+      // 根据 bottomPaddingExtra 动态调整边距
+      // 抽屉展开时：底部边距增大，使轨迹聚焦点发圆屏幕上 1/4 处
+      final effectivePadding = EdgeInsets.only(
+        left: widget.config.padding.left,
+        top: widget.config.padding.top,
+        right: widget.config.padding.right,
+        bottom: widget.config.padding.bottom + widget.bottomPaddingExtra,
+      );
       _mapController!.fitBounds(
         bounds,
         options: FitBoundsOptions(
-          padding: widget.config.padding,
+          padding: effectivePadding,
           maxZoom: 18.0,
         ),
       );
@@ -506,99 +465,6 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
-  void _showMarkerInfo(TrackPointVO point) {
-    if (point is MarkerPointModel) {
-      showCupertinoDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: Text(point.displayTitle),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('类型: ${point.markerTypeText}'),
-              Text('海拔: ${point.elevation.toStringAsFixed(1)}m'),
-              Text(
-                  '坐标: ${point.latitude.toStringAsFixed(4)}, ${point.longitude.toStringAsFixed(4)}'),
-              if (point.description != null && point.description!.isNotEmpty)
-                Text('描述: ${point.description}'),
-            ],
-          ),
-          actions: [
-            CupertinoDialogAction(
-              child: const Text('确定'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
-    } else {
-      showCupertinoDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: const Text('轨迹点'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('海拔: ${point.elevation.toStringAsFixed(1)}m'),
-              Text(
-                  '坐标: ${point.latitude.toStringAsFixed(4)}, ${point.longitude.toStringAsFixed(4)}'),
-              if (point.timestamp != null)
-                Text(
-                    '时间: ${point.timestamp!.toLocal().toString().substring(0, 19)}'),
-              if (point.distanceFromStart != null)
-                Text(
-                    '距离起点: ${(point.distanceFromStart! / 1000).toStringAsFixed(2)}km'),
-            ],
-          ),
-          actions: [
-            CupertinoDialogAction(
-              child: const Text('确定'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
-    }
-  }
-
-  void _showMapTypeSelector() {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) => CupertinoActionSheet(
-        title: const Text('选择地图类型'),
-        actions: [
-          CupertinoActionSheetAction(
-            onPressed: () {
-              setState(() => _currentMapType = MapType.standard);
-              Navigator.pop(context);
-            },
-            child: const Text('标准地图'),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () {
-              setState(() => _currentMapType = MapType.satellite);
-              Navigator.pop(context);
-            },
-            child: const Text('卫星地图'),
-          ),
-          CupertinoActionSheetAction(
-            onPressed: () {
-              setState(() => _currentMapType = MapType.terrain);
-              Navigator.pop(context);
-            },
-            child: const Text('地形地图'),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final currentTrackPoints = _getCurrentTrackPoints();
@@ -616,7 +482,13 @@ class _MapWidgetState extends State<MapWidget> {
               initialCenter: widget.config.initialCenter,
               initialBounds: bounds,
               initialZoom: widget.config.initialZoom,
-              padding: widget.config.padding,
+              // 初始化时也加入 bottomPaddingExtra，确保首次 fitBounds 就有正确的偏移
+              padding: EdgeInsets.only(
+                left: widget.config.padding.left,
+                top: widget.config.padding.top,
+                right: widget.config.padding.right,
+                bottom: widget.config.padding.bottom + widget.bottomPaddingExtra,
+              ),
             ),
             events: UnifiedMapEvents(
               onTap: widget.events.onMapTap,
@@ -627,321 +499,59 @@ class _MapWidgetState extends State<MapWidget> {
             layers: _buildMapLayers(),
             onControllerCreated: (controller) {
               _mapController = controller;
+              widget.onControllerReady?.call(controller);
             },
           ),
           if (widget.config.hasFeature(MapFeature.mapControls))
-            ..._buildMapControls(),
+            ...MapControlsOverlay.buildMapControls(
+              hasCurrentLocation: widget.config.hasFeature(MapFeature.currentLocation),
+              isFollowingLocation: _isFollowingLocation,
+              showElevationChart: _showElevationChart,
+              onToggleFollowLocation: () {
+                setState(() => _isFollowingLocation = !_isFollowingLocation);
+              },
+              onShowMapTypeSelector: () {
+                showMapTypeSelectorSheet(
+                  context: context,
+                  onMapTypeSelected: (mapType) {
+                    setState(() => _currentMapType = mapType);
+                  },
+                );
+              },
+              onLayersPressed: () {},
+              onScopePressed: () {},
+            ),
           if (widget.config.hasFeature(MapFeature.routeInfo) &&
               widget.routeName != null)
-            _buildRouteInfoCard(),
+            RouteInfoCard(
+              routeName: widget.routeName,
+              routeDistance: widget.routeDistance,
+              routeElevationGain: widget.routeElevationGain,
+              routeDifficulty: widget.routeDifficulty,
+            ),
           if (widget.days != null && widget.days! > 1)
-            _buildDaySelector(),
+            DaySelectorWidget(
+              selectedDay: _selectedDay,
+              dayCount: _splitTrackByDays().length,
+              showElevationChart: _showElevationChart,
+              onDayChanged: (day) {
+                setState(() => _selectedDay = day);
+                widget.events.onDayChanged?.call(day);
+              },
+            ),
           if (widget.config.hasFeature(MapFeature.elevationChart) &&
               currentTrackPoints.isNotEmpty)
-            ..._buildElevationChart(currentTrackPoints),
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _buildMapControls() {
-    return [
-      Positioned(
-        top: 16,
-        right: 16,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (widget.config.hasFeature(MapFeature.currentLocation))
-              _buildMapButton(
-                icon: _isFollowingLocation
-                    ? CupertinoIcons.location_fill
-                    : CupertinoIcons.location,
-                isActive: _isFollowingLocation,
-                onPressed: () {
-                  setState(() => _isFollowingLocation = !_isFollowingLocation);
-                },
-              ),
-            const SizedBox(height: 8),
-            _buildMapButton(
-              icon: CupertinoIcons.map,
-              onPressed: _showMapTypeSelector,
-            ),
-            const SizedBox(height: 8),
-            _buildMapButton(
-              icon: CupertinoIcons.layers_alt,
-              onPressed: () {
-                print('图层控制');
+            ...ElevationChartOverlay.buildElevationChart(
+              trackPoints: currentTrackPoints,
+              showElevationChart: _showElevationChart,
+              onToggle: () {
+                setState(() => _showElevationChart = !_showElevationChart);
+              },
+              onClose: () {
+                setState(() => _showElevationChart = false);
               },
             ),
-          ],
-        ),
-      ),
-      Positioned(
-        bottom: _showElevationChart ? 200 : 16,
-        left: 16,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildMapButton(
-              icon: CupertinoIcons.scope,
-              onPressed: () {
-                print('回到轨迹中心');
-              },
-            ),
-          ],
-        ),
-      ),
-    ];
-  }
-
-  Widget _buildRouteInfoCard() {
-    return Positioned(
-      top: 16,
-      left: 16,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: CupertinoColors.black.withOpacity(0.7),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (widget.routeName != null)
-              Text(
-                widget.routeName!,
-                style: const TextStyle(
-                  color: CupertinoColors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            if (widget.routeDistance != null || widget.routeElevationGain != null)
-              const SizedBox(height: 4),
-            if (widget.routeDistance != null || widget.routeElevationGain != null)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (widget.routeDistance != null) ...[
-                    const Icon(
-                      CupertinoIcons.location,
-                      size: 12,
-                      color: CupertinoColors.white,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${widget.routeDistance!.toStringAsFixed(1)}km',
-                      style: const TextStyle(
-                        color: CupertinoColors.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                  if (widget.routeDistance != null && widget.routeElevationGain != null)
-                    const SizedBox(width: 8),
-                  if (widget.routeElevationGain != null) ...[
-                    const Icon(
-                      CupertinoIcons.arrow_up,
-                      size: 12,
-                      color: CupertinoColors.white,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${widget.routeElevationGain!.toString()}m',
-                      style: const TextStyle(
-                        color: CupertinoColors.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                  if (widget.routeDifficulty != null) ...[
-                    const SizedBox(width: 8),
-                    Text(
-                      widget.routeDifficulty!,
-                      style: const TextStyle(
-                        color: CupertinoColors.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDaySelector() {
-    final dailyTracks = _splitTrackByDays();
-    return Positioned(
-      bottom: _showElevationChart ? 180 : 16,
-      left: 16,
-      right: 16,
-      child: Container(
-        height: 40,
-        decoration: BoxDecoration(
-          color: CupertinoColors.systemBackground.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            _buildDayChip(null, '全部'),
-            ...dailyTracks.asMap().entries.map((entry) {
-              return _buildDayChip(entry.key, '第${entry.key + 1}天');
-            }).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDayChip(int? day, String label) {
-    final isSelected = _selectedDay == day;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() => _selectedDay = day);
-          widget.events.onDayChanged?.call(day);
-        },
-        child: Container(
-          margin: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? CupertinoColors.activeBlue
-                : CupertinoColors.systemGrey5,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                color: isSelected
-                    ? CupertinoColors.white
-                    : CupertinoColors.label,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _buildElevationChart(List<TrackPointVO> trackPoints) {
-    return [
-      Positioned(
-        bottom: 16,
-        right: 16,
-        child: _buildMapButton(
-          icon: _showElevationChart
-              ? CupertinoIcons.chart_bar_square_fill
-              : CupertinoIcons.chart_bar_square,
-          isActive: _showElevationChart,
-          onPressed: () {
-            setState(() => _showElevationChart = !_showElevationChart);
-          },
-        ),
-      ),
-      if (_showElevationChart)
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: _buildFloatingElevationChart(trackPoints),
-        ),
-    ];
-  }
-
-  Widget _buildFloatingElevationChart(List<TrackPointVO> trackPoints) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground.withOpacity(0.95),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
         ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: CupertinoColors.separator,
-                  width: 0.5,
-                ),
-              ),
-            ),
-            child: Row(
-              children: [
-                const Text(
-                  '海拔图表',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  minSize: 0,
-                  onPressed: () {
-                    setState(() => _showElevationChart = false);
-                  },
-                  child: const Icon(
-                    CupertinoIcons.xmark,
-                    size: 18,
-                    color: CupertinoColors.secondaryLabel,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ElevationChartWidget(
-            trackPoints: trackPoints,
-            config: const ElevationChartConfig(
-              height: 120.0,
-              showLabels: false,
-              enableInteraction: true,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMapButton({
-    required IconData icon,
-    required VoidCallback onPressed,
-    bool isActive = false,
-    Color? activeColor,
-  }) {
-    final buttonColor = isActive
-        ? (activeColor ?? CupertinoColors.systemBlue)
-        : CupertinoColors.systemGrey4;
-    final iconColor = isActive ? CupertinoColors.white : CupertinoColors.label;
-
-    return CupertinoButton(
-      padding: const EdgeInsets.all(12),
-      color: buttonColor.withOpacity(0.9),
-      borderRadius: BorderRadius.circular(25),
-      minSize: 0,
-      onPressed: onPressed,
-      child: Icon(
-        icon,
-        color: iconColor,
-        size: 20,
       ),
     );
   }

@@ -270,13 +270,11 @@ class GuideTripPlanWidget extends StatelessWidget {
   /// 处理查看行程
   void _handleViewTrip(BuildContext context) {
     // TODO: 实现查看行程功能
-    debugPrint('查看行程规划');
   }
 
   /// 处理查看完整行程规划
   void _handleViewFullPlan(BuildContext context) {
     // TODO: 实现查看完整行程规划功能
-    debugPrint('查看完整行程规划');
   }
 }
 

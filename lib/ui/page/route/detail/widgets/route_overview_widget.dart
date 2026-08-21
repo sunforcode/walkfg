@@ -184,14 +184,11 @@ class RouteOverviewWidget extends StatelessWidget {
   Widget _buildTrackBasicInfo() {
     final track = route.defaultMap;
 
-    // 调试信息
-    print('Route defaultMap: $track');
-
     if (track == null) {
       // 回退方案：使用route对象的计算属性
       return Text(
         '距离 ${route.distance.toStringAsFixed(1)}km · '
-        '用时 ${route.duration} · '
+        '用时 ${route.durationText} · '
         '爬升 ${route.elevationGain.toInt()}m · '
         '下降 ${route.elevationLoss.toInt()}m',
         style: const TextStyle(

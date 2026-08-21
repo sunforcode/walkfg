@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/route/route_model.dart';
 
-/// 路线统计卡片组件 - 显示距离、时间、爬升等关键数据
+/// 路线统计卡片组件 - 显示路线名、距离、时间、爬升等关键数据
 class RouteStatsCardWidget extends StatelessWidget {
   /// 路线数据
   final RouteModel route;
@@ -21,7 +21,7 @@ class RouteStatsCardWidget extends StatelessWidget {
     
     // 获取统计数据
     final distance = track?.distance ?? route.distance;
-    final duration = track?.getEstimatedTimeText() ?? route.duration;
+    final duration = track?.getEstimatedTimeText() ?? route.durationText;
     final elevationGain = track?.elevationGain.toInt() ?? route.elevationGain.toInt();
     final elevationLoss = track?.elevationLoss.toInt() ?? route.elevationLoss.toInt();
 
@@ -44,7 +44,60 @@ class RouteStatsCardWidget extends StatelessWidget {
             ),
           ),
           
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+
+          // 路线名称
+          Text(
+            route.name,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: CupertinoColors.label,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+
+          const SizedBox(height: 6),
+
+          // 地区 + 难度标签行
+          Row(
+            children: [
+              const Icon(
+                CupertinoIcons.location_solid,
+                size: 12,
+                color: CupertinoColors.systemGrey,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                route.region,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: CupertinoColors.systemGrey,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(width: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: route.difficulty.getColor().withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  route.difficulty.getName(),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: route.difficulty.getColor(),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
 
           // 第一行：距离
           _buildStatRow(
@@ -79,11 +132,6 @@ class RouteStatsCardWidget extends StatelessWidget {
               ),
             ],
           ),
-
-          const SizedBox(height: 20),
-
-          // 难度信息
-          _buildDifficultyRow(),
         ],
       ),
       ),
@@ -143,45 +191,6 @@ class RouteStatsCardWidget extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  /// 构建难度信息行
-  Widget _buildDifficultyRow() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            CupertinoIcons.chart_bar,
-            size: 14,
-            color: route.difficulty.getColor(),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            '难度: ${route.difficulty.getName()}',
-            style: TextStyle(
-              fontSize: 12,
-              color: route.difficulty.getColor(),
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            route.region,
-            style: const TextStyle(
-              fontSize: 12,
-              color: CupertinoColors.systemGrey,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
     );
   }
 }

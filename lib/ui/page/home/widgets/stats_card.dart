@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../model/user/user_model.dart';
+import '../../../../model/user/user_stats_model.dart';
 import '../../common/async_content_builder.dart';
 
 /// 统计信息卡片组件
 class StatsCard extends StatelessWidget {
   /// 用户统计数据Future
-  final Future<UserModel> userStatsFuture;
+  final Future<UserStatsModel> userStatsFuture;
 
   /// 点击已完成路线的回调
   final VoidCallback onCompletedRoutesPressed;
@@ -32,7 +32,7 @@ class StatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AsyncContentBuilder<UserModel>(
+    return AsyncContentBuilder<UserStatsModel>(
       future: userStatsFuture,
       builder: (context, userStats) => _buildStatsCard(context, userStats),
       loadingBuilder: (context) => _buildLoadingCard(),
@@ -118,7 +118,7 @@ class StatsCard extends StatelessWidget {
   }
 
   /// 构建统计卡片
-  Widget _buildStatsCard(BuildContext context, UserModel userStats) {
+  Widget _buildStatsCard(BuildContext context, UserStatsModel userStats) {
     // 主题颜色
     final List<Color> themeColors = const [
       Color(0xFF3498DB), // 蓝色

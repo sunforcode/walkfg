@@ -1,0 +1,177 @@
+# Walk Flutter App CI/CD
+#
+# 公开仓库：runner 额度无限（Linux 与 macOS 均不计量费）。
+#
+# analyze-test : PR + push 都跑，静态检查 + 单元测试
+# build-android: push 到 master 跑，产出 debug APK artifact
+# build-ios    : push 到 master 跑（macOS runner），--no-codesign 验证编译，产出 .app
+# build-web    : push 到 master 跑，--base-href /app/ 构建，产出静态文件 artifact
+# deploy-web   : push 到 master 跑，把 web 构建产物发布到 walk-server，
+#                覆盖 ~/walk/flutter-web（nginx /app/ 路由的数据卷挂载点）
+#
+# Flutter 版本钉死与本地一致，防 CI 与本地行为漂移。
+
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+concurrency:
+  group: walkfg-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: '3.41.8'
+
+jobs:
+  analyze-test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
+      - name: Test
+        run: flutter test
+
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: analyze-test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build debug APK
+        run: flutter build apk --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 30
+
+  build-ios:
+    name: Build iOS (no-codesign)
+    runs-on: macos-15
+    needs: analyze-test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
+
+      - name: Upload .app
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app
+          path: build/ios/iphoneos/Runner.app
+          retention-days: 30
+
+  build-web:
+    name: Build Web
+    runs-on: ubuntu-latest
+    needs: analyze-test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build Web (base-href /app/)
+        # vialu.cn 的 Flutter Web 挂在 /app/ 子路径下，与 Admin 前端共用 nginx。
+        run: flutter build web --release --base-href /app/
+
+      - name: Upload web build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web/
+          retention-days: 30
+
+  deploy-web:
+    name: Deploy Web to walk-server
+    runs-on: ubuntu-latest
+    needs: build-web
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Download web build
+        uses: actions/download-artifact@v4
+        with:
+          name: web-build
+          path: web-build
+
+      - name: Configure SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Trust server host key
+        env:
+          WALK_SERVER: ${{ secrets.WALK_SERVER }}
+        run: |
+          mkdir -p ~/.ssh
+          HOST=$(printf '%s' "$WALK_SERVER" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          ssh-keyscan -H "${HOST##*@}" >> ~/.ssh/known_hosts
+
+      - name: Publish to walk-server
+        env:
+          WALK_SERVER: ${{ secrets.WALK_SERVER }}
+          WALK_REMOTE_DIR: ${{ secrets.WALK_REMOTE_DIR }}
+        run: |
+          HOST=$(printf '%s' "$WALK_SERVER" | tr -d '\n\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          # 覆盖 flutter-web 数据卷挂载点，nginx /app/ 路由立即生效，无需重建容器
+          rsync -az --delete \
+            web-build/ \
+            "$HOST:$WALK_REMOTE_DIR/flutter-web/"
+          echo "Published to $HOST:$WALK_REMOTE_DIR/flutter-web/"

@@ -91,7 +91,7 @@ class CampsiteModel extends TrackPointVO {
     required this.id,
     required super.latitude,
     required super.longitude,
-    required super.elevation,
+    super.elevation,
     super.timestamp,
     super.distanceFromStart,
     this.name,
@@ -226,19 +226,35 @@ class CampsiteModel extends TrackPointVO {
 CampsiteType _parseCampsiteType(dynamic value) {
   if (value == null) return CampsiteType.other;
 
+  if (value is String) {
+    switch (value.toLowerCase()) {
+      case 'official':
+      case 'designated':
+        return CampsiteType.designated;
+      case 'unofficial':
+      case 'wild':
+        return CampsiteType.wild;
+      case 'shelter':
+        return CampsiteType.other;
+      case 'summit':
+        return CampsiteType.summit;
+      case 'lakeside':
+        return CampsiteType.lakeside;
+      case 'forest':
+        return CampsiteType.forest;
+      case 'meadow':
+        return CampsiteType.meadow;
+      case 'other':
+      default:
+        return CampsiteType.other;
+    }
+  }
+
   if (value is int) {
-    // 从整数索引转换为枚举
     if (value >= 0 && value < CampsiteType.values.length) {
       return CampsiteType.values[value];
     }
     return CampsiteType.other;
-  }
-
-  if (value is String) {
-    return CampsiteType.values.firstWhere(
-      (type) => type.name == value,
-      orElse: () => CampsiteType.other,
-    );
   }
 
   return CampsiteType.other;
@@ -247,6 +263,21 @@ CampsiteType _parseCampsiteType(dynamic value) {
 /// 解析设施等级
 
 /// 营地类型转JSON
-int _campsiteTypeToJson(CampsiteType type) {
-  return type.index;
+String _campsiteTypeToJson(CampsiteType type) {
+  switch (type) {
+    case CampsiteType.summit:
+      return 'summit';
+    case CampsiteType.lakeside:
+      return 'lakeside';
+    case CampsiteType.forest:
+      return 'forest';
+    case CampsiteType.meadow:
+      return 'meadow';
+    case CampsiteType.designated:
+      return 'designated';
+    case CampsiteType.wild:
+      return 'wild';
+    case CampsiteType.other:
+      return 'other';
+  }
 }

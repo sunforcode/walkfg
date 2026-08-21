@@ -70,7 +70,7 @@ class RouteMapView extends StatelessWidget {
   Widget _buildMap() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: MapWidget(
+      child: UnifiedMapWidget(
         trackPoints: const [],
         markers: routeMarkers.map((m) => m.toMarkerPointModel()).toList(),
         config: MapWidgetConfig(

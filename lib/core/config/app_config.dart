@@ -135,7 +135,7 @@ class AppConfig {
             defaultValue: 'https://staging-api.walkapp.com');
       case AppEnvironment.development:
         return const String.fromEnvironment('DEV_BASE_URL',
-            defaultValue: 'http://127.0.0.1:8080'); // api_endpoints.dart 中已包含 /walkbg 前缀
+            defaultValue: 'http://192.168.31.127:8080'); // 真机调试用 Mac 局域网 IP，api_endpoints.dart 中已包含 /walkbg 前缀
     }
   }
 

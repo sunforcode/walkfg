@@ -91,15 +91,32 @@ enum RouteDifficulty {
 
   /// 从整数解析难度
   static RouteDifficulty fromInt(int value) {
-    if (value >= 0 && value < RouteDifficulty.values.length) {
-      return RouteDifficulty.values[value];
+    switch (value) {
+      case 1:
+        return RouteDifficulty.easy;
+      case 2:
+        return RouteDifficulty.medium;
+      case 3:
+        return RouteDifficulty.hard;
+      case 4:
+        return RouteDifficulty.extreme;
+      default:
+        return RouteDifficulty.medium;
     }
-    return RouteDifficulty.medium; // 默认返回中等难度
   }
 
   /// 难度转整数
   int toInt() {
-    return index;
+    switch (this) {
+      case RouteDifficulty.easy:
+        return 1;
+      case RouteDifficulty.medium:
+        return 2;
+      case RouteDifficulty.hard:
+        return 3;
+      case RouteDifficulty.extreme:
+        return 4;
+    }
   }
 }
 
@@ -141,9 +158,14 @@ RouteStatus parseRouteStatus(String? statusStr) {
   switch (statusStr.toLowerCase()) {
     case 'planning':
       return RouteStatus.planning;
+    case 'in_progress':
+    case 'inprogress':
+    case 'active':
+      return RouteStatus.inProgress;
     case 'completed':
       return RouteStatus.completed;
     case 'cancelled':
+    case 'archived':
       return RouteStatus.cancelled;
     default:
       return RouteStatus.planning;

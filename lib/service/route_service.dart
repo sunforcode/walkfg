@@ -2,10 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:walk/core/network/api_client.dart';
 import 'package:walk/core/network/api_endpoints.dart';
 import 'package:walk/core/network/api_exception.dart';
+import 'package:walk/core/network/response_unwrap.dart';
 import 'package:walk/model/route/route_model.dart';
-import 'package:walk/model/route/route_comment_model.dart';
 import 'package:walk/model/trip/trip_filter_model.dart';
-import 'package:walk/model/route/route_enums.dart';
 
 /// 路线查询参数映射工具
 /// 提供统一的参数抽象，将前端的抽象参数映射到后端的具体查询条件
@@ -152,19 +151,8 @@ class RouteService {
         );
       }
 
-      // 解析API响应
-      final responseData = response.data as Map<String, dynamic>;
-
-      // 检查响应状态
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '获取路线列表失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
       // 解析分页数据
-      final data = responseData['data'] as Map<String, dynamic>;
+      final data = unwrapResponse(response.data as Map<String, dynamic>);
       final content = data['content'] as List<dynamic>;
 
       // 转换为RouteModel列表
@@ -184,16 +172,7 @@ class RouteService {
         ApiEndpoints.routeDetail(routeId),
       );
 
-      final responseData = response.data as Map<String, dynamic>;
-
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '获取路线详情失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final routeData = responseData['data'] as Map<String, dynamic>;
+      final routeData = unwrapResponse(response.data as Map<String, dynamic>);
       return RouteModel.fromJson(routeData);
     } catch (e) {
       if (e is ApiException) {
@@ -220,16 +199,7 @@ class RouteService {
         },
       );
 
-      final responseData = response.data as Map<String, dynamic>;
-
-      if (responseData['code'] != 200) {
-        throw BusinessException(
-          responseData['message'] ?? '搜索路线失败',
-          code: responseData['code']?.toString(),
-        );
-      }
-
-      final data = responseData['data'] as Map<String, dynamic>;
+      final data = unwrapResponse(response.data as Map<String, dynamic>);
       final content = data['content'] as List<dynamic>;
 
       return content.map((json) => RouteModel.fromJson(json)).toList();
@@ -243,13 +213,11 @@ class RouteService {
 
   /// 获取热门路线
   static Future<List<RouteModel>> getPopularRoutes({int limit = 10}) async {
-    debugPrint('RouteService: 开始请求热门路线');
     try {
       final response = await ApiClient.instance.get(
         ApiEndpoints.popularRoutes,
         queryParameters: {'limit': limit},
       );
-      debugPrint('RouteService: 请求热门路线成功');
 
       return _parseRoutesResponse(response.data);
     } catch (e) {
@@ -331,61 +299,10 @@ class RouteService {
 
   /// 解析路线响应数据的通用方法
   static List<RouteModel> _parseRoutesResponse(dynamic responseData) {
-    final data = responseData as Map<String, dynamic>;
-
-    if (data['code'] != 200) {
-      throw BusinessException(
-        data['message'] ?? '获取路线数据失败',
-        code: data['code']?.toString(),
-      );
-    }
-
-    final routesData = data['data'] as Map<String, dynamic>;
+    final routesData = unwrapResponse(responseData as Map<String, dynamic>);
     final content = routesData['content'] as List<dynamic>;
-    debugPrint('RouteService: 成功解析路线数据，共 ${content.length} 条');
 
     return content.map((json) => RouteModel.fromJson(json)).toList();
-  }
-
-  // 以下是其他接口的基础实现，可以根据实际API进行调整
-
-  /// 获取路线评分
-  static Future<Map<String, dynamic>> getRouteRatings(String routeId) async {
-    // TODO: 实现获取路线评分的API调用
-    throw UnimplementedError('getRouteRatings not implemented yet');
-  }
-
-  /// 获取路线标签
-  static Future<List<String>> getRouteTags(String routeId) async {
-    // TODO: 实现获取路线标签的API调用
-    throw UnimplementedError('getRouteTags not implemented yet');
-  }
-
-  /// 获取路线关键点
-  static Future<Map<String, dynamic>> getRouteWaypoints(String routeId) async {
-    // TODO: 实现获取路线关键点的API调用
-    throw UnimplementedError('getRouteWaypoints not implemented yet');
-  }
-
-  /// 根据地区获取路线
-  static Future<List<RouteModel>> getRoutesByRegion(String region,
-      {int limit = 20}) async {
-    // TODO: 实现按地区获取路线的API调用
-    throw UnimplementedError('getRoutesByRegion not implemented yet');
-  }
-
-  /// 根据难度获取路线
-  static Future<List<RouteModel>> getRoutesByDifficulty(RouteDifficulty difficulty,
-      {int limit = 20}) async {
-    // TODO: 实现按难度获取路线的API调用
-    throw UnimplementedError('getRoutesByDifficulty not implemented yet');
-  }
-
-  /// 根据持续时间获取路线
-  static Future<List<RouteModel>> getRoutesByDuration(int minDays, int maxDays,
-      {int limit = 20}) async {
-    // TODO: 实现按持续时间获取路线的API调用
-    throw UnimplementedError('getRoutesByDuration not implemented yet');
   }
 
   /// 根据筛选条件获取路线
@@ -423,27 +340,112 @@ class RouteService {
   }
 
   /// 获取收藏路线
-  static Future<List<RouteModel>> getFavoriteRoutes() async {
-    // TODO: 实现获取收藏路线的API调用
-    throw UnimplementedError('getFavoriteRoutes not implemented yet');
+  ///
+  /// 注意：`userId` 目前由客户端自报，后端未做身份校验，与代码库中既有的
+  /// `_currentUserId = 'current_user'` 占位约定保持一致。
+  static Future<List<RouteModel>> getFavoriteRoutes({
+    String userId = 'current_user',
+    int page = 0,
+    int size = 10,
+  }) async {
+    try {
+      final response = await ApiClient.instance.get(
+        ApiEndpoints.favoriteRoutes,
+        queryParameters: {
+          'userId': userId,
+          'page': page,
+          'size': size,
+        },
+      );
+
+      if (response.data is! Map<String, dynamic>) {
+        throw BusinessException(
+          'API返回了非JSON格式的数据，可能是HTML错误页面。请检查API端点是否正确。',
+          code: 'INVALID_RESPONSE_FORMAT',
+        );
+      }
+
+      final data = unwrapResponse(response.data as Map<String, dynamic>);
+      final content = data['content'] as List<dynamic>;
+
+      return content
+          .map((json) => RouteModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      if (e is ApiException) {
+        rethrow;
+      }
+      throw ApiExceptionFactory.fromException(e);
+    }
   }
 
   /// 收藏路线
-  static Future<bool> favoriteRoute(String routeId) async {
-    // TODO: 实现收藏路线的API调用
-    throw UnimplementedError('favoriteRoute not implemented yet');
+  static Future<bool> favoriteRoute(
+    String routeId, {
+    String userId = 'current_user',
+  }) async {
+    try {
+      final response = await ApiClient.instance.post(
+        ApiEndpoints.favoriteRoute(routeId),
+        queryParameters: {'userId': userId},
+      );
+
+      unwrapResponse(response.data as Map<String, dynamic>);
+
+      return true;
+    } catch (e) {
+      if (e is ApiException) {
+        rethrow;
+      }
+      throw ApiExceptionFactory.fromException(e);
+    }
   }
 
   /// 取消收藏路线
-  static Future<bool> unfavoriteRoute(String routeId) async {
-    // TODO: 实现取消收藏路线的API调用
-    throw UnimplementedError('unfavoriteRoute not implemented yet');
+  static Future<bool> unfavoriteRoute(
+    String routeId, {
+    String userId = 'current_user',
+  }) async {
+    try {
+      final response = await ApiClient.instance.delete(
+        ApiEndpoints.favoriteRoute(routeId),
+        queryParameters: {'userId': userId},
+      );
+
+      unwrapResponse(response.data as Map<String, dynamic>);
+
+      return true;
+    } catch (e) {
+      if (e is ApiException) {
+        rethrow;
+      }
+      throw ApiExceptionFactory.fromException(e);
+    }
   }
 
   /// 检查路线是否已收藏
-  static Future<bool> checkIfFavorite(String routeId) async {
-    // TODO: 实现检查路线是否已收藏的API调用
-    throw UnimplementedError('checkIfFavorite not implemented yet');
+  ///
+  /// 注意：后端没有独立的"检查收藏状态"端点，收藏状态是随
+  /// `GET /api/v1/routes/{id}?userId=` 一并返回的 `is_favorite` 字段，
+  /// 因此这里通过拉取路线详情来获取该状态。
+  static Future<bool> checkIfFavorite(
+    String routeId, {
+    String userId = 'current_user',
+  }) async {
+    try {
+      final response = await ApiClient.instance.get(
+        ApiEndpoints.routeDetail(routeId),
+        queryParameters: {'userId': userId},
+      );
+
+      final routeData = unwrapResponse(response.data as Map<String, dynamic>);
+      return RouteModel.fromJson(routeData).isFavorite;
+    } catch (e) {
+      if (e is ApiException) {
+        rethrow;
+      }
+      throw ApiExceptionFactory.fromException(e);
+    }
   }
 
   /// 添加收藏
@@ -456,52 +458,48 @@ class RouteService {
     return unfavoriteRoute(routeId);
   }
 
-  /// 获取计划路线
-  static Future<List<RouteModel>> getPlannedRoutes() async {
-    // TODO: 实现获取计划路线的API调用
-    throw UnimplementedError('getPlannedRoutes not implemented yet');
-  }
-
-  /// 获取已完成路线
-  static Future<List<RouteModel>> getCompletedRoutes() async {
-    // TODO: 实现获取已完成路线的API调用
-    throw UnimplementedError('getCompletedRoutes not implemented yet');
-  }
-
-  /// 获取路线评论
-  static Future<List<RouteCommentModel>> getRouteComments(String routeId) async {
-    // TODO: 实现获取路线评论的API调用
-    throw UnimplementedError('getRouteComments not implemented yet');
-  }
-
-  /// 添加路线评论
-  static Future<RouteCommentModel> addRouteComment(
-      String routeId, String content, double rating) async {
-    // TODO: 实现添加路线评论的API调用
-    throw UnimplementedError('addRouteComment not implemented yet');
-  }
-
   /// 创建路线
   static Future<RouteModel> createRoute(RouteModel route) async {
-    // TODO: 实现创建路线的API调用
-    throw UnimplementedError('createRoute not implemented yet');
+    try {
+      final response = await ApiClient.instance.post(
+        ApiEndpoints.routes,
+        data: route.toJson(),
+      );
+      final data = unwrapResponse(response.data as Map<String, dynamic>);
+      return RouteModel.fromJson(data);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiExceptionFactory.fromException(e);
+    }
   }
 
   /// 更新路线
   static Future<RouteModel> updateRoute(RouteModel route) async {
-    // TODO: 实现更新路线的API调用
-    throw UnimplementedError('updateRoute not implemented yet');
+    try {
+      final response = await ApiClient.instance.put(
+        ApiEndpoints.routeDetail(route.id),
+        data: route.toJson(),
+      );
+      final data = unwrapResponse(response.data as Map<String, dynamic>);
+      return RouteModel.fromJson(data);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiExceptionFactory.fromException(e);
+    }
   }
 
   /// 删除路线
   static Future<bool> deleteRoute(String routeId) async {
-    // TODO: 实现删除路线的API调用
-    throw UnimplementedError('deleteRoute not implemented yet');
+    try {
+      final response = await ApiClient.instance.delete(
+        ApiEndpoints.routeDetail(routeId),
+      );
+      unwrapResponse(response.data as Map<String, dynamic>);
+      return true;
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiExceptionFactory.fromException(e);
+    }
   }
 
-  /// 获取相关路线
-  static Future<List<RouteModel>> getRelatedRoutes(String routeId,
-      {int limit = 5}) async {
-    return [];
-  }
 }

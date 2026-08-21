@@ -250,7 +250,6 @@ class GuideRelatedWidget extends StatelessWidget {
   /// 处理攻略卡片点击
   void _handleGuideCardTap(GuideModel relatedGuide) {
     // TODO: 实现导航到相关攻略
-    debugPrint('导航到攻略: ${relatedGuide.title}');
   }
 
   /// 格式化数字

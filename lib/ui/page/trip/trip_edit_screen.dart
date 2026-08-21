@@ -57,7 +57,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
         _editingTrip = trip;
       });
     }).catchError((error) {
-      print('加载行程详情失败: $error');
+      debugPrint('加载行程详情失败: $error');
     });
   }
 

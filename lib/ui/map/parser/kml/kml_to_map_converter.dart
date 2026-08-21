@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:walk/model/map/map_bounds.dart';
 import 'package:walk/model/map/map_data_model.dart';
 import 'package:walk/model/map/map_statistics.dart';
@@ -108,10 +109,8 @@ class KmlToMapConverter {
 
       // 按sequenceNumber排序
       segments.sort((a, b) => a.sequenceNumber.compareTo(b.sequenceNumber));
-
-      print('KmlToMapConverter: 解析到 ${segments.length} 个分段');
     } catch (e) {
-      print('KmlToMapConverter: 解析分段数据失败: $e');
+      debugPrint('KmlToMapConverter: 解析分段数据失败: $e');
     }
 
     return segments;
@@ -156,22 +155,16 @@ class KmlToMapConverter {
     List<TrackPointVO> trackPoints,
     List<TrackPointVO> waypoints,
   ) {
-    print('KmlToMapConverter: 开始处理 ${placemarks.length} 个地标');
-
     for (int i = 0; i < placemarks.length; i++) {
       final placemark = placemarks[i];
-      print('KmlToMapConverter: 处理第 ${i + 1} 个地标: ${placemark.name}');
 
       if (placemark.geometry == null) {
-        print('KmlToMapConverter: 地标 ${placemark.name} 没有几何体，跳过');
         continue;
       }
 
       final geometry = placemark.geometry!;
-      print('KmlToMapConverter: 几何体类型: ${geometry.runtimeType}');
 
       if (geometry is KmlPoint) {
-        print('KmlToMapConverter: 处理点几何体');
         // 点几何体作为路标点
         waypoints.add(TrackPointVO(
           latitude: geometry.coordinates.latitude,
@@ -179,11 +172,7 @@ class KmlToMapConverter {
           elevation: geometry.coordinates.altitude,
           timestamp: placemark.timeStamp?.when,
         ));
-        print(
-            'KmlToMapConverter: 添加路标点 (${geometry.coordinates.latitude}, ${geometry.coordinates.longitude})');
       } else if (geometry is KmlLineString) {
-        print(
-            'KmlToMapConverter: 处理线串几何体，坐标数量: ${geometry.coordinates.length}');
         // 线串几何体作为轨迹点
         for (int j = 0; j < geometry.coordinates.length; j++) {
           final coord = geometry.coordinates[j];
@@ -193,15 +182,8 @@ class KmlToMapConverter {
             elevation: coord.altitude,
             timestamp: placemark.timeStamp?.when,
           ));
-          if (j < 3 || j >= geometry.coordinates.length - 3) {
-            print(
-                'KmlToMapConverter: 添加轨迹点 ${j + 1}: (${coord.latitude}, ${coord.longitude})');
-          } else if (j == 3) {
-            print('KmlToMapConverter: ... (省略中间坐标点) ...');
-          }
         }
       } else if (geometry is KmlTrack) {
-        print('KmlToMapConverter: 处理Google扩展轨迹，坐标数量: ${geometry.coord.length}');
         // Google扩展轨迹
         for (int j = 0; j < geometry.coord.length; j++) {
           final coord = geometry.coord[j];
@@ -213,16 +195,8 @@ class KmlToMapConverter {
             elevation: coord.altitude,
             timestamp: timestamp,
           ));
-          if (j < 3 || j >= geometry.coord.length - 3) {
-            print(
-                'KmlToMapConverter: 添加轨迹点 ${j + 1}: (${coord.latitude}, ${coord.longitude})');
-          } else if (j == 3) {
-            print('KmlToMapConverter: ... (省略中间坐标点) ...');
-          }
         }
       } else if (geometry is KmlMultiGeometry) {
-        print(
-            'KmlToMapConverter: 处理多重几何体，子几何体数量: ${geometry.geometries.length}');
         // 多重几何体递归处理
         for (final subGeometry in geometry.geometries) {
           final subPlacemark = KmlPlacemark(
@@ -232,12 +206,9 @@ class KmlToMapConverter {
           _extractFromPlacemarks([subPlacemark], trackPoints, waypoints);
         }
       } else {
-        print('KmlToMapConverter: 未知几何体类型: ${geometry.runtimeType}');
+        debugPrint('KmlToMapConverter: 未知几何体类型: ${geometry.runtimeType}');
       }
     }
-
-    print(
-        'KmlToMapConverter: 处理完成，轨迹点总数: ${trackPoints.length}，路标点总数: ${waypoints.length}');
   }
 
   /// 计算边界

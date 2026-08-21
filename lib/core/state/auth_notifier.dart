@@ -51,23 +51,15 @@ class AuthNotifier extends ChangeNotifier {
   /// 在应用启动时调用，从 AuthInterceptor 读取本地存储的 token 状态
   /// 并初始化 AuthNotifier 的登录状态
   Future<void> initializeFromStorage() async {
-    print('AuthNotifier.initializeFromStorage() called, _isInitialized: $_isInitialized');
-    
     if (_isInitialized) {
-      print('AuthNotifier: Already initialized, skipping');
       return;
     }
-    
-    print('AuthNotifier: Calling AuthInterceptor.isLoggedIn()...');
+
     final hasToken = await AuthInterceptor.isLoggedIn();
-    print('AuthNotifier: AuthInterceptor.isLoggedIn() returned: $hasToken');
-    
+
     _isInitialized = true;
     _isLoggedIn = hasToken;
-    
-    print('AuthNotifier: Initialized from storage, isLoggedIn: $hasToken');
-    debugPrint('AuthNotifier: Initialized from storage, isLoggedIn: $hasToken');
-    
+
     // 通知监听器状态变化
     // 注意：这个方法在 runApp() 之前调用，Widget 可能还没有创建
     // 但为了确保状态一致性，还是调用 notifyListeners()

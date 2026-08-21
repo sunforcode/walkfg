@@ -60,4 +60,10 @@ abstract class BaseModel {
   static int? timestampToJson(DateTime? dateTime) {
     return dateTime?.millisecondsSinceEpoch;
   }
+
+  /// 解析可空时间戳（支持秒和毫秒）
+  static DateTime? parseTimestampNullable(dynamic timestamp) {
+    if (timestamp == null) return null;
+    return parseTimestamp(timestamp);
+  }
 }

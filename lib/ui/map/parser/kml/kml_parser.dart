@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
@@ -456,15 +457,8 @@ class KmlParser {
 
   /// 解析坐标
   static List<KmlCoordinates> _parseCoordinates(String coordinatesText) {
-    print(
-        'KmlParser._parseCoordinates: 开始解析坐标，原始文本长度: ${coordinatesText.length}');
-    print(
-        'KmlParser._parseCoordinates: 原始坐标文本前100字符: ${coordinatesText.length > 100 ? coordinatesText.substring(0, 100) + '...' : coordinatesText}');
-
     final coordinates = <KmlCoordinates>[];
     final lines = coordinatesText.split(RegExp(r'[\s\n\r]+'));
-
-    print('KmlParser._parseCoordinates: 分割后行数: ${lines.length}');
 
     for (int i = 0; i < lines.length; i++) {
       final line = lines[i];
@@ -472,12 +466,6 @@ class KmlParser {
       if (trimmed.isEmpty) continue;
 
       final parts = trimmed.split(',');
-      if (i < 3 || i >= lines.length - 3) {
-        print(
-            'KmlParser._parseCoordinates: 第${i + 1}行: "$trimmed", 分割后部分数: ${parts.length}');
-      } else if (i == 3) {
-        print('KmlParser._parseCoordinates: ... (省略中间行) ...');
-      }
 
       if (parts.length >= 2) {
         final longitude = double.tryParse(parts[0]);
@@ -491,20 +479,15 @@ class KmlParser {
             latitude: latitude,
             altitude: altitude,
           ));
-          if (i < 3 || i >= lines.length - 3) {
-            print(
-                'KmlParser._parseCoordinates: 成功解析坐标: ($longitude, $latitude, $altitude)');
-          }
         } else {
-          print(
+          debugPrint(
               'KmlParser._parseCoordinates: 解析失败，经纬度为null: longitude=$longitude, latitude=$latitude');
         }
       } else {
-        print('KmlParser._parseCoordinates: 跳过无效行，部分数不足: ${parts.length}');
+        debugPrint('KmlParser._parseCoordinates: 跳过无效行，部分数不足: ${parts.length}');
       }
     }
 
-    print('KmlParser._parseCoordinates: 解析完成，总坐标数: ${coordinates.length}');
     return coordinates;
   }
 

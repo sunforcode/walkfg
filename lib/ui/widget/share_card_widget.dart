@@ -267,11 +267,7 @@ class ShareCardWidget extends StatelessWidget {
   }
 
   Widget _buildEquipmentInfo() {
-    // 获取装备清单信息
-    final hasEquipmentList = trip.hasEquipmentList();
-    final equipmentList = trip.getEquipmentList();
-    final totalWeight = equipmentList?.totalWeight ?? 0;
-
+    // 分享卡片暂不展示装备清单详情（行程数据不再内嵌装备清单对象）
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -307,11 +303,9 @@ class ShareCardWidget extends StatelessWidget {
                     color: Colors.black87,
                   ),
                 ),
-                Text(
-                  hasEquipmentList
-                      ? '${(totalWeight / 1000).toStringAsFixed(1)} kg'
-                      : '未配置',
-                  style: const TextStyle(
+                const Text(
+                  '未配置',
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.purple,
@@ -320,23 +314,6 @@ class ShareCardWidget extends StatelessWidget {
               ],
             ),
           ),
-          if (hasEquipmentList)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color:
-                    _getWeightLevelColor(totalWeight / 1000).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                _getWeightLevel(totalWeight / 1000),
-                style: TextStyle(
-                  fontSize: 11,
-                  color: _getWeightLevelColor(totalWeight / 1000),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -434,20 +411,6 @@ class ShareCardWidget extends StatelessWidget {
     );
   }
 
-  String _getWeightLevel(double weight) {
-    if (weight < 10) return '轻装';
-    if (weight < 15) return '中等';
-    if (weight < 20) return '重装';
-    return '超重';
-  }
-
-  Color _getWeightLevelColor(double weight) {
-    if (weight < 10) return Colors.green;
-    if (weight < 15) return Colors.orange;
-    if (weight < 20) return Colors.red;
-    return Colors.red[800]!;
-  }
-
   String _formatDate(DateTime date) {
     return '${date.month}/${date.day}';
   }
@@ -476,7 +439,7 @@ class ShareCardWidget extends StatelessWidget {
           await image.toByteData(format: ui.ImageByteFormat.png);
       return byteData?.buffer.asUint8List();
     } catch (e) {
-      print('生成分享图片失败: $e');
+      debugPrint('生成分享图片失败: $e');
       return null;
     }
   }

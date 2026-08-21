@@ -117,22 +117,29 @@ class _GuideDetailScreenState extends State<GuideDetailScreen> {
   }
 
   /// 处理点赞操作
-  void _handleLike(GuideModel guide) {
+  Future<void> _handleLike(GuideModel guide) async {
+    final wasLiked = _isLiked;
     setState(() {
       _isLiked = !_isLiked;
     });
 
     try {
-      GuideService.likeGuide(guide.id);
+      if (_isLiked) {
+        await GuideService.likeGuide(guide.id);
+      } else {
+        await GuideService.unlikeGuide(guide.id);
+      }
 
+      if (!mounted) return;
       final message = _isLiked
           ? GuideDetailConstants.likeSuccessMessage
           : GuideDetailConstants.unlikeSuccessMessage;
       ToastUtils.showToast(context, message);
     } catch (e) {
+      if (!mounted) return;
       // 回滚状态
       setState(() {
-        _isLiked = !_isLiked;
+        _isLiked = wasLiked;
       });
       ToastUtils.showToast(context, GuideDetailConstants.genericErrorMessage);
     }

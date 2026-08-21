@@ -3,7 +3,6 @@ import '../base/base_model.dart';
 import '../route/route_model.dart';
 import '../route/route_enums.dart';
 import '../trip/trip_model.dart';
-import '../equipment/equipment_list_model.dart';
 import '../user/user_model.dart';
 
 part 'guide_model.g.dart';
@@ -143,10 +142,6 @@ class GuideModel extends BaseModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   final TripModel? baseTrip;
 
-  /// 推荐装备清单
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  final EquipmentListModel? equipmentList;
-
   /// 作者详细信息
   @JsonKey(includeFromJson: false, includeToJson: false)
   final UserModel? authorProfile;
@@ -204,7 +199,6 @@ class GuideModel extends BaseModel {
     // 运行时数据
     this.baseRoute,
     this.baseTrip,
-    this.equipmentList,
     this.authorProfile,
     this.relatedGuides,
   });
@@ -302,11 +296,25 @@ class GuideModel extends BaseModel {
   // === JSON转换辅助方法 ===
 
   /// 解析难度
+  ///
+  /// 后端 difficulty 为 1-5 的整数编码（1=最简单，5=最难），
+  /// 映射关系为：1 -> easy, 2 -> medium, 3 -> hard, 4/5 -> extreme。
+  /// 注意：这不是简单的数组下标索引，避免 1-5 与 0-3 的偏移错位。
   static RouteDifficulty _parseDifficulty(dynamic difficulty) {
-    if (difficulty is int &&
-        difficulty >= 0 &&
-        difficulty < RouteDifficulty.values.length) {
-      return RouteDifficulty.values[difficulty];
+    if (difficulty is int) {
+      switch (difficulty) {
+        case 1:
+          return RouteDifficulty.easy;
+        case 2:
+          return RouteDifficulty.medium;
+        case 3:
+          return RouteDifficulty.hard;
+        case 4:
+        case 5:
+          return RouteDifficulty.extreme;
+        default:
+          return RouteDifficulty.medium;
+      }
     } else if (difficulty is String) {
       switch (difficulty.toLowerCase()) {
         case 'easy':
@@ -333,8 +341,19 @@ class GuideModel extends BaseModel {
   }
 
   /// 难度转JSON
+  ///
+  /// 与 [_parseDifficulty] 对应的反向映射，输出后端期望的 1-5 编码。
   static int _difficultyToJson(RouteDifficulty difficulty) {
-    return difficulty.index;
+    switch (difficulty) {
+      case RouteDifficulty.easy:
+        return 1;
+      case RouteDifficulty.medium:
+        return 2;
+      case RouteDifficulty.hard:
+        return 3;
+      case RouteDifficulty.extreme:
+        return 5;
+    }
   }
 
   /// 创建带有点赞状态的副本
@@ -378,7 +397,6 @@ class GuideModel extends BaseModel {
     // 运行时数据
     RouteModel? baseRoute,
     TripModel? baseTrip,
-    EquipmentListModel? equipmentList,
     UserModel? authorProfile,
     List<GuideModel>? relatedGuides,
   }) {
@@ -426,7 +444,6 @@ class GuideModel extends BaseModel {
       // 运行时数据
       baseRoute: baseRoute ?? this.baseRoute,
       baseTrip: baseTrip ?? this.baseTrip,
-      equipmentList: equipmentList ?? this.equipmentList,
       authorProfile: authorProfile ?? this.authorProfile,
       relatedGuides: relatedGuides ?? this.relatedGuides,
     );

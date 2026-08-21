@@ -406,21 +406,14 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
         .length;
   }
 
-  // 获取装备概要
+  // 获取装备概要（行程数据暂不内嵌装备清单）
   String _getEquipmentSummary() {
-    if (trip.equipmentList == null || trip.equipmentList!.totalItems == 0) {
-      return '0/0';
-    }
-    final prepared =
-        trip.equipmentList!.equipments.where((e) => e.isOwned).length;
-    final total = trip.equipmentList!.totalItems;
-    return '$prepared/$total';
+    return '0/0';
   }
 
   // 获取总重量
   String _getTotalWeight() {
-    if (trip.equipmentList == null) return '0';
-    return trip.equipmentList!.totalWeight.toStringAsFixed(1);
+    return '0';
   }
 
   // 获取预算进度
@@ -481,13 +474,9 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
     return DateTime.now().weekday == 2; // 假设周二有雨
   }
 
-  // 检查是否有装备提醒
+  // 检查是否有装备提醒（行程数据暂不内嵌装备清单，暂不提示）
   bool _hasEquipmentAlert() {
-    if (trip.equipmentList == null) return true;
-    final prepared =
-        trip.equipmentList!.equipments.where((e) => e.isOwned).length;
-    final total = trip.equipmentList!.totalItems;
-    return total > 0 && prepared < total;
+    return false;
   }
 
   // 检查是否有出发提醒

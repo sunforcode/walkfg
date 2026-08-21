@@ -70,7 +70,6 @@ class GuideContentWidget extends StatelessWidget {
       styleSheet: _buildMarkdownStyleSheet(),
       onTapLink: (text, href, title) {
         // TODO: 处理链接点击
-        debugPrint('点击链接: $href');
       },
       imageBuilder: (uri, title, alt) {
         // 自定义图片构建器

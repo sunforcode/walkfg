@@ -129,7 +129,7 @@ class RouteListCard extends StatelessWidget {
               const SizedBox(width: 12),
               _buildInfoChip(
                 CupertinoIcons.time,
-                route.duration,
+                route.durationText,
               ),
             ],
           ),

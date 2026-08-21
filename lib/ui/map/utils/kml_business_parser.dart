@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:walk/model/map/map_data_model.dart';
 import 'package:walk/ui/map/parser/kml/kml_models.dart';
 import 'package:walk/ui/map/parser/kml/kml_parser.dart';
@@ -14,24 +15,19 @@ class KmlBusinessParser {
   /// - 网络URL: 'http://example.com/route.kml', 'https://example.com/route.kml'
   static Future<MapDataModel> parseFromPath(String path) async {
     try {
-      print('KmlBusinessParser.parseFromPath: 开始解析路径: $path');
-
       // 使用底层解析器解析KML文档
       final kmlDocument = await KmlParser.parseFromPath(path);
-      print('KmlBusinessParser.parseFromPath: KML文档解析成功');
 
       // 转换为业务模型
       final mapData = KmlToMapConverter.convertToMapData(
         kmlDocument,
         sourceUrl: path,
       );
-      print(
-          'KmlBusinessParser.parseFromPath: 转换为MapDataModel成功，轨迹点数: ${mapData.trackPoints.length}');
 
       return mapData;
     } catch (e, stackTrace) {
-      print('KmlBusinessParser.parseFromPath: 解析失败: $e');
-      print('KmlBusinessParser.parseFromPath: 堆栈跟踪: $stackTrace');
+      debugPrint('KmlBusinessParser.parseFromPath: 解析失败: $e');
+      debugPrint('KmlBusinessParser.parseFromPath: 堆栈跟踪: $stackTrace');
       rethrow;
     }
   }
@@ -39,12 +35,8 @@ class KmlBusinessParser {
   /// 从字符串解析为MapDataModel
   static MapDataModel parseFromString(String kmlContent, {String? sourceUrl}) {
     try {
-      print(
-          'KmlBusinessParser.parseFromString: 开始解析KML字符串，长度: ${kmlContent.length}');
-
       // 使用底层解析器解析KML文档
       final kmlDocument = KmlParser.parseFromString(kmlContent);
-      print('KmlBusinessParser.parseFromString: KML文档解析成功');
 
       // 转换为业务模型
       final mapData = KmlToMapConverter.convertToMapData(
@@ -52,13 +44,11 @@ class KmlBusinessParser {
         sourceUrl: sourceUrl,
         rawContent: kmlContent,
       );
-      print(
-          'KmlBusinessParser.parseFromString: 转换为MapDataModel成功，轨迹点数: ${mapData.trackPoints.length}');
 
       return mapData;
     } catch (e, stackTrace) {
-      print('KmlBusinessParser.parseFromString: 解析失败: $e');
-      print('KmlBusinessParser.parseFromString: 堆栈跟踪: $stackTrace');
+      debugPrint('KmlBusinessParser.parseFromString: 解析失败: $e');
+      debugPrint('KmlBusinessParser.parseFromString: 堆栈跟踪: $stackTrace');
       rethrow;
     }
   }

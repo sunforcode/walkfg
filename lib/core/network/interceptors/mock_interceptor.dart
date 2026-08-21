@@ -28,8 +28,6 @@ class MockInterceptor extends Interceptor {
     final mockData = _getMockData(path, options.queryParameters);
 
     if (mockData != null) {
-      debugPrint('MockInterceptor: Returning mock data for $path');
-
       // 模拟网络延迟 (200-500ms)
       final delay = 200 + _random.nextInt(300);
       await Future.delayed(Duration(milliseconds: delay));
@@ -68,7 +66,6 @@ class MockInterceptor extends Interceptor {
 
     // 匹配推荐路线
     if (path.contains('/routes') && !path.contains('/trips')) {
-      debugPrint('MockInterceptor: Returning mock data for $path');
       return _mockRoutes();
     }
 
@@ -166,10 +163,10 @@ class MockInterceptor extends Interceptor {
             'updated_at': 1705200000000,
           },
         ],
-        'page': 0,
+        'number': 0,
         'size': 10,
-        'total_elements': 2,
-        'total_pages': 1,
+        'totalElements': 2,
+        'totalPages': 1,
       },
     };
   }
@@ -192,7 +189,7 @@ class MockInterceptor extends Interceptor {
             'cover_url': 'https://picsum.photos/600/400?random=1',
             'is_favorite': false,
             'popularity': 9500,
-            'route_type': false,
+            'route_type': 1,
             'is_loop': false,
             'status': 'planning',
             'usage_count': 156,
@@ -220,7 +217,7 @@ class MockInterceptor extends Interceptor {
             'cover_url': 'https://picsum.photos/600/400?random=2',
             'is_favorite': true,
             'popularity': 12000,
-            'route_type': false,
+            'route_type': 1,
             'is_loop': false,
 
             'status': 'planning',
@@ -250,7 +247,7 @@ class MockInterceptor extends Interceptor {
             'is_favorite': false,
             'popularity': 6800,
             'is_loop': false,
-            'route_type': false,
+            'route_type': 1,
             'status': 'planning',
             'usage_count': 89,
             'tags': ['高海拔', '冰川', '原始森林', '极限挑战'],
@@ -267,10 +264,10 @@ class MockInterceptor extends Interceptor {
             'updated_at': 1705200000000,
           },
         ],
-        'page': 0,
+        'number': 0,
         'size': 10,
-        'total_elements': 3,
-        'total_pages': 1,
+        'totalElements': 3,
+        'totalPages': 1,
       },
     };
   }
@@ -419,10 +416,10 @@ class MockInterceptor extends Interceptor {
             'updated_at': 1705200000000,
           },
         ],
-        'page': 0,
+        'number': 0,
         'size': 10,
-        'total_elements': 4,
-        'total_pages': 1,
+        'totalElements': 4,
+        'totalPages': 1,
       },
     };
   }

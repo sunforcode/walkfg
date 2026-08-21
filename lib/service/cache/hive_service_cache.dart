@@ -42,7 +42,6 @@ class HiveServiceCache implements ServiceCache {
     try {
       _cacheBox = await Hive.openBox<String>(_boxName);
       _metaBox = await Hive.openBox<String>(_metaBoxName);
-      debugPrint('HiveServiceCache: 初始化成功');
     } catch (e) {
       debugPrint('HiveServiceCache: 初始化失败 - $e');
       rethrow;
@@ -96,7 +95,6 @@ class HiveServiceCache implements ServiceCache {
         await _metaBox!.delete(key);
       }
 
-      debugPrint('HiveServiceCache: 缓存写入成功 [$key], TTL: $ttl');
     } catch (e) {
       debugPrint('HiveServiceCache: 缓存写入失败 [$key] - $e');
       rethrow;
@@ -110,7 +108,6 @@ class HiveServiceCache implements ServiceCache {
     try {
       await _cacheBox!.delete(key);
       await _metaBox!.delete(key);
-      debugPrint('HiveServiceCache: 缓存删除成功 [$key]');
     } catch (e) {
       debugPrint('HiveServiceCache: 缓存删除失败 [$key] - $e');
     }
@@ -123,7 +120,6 @@ class HiveServiceCache implements ServiceCache {
     try {
       await _cacheBox!.clear();
       await _metaBox!.clear();
-      debugPrint('HiveServiceCache: 缓存已清空');
     } catch (e) {
       debugPrint('HiveServiceCache: 清空缓存失败 - $e');
     }
@@ -177,17 +173,11 @@ class HiveServiceCache implements ServiceCache {
     _ensureInitialized();
 
     final keys = _cacheBox!.keys.toList();
-    int cleanedCount = 0;
 
     for (final key in keys) {
       if (await _isExpired(key as String)) {
         await remove(key);
-        cleanedCount++;
       }
-    }
-
-    if (cleanedCount > 0) {
-      debugPrint('HiveServiceCache: 清理了 $cleanedCount 条过期缓存');
     }
   }
 
@@ -217,6 +207,5 @@ class HiveServiceCache implements ServiceCache {
     await _metaBox?.close();
     _cacheBox = null;
     _metaBox = null;
-    debugPrint('HiveServiceCache: 已关闭');
   }
 }

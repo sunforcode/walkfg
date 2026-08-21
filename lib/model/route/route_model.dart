@@ -11,6 +11,8 @@ import 'package:walk/model/route/daily_plan_model.dart';
 import 'package:walk/model/route/weather_info.dart';
 import 'package:walk/model/route/campsite_model.dart';
 import 'package:walk/model/route/hitchhike_contact_model.dart';
+import 'package:walk/model/route/poi_point_model.dart';
+import 'package:walk/model/route/segment_scheme_model.dart';
 import 'package:walk/model/user/user_model.dart';
 import 'package:walk/model/water/water_source_model.dart';
 import '../base/base_model.dart';
@@ -27,6 +29,7 @@ class RouteModel extends BaseModel {
   final int usageCount;
 
   /// 描述
+  @JsonKey(defaultValue: '')
   final String description;
 
   /// 区域ID
@@ -39,13 +42,14 @@ class RouteModel extends BaseModel {
 
   /// 默认地图ID
   @JsonKey(name: 'default_map_id')
-  final String defaultMapId;
+  final String? defaultMapId;
 
   /// 评分信息
   final RouteRatingsVO? ratings;
 
   /// 标签列表
-  final List<String>? tags;
+  @JsonKey(defaultValue: <String>[])
+  final List<String> tags;
 
   /// 难度
   @JsonKey(
@@ -68,9 +72,29 @@ class RouteModel extends BaseModel {
   @JsonKey(defaultValue: 0)
   final int popularity;
 
-  /// 是否为环线
+  /// 是否为环线（后端字段 is_loop）
   @JsonKey(name: 'is_loop', defaultValue: false)
-  final bool route_type;
+  final bool isLoop;
+
+  /// 路线类型（后端字段 route_type）
+  @JsonKey(name: 'route_type')
+  final int? routeType;
+
+  /// 路线总距离（公里，来自后端 distance 字段）
+  @JsonKey(name: 'distance')
+  final double? distanceKm;
+
+  /// 总爬升（米，来自后端 elevation_gain 字段）
+  @JsonKey(name: 'elevation_gain', defaultValue: null)
+  final double? elevationGainM;
+
+  /// 总下降（米，来自后端 elevation_loss 字段）
+  @JsonKey(name: 'elevation_loss', defaultValue: null)
+  final double? elevationLossM;
+
+  /// 预计时长（分钟，来自后端 duration 字段）
+  @JsonKey(name: 'duration')
+  final int? durationMinutes;
 
   /// 状态
   @JsonKey(fromJson: _parseStatus, toJson: _statusToJson)
@@ -82,6 +106,14 @@ class RouteModel extends BaseModel {
 
   /// 路径分段，ai根据 某些信息将地图分段
   final List<SegmentModel>? segments;
+
+  /// 分段方案列表（后台返回 segment_schemes，每套方案包含内部分段）
+  @JsonKey(name: 'segment_schemes', defaultValue: <SegmentSchemeModel>[])
+  final List<SegmentSchemeModel> segmentSchemes;
+
+  /// 统一附属信息点列表（后台返回 poi_points，替代 marker_points）
+  @JsonKey(name: 'poi_points', defaultValue: <PoiPointModel>[])
+  final List<PoiPointModel> poiPoints;
 
   /// 水源点列表
   @JsonKey(name: 'water_sources')
@@ -139,25 +171,32 @@ class RouteModel extends BaseModel {
     required this.name,
     this.createUser,
     this.usageCount = 0,
-    required this.description,
+    this.description = '',
     required this.regionId,
     this.region = "未知区域",
-    this.defaultMapId = "",
+    this.defaultMapId,
     this.kmlUrl,
     this.gpxUrl,
     this.trackPoints = const <TrackPointVO>[],
     this.defaultMap,
     this.ratings,
-    this.tags,
+    this.tags = const <String>[],
     required this.difficulty,
     this.segments,
+    this.segmentSchemes = const <SegmentSchemeModel>[],
+    this.poiPoints = const <PoiPointModel>[],
     this.dailyPlans,
     this.weatherInfo,
     this.imageUrls,
     this.coverUrl,
     this.isFavorite = false,
     required this.popularity,
-    this.route_type = false,
+    this.isLoop = false,
+    this.routeType,
+    this.distanceKm,
+    this.elevationGainM,
+    this.elevationLossM,
+    this.durationMinutes,
     RouteStatus? status,
     this.waterSources,
     this.supplyPoints,
@@ -175,28 +214,53 @@ class RouteModel extends BaseModel {
   Map<String, dynamic> toJson() => _$RouteModelToJson(this);
 
   /// 解析难度
+  ///
+  /// 后端 difficulty 为 1-5 的整数编码（1=最简单，5=最难），
+  /// 前端 [RouteDifficulty] 只有 4 档，映射关系为：
+  /// 1 -> easy, 2 -> medium, 3 -> hard, 4/5 -> extreme。
+  /// 注意：这不是简单的数组下标索引，避免 1-5 与 0-3 的偏移错位。
   static RouteDifficulty _parseDifficulty(dynamic difficulty) {
-    if (difficulty is int &&
-        difficulty >= 0 &&
-        difficulty < RouteDifficulty.values.length) {
-      return RouteDifficulty.values[difficulty];
+    if (difficulty is int) {
+      switch (difficulty) {
+        case 1:
+          return RouteDifficulty.easy;
+        case 2:
+          return RouteDifficulty.medium;
+        case 3:
+          return RouteDifficulty.hard;
+        case 4:
+        case 5:
+          return RouteDifficulty.extreme;
+      }
     }
     return RouteDifficulty.medium; // 默认返回中等难度
   }
 
   /// 难度转JSON
+  ///
+  /// 与 [_parseDifficulty] 对应的反向映射，输出后端期望的 1-5 编码。
   static int _difficultyToJson(RouteDifficulty difficulty) {
-    return difficulty.index;
+    switch (difficulty) {
+      case RouteDifficulty.easy:
+        return 1;
+      case RouteDifficulty.medium:
+        return 2;
+      case RouteDifficulty.hard:
+        return 3;
+      case RouteDifficulty.extreme:
+        return 5;
+    }
   }
 
-  /// 解析状态
+  /// 解析状态（支持 int 和 String）
   static RouteStatus _parseStatus(dynamic status) {
-    if (status is String) {
-      return parseRouteStatus(status);
-    } else if (status is int &&
+    if (status is int &&
         status >= 0 &&
         status < RouteStatus.values.length) {
       return RouteStatus.values[status];
+    }
+    if (status is String) {
+      return parseRouteStatus(status);
     }
     return RouteStatus.planning;
   }
@@ -246,6 +310,8 @@ class RouteModel extends BaseModel {
     List<String>? tags,
     RouteDifficulty? difficulty,
     List<SegmentModel>? segments,
+    List<SegmentSchemeModel>? segmentSchemes,
+    List<PoiPointModel>? poiPoints,
     List<DailyPlanModel>? dailyPlans,
     WeatherInfoVO? weatherInfo,
     List<String>? imageUrls,
@@ -253,6 +319,11 @@ class RouteModel extends BaseModel {
     bool? isFavorite,
     int? popularity,
     bool? isLoop,
+    int? routeType,
+    double? distanceKm,
+    double? elevationGainM,
+    double? elevationLossM,
+    int? durationMinutes,
     RouteStatus? status,
     List<WaterSourceModel>? waterSources,
     List<SupplyPointModel>? supplyPoints,
@@ -279,12 +350,20 @@ class RouteModel extends BaseModel {
       tags: tags ?? this.tags,
       difficulty: difficulty ?? this.difficulty,
       segments: segments ?? this.segments,
+      segmentSchemes: segmentSchemes ?? this.segmentSchemes,
+      poiPoints: poiPoints ?? this.poiPoints,
       dailyPlans: dailyPlans ?? this.dailyPlans,
       weatherInfo: weatherInfo ?? this.weatherInfo,
       imageUrls: imageUrls ?? this.imageUrls,
       coverUrl: coverUrl ?? this.coverUrl,
       isFavorite: isFavorite ?? this.isFavorite,
       popularity: popularity ?? this.popularity,
+      isLoop: isLoop ?? this.isLoop,
+      routeType: routeType ?? this.routeType,
+      distanceKm: distanceKm ?? this.distanceKm,
+      elevationGainM: elevationGainM ?? this.elevationGainM,
+      elevationLossM: elevationLossM ?? this.elevationLossM,
+      durationMinutes: durationMinutes ?? this.durationMinutes,
       status: status ?? this.status,
       waterSources: waterSources ?? this.waterSources,
       supplyPoints: supplyPoints ?? this.supplyPoints,
@@ -299,52 +378,65 @@ class RouteModel extends BaseModel {
   /// 获取评分
   double get rating => ratings?.overall ?? 0.0;
 
-  /// 获取路线距离（公里）
+  /// 获取路线距离（公里）：优先取接口直接返回的值，fallback 到地图数据或分段计算
   double get distance {
-    if (defaultMap != null) {
-      return defaultMap!.distance;
-    }
-    // 如果没有地图数据，则从分段计算
+    if (distanceKm != null) return distanceKm!;
+    if (defaultMap != null) return defaultMap!.distance;
     return 0;
   }
 
-  /// 获取路线爬升（米）
+  /// 获取路线爬升（米）：优先取接口直接返回的值，fallback 到地图数据或分段计算
   double get elevationGain {
-    if (defaultMap != null) {
-      return defaultMap!.elevationGain;
-    }
-    // 如果没有地图数据，则从分段计算
-    if (segments == null) return 0.0;
-    return segments!.fold<double>(0.0, (sum, segment) => sum + (segment.elevationGain ?? 0.0));
+    if (elevationGainM != null) return elevationGainM!;
+    if (defaultMap != null) return defaultMap!.elevationGain;
+    final defaultSegments = defaultSegmentScheme?.segments ?? segments;
+    if (defaultSegments == null || defaultSegments.isEmpty) return 0.0;
+    return defaultSegments.fold<double>(
+        0.0, (sum, segment) => sum + (segment.elevationGain ?? 0.0));
   }
 
-  /// 获取路线下降（米）
+  /// 获取路线下降（米）：优先取接口直接返回的值，fallback 到地图数据
   double get elevationLoss {
-    if (defaultMap != null) {
-      return defaultMap!.elevationLoss;
-    }
+    if (elevationLossM != null) return elevationLossM!;
+    if (defaultMap != null) return defaultMap!.elevationLoss;
     return 0;
   }
 
-  /// 获取预计时长
-  String get duration {
-    // 从每日计划计算总时长
-    if (dailyPlans?.isNotEmpty == true) {
-      final totalHours = dailyPlans!.fold(0.0, (sum, plan) {
-        return sum + plan.estimatedTime;
-      });
+  /// 获取默认分段方案（is_default=true 的方案，或第一个方案）
+  SegmentSchemeModel? get defaultSegmentScheme {
+    if (segmentSchemes.isEmpty) return null;
+    return segmentSchemes.firstWhere(
+      (s) => s.isDefault,
+      orElse: () => segmentSchemes.first,
+    );
+  }
 
-      final hours = totalHours.floor();
-      final minutes = ((totalHours - hours) * 60).round();
+  /// 获取所有分段（优先从默认方案取，否则从 segments 字段取）
+  List<SegmentModel> get allSegments {
+    final schemeSegments = defaultSegmentScheme?.segments;
+    if (schemeSegments != null && schemeSegments.isNotEmpty) {
+      return schemeSegments;
+    }
+    return segments ?? [];
+  }
 
+  /// 获取预计时长字符串（优先用后端 duration 字段，fallback 按距离估算）
+  String get durationText {
+    int? mins = durationMinutes;
+    if (mins == null && dailyPlans?.isNotEmpty == true) {
+      mins = (dailyPlans!
+              .fold(0.0, (sum, plan) => sum + plan.estimatedTime) *
+          60).round();
+    }
+    if (mins != null && mins > 0) {
+      final hours = mins ~/ 60;
+      final minutes = mins % 60;
       return '$hours:${minutes.toString().padLeft(2, '0')}';
     }
-
-    // 如果没有每日计划，则估算时长（假设平均步行速度为3km/h）
+    // 按距离估算（3km/h）
     final estimatedHours = distance / 3;
     final hours = estimatedHours.floor();
     final minutes = ((estimatedHours - hours) * 60).round();
-
     return '$hours:${minutes.toString().padLeft(2, '0')}';
   }
 }

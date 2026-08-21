@@ -74,7 +74,7 @@ class SupplyPointModel extends TrackPointVO {
     required this.id,
     required super.latitude,
     required super.longitude,
-    required super.elevation,
+    super.elevation,
     super.timestamp,
     super.distanceFromStart,
     this.name,
@@ -184,25 +184,54 @@ class SupplyPointModel extends TrackPointVO {
 SupplyPointType _parseSupplyType(dynamic value) {
   if (value == null) return SupplyPointType.other;
 
+  if (value is String) {
+    switch (value.toLowerCase()) {
+      case 'shop':
+      case 'store':
+        return SupplyPointType.store;
+      case 'restaurant':
+        return SupplyPointType.restaurant;
+      case 'vending_machine':
+        return SupplyPointType.shop;
+      case 'emergency':
+      case 'medical':
+        return SupplyPointType.medical;
+      case 'accommodation':
+        return SupplyPointType.accommodation;
+      case 'gas_station':
+        return SupplyPointType.gasStation;
+      case 'other':
+      default:
+        return SupplyPointType.other;
+    }
+  }
+
   if (value is int) {
-    // 从整数索引转换为枚举
     if (value >= 0 && value < SupplyPointType.values.length) {
       return SupplyPointType.values[value];
     }
     return SupplyPointType.other;
   }
 
-  if (value is String) {
-    return SupplyPointType.values.firstWhere(
-      (type) => type.name == value,
-      orElse: () => SupplyPointType.other,
-    );
-  }
-
   return SupplyPointType.other;
 }
 
 /// 补给点类型转JSON
-int _supplyTypeToJson(SupplyPointType type) {
-  return type.index;
+String _supplyTypeToJson(SupplyPointType type) {
+  switch (type) {
+    case SupplyPointType.store:
+      return 'store';
+    case SupplyPointType.shop:
+      return 'shop';
+    case SupplyPointType.restaurant:
+      return 'restaurant';
+    case SupplyPointType.accommodation:
+      return 'accommodation';
+    case SupplyPointType.gasStation:
+      return 'gas_station';
+    case SupplyPointType.medical:
+      return 'medical';
+    case SupplyPointType.other:
+      return 'other';
+  }
 }

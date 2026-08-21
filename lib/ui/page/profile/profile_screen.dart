@@ -1,15 +1,18 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/core/network/interceptors/auth_interceptor.dart';
 import 'package:walk/core/state/auth_notifier.dart';
 import 'package:walk/service/user_service.dart';
-import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import '../../../model/user/user_model.dart';
+import '../../../model/user/user_stats_model.dart';
 import '../../page/home/widgets/stats_card.dart';
 import 'login_screen.dart';
 import 'auth/register_screen.dart';
 import 'package:walk/utils/toast_utils.dart';
-import '../debug/debug_menu_page.dart';
+import 'widgets/not_logged_in_view.dart';
+import 'widgets/profile_about_section.dart';
+import 'widgets/profile_function_list.dart';
+import 'widgets/profile_settings_list.dart';
+import 'widgets/user_info_card.dart';
 
 /// 个人页面
 class ProfileScreen extends StatefulWidget {
@@ -24,8 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   /// 用户数据
   UserModel? _user;
 
-  /// 用户统计数据Future
-  Future<UserModel>? _userStatsFuture;
+  /// 用户统计数据 Future
+  Future<UserStatsModel>? _userStatsFuture;
 
   /// 是否正在加载
   bool _isLoading = true;
@@ -36,26 +39,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    print('ProfileScreen - initState');
     _checkLoginStatusAndLoadData();
-    
+
     // 监听登录状态变化
     AuthNotifier().addListener(_onAuthStateChanged);
-    print('ProfileScreen - Listening to AuthNotifier');
   }
 
   @override
   void dispose() {
     // 移除登录状态监听
     AuthNotifier().removeListener(_onAuthStateChanged);
-    print('ProfileScreen - Stopped listening to AuthNotifier');
     super.dispose();
   }
 
   /// 登录状态变化回调
   void _onAuthStateChanged() {
-    print('ProfileScreen - Auth state changed, isLoggedIn: ${AuthNotifier().isLoggedIn}');
-    
     if (mounted) {
       setState(() {
         _isLoggedIn = AuthNotifier().isLoggedIn;
@@ -78,23 +76,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   /// 检查登录状态并加载数据
   void _checkLoginStatusAndLoadData() {
-    print('ProfileScreen - 检查登录状态');
     // 使用 AuthNotifier 的状态（已在 main() 中从本地存储初始化）
     final isLoggedIn = AuthNotifier().isLoggedIn;
-    print('ProfileScreen - AuthNotifier.isLoggedIn: $isLoggedIn');
-    
+
     if (mounted) {
       setState(() {
         _isLoggedIn = isLoggedIn;
       });
     }
-    
+
     if (isLoggedIn) {
-      print('ProfileScreen - 已登录，尝试加载用户数据');
       _loadUserData();
       _userStatsFuture = _loadUserStatsData();
     } else {
-      print('ProfileScreen - 未登录，设置为未登录状态');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -105,10 +99,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   /// 加载用户数据
   Future<void> _loadUserData() async {
-    print('ProfileScreen - 开始加载用户数据');
     try {
       final user = await UserService.getCurrentUser();
-      print('ProfileScreen - 用户数据加载成功: ${user.nickname}');
       if (mounted) {
         setState(() {
           _user = user;
@@ -117,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
       }
     } catch (e) {
-      print('ProfileScreen - 加载用户数据失败: $e');
+      debugPrint('ProfileScreen - 加载用户数据失败: $e');
       // 获取用户数据失败，清除 token 并通知登出
       await AuthInterceptor.clearAuthTokens();
       if (mounted) {
@@ -132,11 +124,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   /// 加载用户统计数据
-  Future<UserModel> _loadUserStatsData() async {
+  Future<UserStatsModel> _loadUserStatsData() async {
     try {
       return await UserService.getUserStats();
     } catch (e) {
-      print('ProfileScreen - 加载用户统计数据失败: $e');
+      debugPrint('ProfileScreen - 加载用户统计数据失败: $e');
       rethrow;
     }
   }
@@ -263,8 +255,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('ProfileScreen - build');
-
     // 显示加载状态
     if (_isLoading) {
       return const CupertinoPageScaffold(
@@ -286,7 +276,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           middle: Text('个人中心'),
         ),
         child: SafeArea(
-          child: _buildNotLoggedInView(),
+          child: NotLoggedInView(
+            onLoginPressed: _navigateToLogin,
+            onRegisterPressed: _navigateToRegister,
+          ),
         ),
       );
     }
@@ -338,7 +331,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             // 用户信息卡片
-            _buildUserInfoCard(context),
+            UserInfoCard(
+              user: _user,
+              onEditPressed: () => _showEditProfileDialog(context),
+            ),
 
             const SizedBox(height: 20),
 
@@ -358,17 +354,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 20),
 
             // 功能列表
-            _buildFunctionList(context),
+            const ProfileFunctionList(),
 
             const SizedBox(height: 20),
 
             // 设置列表
-            _buildSettingsList(context),
+            const ProfileSettingsList(),
 
             const SizedBox(height: 20),
 
             // 关于我们
-            _buildAboutSection(context),
+            const ProfileAboutSection(),
 
             const SizedBox(height: 20),
 
@@ -380,160 +376,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  /// 构建未登录视图
-  Widget _buildNotLoggedInView() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Icon(
-            Icons.hiking,
-            size: 80,
-            color: Color(0xFF4CAF50),
-          ),
-          const SizedBox(height: 40),
-          Text(
-            'Walk',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '徒步旅行助手',
-            style: Theme.of(context).textTheme.titleMedium,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 40),
-          CupertinoButton(
-            color: CupertinoColors.activeBlue,
-            child: const Text('登录'),
-            onPressed: _navigateToLogin,
-          ),
-          const SizedBox(height: 16),
-          CupertinoButton(
-            color: CupertinoColors.systemGrey5,
-            child: const Text(
-              '注册',
-              style: TextStyle(color: CupertinoColors.activeBlue),
-            ),
-            onPressed: _navigateToRegister,
-          ),
-          const SizedBox(height: 40),
-          const Text(
-            '登录后可以使用更多功能',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: CupertinoColors.systemGrey,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 构建用户信息卡片
-  Widget _buildUserInfoCard(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: CupertinoColors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.systemGrey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // 头像
-          Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: CupertinoColors.systemBlue.withOpacity(0.1),
-              border: Border.all(
-                color: CupertinoColors.systemBlue.withOpacity(0.3),
-                width: 2,
-              ),
-            ),
-            child: _user?.avatarUrl != null
-                ? NetworkImageWithFallback(
-                    url: _user!.avatarUrl!,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                    borderRadius: 50,
-                  )
-                : Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: CupertinoColors.systemBlue.withOpacity(0.1),
-                      border: Border.all(
-                        color: CupertinoColors.systemBlue.withOpacity(0.3),
-                        width: 2,
-                      ),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        CupertinoIcons.person_fill,
-                        size: 40,
-                        color: CupertinoColors.systemBlue,
-                      ),
-                    ),
-                  ),
-          ),
-
-          const SizedBox(width: 16),
-
-          // 用户信息
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _user?.nickname ?? '未知用户',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'ID: ${_user?.id ?? '未知'}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: CupertinoColors.systemGrey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // 编辑按钮
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            child: const Icon(CupertinoIcons.pencil),
-            onPressed: () {
-              // 编辑个人资料
-              _showEditProfileDialog(context);
-            },
-          ),
-        ],
       ),
     );
   }
@@ -556,233 +398,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         );
       },
-    );
-  }
-
-  /// 构建功能列表
-  Widget _buildFunctionList(BuildContext context) {
-    return _buildSection(
-      context,
-      '我的功能',
-      [
-        _buildListTile(
-          context,
-          CupertinoIcons.map,
-          '我的路线',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-        _buildListTile(
-          context,
-          CupertinoIcons.heart,
-          '我的收藏',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-        _buildListTile(
-          context,
-          CupertinoIcons.bag,
-          '我的装备',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-        _buildListTile(
-          context,
-          CupertinoIcons.doc_text,
-          '我的攻略',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-      ],
-    );
-  }
-
-  /// 显示功能未实现对话框
-  void _showFeatureNotImplementedDialog(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) {
-        return CupertinoAlertDialog(
-          title: const Text('提示'),
-          content: const Text('此功能尚未实现'),
-          actions: [
-            CupertinoDialogAction(
-              child: const Text('确定'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// 构建设置列表
-  Widget _buildSettingsList(BuildContext context) {
-    return _buildSection(
-      context,
-      '设置',
-      [
-        _buildListTile(
-          context,
-          CupertinoIcons.bell,
-          '消息通知',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-        _buildListTile(
-          context,
-          CupertinoIcons.settings,
-          '通用设置',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-        _buildListTile(
-          context,
-          CupertinoIcons.shield,
-          '隐私设置',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-      ],
-    );
-  }
-
-  /// 构建关于我们部分
-  Widget _buildAboutSection(BuildContext context) {
-    return _buildSection(
-      context,
-      '关于',
-      [
-        _buildListTile(
-          context,
-          CupertinoIcons.info,
-          '关于我们',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-        _buildListTile(
-          context,
-          CupertinoIcons.question,
-          '帮助中心',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-        _buildListTile(
-          context,
-          CupertinoIcons.star,
-          '给我们评分',
-          onTap: () {
-            _showFeatureNotImplementedDialog(context);
-          },
-        ),
-        _buildListTile(
-          context,
-          CupertinoIcons.wrench,
-          '调试菜单',
-          onTap: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) => const DebugMenuPage(),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  /// 构建分区
-  Widget _buildSection(
-      BuildContext context, String title, List<Widget> children) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 8),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: CupertinoColors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: CupertinoColors.systemGrey.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: children,
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// 构建列表项
-  Widget _buildListTile(
-    BuildContext context,
-    IconData icon,
-    String title, {
-    required VoidCallback onTap,
-  }) {
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      onPressed: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: CupertinoColors.systemGrey5,
-              width: 0.5,
-            ),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: CupertinoColors.systemBlue,
-              size: 22,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: CupertinoColors.black,
-                ),
-              ),
-            ),
-            const Icon(
-              CupertinoIcons.chevron_right,
-              color: CupertinoColors.systemGrey,
-              size: 18,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

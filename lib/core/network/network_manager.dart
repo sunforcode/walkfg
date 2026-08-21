@@ -20,14 +20,12 @@ class NetworkManager {
   /// 应在应用启动时调用
   Future<void> initialize() async {
     if (_isInitialized) {
-      debugPrint('NetworkManager: Already initialized');
       return;
     }
 
     try {
       // 获取应用配置
       final config = AppConfig.instance;
-      debugPrint('NetworkManager: Initializing with baseUrl: ${config.baseUrl}');
       // 初始化API客户端
       ApiClient.instance.initialize(
         baseUrl: config.baseUrl,
@@ -42,7 +40,6 @@ class NetworkManager {
       );
 
       _isInitialized = true;
-      debugPrint('NetworkManager: Initialized successfully');
 
       // 打印网络配置信息
       _logNetworkConfig();
@@ -62,8 +59,6 @@ class NetworkManager {
 
     ApiClient.instance.updateBaseUrl(newBaseUrl);
     AppConfig.instance.updateBaseUrl(newBaseUrl);
-
-    debugPrint('NetworkManager: Base URL updated to $newBaseUrl');
   }
 
   /// 设置认证token
@@ -73,7 +68,6 @@ class NetworkManager {
     }
 
     ApiClient.instance.setAuthToken(token);
-    debugPrint('NetworkManager: Auth token set');
   }
 
   /// 清除认证token
@@ -83,7 +77,6 @@ class NetworkManager {
     }
 
     ApiClient.instance.clearAuthToken();
-    debugPrint('NetworkManager: Auth token cleared');
   }
 
   /// 检查网络状态
@@ -151,7 +144,6 @@ class NetworkManager {
     if (_isInitialized) {
       ApiClient.instance.close();
       _isInitialized = false;
-      debugPrint('NetworkManager: Disposed');
     }
   }
 }

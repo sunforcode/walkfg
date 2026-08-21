@@ -77,8 +77,6 @@ class ApiClient {
 
     // 恢复已保存的认证token
     await _restoreAuthToken();
-
-    debugPrint('ApiClient initialized with baseUrl: $baseUrl');
   }
 
   /// 恢复已保存的认证token
@@ -87,9 +85,6 @@ class ApiClient {
       final token = await AuthInterceptor.getCurrentToken();
       if (token != null && token.isNotEmpty) {
         _dio.options.headers['Authorization'] = 'Bearer $token';
-        debugPrint('ApiClient: Restored auth token from storage (token length: ${token.length})');
-      } else {
-        debugPrint('ApiClient: No saved auth token found');
       }
     } catch (e) {
       debugPrint('ApiClient: Error restoring auth token: $e');
@@ -146,7 +141,6 @@ class ApiClient {
         // 优先读缓存
         final cached = await _cache.get<Map<String, dynamic>>(cacheKey);
         if (cached != null) {
-          debugPrint('ApiClient: 缓存命中 [$cacheKey]');
           return fromJson(cached);
         }
         // 缓存没有，请求网络
@@ -167,7 +161,6 @@ class ApiClient {
         if (cached == null) {
           throw CacheNotFoundException(cacheKey);
         }
-        debugPrint('ApiClient: 缓存命中 [$cacheKey]');
         return fromJson(cached);
 
       case DataSource.networkFirst:
@@ -186,7 +179,6 @@ class ApiClient {
         } catch (e) {
           final cached = await _cache.get<Map<String, dynamic>>(cacheKey);
           if (cached != null) {
-            debugPrint('ApiClient: 网络失败，使用缓存 [$cacheKey]');
             return fromJson(cached);
           }
           rethrow;
@@ -247,7 +239,6 @@ class ApiClient {
 
     // 写入缓存
     await _cache.set(cacheKey, data, ttl: cacheTTL);
-    debugPrint('ApiClient: 缓存写入 [$cacheKey], TTL: $cacheTTL');
 
     return fromJson(data);
   }
@@ -349,14 +340,12 @@ class ApiClient {
     if (keys == null || keys.isEmpty) return;
     for (final key in keys) {
       await _cache.remove(key);
-      debugPrint('ApiClient: 缓存失效 [$key]');
     }
   }
 
   /// 清除所有缓存
   Future<void> clearCache() async {
     await _cache.clear();
-    debugPrint('ApiClient: 所有缓存已清除');
   }
 
   /// 移除指定缓存
@@ -430,36 +419,30 @@ class ApiClient {
   /// 更新基础URL
   void updateBaseUrl(String baseUrl) {
     _dio.options.baseUrl = baseUrl;
-    debugPrint('ApiClient baseUrl updated to: $baseUrl');
   }
 
   /// 更新headers
   void updateHeaders(Map<String, String> headers) {
     _dio.options.headers.addAll(headers);
-    debugPrint('ApiClient headers updated: $headers');
   }
 
   /// 清除所有headers
   void clearHeaders() {
     _dio.options.headers.clear();
-    debugPrint('ApiClient headers cleared');
   }
 
   /// 设置认证token
   void setAuthToken(String token) {
     _dio.options.headers['Authorization'] = 'Bearer $token';
-    debugPrint('ApiClient auth token set');
   }
 
   /// 清除认证token
   void clearAuthToken() {
     _dio.options.headers.remove('Authorization');
-    debugPrint('ApiClient auth token cleared');
   }
 
   /// 关闭客户端
   void close() {
     _dio.close();
-    debugPrint('ApiClient closed');
   }
 }

@@ -38,7 +38,7 @@ class HitchhikeContactModel {
       toJson: JsonUtils.timestampToJson)
   final DateTime? updatedAt;
 
-  /// 是否已认证
+  /// 是否已认证（后端字段名为 last_verified，类型为 Boolean）
   @JsonKey(name: 'last_verified')
   final bool isVerified;
 

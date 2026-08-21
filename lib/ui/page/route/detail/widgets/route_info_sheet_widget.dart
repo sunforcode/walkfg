@@ -14,11 +14,15 @@ class RouteInfoSheetWidget extends StatefulWidget {
   /// 抽屉隐藏状态变化回调（true=完全隐藏，false=展开中）
   final ValueChanged<bool>? onHiddenChanged;
 
+  /// 抽屉 size 变化回调（size 为 0.0~1.0 小数，表示占屏幕高度的比例）
+  final ValueChanged<double>? onSizeChanged;
+
   const RouteInfoSheetWidget({
     super.key,
     required this.route,
     required this.sections,
     this.onHiddenChanged,
+    this.onSizeChanged,
   });
 
   @override
@@ -54,8 +58,10 @@ class RouteInfoSheetWidgetState extends State<RouteInfoSheetWidget> {
   /// 监听抽屉尺寸变化，通知外部隐藏状态
   void _onSheetSizeChanged() {
     if (!_controller.isAttached) return;
-    final hidden = _controller.size <= 0.01;
+    final size = _controller.size;
+    final hidden = size <= 0.01;
     widget.onHiddenChanged?.call(hidden);
+    widget.onSizeChanged?.call(size);
   }
 
   /// 打开到半屏（供外部触发区调用）

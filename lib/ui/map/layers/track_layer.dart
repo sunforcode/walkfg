@@ -181,9 +181,16 @@ class TrackLayer extends StatelessWidget {
         return Color(int.parse(hexStr, radix: 16));
       }
     } catch (e) {
-      print('TrackLayer: 解析颜色失败: $e');
+      debugPrint('TrackLayer: 解析颜色失败: $e');
     }
     return null;
+  }
+
+  /// 根据分段序号生成固定颜色（黄金角旋转，各段颜色均匀分布）
+  Color _segmentColor(int seq) {
+    // 使用黄金角 137.508° 旋转，确保任意数量的分段颜色均匀分布
+    final h = (seq * 137.508) % 360;
+    return HSVColor.fromAHSV(1.0, h, 0.8, 0.9).toColor();
   }
 
   /// 根据索引获取对应的分段
@@ -255,7 +262,7 @@ class TrackLayer extends StatelessWidget {
 
       // 确保索引有效
       if (start < 0 || end >= trackPoints.length || start >= end) {
-        print('TrackLayer: 分段 ${segment.name} 索引无效: $start-$end');
+        debugPrint('TrackLayer: 分段 ${segment.name} 索引无效: $start-$end');
         continue;
       }
 
@@ -265,8 +272,8 @@ class TrackLayer extends StatelessWidget {
       // 判断是否选中
       final isSelected = selectedSegmentId == segment.id;
 
-      // 获取颜色
-      Color color = _parseColor(segment.color) ?? config.defaultColor;
+      // 获取颜色：按序号生成随机色，各段在地图上一目了然
+      Color color = _segmentColor(segment.sequenceNumber);
 
       // 未选中的分段降低透明度
       if (!isSelected && selectedSegmentId != null) {

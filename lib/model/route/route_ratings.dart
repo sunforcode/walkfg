@@ -6,32 +6,32 @@ part 'route_ratings.g.dart';
 @JsonSerializable()
 class RouteRatingsVO {
   /// 总体评分
-  final double overall;
+  final double? overall;
 
   /// 风景评分
-  final double scenery;
+  final double? scenery;
 
   /// 难度评分
-  final double difficulty;
+  final double? difficulty;
 
   /// 体验评分
-  final double experience;
+  final double? experience;
 
   /// 设施评分
-  final double facilities;
+  final double? facilities;
 
   /// 评分人数
-  @JsonKey(name: 'rating_count')
+  @JsonKey(name: 'rating_count', defaultValue: 0)
   final int ratingCount;
 
   /// 构造函数
   RouteRatingsVO({
-    required this.overall,
-    required this.scenery,
-    required this.difficulty,
-    required this.experience,
-    required this.facilities,
-    required this.ratingCount,
+    this.overall,
+    this.scenery,
+    this.difficulty,
+    this.experience,
+    this.facilities,
+    this.ratingCount = 0,
   });
 
   /// 从JSON创建

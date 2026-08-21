@@ -1,18 +1,13 @@
 import 'package:flutter/cupertino.dart';
-import '../../../model/route/route_model.dart';
-import '../../../service/route_service.dart';
-import '../common/error_widget.dart';
-import '../common/empty_content_widget.dart';
-import 'detail/route_detail_screen.dart';
-import 'widgets/route_discovery_constants.dart';
-import 'widgets/route_filter_section.dart';
-import 'widgets/route_list_card.dart';
+import 'package:flutter/material.dart';
 
-/// 路线发现页面
-///
-/// 提供路线浏览、搜索、筛选等功能
+import '../../../model/route/route_model.dart';
+import '../../../service/route/current_route_selection_service.dart';
+import '../../../service/route_service.dart';
+
+/// Route picker for Walk v1.
 class RouteDiscoveryScreen extends StatefulWidget {
-  /// 构造函数
+  /// Constructor.
   const RouteDiscoveryScreen({
     super.key,
   });
@@ -22,686 +17,418 @@ class RouteDiscoveryScreen extends StatefulWidget {
 }
 
 class _RouteDiscoveryScreenState extends State<RouteDiscoveryScreen> {
-  /// 热门路线Future
-  late Future<List<RouteModel>> _popularRoutesFuture;
-
-  /// 当季路线Future
-  late Future<List<RouteModel>> _seasonalRoutesFuture;
-
-  /// 全部路线Future
-  late Future<List<RouteModel>> _allRoutesFuture;
-
-  /// 滚动控制器
-  final ScrollController _scrollController = ScrollController();
-
-  /// 当前选中的过滤器
-  String _selectedFilter = RouteDiscoveryConstants.defaultFilter;
-
-  /// 搜索控制器
-  final TextEditingController _searchController = TextEditingController();
-
-  /// 是否显示搜索框
-  bool _isSearching = false;
+  late Future<List<RouteModel>> _routesFuture;
 
   @override
   void initState() {
     super.initState();
-    _loadRoutes();
+    _routesFuture = _loadRoutes();
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  /// 加载路线数据
-  void _loadRoutes() {
+  Future<List<RouteModel>> _loadRoutes() async {
     try {
-      // 加载热门路线
-      _popularRoutesFuture = _loadPopularRoutes();
-
-      // 加载当季路线
-      _seasonalRoutesFuture = _loadSeasonalRoutes();
-
-      // 加载全部路线
-      _allRoutesFuture = _loadAllRoutes();
+      final routes = await RouteService.getPopularRoutes(limit: 12);
+      if (routes.isNotEmpty) return routes;
     } catch (e) {
-      // 统一错误处理
-      _handleLoadError(e);
+      debugPrint('RouteDiscoveryScreen: 热门路线加载失败，尝试全部路线: $e');
     }
+
+    return RouteService.getRoutes(limit: 12);
   }
 
-  /// 加载热门路线
-  Future<List<RouteModel>> _loadPopularRoutes() async {
-    try {
-      return await RouteService.getPopularRoutes(limit: 10);
-    } catch (e) {
-      throw Exception('加载热门路线失败: $e');
-    }
+  Future<void> _selectRoute(RouteModel route) async {
+    await CurrentRouteSelectionService.instance.setSelectedRoute(route);
+
+    if (!mounted) return;
+    Navigator.of(context).pop(route);
   }
 
-  /// 加载当季路线
-  Future<List<RouteModel>> _loadSeasonalRoutes() async {
-    try {
-      return await RouteService.getSeasonalRoutes(limit: 10);
-    } catch (e) {
-      throw Exception('加载当季路线失败: $e');
-    }
-  }
-
-  /// 加载全部路线（支持过滤）
-  Future<List<RouteModel>> _loadAllRoutes() async {
-    try {
-      return await RouteService.getRoutesByCategory(
-        _selectedFilter,
-        limit: 20,
-      );
-    } catch (e) {
-      throw Exception('加载全部路线失败: $e');
-    }
-  }
-
-  /// 处理加载错误
-  void _handleLoadError(dynamic error) {
-    // TODO: 添加错误日志记录
-    // TODO: 显示用户友好的错误提示
-    debugPrint('路线加载失败: $error');
-  }
-
-  /// 处理过滤器选择
-  void _onFilterSelected(String filter) {
+  void _reload() {
     setState(() {
-      _selectedFilter = filter;
+      _routesFuture = _loadRoutes();
     });
-    // 根据过滤器重新加载全部路线数据
-    _reloadAllRoutes();
-  }
-
-  /// 重新加载全部路线（用于过滤后刷新）
-  void _reloadAllRoutes() {
-    setState(() {
-      _allRoutesFuture = _loadAllRoutes();
-    });
-  }
-
-  /// 处理搜索
-  void _onSearch(String query) {
-    // TODO: 实现搜索功能
-    debugPrint('搜索: $query');
-  }
-
-  /// 切换搜索状态
-  void _toggleSearch() {
-    setState(() {
-      _isSearching = !_isSearching;
-      if (!_isSearching) {
-        _searchController.clear();
-      }
-    });
-  }
-
-  /// 导航到路线详情页面
-  void _navigateToRouteDetail(RouteModel route) {
-    Navigator.of(context).push(
-      CupertinoPageRoute(
-        builder: (context) => RouteDetailScreen(
-          routeId: route.id,
-        ),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.systemGroupedBackground,
-      navigationBar: _buildNavigationBar(),
+      backgroundColor: const Color(0xFF07130F),
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('找路线'),
+        previousPageTitle: '首页',
+        backgroundColor: const Color(0xFF07130F).withValues(alpha: 0.92),
+        border: null,
+      ),
       child: SafeArea(
-        child: CustomScrollView(
-          controller: _scrollController,
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            // 搜索框（如果显示）
-            if (_isSearching)
-              SliverToBoxAdapter(
-                child: _buildSearchBar(),
-              ),
-
-            // 过滤器
-            SliverToBoxAdapter(
-              child: RouteFilterSection(
-                filters: RouteDiscoveryConstants.filters,
-                selectedFilter: _selectedFilter,
-                onFilterSelected: _onFilterSelected,
-              ),
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: _RoutePickerBackground(),
             ),
+            FutureBuilder<List<RouteModel>>(
+              future: _routesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CupertinoActivityIndicator(color: Colors.white),
+                  );
+                }
 
-            // 推荐路线区域（合并热门、当季）
-            SliverToBoxAdapter(
-              child: _buildFeaturedSection(),
-            ),
+                if (snapshot.hasError) {
+                  return _RoutePickerMessage(
+                    icon: CupertinoIcons.exclamationmark_triangle,
+                    title: '路线暂时没加载出来',
+                    subtitle: '检查网络或稍后再试。',
+                    actionLabel: '重试',
+                    onAction: _reload,
+                  );
+                }
 
-            // 全部路线
-            _buildSectionTitle(
-              RouteDiscoveryConstants.allRoutesTitle,
-              RouteDiscoveryConstants.allRoutesSubtitle,
-            ),
-            SliverToBoxAdapter(
-              child: _buildAllRoutesList(),
-            ),
+                final routes = snapshot.data ?? const <RouteModel>[];
+                if (routes.isEmpty) {
+                  return _RoutePickerMessage(
+                    icon: CupertinoIcons.map,
+                    title: '还没有可选路线',
+                    subtitle: '第一版只展示少量经典路线，数据准备好后会出现在这里。',
+                    actionLabel: '刷新',
+                    onAction: _reload,
+                  );
+                }
 
-            // 底部间距
-            const SliverToBoxAdapter(
-              child: SizedBox(height: RouteDiscoveryConstants.bottomSpacing),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// 构建导航栏
-  CupertinoNavigationBar _buildNavigationBar() {
-    return CupertinoNavigationBar(
-      middle: const Text(
-        RouteDiscoveryConstants.pageTitle,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      trailing: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: _toggleSearch,
-        child: Icon(
-          _isSearching ? CupertinoIcons.xmark_circle_fill : CupertinoIcons.search,
-          color: CupertinoColors.label,
-        ),
-      ),
-      backgroundColor: CupertinoColors.systemGroupedBackground.withValues(alpha: 0.9),
-      border: null,
-    );
-  }
-
-  /// 构建搜索框
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: RouteDiscoveryConstants.horizontalPadding,
-        vertical: 8,
-      ),
-      child: Container(
-        height: 44,
-        decoration: BoxDecoration(
-          color: CupertinoColors.systemBackground,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.systemGrey4.withValues(alpha: 0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: CupertinoTextField(
-          controller: _searchController,
-          placeholder: '搜索路线...',
-          placeholderStyle: TextStyle(
-            color: CupertinoColors.systemGrey,
-            fontSize: 16,
-          ),
-          style: const TextStyle(
-            fontSize: 16,
-            color: CupertinoColors.label,
-          ),
-          prefix: const Padding(
-            padding: EdgeInsets.only(left: 12),
-            child: Icon(
-              CupertinoIcons.search,
-              size: 18,
-              color: CupertinoColors.systemGrey,
-            ),
-          ),
-          decoration: const BoxDecoration(
-            border: null,
-          ),
-          onSubmitted: _onSearch,
-          onChanged: _onSearch,
-        ),
-      ),
-    );
-  }
-
-  /// 构建推荐路线区域（合并热门、当季）
-  Widget _buildFeaturedSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: RouteDiscoveryConstants.horizontalPadding,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题区域
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '为你推荐',
-                      style: TextStyle(
-                        fontSize: RouteDiscoveryConstants.sectionTitleFontSize,
-                        fontWeight: FontWeight.bold,
-                        color: CupertinoColors.label,
+                return CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(22, 28, 22, 18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '这周去哪走？',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.74),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              '选一条经典路线',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 34,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0,
+                                height: 1.05,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              '点选后直接回到首页，看轨迹和这周/下周天气。',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.58),
+                                fontSize: 15,
+                                height: 1.35,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '精选热门和当季路线',
-                      style: TextStyle(
-                        fontSize: RouteDiscoveryConstants.sectionSubtitleFontSize,
-                        color: CupertinoColors.systemGrey,
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, visualIndex) {
+                          if (visualIndex.isOdd) {
+                            return const SizedBox(height: 12);
+                          }
+
+                          final index = visualIndex ~/ 2;
+                          final route = routes[index];
+                          return Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              18,
+                              0,
+                              18,
+                              index == routes.length - 1 ? 28 : 0,
+                            ),
+                            child: _RouteChoiceCard(
+                              route: route,
+                              onTap: () => _selectRoute(route),
+                            ),
+                          );
+                        },
+                        childCount: routes.isEmpty ? 0 : routes.length * 2 - 1,
                       ),
                     ),
                   ],
-                ),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Row(
-                    children: [
-                      Text(
-                        RouteDiscoveryConstants.viewAllText,
-                        style: TextStyle(
-                          fontSize: RouteDiscoveryConstants.viewAllFontSize,
-                          color: CupertinoColors.activeBlue,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RouteChoiceCard extends StatelessWidget {
+  final RouteModel route;
+  final VoidCallback onTap;
+
+  const _RouteChoiceCard({
+    required this.route,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF112019).withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.08),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.24),
+              blurRadius: 24,
+              offset: const Offset(0, 16),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              _RouteThumb(route: route),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      route.region,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: const Color(0xFFB6FF5C).withValues(alpha: 0.88),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      route.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0,
+                        height: 1.12,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _RoutePill(
+                          icon: CupertinoIcons.arrow_right_arrow_left,
+                          label: '${route.distance.toStringAsFixed(1)} km',
                         ),
-                      ),
-                      Icon(
-                        CupertinoIcons.chevron_right,
-                        size: RouteDiscoveryConstants.viewAllIconSize,
-                        color: CupertinoColors.activeBlue,
-                      ),
-                    ],
-                  ),
-                  onPressed: _onViewAllPressed,
+                        _RoutePill(
+                          icon: CupertinoIcons.arrow_up_right,
+                          label: '${route.elevationGain.toStringAsFixed(0)} m',
+                        ),
+                        _RoutePill(
+                          icon: CupertinoIcons.chart_bar_alt_fill,
+                          label: route.difficulty.getName(),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
+              const SizedBox(width: 8),
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFB6FF5C),
+                  borderRadius: BorderRadius.circular(17),
+                ),
+                child: const Icon(
+                  CupertinoIcons.chevron_right,
+                  color: Color(0xFF07130F),
+                  size: 18,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RouteThumb extends StatelessWidget {
+  final RouteModel route;
+
+  const _RouteThumb({required this.route});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: SizedBox(
+        width: 86,
+        height: 108,
+        child: route.coverUrl != null && route.coverUrl!.isNotEmpty
+            ? Image.network(
+                route.coverUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const _RouteThumbFallback(),
+              )
+            : const _RouteThumbFallback(),
+      ),
+    );
+  }
+}
+
+class _RouteThumbFallback extends StatelessWidget {
+  const _RouteThumbFallback();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      foregroundPainter: _MiniTerrainPainter(),
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF263D30),
+              Color(0xFF0D1A14),
+            ],
+          ),
+        ),
+        child: const Center(
+          child: Icon(
+            CupertinoIcons.map_fill,
+            color: Color(0xFFB6FF5C),
+            size: 28,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RoutePill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _RoutePill({
+    required this.icon,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: Colors.white.withValues(alpha: 0.72),
+            size: 13,
+          ),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.78),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
             ),
           ),
-
-          // 推荐路线网格
-          _buildFeaturedGrid(),
         ],
       ),
     );
   }
+}
 
-  /// 构建推荐路线网格
-  Widget _buildFeaturedGrid() {
-    return FutureBuilder<List<RouteModel>>(
-      future: _popularRoutesFuture,
-      builder: (context, popularSnapshot) {
-        if (popularSnapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CupertinoActivityIndicator(),
-          );
-        }
+class _RoutePickerMessage extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String actionLabel;
+  final VoidCallback onAction;
 
-        if (popularSnapshot.hasError) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: ErrorMessageWidget(
-              errorMessage: RouteDiscoveryConstants.loadErrorMessage,
-              onRetry: () {
-                setState(() {
-                  _loadRoutes();
-                });
-              },
-            ),
-          );
-        }
+  const _RoutePickerMessage({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.actionLabel,
+    required this.onAction,
+  });
 
-        final popularRoutes = popularSnapshot.data ?? [];
-
-        return FutureBuilder<List<RouteModel>>(
-          future: _seasonalRoutesFuture,
-          builder: (context, seasonalSnapshot) {
-            if (seasonalSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CupertinoActivityIndicator(),
-              );
-            }
-
-            if (seasonalSnapshot.hasError) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: ErrorMessageWidget(
-                  errorMessage: RouteDiscoveryConstants.loadErrorMessage,
-                  onRetry: () {
-                    setState(() {
-                      _loadRoutes();
-                    });
-                  },
-                ),
-              );
-            }
-
-            final seasonalRoutes = seasonalSnapshot.data ?? [];
-
-            // 合并热门和当季路线，去重
-            final allFeatured = <RouteModel>{};
-            allFeatured.addAll(popularRoutes.take(3));
-            allFeatured.addAll(seasonalRoutes.take(3));
-
-            if (allFeatured.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 40),
-                child: EmptyContentWidget(
-                  icon: CupertinoIcons.map,
-                  title: RouteDiscoveryConstants.emptyRoutesTitle,
-                  subtitle: RouteDiscoveryConstants.emptyRoutesSubtitle,
-                ),
-              );
-            }
-
-            // 构建网格
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.85,
-              ),
-              itemCount: allFeatured.length,
-              itemBuilder: (context, index) {
-                final route = allFeatured.elementAt(index);
-                return _buildFeaturedCard(route);
-              },
-            );
-          },
-        );
-      },
-    );
-  }
-
-  /// 构建推荐卡片
-  Widget _buildFeaturedCard(RouteModel route) {
-    return GestureDetector(
-      onTap: () => _navigateToRouteDetail(route),
-      child: Container(
-        decoration: BoxDecoration(
-          color: CupertinoColors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.systemGrey4.withValues(alpha: 0.15),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 图片区域
-            Expanded(
-              flex: 3,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // 背景图片
-                    route.coverUrl != null
-                        ? Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(route.coverUrl!),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                        : Container(
-                            color: CupertinoColors.systemGrey5,
-                            child: Icon(
-                              CupertinoIcons.photo,
-                              size: 32,
-                              color: CupertinoColors.systemGrey2,
-                            ),
-                          ),
-
-                    // 渐变遮罩
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            CupertinoColors.white.withValues(alpha: 0),
-                            CupertinoColors.black.withValues(alpha: 0.3),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // 难度标签
-                    Positioned(
-                      bottom: 8,
-                      left: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: CupertinoColors.white.withValues(alpha: 0.9),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              CupertinoIcons.chart_bar_alt_fill,
-                              size: 12,
-                              color: _getDifficultyColor(route.difficulty.index),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              _getDifficultyText(route.difficulty.index),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: _getDifficultyColor(route.difficulty.index),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // 信息区域
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // 路线名称
-                    Text(
-                      route.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: CupertinoColors.label,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-
-                    // 位置
-                    Row(
-                      children: [
-                        Icon(
-                          CupertinoIcons.location_solid,
-                          size: 12,
-                          color: CupertinoColors.systemGrey,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            route.region,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: CupertinoColors.systemGrey,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-
-                    // 距离和时间
-                    Row(
-                      children: [
-                        Icon(
-                          CupertinoIcons.arrow_right_arrow_left,
-                          size: 12,
-                          color: CupertinoColors.systemGrey,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${route.distance} km',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: CupertinoColors.systemGrey,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Icon(
-                          CupertinoIcons.time,
-                          size: 12,
-                          color: CupertinoColors.systemGrey,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          route.duration,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: CupertinoColors.systemGrey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// 获取难度颜色
-  Color _getDifficultyColor(int index) {
-    switch (index) {
-      case 0:
-        return CupertinoColors.systemGreen;
-      case 1:
-        return CupertinoColors.systemOrange;
-      case 2:
-        return CupertinoColors.systemRed;
-      case 3:
-        return CupertinoColors.systemPurple;
-      default:
-        return CupertinoColors.activeBlue;
-    }
-  }
-
-  /// 获取难度文本
-  String _getDifficultyText(int index) {
-    switch (index) {
-      case 0:
-        return '简单';
-      case 1:
-        return '中等';
-      case 2:
-        return '困难';
-      case 3:
-        return '极难';
-      default:
-        return '中等';
-    }
-  }
-
-  /// 构建分区标题
-  Widget _buildSectionTitle(String title, String subtitle) {
-    return SliverToBoxAdapter(
+  @override
+  Widget build(BuildContext context) {
+    return Center(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          RouteDiscoveryConstants.horizontalPadding,
-          RouteDiscoveryConstants.sectionTopPadding,
-          RouteDiscoveryConstants.horizontalPadding,
-          RouteDiscoveryConstants.sectionBottomPadding,
-        ),
+        padding: const EdgeInsets.all(28),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: RouteDiscoveryConstants.sectionTitleFontSize,
-                    fontWeight: FontWeight.bold,
-                    color: CupertinoColors.label,
-                  ),
-                ),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Row(
-                    children: [
-                      Text(
-                        RouteDiscoveryConstants.viewAllText,
-                        style: TextStyle(
-                          fontSize: RouteDiscoveryConstants.viewAllFontSize,
-                          color: CupertinoColors.activeBlue,
-                        ),
-                      ),
-                      Icon(
-                        CupertinoIcons.chevron_right,
-                        size: RouteDiscoveryConstants.viewAllIconSize,
-                        color: CupertinoColors.activeBlue,
-                      ),
-                    ],
-                  ),
-                  onPressed: _onViewAllPressed,
-                ),
-              ],
+            Icon(icon, color: const Color(0xFFB6FF5C), size: 42),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 21,
+                fontWeight: FontWeight.w800,
+              ),
             ),
+            const SizedBox(height: 8),
             Text(
               subtitle,
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: RouteDiscoveryConstants.sectionSubtitleFontSize,
-                color: CupertinoColors.systemGrey,
+                color: Colors.white.withValues(alpha: 0.6),
+                fontSize: 15,
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 22),
+            CupertinoButton(
+              color: const Color(0xFFB6FF5C),
+              borderRadius: BorderRadius.circular(999),
+              onPressed: onAction,
+              child: Text(
+                actionLabel,
+                style: const TextStyle(
+                  color: Color(0xFF07130F),
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
           ],
@@ -709,117 +436,65 @@ class _RouteDiscoveryScreenState extends State<RouteDiscoveryScreen> {
       ),
     );
   }
+}
 
-  /// 构建全部路线列表
-  Widget _buildAllRoutesList() {
-    return FutureBuilder<List<RouteModel>>(
-      future: _allRoutesFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
-            height: RouteDiscoveryConstants.loadingHeight,
-            child: Center(
-              child: CupertinoActivityIndicator(),
-            ),
-          );
-        }
+class _RoutePickerBackground extends StatelessWidget {
+  const _RoutePickerBackground();
 
-        if (snapshot.hasError) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: RouteDiscoveryConstants.horizontalPadding,
-            ),
-            child: ErrorMessageWidget(
-              errorMessage: RouteDiscoveryConstants.loadErrorMessage,
-              onRetry: () {
-                setState(() {
-                  _loadRoutes();
-                });
-              },
-            ),
-          );
-        }
-
-        final routes = snapshot.data;
-        if (routes == null || routes.isEmpty) {
-          return const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: RouteDiscoveryConstants.horizontalPadding,
-            ),
-            child: EmptyContentWidget(
-              icon: CupertinoIcons.map,
-              title: RouteDiscoveryConstants.emptyRoutesTitle,
-              subtitle: RouteDiscoveryConstants.emptyRoutesSubtitle,
-            ),
-          );
-        }
-
-        // 只显示前6个路线
-        final displayRoutes =
-            routes.length > RouteDiscoveryConstants.maxDisplayRoutes
-                ? routes.sublist(0, RouteDiscoveryConstants.maxDisplayRoutes)
-                : routes;
-
-        return Column(
-          children: [
-            // 路线列表
-            ListView.builder(
-              padding: const EdgeInsets.symmetric(
-                horizontal: RouteDiscoveryConstants.horizontalPadding,
-              ),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: displayRoutes.length,
-              itemBuilder: (context, index) {
-                final route = displayRoutes[index];
-                return RouteListCard(
-                  route: route,
-                  onTap: () => _navigateToRouteDetail(route),
-                );
-              },
-            ),
-
-            // 查看更多按钮
-            if (routes.length > RouteDiscoveryConstants.maxDisplayRoutes)
-              Padding(
-                padding: const EdgeInsets.all(
-                    RouteDiscoveryConstants.horizontalPadding),
-                child: CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  color: CupertinoColors.activeBlue,
-                  borderRadius: BorderRadius.circular(
-                    RouteDiscoveryConstants.buttonBorderRadius,
-                  ),
-                  child: const SizedBox(
-                    height: RouteDiscoveryConstants.buttonHeight,
-                    child: Center(
-                      child: Text(
-                        RouteDiscoveryConstants.viewMoreText,
-                        style: TextStyle(
-                          color: CupertinoColors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  onPressed: _onViewMorePressed,
-                ),
-              ),
-          ],
-        );
-      },
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      foregroundPainter: _MiniTerrainPainter(
+        color: Colors.white.withValues(alpha: 0.06),
+      ),
+      child: const DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topRight,
+            radius: 1.05,
+            colors: [
+              Color(0xFF244132),
+              Color(0xFF07130F),
+            ],
+          ),
+        ),
+      ),
     );
   }
+}
 
-  /// 处理查看全部按钮点击
-  void _onViewAllPressed() {
-    // TODO: 实现查看全部功能
-    debugPrint('查看全部路线');
+class _MiniTerrainPainter extends CustomPainter {
+  final Color color;
+
+  const _MiniTerrainPainter({
+    this.color = const Color(0x22FFFFFF),
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    for (var i = 0; i < 9; i++) {
+      final path = Path();
+      final y = size.height * (0.16 + i * 0.1);
+      path.moveTo(-10, y);
+      path.cubicTo(
+        size.width * 0.25,
+        y - 18 + i * 2,
+        size.width * 0.58,
+        y + 22 - i,
+        size.width + 10,
+        y - 8,
+      );
+      canvas.drawPath(path, paint);
+    }
   }
 
-  /// 处理查看更多按钮点击
-  void _onViewMorePressed() {
-    // TODO: 实现查看更多功能
-    debugPrint('查看更多路线');
+  @override
+  bool shouldRepaint(covariant _MiniTerrainPainter oldDelegate) {
+    return oldDelegate.color != color;
   }
 }

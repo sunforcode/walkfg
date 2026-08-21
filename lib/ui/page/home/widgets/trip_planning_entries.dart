@@ -170,7 +170,7 @@ class TripPlanningEntries extends StatelessWidget {
         ),
       );
     } catch (e) {
-      print('获取推荐路线失败: $e');
+      debugPrint('获取推荐路线失败: $e');
       // 如果获取路线失败，直接创建空白行程
       Navigator.of(context).push(
         CupertinoPageRoute(

@@ -58,11 +58,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
 
-    debugPrint('RegisterScreen: _handleRegister called');
-    debugPrint('RegisterScreen: username: $username');
-    debugPrint('RegisterScreen: email: $email');
-    debugPrint('RegisterScreen: password: ${password.isNotEmpty ? '***' : 'empty'}');
-
     // 表单验证
     if (username.isEmpty) {
       _showErrorDialog('请输入用户名');
@@ -102,8 +97,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     // 密码长度验证
-    if (password.length < 6) {
-      _showErrorDialog('密码长度不能少于6个字符');
+    if (password.length < 6 || password.length > 20) {
+      _showErrorDialog('密码长度必须在 6-20 字符之间');
       return;
     }
 
@@ -123,17 +118,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      debugPrint('RegisterScreen: Calling UserService.register...');
-      
-      // 调用实际的注册API（后端会自动登录并返回token）
+      // 调用实际的注册 API（后端会自动登录并返回 token）
       final user = await UserService.register(
         username: username,
         password: password,
         email: email,
       );
       
-      debugPrint('RegisterScreen: Registration successful, user: ${user.username}');
-
       // 注册成功，返回个人主页
       if (mounted) {
         setState(() {

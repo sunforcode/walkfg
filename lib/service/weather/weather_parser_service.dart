@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:walk/model/weather/weather_condition.dart';
 import 'package:walk/model/weather/weather_model.dart';
 
@@ -20,14 +21,14 @@ class WeatherParserService {
       // 检查API响应状态码
       final code = weatherData['code'];
       if (code != '200') {
-        print('和风天气API错误: ${weatherData['code']} - ${weatherData['fxLink']}');
+        debugPrint('和风天气API错误: ${weatherData['code']} - ${weatherData['fxLink']}');
         return null;
       }
 
       // 获取实时天气数据
       final now = weatherData['now'];
       if (now == null) {
-        print('和风天气API返回数据格式错误: 缺少now字段');
+        debugPrint('和风天气API返回数据格式错误: 缺少now字段');
         return null;
       }
 
@@ -50,11 +51,6 @@ class WeatherParserService {
         } else {
           cityName = adm2.isNotEmpty ? adm2 : (adm1.isNotEmpty ? adm1 : '未知位置');
         }
-
-        print(
-            '使用地点查询API获取的城市名称: $cityName (原始: name=$name, adm2=$adm2, adm1=$adm1)');
-      } else {
-        print('地点查询API未返回数据，使用默认城市名称');
       }
 
       // 解析天气状况
@@ -67,9 +63,6 @@ class WeatherParserService {
       String visibility = now['vis'] ?? '0';
       String windDir = now['windDir'] ?? '';
       String windScale = now['windScale'] ?? '0';
-
-      print(
-          '天气解析结果: 城市=$cityName, 天气=$weatherText, 温度=${temp}°C, 体感温度=${feelsLike}°C');
 
       // 判断是否适合徒步
       final isSuitable = isWeatherSuitableForHiking(weatherText, windSpeed);
@@ -92,7 +85,7 @@ class WeatherParserService {
         // windScale: windScale,
       );
     } catch (e) {
-      print('解析和风天气API响应失败: $e');
+      debugPrint('解析和风天气API响应失败: $e');
       return null;
     }
   }
@@ -109,14 +102,14 @@ class WeatherParserService {
       // 检查API响应状态码
       final code = data['code'];
       if (code != '200') {
-        print('和风天气API错误: ${data['code']} - ${data['fxLink']}');
+        debugPrint('和风天气API错误: ${data['code']} - ${data['fxLink']}');
         return null;
       }
 
       // 获取实时天气数据
       final now = data['now'];
       if (now == null) {
-        print('和风天气API返回数据格式错误: 缺少now字段${data}');
+        debugPrint('和风天气API返回数据格式错误: 缺少now字段${data}');
         return null;
       }
 
@@ -142,7 +135,7 @@ class WeatherParserService {
         humidity: double.tryParse(humidity) ?? 0.0,
       );
     } catch (e) {
-      print('解析和风天气API响应失败: $e');
+      debugPrint('解析和风天气API响应失败: $e');
       return null;
     }
   }
@@ -166,14 +159,14 @@ class WeatherParserService {
       // 检查API响应状态码
       final code = data['code'];
       if (code != '200') {
-        print('和风天气API错误: ${data['code']} - ${data['fxLink']}');
+        debugPrint('和风天气API错误: ${data['code']} - ${data['fxLink']}');
         return [];
       }
 
       // 获取天气预报数据
       final daily = data['daily'];
       if (daily == null || daily is! List) {
-        print('和风天气API返回数据格式错误: 缺少daily字段或格式不正确');
+        debugPrint('和风天气API返回数据格式错误: 缺少daily字段或格式不正确');
         return [];
       }
 
@@ -213,11 +206,11 @@ class WeatherParserService {
             precipitationProbability: precipProb,
           ));
         } catch (e) {
-          print('解析单日预报数据失败: $e');
+          debugPrint('解析单日预报数据失败: $e');
         }
       }
     } catch (e) {
-      print('解析和风天气API预报响应失败: $e');
+      debugPrint('解析和风天气API预报响应失败: $e');
     }
 
     return forecasts;

@@ -8,12 +8,6 @@ import '../api_exception.dart';
 class ErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    debugPrint(
-        'ErrorInterceptor: Handling error for ${err.requestOptions.path}');
-    debugPrint('ErrorInterceptor: Error type: ${err.type}');
-    debugPrint('ErrorInterceptor: Status code: ${err.response?.statusCode}');
-    debugPrint('ErrorInterceptor: Error message: ${err.message}');
-
     // 将DioException转换为ApiException
     final apiException = ApiExceptionFactory.fromDioException(err);
 

@@ -3,16 +3,15 @@ import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/model/trip/transportation_info_model.dart';
 import 'package:walk/model/trip/weather_info_model.dart';
 import 'package:walk/theme/tokens/colors.dart';
-import 'package:walk/ui/page/trip/widget/trip_basic_info_card_widget.dart';
-import 'package:walk/ui/page/trip/widget/trip_card_template.dart';
-import 'package:walk/ui/page/trip/widget/trip_cover_widget.dart';
-import 'package:walk/ui/page/trip/widget/trip_equipment_card_widget.dart';
+import 'package:walk/ui/page/trip/widget/cards/trip_basic_info_card_widget.dart';
+import 'package:walk/ui/page/trip/widget/cards/trip_card_template.dart';
+import 'package:walk/ui/page/trip/widget/cards/trip_cover_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_food_widget.dart';
-import 'package:walk/ui/page/trip/widget/trip_itinerary_card_widget.dart';
+import 'package:walk/ui/page/trip/widget/cards/trip_itinerary_card_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_participants_widget.dart';
-import 'package:walk/ui/page/trip/widget/trip_transportation_card_widget.dart';
+import 'package:walk/ui/page/trip/widget/cards/trip_transportation_card_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_water_widget.dart';
-import 'package:walk/ui/page/trip/widget/trip_weather_card_widget.dart';
+import 'package:walk/ui/page/trip/widget/cards/trip_weather_card_widget.dart';
 
 /// 行程详情内容组件
 ///
@@ -73,9 +72,6 @@ class TripDetailsContentWidget extends StatelessWidget {
 
     // 直接使用trip.itinerary，无需转换
     final itinerary = trip.itinerary;
-
-    // 创建装备清单模型
-    final equipmentList = trip.equipmentList;
 
     // 创建交通信息列表
     final transportations = _createTransportationList(trip);
@@ -249,19 +245,6 @@ class TripDetailsContentWidget extends StatelessWidget {
                   onEdit: onEdit,
                   onSave: onSave,
                 ),
-
-                if (equipmentList != null) ...[
-                  const SizedBox(height: 24),
-
-                  // 装备清单卡片
-                  TripEquipmentCardWidget(
-                    listModel: equipmentList,
-                    isEditMode: isEditMode,
-                    editingSectionId: editingSectionId,
-                    onEdit: onEdit,
-                    onSave: onSave,
-                  ),
-                ],
 
                 // 膳食计划卡片
                 if (trip.mealPlan != null) ...[

@@ -234,7 +234,6 @@ class GuideAuthorWidget extends StatelessWidget {
   /// 处理关注操作
   void _handleFollow(BuildContext context) {
     // TODO: 实现关注功能
-    debugPrint('已关注作者: ${guide.author}');
   }
 }
 

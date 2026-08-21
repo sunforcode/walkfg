@@ -1,153 +1,23 @@
 import 'package:flutter/cupertino.dart';
-import '../ui/page/home/home_screen.dart';
-import '../ui/page/route/route_discovery_screen.dart';
-import '../ui/page/equipment/equipment_screen.dart';
-import '../ui/page/profile/profile_screen.dart';
-import '../ui/page/navigation/navigation_screen.dart';
-import 'tokens/tokens.dart';
 
-/// 主布局页面，包含底部导航栏和内容区域
-class MainLayout extends StatefulWidget {
-  /// 初始选中的标签页索引
+import '../ui/page/home/home_screen.dart';
+
+/// Main v1 shell.
+///
+/// Walk v1 intentionally keeps only the current route surface. Route selection
+/// is opened from the home empty/replace-route action.
+class MainLayout extends StatelessWidget {
+  /// Preserved for callers that still pass an initial tab index.
   final int initialIndex;
 
-  /// 构造函数
+  /// Constructor.
   const MainLayout({
     super.key,
     this.initialIndex = 0,
   });
 
   @override
-  State<MainLayout> createState() => _MainLayoutState();
-}
-
-class _MainLayoutState extends State<MainLayout> {
-  /// 当前选中的标签页索引
-  late int _currentIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentIndex = widget.initialIndex;
-  }
-
-  /// 导航到导航页面
-  void _navigateToNavigation(BuildContext context) {
-    Navigator.of(context).push(
-      CupertinoPageRoute(
-        builder: (context) => const NavigationScreen(),
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        CupertinoTabScaffold(
-          tabBar: CupertinoTabBar(
-            activeColor: AppColors.primary,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.home),
-                label: '首页',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.map),
-                label: '路线',
-              ),
-              // 中间的加号按钮占位
-              BottomNavigationBarItem(
-                icon: Icon(null),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.square_list),
-                label: '装备',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.person),
-                label: '我的',
-              ),
-            ],
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              // 如果点击的是中间的加号按钮
-              if (index == 2) {
-                _navigateToNavigation(context);
-                return;
-              }
-
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-          ),
-          tabBuilder: (context, index) {
-            // 调整索引，跳过中间的加号按钮
-            int actualIndex = index;
-            if (index > 2) {
-              actualIndex = index - 1;
-            }
-
-            switch (actualIndex) {
-              case 0:
-                return CupertinoTabView(
-                  builder: (context) => const HomeScreen(),
-                );
-              case 1:
-                return CupertinoTabView(
-                  builder: (context) => const RouteDiscoveryScreen(),
-                );
-              case 2:
-                return CupertinoTabView(
-                  builder: (context) => const EquipmentScreen(),
-                );
-              case 3:
-                return CupertinoTabView(
-                  builder: (context) => const ProfileScreen(),
-                );
-              default:
-                return CupertinoTabView(
-                  builder: (context) => const HomeScreen(),
-                );
-            }
-          },
-        ),
-
-        // 添加浮动的加号按钮
-        Positioned(
-          bottom: 30,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: GestureDetector(
-              onTap: () => _navigateToNavigation(context),
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  CupertinoIcons.add,
-                  color: CupertinoColors.white,
-                  size: 30,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+    return const HomeScreen();
   }
 }

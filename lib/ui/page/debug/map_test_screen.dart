@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:walk/model/map/map_data_model.dart';
+import 'package:walk/model/map/marker_point_model.dart';
 import 'package:walk/model/map/track_point_model.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/route/segment_model.dart';
 import 'package:walk/service/kml_cache_service.dart';
 import 'package:walk/service/route_service.dart';
 import 'package:walk/ui/map/map_widget.dart';
+import 'package:walk/ui/map/utils/map_data_helper.dart';
 import 'package:walk/ui/page/common/error_view.dart';
 import 'package:walk/ui/page/common/loading_view.dart';
 
@@ -35,6 +38,18 @@ class _MapTestScreenState extends State<MapTestScreen> {
   String? _selectedSegmentId;
   String? _routeId;
 
+  /// 是否使用 3D 模式（Mapbox），默认 false（2D flutter_map）
+  bool _is3DMode = false;
+
+  /// 信息面板是否展开
+  bool _infoExpanded = false;
+
+  /// 分段面板是否展开
+  bool _segmentsExpanded = false;
+
+  /// 2D 地图控制器（用于外部缩放）
+  MapController? _map2DController;
+
   @override
   void initState() {
     super.initState();
@@ -45,19 +60,14 @@ class _MapTestScreenState extends State<MapTestScreen> {
     _dataFuture = _loadCompleteData();
   }
 
+  /// 固定加载的五台山路线 ID
+  static const String _wutaiRouteId = 'route_1778383536408_P4gA3V5H';
+
   Future<_MapTestData> _loadCompleteData() async {
-    final popularRoutes = await RouteService.getPopularRoutes(limit: 5);
-    if (popularRoutes.isEmpty) {
-      throw Exception('没有推荐路线');
-    }
+    _routeId = _wutaiRouteId;
 
-    final firstRoute = popularRoutes.first;
-    _routeId = firstRoute.id;
-    print('MapTestScreen: 使用第一个推荐路线: ${firstRoute.name} (ID: ${firstRoute.id})');
+    final routeDetail = await RouteService.getRouteDetail(_wutaiRouteId);
 
-    final routeDetail = await RouteService.getRouteDetail(firstRoute.id);
-    print('MapTestScreen: 路线详情加载成功: ${routeDetail.name}');
-    
     return await _loadTrackDataForRoute(routeDetail);
   }
 
@@ -65,12 +75,10 @@ class _MapTestScreenState extends State<MapTestScreen> {
     try {
       if (route.kmlUrl != null && route.kmlUrl!.isNotEmpty) {
         try {
-          print('MapTestScreen: 通过 KmlCacheService 加载 KML 数据, kmlUrl: ${route.kmlUrl}');
           final mapData = await KmlCacheService.instance.getMapData(
             route.kmlUrl!,
             routeId: route.id,
           );
-          print('MapTestScreen: KML数据加载成功: 轨迹点${mapData.trackPoints.length}个, 路标点${mapData.waypoints.length}个, 分段${mapData.segments.length}个');
 
           if (mapData.trackPoints.isNotEmpty) {
             return _MapTestData(
@@ -81,12 +89,11 @@ class _MapTestScreenState extends State<MapTestScreen> {
             );
           }
         } catch (e) {
-          print('MapTestScreen: KML缓存/网络加载失败: $e');
+          debugPrint('MapTestScreen: KML缓存/网络加载失败: $e');
         }
       }
 
       if (route.trackPoints.isNotEmpty) {
-        print('MapTestScreen: 使用 API 返回的 trackPoints，数量: ${route.trackPoints.length}');
         return _MapTestData(
           route: route,
           trackPoints: route.trackPoints,
@@ -96,28 +103,33 @@ class _MapTestScreenState extends State<MapTestScreen> {
 
       throw Exception('没有可用的轨迹数据: KML URL为空且API返回的trackPoints为空');
     } catch (e) {
-      print('MapTestScreen: 轨迹数据加载失败: $e');
+      debugPrint('MapTestScreen: 轨迹数据加载失败: $e');
       rethrow;
     }
   }
 
+  /// 获取分段数据（使用统一优先级逻辑）
   List<SegmentModel> _getSegments(_MapTestData data) {
-    if (data.route.segments?.isNotEmpty ?? false) {
-      print('MapTestScreen: 使用 route.segments，数量: ${data.route.segments!.length}');
-      return data.route.segments!;
-    }
+    return MapDataHelper.resolveSegments(data.route, data.mapData);
+  }
 
-    if (data.mapData?.segments.isNotEmpty ?? false) {
-      print('MapTestScreen: 使用 mapData.segments，数量: ${data.mapData!.segments.length}');
-      return data.mapData!.segments;
-    }
+  /// 获取标记点数据（使用统一优先级逻辑）
+  List<MarkerPointModel> _getMarkers(_MapTestData data) {
+    return MapDataHelper.resolveMarkers(data.route);
+  }
 
-    print('MapTestScreen: 没有可用的分段数据，返回空列表');
-    return [];
+  /// 根据序号生成固定颜色（黄金角旋转，各段颜色均匀分布）
+  static Color _segmentColor(int seq, bool isSelected) {
+    final h = (seq * 137.508) % 360;
+    return HSVColor.fromAHSV(
+      isSelected ? 0.5 : 1.0,
+      h,
+      0.75,
+      0.85,
+    ).toColor();
   }
 
   void _handleSegmentTap(SegmentModel segment) {
-    print('MapTestScreen: 点击分段: ${segment.name}');
     setState(() {
       if (_selectedSegmentId == segment.id) {
         _selectedSegmentId = null;
@@ -127,13 +139,37 @@ class _MapTestScreenState extends State<MapTestScreen> {
     });
   }
 
-  void _reloadData() {
+  void _reloadData() async {
+    // 清除旧 KML 缓存，确保重新从后台加载
+    await KmlCacheService.instance.clearAllCache();
     setState(() {
       _selectedSegmentId = null;
       _routeId = null;
-      _routeName = null;
+      _map2DController = null;
       _loadData();
     });
+  }
+
+  void _toggle3DMode() {
+    setState(() {
+      _is3DMode = !_is3DMode;
+    });
+  }
+
+  /// 放大地图
+  void _zoomIn() {
+    final ctrl = _map2DController;
+    if (ctrl == null) return;
+    final current = ctrl.camera.zoom;
+    ctrl.move(ctrl.camera.center, (current + 1).clamp(3.0, 18.0));
+  }
+
+  /// 缩小地图
+  void _zoomOut() {
+    final ctrl = _map2DController;
+    if (ctrl == null) return;
+    final current = ctrl.camera.zoom;
+    ctrl.move(ctrl.camera.center, (current - 1).clamp(3.0, 18.0));
   }
 
   @override
@@ -142,31 +178,63 @@ class _MapTestScreenState extends State<MapTestScreen> {
       navigationBar: CupertinoNavigationBar(
         middle: const Text('地图测试'),
         backgroundColor: CupertinoColors.systemBackground,
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          minimumSize: const Size(44, 44),
-          onPressed: () {
-            showCupertinoModalPopup(
-              context: context,
-              builder: (context) => CupertinoActionSheet(
-                title: const Text('地图设置'),
-                actions: [
-                  CupertinoActionSheetAction(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _reloadData();
-                    },
-                    child: const Text('重新加载数据'),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 2D/3D 切换按钮
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(52, 44),
+              onPressed: _toggle3DMode,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _is3DMode
+                      ? CupertinoColors.systemBlue
+                      : CupertinoColors.systemGrey5,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  _is3DMode ? '3D' : '2D',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: _is3DMode
+                        ? CupertinoColors.white
+                        : CupertinoColors.label,
                   ),
-                ],
-                cancelButton: CupertinoActionSheetAction(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('取消'),
                 ),
               ),
-            );
-          },
-          child: const Icon(CupertinoIcons.settings),
+            ),
+            const SizedBox(width: 4),
+            // 设置按钮
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(44, 44),
+              onPressed: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) => CupertinoActionSheet(
+                    title: const Text('地图设置'),
+                    actions: [
+                      CupertinoActionSheetAction(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _reloadData();
+                        },
+                        child: const Text('重新加载数据'),
+                      ),
+                    ],
+                    cancelButton: CupertinoActionSheetAction(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('取消'),
+                    ),
+                  ),
+                );
+              },
+              child: const Icon(CupertinoIcons.settings),
+            ),
+          ],
         ),
       ),
       child: SafeArea(
@@ -200,38 +268,57 @@ class _MapTestScreenState extends State<MapTestScreen> {
       return s.copyWith(isSelected: _selectedSegmentId == s.id);
     }).toList();
 
-    print('MapTestScreen: 构建地图，trackPoints数量: ${data.trackPoints.length}');
-    print('MapTestScreen: 构建地图，markers数量: ${data.route.markerPoints?.length ?? 0}');
-    print('MapTestScreen: 构建地图，segments数量: ${segments.length}');
+    final markers = _getMarkers(data);
 
     return Stack(
       children: [
+        // 根据模式切换 2D / 3D 地图（全屏）
         Positioned.fill(
-          child: _build2DMap(data),
+          child: _is3DMode
+              ? UnifiedMapWidget(
+                  mapMode: MapMode.map3d,
+                  trackPoints: data.trackPoints,
+                  markers: markers,
+                  segments: segments,
+                  selectedSegmentId: _selectedSegmentId,
+                )
+              : _build2DMap(data, markers),
         ),
+
+        // 左上角：信息按钮（折叠时只显示小图标）
         Positioned(
-          top: 16,
-          left: 16,
-          right: 16,
-          child: _buildInfoPanel(data),
+          top: 12,
+          left: 12,
+          child: _buildInfoToggle(data),
         ),
+
+        // 右侧：缩放按钮（仅 2D 模式，3D 模式由 MapboxMapWidget 内部提供）
+        if (!_is3DMode)
+          Positioned(
+            right: 12,
+            bottom: segmentsWithSelection.isNotEmpty ? 80 : 40,
+            child: _buildZoomButtons(),
+          ),
+
+        // 底部：分段按钮（2D 和 3D 都显示）
         if (segmentsWithSelection.isNotEmpty)
           Positioned(
-            bottom: 16,
-            left: 16,
-            right: 16,
-            child: _buildSegmentsWidget(data, segmentsWithSelection),
+            bottom: 12,
+            left: 12,
+            right: _is3DMode ? 60 : 12, // 3D 模式右侧留出缩放按钮的空间
+            child: _buildSegmentsToggle(data, segmentsWithSelection),
           ),
       ],
     );
   }
 
-  Widget _build2DMap(_MapTestData data) {
+  Widget _build2DMap(_MapTestData data, List<MarkerPointModel> markers) {
     final segments = _getSegments(data);
 
-    return MapWidget(
+    return UnifiedMapWidget(
+      mapMode: MapMode.map2d,
       trackPoints: data.trackPoints,
-      markers: data.route.markerPoints ?? [],
+      markers: markers,
       days: data.route.dailyPlans?.length,
       segments: segments,
       selectedSegmentId: _selectedSegmentId,
@@ -250,140 +337,92 @@ class _MapTestScreenState extends State<MapTestScreen> {
       routeDistance: data.route.distance,
       routeElevationGain: data.route.elevationGain,
       routeDifficulty: data.route.difficulty.getName(),
+      onControllerReady: (controller) {
+        _map2DController = controller;
+      },
     );
   }
 
-  Widget _buildInfoPanel(_MapTestData data) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                CupertinoIcons.map_fill,
-                color: CupertinoColors.systemBlue,
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                data.route.name,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(
-                data.dataSource.contains('KML') 
-                    ? CupertinoIcons.cloud_download 
-                    : CupertinoIcons.info_circle,
-                color: CupertinoColors.systemGreen,
-                size: 12,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '数据来源: ${data.dataSource}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: CupertinoColors.secondaryLabel,
-                ),
-              ),
-            ],
-          ),
-          if (_routeId != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              '路线ID: $_routeId',
-              style: TextStyle(
-                fontSize: 11,
-                color: CupertinoColors.secondaryLabel.withValues(alpha: 0.8),
-              ),
+  /// 放大/缩小按钮组
+  Widget _buildZoomButtons() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildZoomButton(
+          icon: CupertinoIcons.plus,
+          onPressed: _zoomIn,
+        ),
+        const SizedBox(height: 4),
+        _buildZoomButton(
+          icon: CupertinoIcons.minus,
+          onPressed: _zoomOut,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildZoomButton({required IconData icon, required VoidCallback onPressed}) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemBackground.withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: CupertinoColors.black.withValues(alpha: 0.15),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
           ],
-          const SizedBox(height: 4),
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: [
-              _buildInfoChip('轨迹点', '${data.trackPoints.length}'),
-              _buildInfoChip('标记点', '${data.route.markerPoints?.length ?? 0}'),
-              _buildInfoChip('距离', '${data.route.distance.toStringAsFixed(1)}km'),
-              _buildInfoChip('爬升', '${data.route.elevationGain.toStringAsFixed(0)}m'),
+        ),
+        child: Icon(icon, size: 18, color: CupertinoColors.label),
+      ),
+    );
+  }
+
+  /// 左上角信息按钮 + 展开面板
+  Widget _buildInfoToggle(_MapTestData data) {
+    if (!_infoExpanded) {
+      // 折叠态：小圆形按钮
+      return GestureDetector(
+        onTap: () => setState(() => _infoExpanded = true),
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: CupertinoColors.systemBackground.withValues(alpha: 0.9),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: CupertinoColors.black.withValues(alpha: 0.15),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoChip(String label, String value) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey5,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: CupertinoColors.secondaryLabel,
-            ),
+          child: const Icon(
+            CupertinoIcons.info_circle,
+            size: 20,
+            color: CupertinoColors.systemBlue,
           ),
-          const SizedBox(width: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: CupertinoColors.label,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      );
+    }
 
-  Widget _buildSegmentsWidget(_MapTestData data, List<SegmentModel> segments) {
-    if (segments.isEmpty) return const SizedBox.shrink();
-
+    // 展开态：完整面板
     return GestureDetector(
-      onTap: () {
-        if (_selectedSegmentId != null) {
-          setState(() {
-            _selectedSegmentId = null;
-          });
-        }
-      },
+      onTap: () => setState(() => _infoExpanded = false),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemBackground.withValues(alpha: 0.9),
+          color: CupertinoColors.systemBackground.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: CupertinoColors.black.withValues(alpha: 0.1),
+              color: CupertinoColors.black.withValues(alpha: 0.12),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -393,55 +432,207 @@ class _MapTestScreenState extends State<MapTestScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '路线分段',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(CupertinoIcons.map_fill, color: CupertinoColors.systemBlue, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  data.route.name,
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 8),
+                const Icon(CupertinoIcons.chevron_up, size: 12, color: CupertinoColors.secondaryLabel),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '数据: ${data.dataSource.contains('KML') ? 'KML' : 'API'}  ID: ${_routeId ?? '-'}',
+              style: TextStyle(fontSize: 10, color: CupertinoColors.secondaryLabel),
+            ),
+            if (data.route.segmentSchemes.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Text(
+                '方案: ${data.route.segmentSchemes.map((s) => s.label).join(' / ')}',
+                style: TextStyle(fontSize: 10, color: CupertinoColors.secondaryLabel),
               ),
+            ],
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: [
+                _buildInfoChip('轨迹点', '${data.trackPoints.length}'),
+                _buildInfoChip('标记点', '${_getMarkers(data).length}'),
+                _buildInfoChip('分段', '${_getSegments(data).length}'),
+                _buildInfoChip('距离', '${data.route.distance.toStringAsFixed(1)}km'),
+                _buildInfoChip('爬升', '${data.route.elevationGain.toStringAsFixed(0)}m'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoChip(String label, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      decoration: BoxDecoration(
+        color: CupertinoColors.systemGrey5,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label, style: TextStyle(fontSize: 10, color: CupertinoColors.secondaryLabel)),
+          const SizedBox(width: 3),
+          Text(value, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
+  /// 底部分段按钮 + 展开列表
+  Widget _buildSegmentsToggle(_MapTestData data, List<SegmentModel> segments) {
+    if (!_segmentsExpanded) {
+      // 折叠态：小胶囊按钮
+      return Align(
+        alignment: Alignment.centerRight,
+        child: GestureDetector(
+          onTap: () => setState(() => _segmentsExpanded = true),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: CupertinoColors.systemBackground.withValues(alpha: 0.9),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: CupertinoColors.black.withValues(alpha: 0.15),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 各段颜色小点预览（最多5个）
+                ...segments.take(5).map((s) => Container(
+                  width: 8,
+                  height: 8,
+                  margin: const EdgeInsets.only(right: 3),
+                  decoration: BoxDecoration(
+                    color: _segmentColor(s.sequenceNumber, false),
+                    shape: BoxShape.circle,
+                  ),
+                )),
+                if (segments.length > 5)
+                  Text('...', style: TextStyle(fontSize: 10, color: CupertinoColors.secondaryLabel)),
+                const SizedBox(width: 4),
+                Text(
+                  '${segments.length}段',
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(width: 4),
+                const Icon(CupertinoIcons.chevron_up, size: 12, color: CupertinoColors.secondaryLabel),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 展开态：完整分段列表
+    return GestureDetector(
+      onTap: () {
+        setState(() => _segmentsExpanded = false);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemBackground.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: CupertinoColors.black.withValues(alpha: 0.12),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Text('路线分段', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                const Spacer(),
+                const Icon(CupertinoIcons.chevron_down, size: 12, color: CupertinoColors.secondaryLabel),
+              ],
             ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
-              runSpacing: 8,
+              runSpacing: 6,
               children: segments.map((segment) {
                 final isSelected = segment.isSelected;
+                final segColor = _segmentColor(segment.sequenceNumber, false);
                 return GestureDetector(
-                  onTap: () => _handleSegmentTap(segment),
+                  onTap: () {
+                    _handleSegmentTap(segment);
+                  },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? CupertinoColors.systemBlue
-                          : CupertinoColors.systemGrey5,
+                          ? segColor.withValues(alpha: 0.2)
+                          : CupertinoColors.systemGrey6,
                       borderRadius: BorderRadius.circular(8),
-                      border: isSelected
-                          ? Border.all(color: CupertinoColors.systemBlue, width: 1)
-                          : null,
+                      border: Border.all(
+                        color: isSelected ? segColor : CupertinoColors.separator,
+                        width: isSelected ? 1.5 : 0.5,
+                      ),
                     ),
-                    child: Column(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        // 序号色块
+                        Container(
+                          width: 14,
+                          height: 14,
+                          margin: const EdgeInsets.only(right: 4),
+                          decoration: BoxDecoration(
+                            color: segColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${segment.sequenceNumber}',
+                              style: const TextStyle(
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: CupertinoColors.white,
+                              ),
+                            ),
+                          ),
+                        ),
                         Text(
                           segment.name,
                           style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: isSelected
-                                ? CupertinoColors.white
-                                : CupertinoColors.label,
+                            fontSize: 11,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                            color: CupertinoColors.label,
                           ),
                         ),
-                        if (segment.distance != null)
+                        if (segment.distance != null) ...[
+                          const SizedBox(width: 4),
                           Text(
-                            '${segment.distance!.toStringAsFixed(1)}km',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: isSelected
-                                  ? CupertinoColors.white.withValues(alpha: 0.8)
-                                  : CupertinoColors.secondaryLabel,
-                            ),
+                            '${segment.distance!.toStringAsFixed(1)}k',
+                            style: TextStyle(fontSize: 10, color: CupertinoColors.secondaryLabel),
                           ),
+                        ],
                       ],
                     ),
                   ),

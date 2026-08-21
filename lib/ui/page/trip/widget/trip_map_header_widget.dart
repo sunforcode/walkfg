@@ -23,7 +23,7 @@ class TripMapHeaderWidget extends StatelessWidget {
         bottomLeft: Radius.circular(16),
         bottomRight: Radius.circular(16),
       ),
-      child: MapWidget(
+      child: UnifiedMapWidget(
         trackPoints: trackPoints,
         markers: route?.markerPoints ?? [],
         config: MapWidgetConfig(

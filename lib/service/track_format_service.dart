@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:xml/xml.dart';
 import '../model/map/track_point_model.dart';
 
@@ -24,20 +25,15 @@ class TrackFormatService {
   /// 解析KML格式文件
   static List<TrackPointVO> parseKmlFile(String content) {
     try {
-      print(
-          'TrackFormatService.parseKmlFile - 开始解析KML文件，内容长度: ${content.length}');
       final document = XmlDocument.parse(content);
       final points = <TrackPointVO>[];
 
       // 解析坐标
       final coordinates = document.findAllElements('coordinates');
-      print(
-          'TrackFormatService.parseKmlFile - 找到坐标元素数量: ${coordinates.length}');
 
       for (final coordinate in coordinates) {
         final coordText = coordinate.text.trim();
         final coordList = coordText.split(' ');
-        print('TrackFormatService.parseKmlFile - 坐标点数量: ${coordList.length}');
 
         for (final coord in coordList) {
           if (coord.trim().isEmpty) continue;
@@ -62,7 +58,6 @@ class TrackFormatService {
 
       // 解析路径点
       final placemarks = document.findAllElements('Placemark');
-      print('TrackFormatService.parseKmlFile - 找到地标元素数量: ${placemarks.length}');
 
       for (final placemark in placemarks) {
         final point = placemark.findElements('Point').firstOrNull;
@@ -90,16 +85,9 @@ class TrackFormatService {
         }
       }
 
-      print(
-          'TrackFormatService.parseKmlFile - KML解析完成，共解析出 ${points.length} 个点');
-      if (points.isNotEmpty) {
-        print(
-            'TrackFormatService.parseKmlFile - 第一个点: ${points.first.latitude}, ${points.first.longitude}');
-      }
       return points;
     } catch (e) {
-      print('TrackFormatService.parseKmlFile - KML解析错误: $e');
-      print('TrackFormatService.parseKmlFile - 错误堆栈: ${StackTrace.current}');
+      debugPrint('TrackFormatService.parseKmlFile - KML解析错误: $e');
       return [];
     }
   }

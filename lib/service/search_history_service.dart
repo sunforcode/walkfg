@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../model/search/search_history_model.dart';
 
@@ -19,7 +20,7 @@ class SearchHistoryService {
       final String jsonString = await rootBundle.loadString(path);
       return json.decode(jsonString);
     } catch (e) {
-      print('加载JSON文件失败: $e');
+      debugPrint('加载JSON文件失败: $e');
       return null;
     }
   }
@@ -30,9 +31,6 @@ class SearchHistoryService {
     if (_searchHistoryCache != null) {
       return _searchHistoryCache!;
     }
-
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
 
     final historyJson =
         await _loadJsonData('assets/mock_data/search_history.json');
@@ -51,9 +49,6 @@ class SearchHistoryService {
 
   /// 保存搜索历史
   static Future<bool> saveSearchHistory(SearchHistoryListModel history) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
     // 更新缓存
     _searchHistoryCache = history;
 
@@ -62,9 +57,6 @@ class SearchHistoryService {
 
   /// 添加搜索记录
   static Future<bool> addSearch(String keyword) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
     // 确保缓存已初始化
     if (_searchHistoryCache == null) {
       await getSearchHistory();
@@ -120,9 +112,6 @@ class SearchHistoryService {
 
   /// 清空搜索历史
   static Future<bool> clearSearchHistory() async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
     // 清空缓存
     _searchHistoryCache = SearchHistoryListModel(items: []);
 

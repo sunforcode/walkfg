@@ -8,6 +8,7 @@ import 'package:walk/service/kml_cache_service.dart';
 import 'package:walk/service/route_service.dart';
 import 'package:walk/ui/map/map_widget.dart';
 import 'package:walk/ui/map/utils/kml_business_parser.dart';
+import 'package:walk/ui/map/utils/map_data_helper.dart';
 import 'package:walk/ui/page/common/error_view.dart';
 import 'package:walk/ui/page/common/loading_view.dart';
 import 'package:walk/ui/page/route/detail/widgets/route_overview_widget.dart';
@@ -72,6 +73,9 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   /// 抽屉是否完全隐藏（用于显示底部触发区）
   bool _sheetHidden = false;
 
+  /// 抽屉当前占屏幕高度比例（用于动态调整地图聚焦偏移）
+  double _sheetSize = 0.40;
+
   /// 抽屉 GlobalKey，用于调用 openToHalf()
   final GlobalKey<RouteInfoSheetWidgetState> _sheetKey = GlobalKey();
 
@@ -107,7 +111,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     _routeFuture.then((route) {
       _loadKmlData(route);
     }).catchError((e) {
-      print('路线详情加载错误: $e');
+      debugPrint('路线详情加载错误: $e');
     });
   }
 
@@ -116,19 +120,15 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   /// 注意：API 返回的 trackpoints 暂时不处理，优先使用 KML 数据
   void _loadKmlData(RouteModel route) async {
     try {
-      print('开始加载轨迹数据...');
-
       // 1. 使用 KmlCacheService 从缓存或网络获取 KML（自动处理缓存逻辑）
       // 注意：API 返回的 trackpoints 暂时不处理
       if (route.kmlUrl != null && route.kmlUrl!.isNotEmpty) {
         try {
-          print('通过 KmlCacheService 加载 KML 数据, kmlUrl: ${route.kmlUrl}');
           // 获取 MapDataModel（内部会缓存 KML 原始字符串）
           final mapData = await KmlCacheService.instance.getMapData(
             route.kmlUrl!,
             routeId: route.id,
           );
-          print('KML数据加载成功: 轨迹点${mapData.trackPoints.length}个, 路标点${mapData.waypoints.length}个, 分段${mapData.segments.length}个');
 
           setState(() {
             _mapData = mapData;
@@ -137,23 +137,20 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
           return;
         } catch (e) {
           // 网络下载失败，继续回退到本地 assets
-          print('KML缓存/网络加载失败: $e，将尝试回退到本地 assets');
+          debugPrint('KML缓存/网络加载失败: $e，将尝试回退到本地 assets');
         }
       }
 
       // 2. 最后使用本地 assets KML 文件作为最终回退
-      print('使用本地 assets KML 文件（最终回退）');
       final mapData =
           await KmlBusinessParser.parseFromPath('assets/maps/wutai.kml');
-      print(
-          'KML数据加载成功: 轨迹点${mapData.trackPoints.length}个, 路标点${mapData.waypoints.length}个, 分段${mapData.segments.length}个');
 
       setState(() {
         _mapData = mapData;
         _kmlTrackPoints = mapData.trackPoints;
       });
     } catch (e) {
-      print('轨迹点加载失败: $e');
+      debugPrint('轨迹点加载失败: $e');
     }
   }
 
@@ -170,16 +167,19 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
         _relatedTrips = results.length > 1 ? results[1] as List<TripModel> : [];
       });
     } catch (e) {
-      print('加载路线数据失败: $e');
+      debugPrint('加载路线数据失败: $e');
     }
   }
 
   /// 检查路线是否已收藏
   void _checkIfFavorite() {
     RouteService.checkIfFavorite(widget.routeId).then((isFavorite) {
+      if (!mounted) return;
       setState(() {
         _isFavorite = isFavorite;
       });
+    }).catchError((e) {
+      debugPrint('检查收藏状态失败: $e');
     });
   }
 
@@ -195,19 +195,20 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   }
 
   /// 处理收藏操作
-  void _handleFavorite() {
-    if (_isFavorite) {
-      RouteService.removeFavorite(widget.routeId).then((_) {
-        setState(() {
-          _isFavorite = false;
-        });
+  Future<void> _handleFavorite() async {
+    final wasFavorite = _isFavorite;
+    setState(() {
+      _isFavorite = !wasFavorite;
+    });
+
+    try {
+      if (wasFavorite) {
+        await RouteService.removeFavorite(widget.routeId);
+        if (!mounted) return;
         ToastUtils.showToast(context, '已取消收藏');
-      });
-    } else {
-      RouteService.addFavorite(widget.routeId).then((_) {
-        setState(() {
-          _isFavorite = true;
-        });
+      } else {
+        await RouteService.addFavorite(widget.routeId);
+        if (!mounted) return;
         ToastUtils.showToast(context, '已添加到收藏');
 
         Navigator.of(context).push(
@@ -215,18 +216,21 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
             builder: (context) => const MyFavoriteRoutesScreen(),
           ),
         );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isFavorite = wasFavorite;
       });
+      ToastUtils.showToast(context, '操作失败，请稍后重试');
     }
   }
 
   /// 处理日程点击
-  void _handleDayTap(int dayIndex) {
-    print('点击第${dayIndex + 1}天');
-  }
+  void _handleDayTap(int dayIndex) {}
 
   /// 处理分段点击
   void _handleSegmentTap(SegmentModel segment) {
-    print('点击分段: ${segment.name}');
     setState(() {
       // 如果点击的是当前选中的分段，则取消选中
       if (_selectedSegmentId == segment.id) {
@@ -237,57 +241,13 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     });
   }
 
-  /// 获取测试分段数据（用于开发/测试，当API返回数据为空时使用）
-  ///
-  /// 基于KML时间分布分析：
-  /// - 轨迹点总数：6954个
-  /// - 时间范围：2025-03-18 到 2025-03-21（约3天）
-  List<SegmentModel> _getTestSegments() {
-    return [
-      SegmentModel(
-        id: '1',
-        name: '第一天',
-        sequenceNumber: 1,
-        trackStartIndex: 0,
-        trackEndIndex: 3476,
-        color: '#FF5722',
-        distance: 36.0,
-        elevationGain: 2500,
-        elevationLoss: 2000,
-      ),
-      SegmentModel(
-        id: '2',
-        name: '第二天',
-        sequenceNumber: 2,
-        trackStartIndex: 3477,
-        trackEndIndex: 6953,
-        color: '#2196F3',
-        distance: 37.22,
-        elevationGain: 2000,
-        elevationLoss: 2500,
-      ),
-    ];
-  }
-
-  /// 获取分段数据（优先使用API返回的，其次使用测试数据）
+  /// 获取分段数据（使用统一优先级逻辑，仅使用远端数据）
   List<SegmentModel> _getSegments(RouteModel route) {
-    // 优先使用 route.segments（从API返回的），这是方案B的正确方式
-    if (route.segments?.isNotEmpty ?? false) {
-      return route.segments!;
-    }
-
-    // 其次使用 KML 解析的 segments
-    if (_mapData?.segments.isNotEmpty ?? false) {
-      return _mapData!.segments;
-    }
-
-    // 最后使用测试数据（用于开发/测试）
-    return _getTestSegments();
+    return MapDataHelper.resolveSegments(route, _mapData);
   }
 
   /// 构建分段Widget
   Widget _buildSegmentsWidget(RouteModel route) {
-    // 优先使用 route.segments（从API返回的），这是方案B的正确方式
     final segments = _getSegments(route);
 
     if (segments.isEmpty) return const SizedBox.shrink();
@@ -314,9 +274,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   }
 
   /// 处理图片点击
-  void _handleImageTap(int index) {
-    print('点击图片: $index');
-  }
+  void _handleImageTap(int index) {}
 
   /// 处理相关路线点击
   void _handleRelatedRouteTap(RouteModel route) {
@@ -382,6 +340,11 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
                     onHiddenChanged: (hidden) {
                       if (hidden != _sheetHidden) {
                         setState(() => _sheetHidden = hidden);
+                      }
+                    },
+                    onSizeChanged: (size) {
+                      if ((size - _sheetSize).abs() > 0.01) {
+                        setState(() => _sheetSize = size);
                       }
                     },
                     sections: [
@@ -488,78 +451,31 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     );
   }
 
-  /// 构建导航栏（悬浮透明渐变，44pt + SafeArea）
+  /// 构建导航栏（仅左侧返回按钮，悬浮透明）
   Widget _buildNavigationBar(RouteModel route) {
-    return Container(
-      height: 44 + MediaQuery.of(context).padding.top,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            CupertinoColors.black.withOpacity(0.5),
-            CupertinoColors.black.withOpacity(0.0),
-          ],
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // 返回按钮
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                minSize: 44,
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Icon(
-                  CupertinoIcons.back,
-                  color: CupertinoColors.white,
-                  size: 24,
-                ),
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8, top: 4),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: CupertinoButton(
+            padding: EdgeInsets.zero,
+            minSize: 44,
+            onPressed: () => Navigator.of(context).pop(),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: CupertinoColors.black.withOpacity(0.3),
+                shape: BoxShape.circle,
               ),
-              // 标题（白色粗体）
-              Expanded(
-                child: Text(
-                  route.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: CupertinoColors.white,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              child: const Icon(
+                CupertinoIcons.back,
+                color: CupertinoColors.white,
+                size: 20,
               ),
-              // 收藏 + 分享
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                minSize: 44,
-                onPressed: _handleFavorite,
-                child: Icon(
-                  _isFavorite ? CupertinoIcons.star_fill : CupertinoIcons.star,
-                  color: _isFavorite
-                      ? CupertinoColors.systemYellow
-                      : CupertinoColors.white,
-                  size: 22,
-                ),
-              ),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                minSize: 44,
-                onPressed: () {
-                  ToastUtils.showFeatureInDevelopmentDialog(context);
-                },
-                child: const Icon(
-                  CupertinoIcons.share,
-                  color: CupertinoColors.white,
-                  size: 22,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -579,14 +495,18 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     );
   }
 
-  /// 构建2D地图
+  /// 构建地图（统一使用 UnifiedMapWidget）
   Widget _build2DMap(RouteModel route, [double? height]) {
-    // 优先使用 route.segments（从API返回的），这是方案B的正确方式
     final segments = _getSegments(route);
+    // 根据抽屉占屏幕高度比例计算额外底部 padding
+    // 抽屉展开时，底部复原空间大，轨迹聚焦将向屏幕上方偏移
+    // 屏幕高度 * sheetSize 即为抽屉占据的像素高度
+    final screenH = MediaQuery.of(context).size.height;
+    final bottomExtra = screenH * _sheetSize * 0.75; // 0.75 系数用于缩小偏移幅度
 
-    return MapWidget(
+    return UnifiedMapWidget(
       trackPoints: _kmlTrackPoints,
-      markers: route.markerPoints ?? [],
+      markers: MapDataHelper.resolveMarkers(route),
       days: route.dailyPlans?.length,
       segments: segments,
       selectedSegmentId: _selectedSegmentId,
@@ -605,6 +525,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
       routeDistance: route.distance,
       routeElevationGain: route.elevationGain,
       routeDifficulty: route.difficulty.getName(),
+      bottomPaddingExtra: bottomExtra,
     );
   }
 

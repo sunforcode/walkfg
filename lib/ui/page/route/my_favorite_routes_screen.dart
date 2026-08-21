@@ -111,7 +111,7 @@ class _MyFavoriteRoutesScreenState extends State<MyFavoriteRoutesScreen> {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(12),
                 ),
-                child: route.coverUrl == null
+                child: route.coverUrl != null
                     ? Image.network(
                         route.coverUrl!,
                         height: 150,
@@ -158,7 +158,7 @@ class _MyFavoriteRoutesScreenState extends State<MyFavoriteRoutesScreen> {
                         const SizedBox(width: 12),
                         _buildInfoChip(
                           CupertinoIcons.time,
-                          route.duration,
+                          route.durationText,
                         ),
                       ],
                     ),

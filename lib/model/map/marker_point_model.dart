@@ -59,7 +59,7 @@ class MarkerPointModel extends TrackPointVO {
     required this.id,
     required super.latitude,
     required super.longitude,
-    required super.elevation,
+    super.elevation,
     super.timestamp,
     super.distanceFromStart,
     this.name,
@@ -299,26 +299,57 @@ class MarkerPointModel extends TrackPointVO {
 MarkerPointType _parseMarkerType(dynamic value) {
   if (value == null) return MarkerPointType.other;
 
+  if (value is String) {
+    switch (value.toLowerCase()) {
+      case 'scenic':
+        return MarkerPointType.poi;
+      case 'viewpoint':
+        return MarkerPointType.viewpoint;
+      case 'danger':
+        return MarkerPointType.dangerPoint;
+      case 'rest':
+        return MarkerPointType.restPoint;
+      case 'water':
+      case 'food':
+      case 'shelter':
+        return MarkerPointType.poi;
+      case 'landmark':
+        return MarkerPointType.landmark;
+      case 'info_point':
+      case 'infopoint':
+        return MarkerPointType.infoPoint;
+      case 'other':
+      default:
+        return MarkerPointType.other;
+    }
+  }
+
   if (value is int) {
-    // 从整数索引转换为枚举
     if (value >= 0 && value < MarkerPointType.values.length) {
       return MarkerPointType.values[value];
     }
     return MarkerPointType.other;
   }
 
-  if (value is String) {
-    // 从字符串名称转换为枚举
-    return MarkerPointType.values.firstWhere(
-      (type) => type.name == value,
-      orElse: () => MarkerPointType.other,
-    );
-  }
-
   return MarkerPointType.other;
 }
 
 /// 标记点类型转JSON
-int _markerTypeToJson(MarkerPointType type) {
-  return type.index;
+String _markerTypeToJson(MarkerPointType type) {
+  switch (type) {
+    case MarkerPointType.poi:
+      return 'scenic';
+    case MarkerPointType.landmark:
+      return 'landmark';
+    case MarkerPointType.viewpoint:
+      return 'viewpoint';
+    case MarkerPointType.restPoint:
+      return 'rest';
+    case MarkerPointType.dangerPoint:
+      return 'danger';
+    case MarkerPointType.infoPoint:
+      return 'info_point';
+    case MarkerPointType.other:
+      return 'other';
+  }
 }

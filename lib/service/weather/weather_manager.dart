@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/map/marker_point_model.dart';
 import 'package:walk/model/weather/weather_model.dart';
@@ -83,11 +84,9 @@ class WeatherManager {
       );
 
       if (position == null) {
-        print('无法获取当前位置');
+        debugPrint('无法获取当前位置');
         return null;
       }
-
-      print('获取当前位置天气: 纬度=${position.latitude}, 经度=${position.longitude}');
 
       // 使用坐标获取天气
       return getWeatherByLocation(
@@ -96,7 +95,7 @@ class WeatherManager {
         forceRefresh: forceRefresh,
       );
     } catch (e) {
-      print('获取当前位置天气失败: $e');
+      debugPrint('获取当前位置天气失败: $e');
       return null;
     }
   }
@@ -134,7 +133,7 @@ class WeatherManager {
       final locationData = futures[1] as Map<String, dynamic>?;
 
       if (weatherData == null) {
-        print('获取天气数据失败');
+        debugPrint('获取天气数据失败');
         return _cacheService.getCachedData<WeatherModel>(cacheKey);
       }
 
@@ -153,7 +152,7 @@ class WeatherManager {
 
       return weatherModel;
     } catch (e) {
-      print('获取天气数据失败: $e');
+      debugPrint('获取天气数据失败: $e');
     }
 
     // 如果获取失败但缓存存在，返回缓存数据
@@ -213,7 +212,7 @@ class WeatherManager {
       final locationData = futures[1] as Map<String, dynamic>?;
 
       if (forecastData == null) {
-        print('获取天气预报数据失败');
+        debugPrint('获取天气预报数据失败');
         // 如果获取失败但缓存存在，返回缓存数据
         final cachedData =
             _cacheService.getCachedData<List<WeatherModel>>(cacheKey);
@@ -238,7 +237,7 @@ class WeatherManager {
 
       return forecasts;
     } catch (e) {
-      print('获取天气预报数据失败: $e');
+      debugPrint('获取天气预报数据失败: $e');
     }
 
     // 如果获取失败但缓存存在，返回缓存数据

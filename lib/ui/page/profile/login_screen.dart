@@ -39,10 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
 
-    debugPrint('LoginScreen: _handleLogin called');
-    debugPrint('LoginScreen: username: $username');
-    debugPrint('LoginScreen: password: ${password.isNotEmpty ? '***' : 'empty'}');
-
     // 简单的表单验证
     if (username.isEmpty) {
       _showErrorDialog('请输入用户名');
@@ -54,19 +50,20 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    if (password.length < 6 || password.length > 20) {
+      _showErrorDialog('密码长度必须在 6-20 字符之间');
+      return;
+    }
+
     // 设置登录状态
     setState(() {
       _isLoggingIn = true;
     });
 
     try {
-      debugPrint('LoginScreen: Calling UserService.login...');
-      
       // 调用实际的登录API
       final user = await UserService.login(username, password);
       
-      debugPrint('LoginScreen: Login successful, user: ${user.username}');
-
       // 登录成功，返回个人主页
       if (mounted) {
         setState(() {
@@ -192,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
               CupertinoTextField(
                 controller: _passwordController,
-                placeholder: '密码',
+                placeholder: '密码（6-20位）',
                 obscureText: _obscurePassword,
                 prefix: const Padding(
                   padding: EdgeInsets.only(left: 10),

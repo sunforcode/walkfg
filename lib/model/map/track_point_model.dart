@@ -16,7 +16,8 @@ class TrackPointVO {
   /// 经度
   final double longitude;
 
-  /// 海拔高度（米）
+  /// 海拔高度（米），后端可能为 null，默认 0.0
+  @JsonKey(defaultValue: 0.0)
   final double elevation;
 
   /// 描述
@@ -50,7 +51,7 @@ class TrackPointVO {
     this.id,
     required this.latitude,
     required this.longitude,
-    required this.elevation,
+    this.elevation = 0.0,
     this.name,
     this.description,
     this.type,

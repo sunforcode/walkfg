@@ -114,7 +114,7 @@ class WaterSourceModel extends TrackPointVO {
     required this.id,
     required super.latitude,
     required super.longitude,
-    required super.elevation,
+    super.elevation,
     super.timestamp,
     super.distanceFromStart,
     this.name,
@@ -277,19 +277,37 @@ class WaterSourceModel extends TrackPointVO {
 WaterSourceType _parseWaterType(dynamic value) {
   if (value == null) return WaterSourceType.other;
 
+  if (value is String) {
+    switch (value.toLowerCase()) {
+      case 'natural':
+        return WaterSourceType.spring; // 天然水源映射为泉水
+      case 'treated':
+        return WaterSourceType.artificial; // 处理过的映射为人工水源
+      case 'bottled':
+        return WaterSourceType.other;
+      case 'stream':
+        return WaterSourceType.stream;
+      case 'spring':
+        return WaterSourceType.spring;
+      case 'river':
+        return WaterSourceType.stream;
+      case 'well':
+        return WaterSourceType.well;
+      case 'lake':
+        return WaterSourceType.lake;
+      case 'artificial':
+        return WaterSourceType.artificial;
+      case 'other':
+      default:
+        return WaterSourceType.other;
+    }
+  }
+
   if (value is int) {
-    // 从整数索引转换为枚举
     if (value >= 0 && value < WaterSourceType.values.length) {
       return WaterSourceType.values[value];
     }
     return WaterSourceType.other;
-  }
-
-  if (value is String) {
-    return WaterSourceType.values.firstWhere(
-      (type) => type.name == value,
-      orElse: () => WaterSourceType.other,
-    );
   }
 
   return WaterSourceType.other;
@@ -299,30 +317,51 @@ WaterSourceType _parseWaterType(dynamic value) {
 WaterQuality _parseWaterQuality(dynamic value) {
   if (value == null) return WaterQuality.unknown;
 
+  if (value is String) {
+    switch (value.toLowerCase()) {
+      case 'excellent':
+        return WaterQuality.excellent;
+      case 'good':
+        return WaterQuality.good;
+      case 'fair':
+        return WaterQuality.fair;
+      case 'poor':
+        return WaterQuality.poor;
+      case 'unknown':
+      default:
+        return WaterQuality.unknown;
+    }
+  }
+
   if (value is int) {
-    // 从整数索引转换为枚举
     if (value >= 0 && value < WaterQuality.values.length) {
       return WaterQuality.values[value];
     }
     return WaterQuality.unknown;
   }
 
-  if (value is String) {
-    return WaterQuality.values.firstWhere(
-      (quality) => quality.name == value,
-      orElse: () => WaterQuality.unknown,
-    );
-  }
-
   return WaterQuality.unknown;
 }
 
 /// 水源类型转JSON
-int _waterTypeToJson(WaterSourceType type) {
-  return type.index;
+String _waterTypeToJson(WaterSourceType type) {
+  switch (type) {
+    case WaterSourceType.stream:
+      return 'river';
+    case WaterSourceType.spring:
+      return 'spring';
+    case WaterSourceType.well:
+      return 'well';
+    case WaterSourceType.lake:
+      return 'lake';
+    case WaterSourceType.artificial:
+      return 'treated';
+    case WaterSourceType.other:
+      return 'other';
+  }
 }
 
 /// 水质等级转JSON
-int _waterQualityToJson(WaterQuality quality) {
-  return quality.index;
+String _waterQualityToJson(WaterQuality quality) {
+  return quality.name;
 }

@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../model/route/route_model.dart';
 import '../model/search/hot_search_model.dart';
 
-/// 推荐服务
+/// 推荐服务（本地数据，后端暂未实现）
 ///
 /// 使用静态方法，无需实例化
 /// 当前使用本地 JSON 数据，后续可改为 API 请求
@@ -17,7 +18,7 @@ class RecommendationService {
       final String jsonString = await rootBundle.loadString(path);
       return json.decode(jsonString);
     } catch (e) {
-      print('加载JSON文件失败: $e');
+      debugPrint('加载JSON文件失败: $e');
       return null;
     }
   }
@@ -26,9 +27,6 @@ class RecommendationService {
   ///
   /// [limit] 限制返回的结果数量
   static Future<HotSearchListModel> getHotSearches({int limit = 10}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
     final hotSearchesJson =
         await _loadJsonData('assets/mock_data/hot_searches.json');
     if (hotSearchesJson == null) {
@@ -54,9 +52,6 @@ class RecommendationService {
   /// [limit] 限制返回的结果数量
   static Future<List<RouteModel>> getSeasonalRecommendations(
       {String? season, int limit = 10}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
     final routesJson = await _loadJsonData('assets/mock_data/routes.json');
     if (routesJson == null || !(routesJson is List)) {
       return [];
@@ -75,9 +70,6 @@ class RecommendationService {
   /// [limit] 限制返回的结果数量
   static Future<List<RouteModel>> getPersonalizedRecommendations(
       {int limit = 10}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
     final routesJson = await _loadJsonData('assets/mock_data/routes.json');
     if (routesJson == null || !(routesJson is List)) {
       return [];
@@ -96,9 +88,6 @@ class RecommendationService {
   /// [limit] 限制返回的结果数量
   static Future<List<RouteModel>> getSimilarRoutes(String routeId,
       {int limit = 5}) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 400));
-
     final routesJson = await _loadJsonData('assets/mock_data/routes.json');
     if (routesJson == null || !(routesJson is List)) {
       return [];

@@ -182,23 +182,14 @@ class TripQuickOverviewWidget extends StatelessWidget {
     return 1;
   }
 
-  // 获取装备进度
+  // 获取装备进度（行程数据暂不内嵌装备清单，统一展示为待配置）
   int _getEquipmentProgress() {
-    if (trip.equipmentList == null || trip.equipmentList!.totalItems == 0) {
-      return 0;
-    }
-    final prepared =
-        trip.equipmentList!.equipments.where((e) => e.isOwned).length;
-    return ((prepared / trip.equipmentList!.totalItems) * 100).round();
+    return 0;
   }
 
   // 获取装备状态
   String _getEquipmentStatus() {
-    final progress = _getEquipmentProgress();
-    if (progress == 100) return '准备完成';
-    if (progress >= 70) return '基本就绪';
-    if (progress >= 30) return '准备中';
-    return '待准备';
+    return '待配置';
   }
 
   // 获取预算进度

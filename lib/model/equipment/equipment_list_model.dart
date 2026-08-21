@@ -1,336 +1,176 @@
-/// 装备模型类
-///
-/// 用于存储装备清单、分类和项目信息
-
-import '../base/base_model.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'equipment_item_model.dart';
-import 'equipment_necessity.dart';
-import 'equipment_list_type.dart';
-import 'equipment_list_status.dart';
-
-part 'equipment_list_model.g.dart';
-
-/// 装备季节适用性
-enum SeasonSuitability { spring, summer, autumn, winter, allSeasons }
+import 'equipment_enums.dart';
 
 /// 装备清单模型
-@JsonSerializable()
-class EquipmentListModel extends BaseModel {
-  /// 清单名称
+///
+/// 严格对齐后端 `org.example.equipment.dto.EquipmentListResponse`。
+///
+/// 重要提示：
+/// - 字段命名同样是驼峰/蛇形混用：`typeName`/`statusName`/`type`/`status`
+///   是驼峰或原名，而 `trip_id`/`creator_id`/`total_weight`/`person_count`/
+///   `created_at`/`updated_at`/`item_count` 有 `@JsonProperty` 蛇形映射。
+/// - `created_at`/`updated_at` 后端使用的是 **秒级** epochSecond，
+///   不是本项目其它模块常见的毫秒时间戳，解析时需要 `* 1000`。
+/// - `description` 字段后端 `fromEntity` 里硬编码为 `null`，即使创建时
+///   传了描述也不会被持久化和回显，这里仍保留该字段以便未来后端修复后可用，
+///   但 UI 不应依赖它有值。
+/// - 清单响应体本身**不包含**装备条目详情，只有 [itemCount] 数量；
+///   要获取清单内的装备，需要另外调用 `GET /equipment-lists/{id}/items`。
+class EquipmentListModel {
+  /// ID
+  final String id;
+
+  /// 名称
   final String name;
 
-  /// 清单描述
-  final String description;
+  /// 描述（后端目前恒为 null，见类注释）
+  final String? description;
 
-  /// 清单类型
-  @JsonKey(fromJson: _listTypeFromJson, toJson: _listTypeToJson)
+  /// 类型（0-2）
   final EquipmentListType type;
 
-  /// 路线ID
-  @JsonKey(name: 'route_id')
-  final String? routeId;
+  /// 类型展示名称（后端直接返回）
+  final String typeName;
 
-  /// 路线名称
-  @JsonKey(name: 'route_name')
-  final String? routeName;
-
-  /// 行程ID
-  @JsonKey(name: 'trip_id')
+  /// 关联的行程ID（可能为 null）
   final String? tripId;
 
-  /// 行程天数
-  @JsonKey(name: 'trip_days')
-  final int tripDays;
+  /// 创建者用户ID（由后端认证态自动决定，不需要客户端传递）
+  final String? creatorId;
 
-  /// 适用人数
-  @JsonKey(name: 'person_count')
-  final int personCount;
-
-  /// 季节
-  @JsonKey(fromJson: _seasonsFromJson, toJson: _seasonsToJson)
-  final List<SeasonSuitability> seasons;
-
-  /// 装备列表
-  @JsonKey(fromJson: _equipmentsFromJson, toJson: _equipmentsToJson)
-  final List<EquipmentItemModel> equipments;
-
-  /// 总重量(g)
-  @JsonKey(name: 'total_weight')
+  /// 总重量（后端 SQL 计算，混合单位清单场景下可能不准确，见下方说明）
+  ///
+  /// 已知后端限制：`total_weight` 的计算 SQL 是
+  /// `SUM(ei.weight * eli.quantity)`，并未按 `weightUnit` 做单位换算，
+  /// 如果清单内装备的重量单位不一致，这个值会失真。客户端只能如实展示。
   final double totalWeight;
 
-  /// 基础重量(g)
-  @JsonKey(name: 'base_weight')
-  final double baseWeight;
+  /// 人数
+  final int personCount;
 
-  /// 消耗品重量(g)
-  @JsonKey(name: 'consumable_weight')
-  final double consumableWeight;
-
-  /// 穿着重量(g)
-  @JsonKey(name: 'worn_weight')
-  final double wornWeight;
-
-  /// 创建者ID
-  @JsonKey(name: 'creator_id')
-  final String creatorId;
-
-  /// 创建者名称
-  @JsonKey(name: 'creator_name')
-  final String creatorName;
-
-  /// 标签
-  final List<String> tags;
-
-  /// 是否官方推荐
-  @JsonKey(name: 'is_official')
-  final bool isOfficial;
-
-  /// 是否为模板
-  @JsonKey(name: 'is_template')
-  final bool isTemplate;
-
-  /// 模板ID (如果是从模板创建)
-  @JsonKey(name: 'template_id')
-  final String? templateId;
-
-  /// 状态
-  @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)
+  /// 状态（0-3，但只有 0-2 可写入，见 [EquipmentListStatus]）
   final EquipmentListStatus status;
 
-  /// 最后使用时间
-  @JsonKey(name: 'last_used_at')
-  final DateTime? lastUsedAt;
+  /// 状态展示名称（后端直接返回）
+  final String statusName;
 
-  /// 构造函数
-  EquipmentListModel({
-    required super.id,
-    super.createdAt,
-    super.updatedAt,
+  /// 创建时间
+  final DateTime createdAt;
+
+  /// 更新时间
+  final DateTime updatedAt;
+
+  /// 清单内装备条目数量（不含具体装备详情）
+  final int itemCount;
+
+  const EquipmentListModel({
+    required this.id,
     required this.name,
-    required this.description,
-    this.type = EquipmentListType.custom,
-    this.routeId,
-    this.routeName,
+    this.description,
+    required this.type,
+    required this.typeName,
     this.tripId,
-    required this.tripDays,
-    this.personCount = 1,
-    required this.seasons,
-    required this.equipments,
+    this.creatorId,
     required this.totalWeight,
-    required this.baseWeight,
-    required this.consumableWeight,
-    required this.wornWeight,
-    required this.creatorId,
-    required this.creatorName,
-    required this.tags,
-    this.isOfficial = false,
-    this.isTemplate = false,
-    this.templateId,
-    this.status = EquipmentListStatus.planning,
-    this.lastUsedAt,
+    required this.personCount,
+    required this.status,
+    required this.statusName,
+    required this.createdAt,
+    required this.updatedAt,
+    this.itemCount = 0,
   });
 
-  /// 从JSON创建
-  factory EquipmentListModel.fromJson(Map<String, dynamic> json) =>
-      _$EquipmentListModelFromJson(json);
-
-  /// 转换为JSON
-  @override
-  Map<String, dynamic> toJson() => _$EquipmentListModelToJson(this);
-
-  /// 季节列表从JSON转换
-  static List<SeasonSuitability> _seasonsFromJson(List<dynamic> list) {
-    return list.map((i) => SeasonSuitability.values[i as int]).toList();
-  }
-
-  /// 季节列表转JSON
-  static List<int> _seasonsToJson(List<SeasonSuitability> seasons) {
-    return seasons.map((e) => e.index).toList();
-  }
-
-  /// 装备列表从JSON转换
-  static List<EquipmentItemModel> _equipmentsFromJson(List<dynamic> list) {
-    return list
-        .map((i) => EquipmentItemModel.fromJson(i as Map<String, dynamic>))
-        .toList();
-  }
-
-  /// 装备列表转JSON
-  static List<Map<String, dynamic>> _equipmentsToJson(
-      List<EquipmentItemModel> equipments) {
-    return equipments.map((e) => e.toJson()).toList();
-  }
-
-  /// 清单类型从JSON转换
-  static EquipmentListType _listTypeFromJson(dynamic type) {
-    if (type is String) {
-      return parseListTypeFromString(type);
-    } else if (type is int &&
-        type >= 0 &&
-        type < EquipmentListType.values.length) {
-      return EquipmentListType.values[type];
-    }
-    return EquipmentListType.custom;
-  }
-
-  /// 清单类型转JSON
-  static String _listTypeToJson(EquipmentListType type) {
-    return getListTypeName(type);
-  }
-
-  /// 清单状态从JSON转换
-  static EquipmentListStatus _statusFromJson(dynamic status) {
-    if (status is String) {
-      return parseListStatusFromString(status);
-    } else if (status is int &&
-        status >= 0 &&
-        status < EquipmentListStatus.values.length) {
-      return EquipmentListStatus.values[status];
-    }
-    return EquipmentListStatus.planning;
-  }
-
-  /// 清单状态转JSON
-  static String _statusToJson(EquipmentListStatus status) {
-    return getListStatusName(status);
-  }
-
-  /// 获取每人每日平均重量
-  double get weightPerPersonPerDay => totalWeight / (tripDays * personCount);
-
-  /// 获取总装备数
-  int get totalItems => equipments.length;
-
-  /// 获取必需装备数
-  int get essentialItems => equipments
-      .where((item) => item.necessity == EquipmentNecessity.essential)
-      .length;
-
-  /// 获取推荐装备数
-  int get recommendedItems => equipments
-      .where((item) => item.necessity == EquipmentNecessity.recommended)
-      .length;
-
-  /// 获取可选装备数
-  int get optionalItems => equipments
-      .where((item) => item.necessity == EquipmentNecessity.optional)
-      .length;
-
-  /// 获取已准备装备数
-  int get preparedItems => equipments.where((item) => item.prepared).length;
-
-  /// 获取装备准备进度百分比
-  double get preparationPercentage =>
-      equipments.isEmpty ? 0 : (preparedItems / totalItems) * 100;
-
-  /// 获取所有装备项目列表
-  List<EquipmentItemModel> get allItems => List.from(equipments);
-
-  /// 获取季节名称列表
-  List<String> getSeasonNames() {
-    final seasonNames = <String>[];
-    for (final season in seasons) {
-      switch (season) {
-        case SeasonSuitability.spring:
-          seasonNames.add('春季');
-          break;
-        case SeasonSuitability.summer:
-          seasonNames.add('夏季');
-          break;
-        case SeasonSuitability.autumn:
-          seasonNames.add('秋季');
-          break;
-        case SeasonSuitability.winter:
-          seasonNames.add('冬季');
-          break;
-        case SeasonSuitability.allSeasons:
-          seasonNames.add('四季');
-          break;
-      }
-    }
-    return seasonNames;
-  }
-
-  /// 获取装备总价值
-  double get totalValue => equipments.fold(
-      0, (sum, item) => sum + (item.price ?? 0) * item.quantity);
-
-  /// 获取已拥有装备数量
-  int get ownedItems => equipments.where((item) => item.isOwned).length;
-
-  /// 获取需要购买的装备数量
-  int get itemsToBuy => equipments.where((item) => !item.isOwned).length;
-
-  /// 获取需要购买的装备总价值
-  double get valueToBuy => equipments
-      .where((item) => !item.isOwned)
-      .fold(0, (sum, item) => sum + (item.price ?? 0) * item.quantity);
-
-  /// 获取清单类型名称
-  String getTypeText() {
-    return getListTypeName(type);
-  }
-
-  /// 获取清单状态名称
-  String getStatusText() {
-    return getListStatusName(status);
-  }
-
-  /// 创建副本并更新指定字段
-  EquipmentListModel copyWith({
-    String? id,
-    String? name,
-    String? description,
-    EquipmentListType? type,
-    String? routeId,
-    String? routeName,
-    String? tripId,
-    int? tripDays,
-    int? personCount,
-    List<SeasonSuitability>? seasons,
-    List<EquipmentItemModel>? equipments,
-    double? totalWeight,
-    double? baseWeight,
-    double? consumableWeight,
-    double? wornWeight,
-    String? creatorId,
-    String? creatorName,
-    List<String>? tags,
-    bool? isOfficial,
-    bool? isTemplate,
-    String? templateId,
-    EquipmentListStatus? status,
-    DateTime? lastUsedAt,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
+  factory EquipmentListModel.fromJson(Map<String, dynamic> json) {
     return EquipmentListModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      type: type ?? this.type,
-      routeId: routeId ?? this.routeId,
-      routeName: routeName ?? this.routeName,
-      tripId: tripId ?? this.tripId,
-      tripDays: tripDays ?? this.tripDays,
-      personCount: personCount ?? this.personCount,
-      seasons: seasons ?? this.seasons,
-      equipments: equipments ?? this.equipments,
-      totalWeight: totalWeight ?? this.totalWeight,
-      baseWeight: baseWeight ?? this.baseWeight,
-      consumableWeight: consumableWeight ?? this.consumableWeight,
-      wornWeight: wornWeight ?? this.wornWeight,
-      creatorId: creatorId ?? this.creatorId,
-      creatorName: creatorName ?? this.creatorName,
-      tags: tags ?? this.tags,
-      isOfficial: isOfficial ?? this.isOfficial,
-      isTemplate: isTemplate ?? this.isTemplate,
-      templateId: templateId ?? this.templateId,
-      status: status ?? this.status,
-      lastUsedAt: lastUsedAt ?? this.lastUsedAt,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String?,
+      type: equipmentListTypeFromCode(json['type']),
+      typeName: json['typeName'] as String? ?? '',
+      tripId: json['trip_id'] as String?,
+      creatorId: json['creator_id'] as String?,
+      totalWeight: _parseDouble(json['total_weight']),
+      personCount: (json['person_count'] as num?)?.toInt() ?? 1,
+      status: equipmentListStatusFromCode(json['status']),
+      statusName: json['statusName'] as String? ?? '',
+      createdAt: _parseEpochSeconds(json['created_at']),
+      updatedAt: _parseEpochSeconds(json['updated_at']),
+      itemCount: (json['item_count'] as num?)?.toInt() ?? 0,
     );
   }
+
+  static double _parseDouble(dynamic value) {
+    if (value == null) return 0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  /// 解析秒级或毫秒级时间戳
+  static DateTime _parseEpochSeconds(dynamic value) {
+    if (value is int) {
+      // 与 BaseModel.parseTimestamp 保持一致的秒/毫秒自动探测
+      if (value > 9999999999) {
+        return DateTime.fromMillisecondsSinceEpoch(value);
+      } else {
+        return DateTime.fromMillisecondsSinceEpoch(value * 1000);
+      }
+    }
+    if (value is String) {
+      final parsed = int.tryParse(value);
+      if (parsed != null) return _parseEpochSeconds(parsed);
+      return DateTime.tryParse(value) ?? DateTime.now();
+    }
+    return DateTime.now();
+  }
+
+  /// 获取总重量展示文本（克/千克自动换算）
+  String get totalWeightText {
+    if (totalWeight >= 1000) {
+      return '${(totalWeight / 1000).toStringAsFixed(1)}kg';
+    }
+    return '${totalWeight.toStringAsFixed(0)}g';
+  }
+}
+
+/// 创建装备清单的请求体
+///
+/// 对齐后端 `org.example.equipment.dto.EquipmentListCreateRequest`。
+///
+/// 后端 `type` 字段的 Int/String 解析 bug 已在 `EquipmentServiceImpl`
+/// 中修复（新增了同时兼容 Int/Number/String 来源的 `parseIntField`），
+/// 因此这里已可正常传递并持久化清单类型。
+///
+/// `tripId` 字段（关联行程）已通过 `trip-equipment-link` change 修复：
+/// `EquipmentListController.createEquipmentList` 现在会将其透传到
+/// 服务层并持久化。
+///
+/// 仍然保留的已知后端限制：
+/// - `description` 字段无法持久化（`EquipmentList` 实体没有该列）。
+/// 该字段本请求体仍不包含，避免用户填写了却发现无效。
+class EquipmentListCreateRequestModel {
+  /// 清单名称（必填，非空）
+  final String name;
+
+  /// 清单类型
+  final EquipmentListType type;
+
+  /// 人数
+  final int personCount;
+
+  /// 关联的行程ID（可选）
+  final String? tripId;
+
+  const EquipmentListCreateRequestModel({
+    required this.name,
+    this.type = EquipmentListType.personal,
+    this.personCount = 1,
+    this.tripId,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'type': type.toCode(),
+        'personCount': personCount,
+        if (tripId != null) 'tripId': tripId,
+      };
 }

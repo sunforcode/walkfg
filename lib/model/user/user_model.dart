@@ -24,6 +24,17 @@ class UserModel extends BaseModel {
   @JsonKey(name: 'avatar_url')
   final String? avatarUrl;
 
+  /// 个人简介
+  @JsonKey(name: 'bio')
+  final String? bio;
+
+  /// 最近登录时间
+  @JsonKey(
+      name: 'last_login_at',
+      fromJson: BaseModel.parseTimestampNullable,
+      toJson: BaseModel.timestampToJson)
+  final DateTime? lastLoginAt;
+
   /// 已完成路线数量
   @JsonKey(name: 'completed_routes', defaultValue: 0)
   final int completedRoutes;
@@ -46,6 +57,8 @@ class UserModel extends BaseModel {
     required this.nickname,
     this.phone,
     this.avatarUrl,
+    this.bio,
+    this.lastLoginAt,
     this.completedRoutes = 0,
     this.equipmentLists = 0,
     this.favoriteRoutes = 0,

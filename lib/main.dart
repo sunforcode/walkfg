@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'app.dart';
@@ -16,6 +17,9 @@ import 'core/state/auth_notifier.dart';
 void main() async {
   // 确保Flutter绑定初始化
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 加载 .env 配置文件
+  await dotenv.load(fileName: '.env');
 
   // 初始化日期格式化
   await initializeDateFormatting('zh_CN', null);
@@ -48,8 +52,10 @@ void main() async {
   runApp(const App());
 }
 
-/// 预加载JSON数据文件
+/// 预加载JSON数据文件（仅在使用 mock 服务时）
 Future<void> _preloadJsonData() async {
+  if (!AppConfig.instance.useMockServices) return;
+
   final jsonFiles = [
     'assets/mock_data/guides.json',
     'assets/mock_data/routes.json',
@@ -60,7 +66,6 @@ Future<void> _preloadJsonData() async {
   for (final file in jsonFiles) {
     try {
       await rootBundle.loadString(file);
-      debugPrint('预加载成功: $file');
     } catch (e) {
       debugPrint('预加载失败: $file - $e');
     }

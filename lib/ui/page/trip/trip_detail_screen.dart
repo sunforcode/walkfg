@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/model/trip/trip_model.dart';
 import 'package:walk/service/route_service.dart';
-import 'package:walk/service/trip_service.dart';
 import 'package:walk/ui/map/map_widget.dart';
 import 'package:walk/ui/page/trip/widget/trip_map_header_widget.dart';
 import 'package:walk/ui/page/trip/widget/display/trip_overview_display_widget.dart';
@@ -91,7 +90,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
           _trip = _buildTripModelFromRoute(route);
         } catch (e) {
           // 如果路线不存在，创建一个空白行程
-          print('路线不存在，创建空白行程: $e');
+          debugPrint('路线不存在，创建空白行程: $e');
           _trip = _buildNewTripModel();
         }
       } else {
@@ -139,7 +138,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       participantCount: 1,
       organizerId: _currentUserId,
       equipmentListId: null,
-      equipmentList: null,
       mealPlanId: null,
       mealPlan: null,
       waterPlanId: null,
@@ -172,7 +170,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
       participantCount: 1,
       organizerId: _currentUserId,
       equipmentListId: null,
-      equipmentList: null,
       mealPlanId: null,
       mealPlan: null,
       waterPlanId: null,
@@ -305,7 +302,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
           SliverToBoxAdapter(
             child: _relatedRoutes.isNotEmpty &&
                     _relatedRoutes.first.defaultMap != null
-                ? MapWidget(
+                ? UnifiedMapWidget(
                     trackPoints: _relatedRoutes.first.defaultMap!.trackPoints,
                     markers: _relatedRoutes.first.markerPoints ?? [],
                     days: 3,

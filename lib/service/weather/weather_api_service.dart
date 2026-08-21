@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'weather_config.dart';
 
@@ -58,24 +59,23 @@ class WeatherApiService {
         // 检查API响应状态码
         final code = data['code'];
         if (code != '200') {
-          print('和风天气地点查询API错误: ${data['code']}');
+          debugPrint('和风天气地点查询API错误: ${data['code']}');
           return [];
         }
 
         // 获取地点数据
         final locations = data['location'];
         if (locations == null || locations is! List) {
-          print('和风天气地点查询API返回数据格式错误: 缺少location字段');
+          debugPrint('和风天气地点查询API返回数据格式错误: 缺少location字段');
           return [];
         }
 
-        print('成功查询到 ${locations.length} 个地点');
         return List<Map<String, dynamic>>.from(locations);
       } else {
-        print('和风天气地点查询API请求失败: ${response.statusCode} - ${response.body}');
+        debugPrint('和风天气地点查询API请求失败: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
-      print('查询地点信息失败: $e');
+      debugPrint('查询地点信息失败: $e');
     }
 
     return [];
@@ -119,21 +119,18 @@ class WeatherApiService {
         // 检查API响应状态码
         final code = data['code'];
         if (code != '200') {
-          print('和风天气逆地理编码API错误: ${data}');
+          debugPrint('和风天气逆地理编码API错误: ${data}');
           return null;
         }
 
         // 获取地点数据
         final locations = data['location'];
         if (locations == null || locations is! List || locations.isEmpty) {
-          print('和风天气逆地理编码API返回数据格式错误或无数据');
+          debugPrint('和风天气逆地理编码API返回数据格式错误或无数据');
           return null;
         }
 
         final location = locations[0];
-        print('和风天气API原始返回数据: $location');
-        print(
-            '成功获取地点信息: ${location['name']} (${location['adm2']}, ${location['adm1']})');
 
         // 构造更完整的地点信息
         final result = {
@@ -151,13 +148,12 @@ class WeatherApiService {
           'fxLink': location['fxLink'] ?? '',
         };
 
-        print('处理后的地点信息: $result');
         return result;
       } else {
-        print('和风天气逆地理编码API请求失败: ${response.statusCode} - ${response.body}');
+        debugPrint('和风天气逆地理编码API请求失败: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
-      print('通过坐标查询地点信息失败: $e');
+      debugPrint('通过坐标查询地点信息失败: $e');
     }
 
     return null;
@@ -198,17 +194,16 @@ class WeatherApiService {
         // 检查API响应状态码
         final code = data['code'];
         if (code != '200') {
-          print('和风天气API错误: ${data['code']}');
+          debugPrint('和风天气API错误: ${data['code']}');
           return null;
         }
 
-        print('成功获取天气数据');
         return data;
       } else {
-        print('和风天气API请求失败: ${response.statusCode} - ${response.body}');
+        debugPrint('和风天气API请求失败: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
-      print('获取天气数据异常: $e');
+      debugPrint('获取天气数据异常: $e');
     }
     return null;
   }
@@ -249,17 +244,16 @@ class WeatherApiService {
         // 检查API响应状态码
         final code = data['code'];
         if (code != '200') {
-          print('和风天气预报API错误: ${data['code']}');
+          debugPrint('和风天气预报API错误: ${data['code']}');
           return null;
         }
 
-        print('成功获取天气预报数据');
         return data;
       } else {
-        print('和风天气预报API请求失败: ${response.statusCode} - ${response.body}');
+        debugPrint('和风天气预报API请求失败: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
-      print('获取天气预报数据异常: $e');
+      debugPrint('获取天气预报数据异常: $e');
     }
     return null;
   }
