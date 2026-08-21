@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../model/route/route_enums.dart';
 import '../../../model/route/route_model.dart';
+import '../../../service/route/current_route_selection_service.dart';
 import '../../../service/route_service.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/motion.dart';
-import '../../routes/app_navigator.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // P3 路线发现 (PRD §3)
@@ -44,8 +44,10 @@ class _RouteDiscoveryScreenState extends State<RouteDiscoveryScreen> {
     });
   }
 
-  void _onCardTap(RouteModel route) {
-    AppNavigator.pushRouteDetail(context, routeId: route.id);
+  Future<void> _onCardTap(RouteModel route) async {
+    await CurrentRouteSelectionService.instance.setSelectedRoute(route);
+    if (!mounted) return;
+    Navigator.of(context).pop(route);
   }
 
   void _goHome() {
