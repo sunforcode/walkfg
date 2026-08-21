@@ -29,6 +29,12 @@ permissions:
 
 env:
   FLUTTER_VERSION: '3.41.8'
+  # pubspec.lock 里 214 个包记录的源是 pub.flutter-io.cn（本地开发镜像）。
+  # CI runner 默认用 pub.dev，源不一致会让 pub 判定 lock 失效并全部重新解析，
+  # dio 等包被升到最新版，出现本地不存在的 transformTimeout 等编译错误。
+  # 指定同一镜像使 CI 与本地严格同源。
+  PUB_HOSTED_URL: https://pub.flutter-io.cn
+  FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
 
 jobs:
   analyze-test:
