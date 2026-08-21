@@ -183,13 +183,22 @@ jobs:
 
       - name: Build Web (base-href /app/)
         # vialu.cn 的 Flutter Web 挂在 /app/ 子路径下，与 Admin 前端共用 nginx。
-        run: flutter build web --release --base-href /app/
+        # Web 必须使用线上 HTTPS 同源地址；若不传 dart-define，AppConfig 会回落到
+        # 开发机的 http://192.168.31.127:8080，HTTPS 页面会因混合内容/不可达而加载失败。
+        run: >-
+          flutter build web --release --base-href /app/
+          --dart-define=ENV=production
+          --dart-define=PROD_BASE_URL=https://vialu.cn
 
       - name: Upload web build
         uses: actions/upload-artifact@v4
         with:
           name: web-build
           path: build/web/
+          # flutter_dotenv 将 .env 作为运行时 asset 加载。
+          # upload-artifact@v4 默认排除隐藏文件，遗漏后线上会把
+          # /app/assets/.env 回退成 index.html，导致 runApp 前初始化失败并白屏。
+          include-hidden-files: true
           retention-days: 30
 
   deploy-web:

@@ -105,8 +105,11 @@ class TripModel extends BaseModel {
   /// 备注
   String? notes;
 
-  /// 隐私设置（公开、私密等）
-  @JsonKey(name: 'privacy_setting')
+  /// 隐私设置（公开、好友可见、私密）
+  ///
+  /// 后端响应使用字符串（public/friends/private），创建与更新请求则要求
+  /// 整数编码（0/1/2），因此仅在序列化请求时转换，内存模型保持字符串。
+  @JsonKey(name: 'privacy_setting', toJson: _privacySettingToJson)
   final String privacySetting;
 
   /// 交通方式
@@ -195,6 +198,19 @@ class TripModel extends BaseModel {
   /// 状态转JSON
   static int _statusToJson(TripStatus status) {
     return status.index;
+  }
+
+  /// 隐私设置转为后端请求使用的整数编码
+  static int _privacySettingToJson(String privacySetting) {
+    switch (privacySetting.toLowerCase()) {
+      case 'friends':
+        return 1;
+      case 'private':
+        return 2;
+      case 'public':
+      default:
+        return 0;
+    }
   }
 
   /// 获取状态名称
