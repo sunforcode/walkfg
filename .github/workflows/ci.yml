@@ -169,8 +169,14 @@ jobs:
           security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
 
           PROFILE_UUID=$(security cms -D -i "$PROVISIONING_PROFILE_PATH" | plutil -extract UUID raw -)
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          cp "$PROVISIONING_PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+          LEGACY_PROFILES_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          XCODE_PROFILES_DIR="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+          mkdir -p "$LEGACY_PROFILES_DIR" "$XCODE_PROFILES_DIR"
+          cp "$PROVISIONING_PROFILE_PATH" "$LEGACY_PROFILES_DIR/$PROFILE_UUID.mobileprovision"
+          cp "$PROVISIONING_PROFILE_PATH" "$XCODE_PROFILES_DIR/$PROFILE_UUID.mobileprovision"
+
+          security cms -D -i "$XCODE_PROFILES_DIR/$PROFILE_UUID.mobileprovision" | plutil -extract Name raw -
+          security find-identity -v -p codesigning "$KEYCHAIN_PATH"
 
       - name: Build signed IPA
         run: >-
