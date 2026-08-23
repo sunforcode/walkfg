@@ -198,8 +198,33 @@ jobs:
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_API_PRIVATE_KEY }}
         run: |
-          mkdir -p "$HOME/.appstoreconnect/private_keys"
-          printf '%s' "$APP_STORE_CONNECT_API_PRIVATE_KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_API_KEY_ID.p8"
+          PRIVATE_KEYS_DIR="$HOME/.appstoreconnect/private_keys"
+          PRIVATE_KEY_PATH="$PRIVATE_KEYS_DIR/AuthKey_$APP_STORE_CONNECT_API_KEY_ID.p8"
+          mkdir -p "$PRIVATE_KEYS_DIR"
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          raw = os.environ["APP_STORE_CONNECT_API_PRIVATE_KEY"].strip()
+          try:
+              decoded = json.loads(raw)
+              if isinstance(decoded, dict):
+                  raw = decoded.get("private_key") or decoded.get("key") or ""
+              elif isinstance(decoded, str):
+                  raw = decoded
+          except json.JSONDecodeError:
+              pass
+
+          private_key = raw.replace("\\n", "\n").strip() + "\n"
+          if not private_key.startswith("-----BEGIN PRIVATE KEY-----"):
+              raise SystemExit("APP_STORE_CONNECT_API_PRIVATE_KEY is not a PEM private key")
+
+          path = Path.home() / ".appstoreconnect" / "private_keys" / f"AuthKey_{os.environ['APP_STORE_CONNECT_API_KEY_ID']}.p8"
+          path.write_text(private_key)
+          path.chmod(0o600)
+          PY
+          openssl pkey -in "$PRIVATE_KEY_PATH" -noout -check
           xcrun altool --upload-app \
             --type ios \
             --file "$(find build/ios/ipa -name '*.ipa' -print -quit)" \
