@@ -119,7 +119,7 @@ jobs:
 
   build-ios:
     name: Build iOS & Upload TestFlight
-    runs-on: macos-15
+    runs-on: macos-26
     needs: analyze-test
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     steps:
@@ -130,6 +130,11 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
+
+      - name: Verify Xcode and iOS SDK
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
 
       - name: Pub get
         run: flutter pub get
