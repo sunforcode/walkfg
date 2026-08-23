@@ -157,7 +157,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.interactiveAccent,
         middle: const Text(
           '编辑行程',
           style: TextStyle(
@@ -170,7 +170,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
           child: const Text(
             '取消',
             style: TextStyle(
-              color: AppColors.textBody,
+              color: AppColors.textWeak,
             ),
           ),
           onPressed: _cancelEdit,
@@ -244,14 +244,13 @@ class _TripEditScreenState extends State<TripEditScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.textBody,
+                          color: AppColors.textWeak,
                         ),
                       ),
                       const SizedBox(height: 8),
                       CupertinoTextField(
                         placeholder: '请输入行程名称',
-                        controller: _nameController
-                          ..text = displayTrip.name,
+                        controller: _nameController..text = displayTrip.name,
                         onChanged: (value) {
                           _updateTrip(displayTrip.copyWith(name: value));
                         },
@@ -259,11 +258,14 @@ class _TripEditScreenState extends State<TripEditScreen> {
                       const SizedBox(height: 16),
 
                       // 出发日期 (PRD §3.2: read-only display)
-                      _DateRow(label: '出发日期', value: _fmtDate(displayTrip.startDate)),
+                      _DateRow(
+                          label: '出发日期',
+                          value: _fmtDate(displayTrip.startDate)),
                       const SizedBox(height: 16),
 
                       // 返回日期
-                      _DateRow(label: '返回日期', value: _fmtDate(displayTrip.endDate)),
+                      _DateRow(
+                          label: '返回日期', value: _fmtDate(displayTrip.endDate)),
                       const SizedBox(height: 16),
 
                       // 行程描述
@@ -272,7 +274,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.textBody,
+                          color: AppColors.textWeak,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -302,7 +304,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
                     padding: const EdgeInsets.all(16),
                     child: const Text(
                       '每日行程编辑功能开发中...',
-                      style: TextStyle(color: AppColors.textSubtitle),
+                      style: TextStyle(color: AppColors.textWeak),
                     ),
                   ),
                 ),
@@ -320,7 +322,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
                     padding: const EdgeInsets.all(16),
                     child: const Text(
                       '参与者管理功能开发中...',
-                      style: TextStyle(color: AppColors.textSubtitle),
+                      style: TextStyle(color: AppColors.textWeak),
                     ),
                   ),
                 ),
@@ -338,7 +340,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
                     padding: const EdgeInsets.all(16),
                     child: const Text(
                       '装备管理功能开发中...',
-                      style: TextStyle(color: AppColors.textSubtitle),
+                      style: TextStyle(color: AppColors.textWeak),
                     ),
                   ),
                 ),
@@ -356,7 +358,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
                     padding: const EdgeInsets.all(16),
                     child: const Text(
                       '预算管理功能开发中...',
-                      style: TextStyle(color: AppColors.textSubtitle),
+                      style: TextStyle(color: AppColors.textWeak),
                     ),
                   ),
                 ),
@@ -374,7 +376,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
                     padding: const EdgeInsets.all(16),
                     child: const Text(
                       '食物饮水规划功能开发中...',
-                      style: TextStyle(color: AppColors.textSubtitle),
+                      style: TextStyle(color: AppColors.textWeak),
                     ),
                   ),
                 ),
@@ -392,7 +394,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
                     padding: const EdgeInsets.all(16),
                     child: const Text(
                       '交通住宿预订功能开发中...',
-                      style: TextStyle(color: AppColors.textSubtitle),
+                      style: TextStyle(color: AppColors.textWeak),
                     ),
                   ),
                 ),
@@ -410,7 +412,7 @@ class _TripEditScreenState extends State<TripEditScreen> {
                     padding: const EdgeInsets.all(16),
                     child: const Text(
                       '安全备注功能开发中...',
-                      style: TextStyle(color: AppColors.textSubtitle),
+                      style: TextStyle(color: AppColors.textWeak),
                     ),
                   ),
                 ),
@@ -454,7 +456,7 @@ class _DateRow extends StatelessWidget {
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
         Text(

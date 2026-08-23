@@ -27,7 +27,7 @@ class WeatherScreen extends StatelessWidget {
               '← 返回',
               style: TextStyle(
                 fontSize: 14,
-                color: AppColors.textTertiary,
+                color: AppColors.textSecondary,
               ),
             ),
           ),
@@ -79,7 +79,7 @@ class _CurrentWeatherCard extends StatelessWidget {
           Text(
             '${_mockConditionIcon} ${_mockCondition}',
             style: AppTypography.bodyLg.copyWith(
-              color: AppColors.textTertiary,
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
@@ -87,7 +87,7 @@ class _CurrentWeatherCard extends StatelessWidget {
           Text(
             _mockLocation,
             style: AppTypography.caption.copyWith(
-              color: AppColors.textHint,
+              color: AppColors.textWeak,
             ),
           ),
         ],
@@ -117,7 +117,7 @@ class _ForecastSection extends StatelessWidget {
             child: Text(
               '徒步日预报',
               style: AppTypography.caption.copyWith(
-                color: AppColors.textHint,
+                color: AppColors.textWeak,
               ),
             ),
           ),
@@ -185,7 +185,7 @@ class _ForecastDayItem extends StatelessWidget {
             child: Text(
               _tempRange(day),
               style: AppTypography.caption.copyWith(
-                color: AppColors.textBody,
+                color: AppColors.textWeak,
               ),
             ),
           ),
@@ -243,7 +243,7 @@ class _DetailDataSection extends StatelessWidget {
             child: Text(
               '详细数据',
               style: AppTypography.caption.copyWith(
-                color: AppColors.textHint,
+                color: AppColors.textWeak,
               ),
             ),
           ),
@@ -301,7 +301,7 @@ class _DetailItem extends StatelessWidget {
             child: Text(
               item.value,
               style: AppTypography.caption.copyWith(
-                color: AppColors.textBody,
+                color: AppColors.textWeak,
               ),
               textAlign: TextAlign.right,
             ),

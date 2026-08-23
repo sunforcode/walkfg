@@ -28,9 +28,9 @@ class ShareCardWidget extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.primary.withValues(alpha: 0.1),
+              AppColors.interactiveAccent.withValues(alpha: 0.1),
               Colors.white,
-              AppColors.primary.withValues(alpha: 0.05),
+              AppColors.interactiveAccent.withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -84,7 +84,7 @@ class ShareCardWidget extends StatelessWidget {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: AppColors.interactiveAccent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(
@@ -122,14 +122,14 @@ class ShareCardWidget extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: AppColors.interactiveAccent.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             '${duration}天',
             style: TextStyle(
               fontSize: 12,
-              color: AppColors.primary,
+              color: AppColors.interactiveAccent,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -158,7 +158,7 @@ class ShareCardWidget extends StatelessWidget {
               Icon(
                 CupertinoIcons.map_fill,
                 size: 16,
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
               ),
               const SizedBox(width: 8),
               const Text(
@@ -379,7 +379,7 @@ class ShareCardWidget extends StatelessWidget {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: const Icon(

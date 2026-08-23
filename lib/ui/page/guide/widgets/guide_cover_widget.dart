@@ -58,13 +58,13 @@ class GuideCoverWidget extends StatelessWidget {
   /// 构建占位图片
   Widget _buildFallbackImage() {
     return Container(
-      color:
-          AppColors.primary.withValues(alpha: _CoverConstants.fallbackImageOpacity),
+      color: AppColors.interactiveAccent
+          .withValues(alpha: _CoverConstants.fallbackImageOpacity),
       child: const Center(
         child: Icon(
           CupertinoIcons.photo,
           size: _CoverConstants.fallbackIconSize,
-          color: AppColors.primary,
+          color: AppColors.interactiveAccent,
         ),
       ),
     );
@@ -104,7 +104,7 @@ class GuideCoverWidget extends StatelessWidget {
           vertical: _CoverConstants.tagPaddingVertical,
         ),
         decoration: BoxDecoration(
-          color: AppColors.primary,
+          color: AppColors.interactiveAccent,
           borderRadius: BorderRadius.circular(_CoverConstants.tagBorderRadius),
           boxShadow: [
             BoxShadow(
@@ -168,8 +168,8 @@ class GuideCoverWidget extends StatelessWidget {
         vertical: _CoverConstants.infoBadgePaddingVertical,
       ),
       decoration: BoxDecoration(
-        color:
-            CupertinoColors.white.withValues(alpha: _CoverConstants.infoBadgeOpacity),
+        color: CupertinoColors.white
+            .withValues(alpha: _CoverConstants.infoBadgeOpacity),
         borderRadius:
             BorderRadius.circular(_CoverConstants.infoBadgeBorderRadius),
       ),

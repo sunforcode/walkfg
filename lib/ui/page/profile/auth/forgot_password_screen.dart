@@ -123,7 +123,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 '请输入您的电子邮件，我们将向您发送重置密码的链接',
                 style: TextStyle(
                   fontSize: 16,
-                  color: AppColors.textSubtitle,
+                  color: AppColors.textWeak,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -136,7 +136,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.mail,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
                 padding:
@@ -153,8 +153,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ? AppColors.badgeVerifiedBg
                     : AppColors.interactiveAccent,
                 child: _isSending
-                    ? const CupertinoActivityIndicator(
-                        color: AppColors.bgBase)
+                    ? const CupertinoActivityIndicator(color: AppColors.bgBase)
                     : Text(_isSent ? '已发送' : '发送重置链接'),
                 onPressed:
                     (_isSending || _isSent) ? null : _handleSendResetLink,

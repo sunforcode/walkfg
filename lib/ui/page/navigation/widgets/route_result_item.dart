@@ -45,7 +45,7 @@ class RouteResultItem extends StatelessWidget {
               child: Container(
                 height: 120,
                 width: double.infinity,
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: AppColors.interactiveAccent.withValues(alpha: 0.1),
                 child: route.coverUrl != null
                     ? NetworkImageWithFallback(
                         url: route.coverUrl!,
@@ -57,12 +57,13 @@ class RouteResultItem extends StatelessWidget {
                     : Container(
                         height: 80,
                         width: 80,
-                        color: AppColors.primary.withValues(alpha: 0.1),
+                        color:
+                            AppColors.interactiveAccent.withValues(alpha: 0.1),
                         child: Center(
                           child: Icon(
                             CupertinoIcons.photo,
                             size: 40,
-                            color: AppColors.primary,
+                            color: AppColors.interactiveAccent,
                           ),
                         ),
                       ),
@@ -123,7 +124,7 @@ class RouteResultItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
+        color: AppColors.interactiveAccent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -132,14 +133,14 @@ class RouteResultItem extends StatelessWidget {
           Icon(
             icon,
             size: 12,
-            color: AppColors.primary,
+            color: AppColors.interactiveAccent,
           ),
           const SizedBox(width: 4),
           Text(
             text,
             style: TextStyle(
               fontSize: 12,
-              color: AppColors.primary,
+              color: AppColors.interactiveAccent,
             ),
           ),
         ],

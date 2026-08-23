@@ -90,7 +90,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                     const Icon(
                       CupertinoIcons.map,
                       size: 64,
-                      color: AppColors.primary,
+                      color: AppColors.interactiveAccent,
                     ),
                     const SizedBox(height: 16),
                     const Text(
@@ -268,7 +268,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
                       '继续规划 →',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.primary,
+                        color: AppColors.interactiveAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -288,7 +288,7 @@ class _MyTripPlansScreenState extends State<MyTripPlansScreen> {
         Icon(
           icon,
           size: 14,
-          color: AppColors.primary,
+          color: AppColors.interactiveAccent,
         ),
         const SizedBox(width: 4),
         Text(

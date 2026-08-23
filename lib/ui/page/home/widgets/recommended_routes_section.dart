@@ -66,7 +66,8 @@ class RecommendedRoutesSection extends StatelessWidget {
   }
 
   /// 构建推荐路线列表
-  Widget _buildRecommendedRoutesList(BuildContext context, List<RouteModel> recommendedRoutes) {
+  Widget _buildRecommendedRoutesList(
+      BuildContext context, List<RouteModel> recommendedRoutes) {
     return SizedBox(
       height: 220,
       child: ListView.builder(
@@ -78,7 +79,7 @@ class RecommendedRoutesSection extends StatelessWidget {
 
           return Padding(
             padding: EdgeInsets.only(
-              right: index == recommendedRoutes.length - 1 ? 0 : AppSpacing.md,
+              right: index == recommendedRoutes.length - 1 ? 0 : AppSpacing.lg,
             ),
             child: _buildRouteCard(context, route, color),
           );
@@ -94,10 +95,10 @@ class RecommendedRoutesSection extends StatelessWidget {
       child: Container(
         width: 280,
         decoration: BoxDecoration(
-          borderRadius: AppRadius.borderLg,
+          borderRadius: AppRadius.borderControl,
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadow,
+              color: AppColors.surfaceOverlay,
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -109,7 +110,7 @@ class RecommendedRoutesSection extends StatelessWidget {
             // 路线图片
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(AppRadius.lg),
+                top: Radius.circular(AppRadius.control),
               ),
               child: route.coverUrl != null
                   ? NetworkImageWithFallback(
@@ -138,7 +139,7 @@ class RecommendedRoutesSection extends StatelessWidget {
               decoration: const BoxDecoration(
                 color: CupertinoColors.white,
                 borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(AppRadius.lg),
+                  bottom: Radius.circular(AppRadius.control),
                 ),
               ),
               padding: AppSpacing.allSm,

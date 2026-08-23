@@ -30,11 +30,11 @@ class TripPlanningEntries extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.interactiveAccent.withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -94,12 +94,12 @@ class TripPlanningEntries extends StatelessWidget {
                 color: AppColors.bgLight,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.3),
+                  color: AppColors.interactiveAccent.withValues(alpha: 0.3),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.textHint.withValues(alpha: 0.1),
+                    color: AppColors.textWeak.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -110,7 +110,7 @@ class TripPlanningEntries extends StatelessWidget {
                   Icon(
                     CupertinoIcons.doc_text,
                     size: 32,
-                    color: AppColors.primary,
+                    color: AppColors.interactiveAccent,
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -126,10 +126,12 @@ class TripPlanningEntries extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          unfinishedPlansCount > 0 ? '你有$unfinishedPlansCount个未完成的行程规划' : '查看你的所有行程规划',
+                          unfinishedPlansCount > 0
+                              ? '你有$unfinishedPlansCount个未完成的行程规划'
+                              : '查看你的所有行程规划',
                           style: const TextStyle(
                             fontSize: 14,
-                            color: AppColors.textBody,
+                            color: AppColors.textWeak,
                           ),
                         ),
                       ],
@@ -137,7 +139,7 @@ class TripPlanningEntries extends StatelessWidget {
                   ),
                   const Icon(
                     CupertinoIcons.chevron_right,
-                    color: AppColors.textHint,
+                    color: AppColors.textWeak,
                   ),
                 ],
               ),

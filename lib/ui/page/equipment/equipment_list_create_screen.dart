@@ -23,8 +23,7 @@ class EquipmentListCreateScreen extends StatefulWidget {
       _EquipmentListCreateScreenState();
 }
 
-class _EquipmentListCreateScreenState
-    extends State<EquipmentListCreateScreen> {
+class _EquipmentListCreateScreenState extends State<EquipmentListCreateScreen> {
   final TextEditingController _nameController = TextEditingController();
   final FocusNode _nameFocusNode = FocusNode();
 
@@ -35,8 +34,7 @@ class _EquipmentListCreateScreenState
   bool _isSaving = false;
   bool _nameHasError = false;
 
-  bool get _canSave =>
-      _nameController.text.trim().isNotEmpty && !_isSaving;
+  bool get _canSave => _nameController.text.trim().isNotEmpty && !_isSaving;
 
   @override
   void initState() {
@@ -150,7 +148,7 @@ class _EquipmentListCreateScreenState
             '取消',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textTertiary,
+              color: AppColors.textSecondary,
             ),
           ),
         ),
@@ -225,9 +223,7 @@ class _EquipmentListCreateScreenState
         style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w500,
-          color: enabled
-              ? AppColors.interactiveAccent
-              : AppColors.textHint,
+          color: enabled ? AppColors.interactiveAccent : AppColors.textWeak,
         ),
       ),
     );
@@ -272,7 +268,7 @@ class _NameInputSection extends StatelessWidget {
           ),
           placeholderStyle: TextStyle(
             fontSize: 16,
-            color: AppColors.textDim,
+            color: AppColors.textWeak,
           ),
           decoration: BoxDecoration(
             color: AppColors.surfaceCard,
@@ -386,7 +382,7 @@ class _SegmentItem extends StatelessWidget {
               fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
               color: isSelected
                   ? AppColors.interactiveAccent.withValues(alpha: 0.9)
-                  : AppColors.textSubtitle.withValues(alpha: 0.5),
+                  : AppColors.textWeak.withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -441,9 +437,8 @@ class _PersonCountSection extends StatelessWidget {
                   children: [
                     _StepperButton(
                       icon: '−',
-                      onPressed: (dimmed || personCount <= 1)
-                          ? null
-                          : onDecrement,
+                      onPressed:
+                          (dimmed || personCount <= 1) ? null : onDecrement,
                       isDisabled: personCount <= 1,
                     ),
                     const SizedBox(width: 16),
@@ -462,9 +457,8 @@ class _PersonCountSection extends StatelessWidget {
                     const SizedBox(width: 16),
                     _StepperButton(
                       icon: '+',
-                      onPressed: (dimmed || personCount >= 20)
-                          ? null
-                          : onIncrement,
+                      onPressed:
+                          (dimmed || personCount >= 20) ? null : onIncrement,
                       isDisabled: personCount >= 20,
                     ),
                   ],
@@ -500,7 +494,7 @@ class _StepperButton extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: AppColors.surfaceCardBorder, // rgba(255,255,255,.06)
+            color: AppColors.border, // rgba(255,255,255,.06)
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
@@ -508,7 +502,7 @@ class _StepperButton extends StatelessWidget {
             icon,
             style: TextStyle(
               fontSize: 18,
-              color: AppColors.textBody,
+              color: AppColors.textWeak,
             ),
           ),
         ),
@@ -601,7 +595,7 @@ class _TemplateChipWidget extends StatelessWidget {
             fontSize: 13,
             color: isSelected
                 ? AppColors.interactiveAccent.withValues(alpha: 0.8)
-                : AppColors.textBody.withValues(alpha: 0.55),
+                : AppColors.textWeak.withValues(alpha: 0.55),
           ),
         ),
       ),
@@ -650,9 +644,7 @@ class _BottomCreateButton extends StatelessWidget {
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: isEnabled
-              ? AppColors.textPrimary
-              : AppColors.textHint,
+              color: isEnabled ? AppColors.textPrimary : AppColors.textWeak,
             ),
           ),
         ),
@@ -675,7 +667,7 @@ class _SectionLabel extends StatelessWidget {
         text,
         style: TextStyle(
           fontSize: 13,
-          color: AppColors.textSubtitle,
+          color: AppColors.textWeak,
         ),
       ),
     );

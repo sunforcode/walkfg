@@ -12,6 +12,50 @@ class AppTypography {
   static const String fontFamily = 'NotoSansSC';
   static const String fontFamilyMono = 'NotoSansSC';
 
+  // ============ 沉浸式语义字体 ============
+  static const TextStyle heroTitle = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 48,
+    fontWeight: FontWeight.w700,
+    height: 1,
+    color: AppColors.textPrimary,
+  );
+  static const TextStyle heroSubtitle = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    height: 1.4,
+    color: AppColors.textSecondary,
+  );
+  static const TextStyle displayTitle = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 32,
+    fontWeight: FontWeight.w700,
+    height: 1.1,
+    color: AppColors.textPrimary,
+  );
+  static const TextStyle pageTitle = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 28,
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+    color: AppColors.textPrimary,
+  );
+  static const TextStyle sectionTitle = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    height: 1.3,
+    color: AppColors.textPrimary,
+  );
+  static const TextStyle cardTitle = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    height: 1.3,
+    color: AppColors.textPrimary,
+  );
+
   // ============ 展示型 ============
   /// 超大数字（天气温度）— 48px/200
   static const TextStyle displayHero = TextStyle(
@@ -124,7 +168,7 @@ class AppTypography {
     fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 1.5,
-    color: AppColors.textBody,
+    color: AppColors.textWeak,
   );
 
   /// 说明文字 — 13px/400
@@ -133,7 +177,7 @@ class AppTypography {
     fontSize: 13,
     fontWeight: FontWeight.w400,
     height: 1.5,
-    color: AppColors.textBody,
+    color: AppColors.textWeak,
   );
 
   // ============ 标注型 ============
@@ -141,9 +185,9 @@ class AppTypography {
   static const TextStyle label = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
     height: 1.3,
-    color: AppColors.textSubtitle,
+    color: AppColors.textWeak,
   );
 
   /// 极小标注 — 11px/400
@@ -152,7 +196,7 @@ class AppTypography {
     fontSize: 11,
     fontWeight: FontWeight.w400,
     height: 1.3,
-    color: AppColors.textHint,
+    color: AppColors.textWeak,
   );
 
   /// 微型标注 — 10px/400
@@ -161,7 +205,7 @@ class AppTypography {
     fontSize: 10,
     fontWeight: FontWeight.w400,
     height: 1.3,
-    color: AppColors.textHint,
+    color: AppColors.textWeak,
   );
 
   // ============ 特殊样式 ============
@@ -246,7 +290,7 @@ class AppTypography {
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.2,
-    color: AppColors.textSubtitle,
+    color: AppColors.textWeak,
   );
 
   static const TextStyle statValue = TextStyle(
@@ -263,7 +307,7 @@ class AppTypography {
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.2,
-    color: AppColors.textSubtitle,
+    color: AppColors.textWeak,
   );
 
   static const TextStyle statLabel = TextStyle(
@@ -271,16 +315,23 @@ class AppTypography {
     fontSize: 10,
     fontWeight: FontWeight.w400,
     height: 1.2,
-    color: AppColors.textHint,
+    color: AppColors.textWeak,
   );
 
   static const TextStyle metricValue = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: FontWeight.w600,
     height: 1.2,
     color: AppColors.textPrimary,
     fontFeatures: [FontFeature.tabularFigures()],
+  );
+
+  static const TextStyle metricUnit = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textSecondary,
   );
 
   static const TextStyle metricLabel = TextStyle(
@@ -288,7 +339,7 @@ class AppTypography {
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.2,
-    color: AppColors.textSubtitle,
+    color: AppColors.textWeak,
   );
 
   // ============ 工具方法 ============

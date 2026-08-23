@@ -67,8 +67,8 @@ class HotSearchesSection extends StatelessWidget {
 
   /// 构建搜索标签
   Widget _buildSearchTag(String keyword, String? tagColor, bool isHot) {
-    Color backgroundColor = AppColors.primary.withValues(alpha: 0.1);
-    Color textColor = AppColors.primary;
+    Color backgroundColor = AppColors.interactiveAccent.withValues(alpha: 0.1);
+    Color textColor = AppColors.interactiveAccent;
 
     if (tagColor != null) {
       try {

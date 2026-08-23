@@ -5,22 +5,22 @@ import 'package:walk/theme/tokens/colors.dart';
 class EmptyContentWidget extends StatelessWidget {
   /// 图标
   final IconData icon;
-  
+
   /// 标题
   final String title;
-  
+
   /// 副标题
   final String? subtitle;
-  
+
   /// 操作按钮文本
   final String? actionText;
-  
+
   /// 操作按钮回调
   final VoidCallback? onAction;
-  
+
   /// 颜色
   final Color? color;
-  
+
   /// 构造函数
   const EmptyContentWidget({
     super.key,
@@ -34,8 +34,8 @@ class EmptyContentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayColor = color ?? AppColors.secondary;
-    
+    final displayColor = color ?? AppColors.interactiveAccent;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

@@ -31,7 +31,7 @@ class AltitudeButton extends StatelessWidget {
             children: [
               Icon(
                 Icons.terrain,
-                color: AppColors.textOnDark.withValues(alpha: 0.9),
+                color: AppColors.textPrimary.withValues(alpha: 0.9),
                 size: 20,
               ),
               if (isLoadingAltitude)
@@ -41,7 +41,7 @@ class AltitudeButton extends StatelessWidget {
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.textOnDark.withValues(alpha: 0.9),
+                      AppColors.textPrimary.withValues(alpha: 0.9),
                     ),
                   ),
                 ),
@@ -51,7 +51,7 @@ class AltitudeButton extends StatelessWidget {
           Text(
             '海拔',
             style: TextStyle(
-              color: AppColors.textOnDark.withValues(alpha: 0.9),
+              color: AppColors.textPrimary.withValues(alpha: 0.9),
               fontSize: 12,
             ),
           ),
@@ -59,7 +59,7 @@ class AltitudeButton extends StatelessWidget {
             Text(
               '${altitudeInfo!.altitude.toInt()}m',
               style: const TextStyle(
-                color: AppColors.textOnDark,
+                color: AppColors.textPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
@@ -67,15 +67,15 @@ class AltitudeButton extends StatelessWidget {
             Text(
               '±${altitudeInfo!.accuracy.toInt()}m',
               style: TextStyle(
-color: AppColors.textOnDark.withValues(alpha: 0.7),
-              fontSize: 10,
+                color: AppColors.textPrimary.withValues(alpha: 0.7),
+                fontSize: 10,
               ),
             ),
           ] else ...[
             Text(
               isLoadingAltitude ? '获取中...' : '点击获取',
               style: const TextStyle(
-                color: AppColors.textOnDark,
+                color: AppColors.textPrimary,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),

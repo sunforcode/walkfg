@@ -1,158 +1,53 @@
 import 'package:flutter/widgets.dart';
 
-/// 应用间距 Token
-///
-/// 使用 4px 基础网格系统
+/// Semantic spacing tokens on a 4dp grid.
 class AppSpacing {
   AppSpacing._();
 
-  // ============ 基础间距值 (保留现有值，避免 breaking change) ============
-  /// 极小间距 - 4px (图标与文字间距)
   static const double xs = 4.0;
-
-  /// 小间距 - 8px (列表项内部间距)
   static const double sm = 8.0;
+  static const double md = 12.0;
+  static const double lg = 16.0;
+  static const double xl = 24.0;
+  static const double xxl = 32.0;
+  static const double xxxl = 48.0;
+  static const double hero = 80.0;
 
-  /// 中间距 - 16px (卡片内边距、标准间距)
-  static const double md = 16.0;
-
-  /// 大间距 - 24px (区块间距)
-  static const double lg = 24.0;
-
-  /// 超大间距 - 32px (页面边距)
-  static const double xl = 32.0;
-
-  /// 特大间距 - 48px (区域分隔)
-  static const double xxl = 48.0;
-
-  // ============ PRD §8.1.4 间距别名 Token ============
-  /// PRD --space-md = 12px
-  static const double spaceMd = 12.0;
-
-  /// PRD --space-base = 16px
-  static const double base = 16.0;
-
-  /// PRD --space-lg = 20px
-  static const double spaceLg = 20.0;
-
-  /// PRD --space-xl = 24px
-  static const double spaceXl = 24.0;
-
-  /// PRD --space-2xl = 32px
-  static const double space2xl = 32.0;
-
-  /// PRD --space-3xl = 48px
-  static const double space3xl = 48.0;
-
-  /// PRD --space-4xl = 80px
-  static const double space4xl = 80.0;
-
-  // ============ 安全区域 Token (PRD §8.1.4) ============
-  /// 顶部安全区域高度 - 52px
-  static const double safeTop = 52.0;
-
-  /// 顶部安全区域高度（备用）- 56px
-  static const double safeTopAlt = 56.0;
-
-  /// 底部安全区域高度 - 34px
-  static const double safeBottom = 34.0;
-
-  /// 底部安全区域高度（表单）- 40px
-  static const double safeBottomForm = 40.0;
-
-  // ============ 特殊间距 ============
-  /// 页面水平边距
-  static const double pageHorizontal = 16.0;
-
-  /// 页面垂直边距
-  static const double pageVertical = 16.0;
-
-  /// 卡片内边距
-  static const double cardPadding = 16.0;
-
-  /// 列表项间距 (PRD --space-md = 12px)
-  static const double listItemSpacing = 12.0;
-
-  /// 区块间距 (PRD --space-xl = 24px)
-  static const double sectionSpacing = 24.0;
-
-  /// 导航栏高度
+  static const double pageHorizontal = lg;
+  static const double heroHorizontal = 20.0;
+  static const double pageVertical = lg;
+  static const double componentPadding = lg;
+  static const double listItemGap = md;
+  static const double sectionGap = xl;
   static const double navBarHeight = 44.0;
 
-  /// 底部安全区域 (deprecated: use safeBottom)
-  static const double bottomSafeArea = 34.0;
-
-  // ============ EdgeInsets 快捷方式 ============
-  /// 全部 xs 间距
   static const EdgeInsets allXs = EdgeInsets.all(xs);
-
-  /// 全部 sm 间距
   static const EdgeInsets allSm = EdgeInsets.all(sm);
-
-  /// 全部 md 间距
   static const EdgeInsets allMd = EdgeInsets.all(md);
-
-  /// 全部 lg 间距
   static const EdgeInsets allLg = EdgeInsets.all(lg);
-
-  /// 全部 xl 间距
   static const EdgeInsets allXl = EdgeInsets.all(xl);
 
-  /// 水平 sm 间距
   static const EdgeInsets horizontalSm = EdgeInsets.symmetric(horizontal: sm);
-
-  /// 水平 md 间距
   static const EdgeInsets horizontalMd = EdgeInsets.symmetric(horizontal: md);
-
-  /// 水平 lg 间距
   static const EdgeInsets horizontalLg = EdgeInsets.symmetric(horizontal: lg);
-
-  /// 垂直 sm 间距
   static const EdgeInsets verticalSm = EdgeInsets.symmetric(vertical: sm);
-
-  /// 垂直 md 间距
   static const EdgeInsets verticalMd = EdgeInsets.symmetric(vertical: md);
-
-  /// 垂直 lg 间距
   static const EdgeInsets verticalLg = EdgeInsets.symmetric(vertical: lg);
 
-  /// 页面标准内边距
   static const EdgeInsets page = EdgeInsets.symmetric(
     horizontal: pageHorizontal,
     vertical: pageVertical,
   );
+  static const EdgeInsets component = EdgeInsets.all(componentPadding);
 
-  /// 卡片标准内边距
-  static const EdgeInsets card = EdgeInsets.all(cardPadding);
-
-  // ============ SizedBox 快捷方式 ============
-  /// 水平间距 xs
   static const SizedBox gapXs = SizedBox(width: xs);
-
-  /// 水平间距 sm
   static const SizedBox gapSm = SizedBox(width: sm);
-
-  /// 水平间距 md
   static const SizedBox gapMd = SizedBox(width: md);
-
-  /// 水平间距 lg
   static const SizedBox gapLg = SizedBox(width: lg);
-
-  /// 垂直间距 xs
   static const SizedBox gapVerticalXs = SizedBox(height: xs);
-
-  /// 垂直间距 sm
   static const SizedBox gapVerticalSm = SizedBox(height: sm);
-
-  /// 垂直间距 md
   static const SizedBox gapVerticalMd = SizedBox(height: md);
-
-  /// 垂直间距 lg
   static const SizedBox gapVerticalLg = SizedBox(height: lg);
-
-  /// 垂直间距 xl
   static const SizedBox gapVerticalXl = SizedBox(height: xl);
-
-  /// 垂直间距 xxl
   static const SizedBox gapVerticalXxl = SizedBox(height: xxl);
 }

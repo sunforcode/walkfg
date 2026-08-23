@@ -38,7 +38,7 @@ class TripDailyItineraryWidget extends StatelessWidget {
           const Icon(
             CupertinoIcons.calendar,
             size: 48,
-            color: AppColors.textHint,
+            color: AppColors.textWeak,
           ),
           const SizedBox(height: 16),
           const Text(
@@ -46,7 +46,7 @@ class TripDailyItineraryWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
             ),
           ),
           const SizedBox(height: 8),
@@ -54,7 +54,7 @@ class TripDailyItineraryWidget extends StatelessWidget {
             'AI将为您规划详细的每日行程',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textHint,
+              color: AppColors.textWeak,
             ),
           ),
           const SizedBox(height: 16),
@@ -123,28 +123,28 @@ class TripDailyItineraryWidget extends StatelessWidget {
                           Icon(
                             CupertinoIcons.location,
                             size: 12,
-                            color: AppColors.textSubtitle,
+                            color: AppColors.textWeak,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '${plan.distance.toStringAsFixed(1)}km',
                             style: const TextStyle(
                               fontSize: 12,
-                              color: AppColors.textSubtitle,
+                              color: AppColors.textWeak,
                             ),
                           ),
                           const SizedBox(width: 12),
                           Icon(
                             CupertinoIcons.arrow_up_arrow_down,
                             size: 12,
-                            color: AppColors.textSubtitle,
+                            color: AppColors.textWeak,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '+${plan.elevationGain}m',
                             style: const TextStyle(
                               fontSize: 12,
-                              color: AppColors.textSubtitle,
+                              color: AppColors.textWeak,
                             ),
                           ),
                         ],
@@ -199,7 +199,7 @@ class TripDailyItineraryWidget extends StatelessWidget {
                           '预计时长',
                           style: TextStyle(
                             fontSize: 10,
-                            color: AppColors.textSubtitle,
+                            color: AppColors.textWeak,
                           ),
                         ),
                       ],
@@ -226,7 +226,7 @@ class TripDailyItineraryWidget extends StatelessWidget {
                           '徒步距离',
                           style: TextStyle(
                             fontSize: 10,
-                            color: AppColors.textSubtitle,
+                            color: AppColors.textWeak,
                           ),
                         ),
                       ],
@@ -253,7 +253,7 @@ class TripDailyItineraryWidget extends StatelessWidget {
                           '爬升高度',
                           style: TextStyle(
                             fontSize: 10,
-                            color: AppColors.textSubtitle,
+                            color: AppColors.textWeak,
                           ),
                         ),
                       ],

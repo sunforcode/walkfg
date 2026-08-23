@@ -29,17 +29,14 @@ class WalkDrawer extends StatelessWidget {
     return Container(
       width: AppSizes.drawer,
       color: AppColors.bgDrawer,
-      child: Column(
-        children: [
-          // 顶部安全区 + 品牌区
-          _buildBrandArea(),
-          // 功能网格
-          Expanded(child: _buildFunctionGrid(context)),
-          // 底部用户区
-          _buildUserArea(context),
-          // 底部安全区
-          SizedBox(height: AppSpacing.safeBottom),
-        ],
+      child: SafeArea(
+        child: Column(
+          children: [
+            _buildBrandArea(),
+            Expanded(child: _buildFunctionGrid(context)),
+            _buildUserArea(context),
+          ],
+        ),
       ),
     );
   }
@@ -48,10 +45,10 @@ class WalkDrawer extends StatelessWidget {
 
   Widget _buildBrandArea() {
     return Container(
-      padding: EdgeInsets.only(
-        left: AppSpacing.spaceXl,
-        top: AppSpacing.safeTopAlt,
-        bottom: AppSpacing.spaceXl,
+      padding: const EdgeInsets.only(
+        left: AppSpacing.xl,
+        top: AppSpacing.md,
+        bottom: AppSpacing.xl,
       ),
       alignment: Alignment.centerLeft,
       child: Column(
@@ -75,7 +72,7 @@ class WalkDrawer extends StatelessWidget {
               fontFamily: AppTypography.fontFamily,
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: AppColors.textLabel,
+              color: AppColors.textWeak,
             ),
           ),
         ],
@@ -88,7 +85,7 @@ class WalkDrawer extends StatelessWidget {
   Widget _buildFunctionGrid(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.base,
+        horizontal: AppSpacing.lg,
       ),
       child: GridView.count(
         crossAxisCount: 3,
@@ -111,8 +108,8 @@ class WalkDrawer extends StatelessWidget {
   Widget _buildUserArea(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.spaceXl,
-        vertical: AppSpacing.md,
+        horizontal: AppSpacing.xl,
+        vertical: AppSpacing.lg,
       ),
       decoration: const BoxDecoration(
         border: Border(
@@ -135,7 +132,7 @@ class WalkDrawer extends StatelessWidget {
                 color: AppColors.surfaceCard,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppColors.surfaceCardBorder,
+                  color: AppColors.border,
                   width: 1,
                 ),
               ),
@@ -154,7 +151,7 @@ class WalkDrawer extends StatelessWidget {
                   fontFamily: AppTypography.fontFamily,
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.textBody,
+                  color: AppColors.textWeak,
                 ),
               ),
             ),
@@ -162,7 +159,7 @@ class WalkDrawer extends StatelessWidget {
             Icon(
               CupertinoIcons.gear_solid,
               size: 18,
-              color: AppColors.textHint,
+              color: AppColors.textWeak,
             ),
           ],
         ),
@@ -225,7 +222,16 @@ class WalkDrawer extends StatelessWidget {
 // 数据模型
 // ─────────────────────────────────────────────────────────────────────────────
 
-enum _DrawerItemId { route, trip, weather, calendar, gear, statistics, navigation, nearby }
+enum _DrawerItemId {
+  route,
+  trip,
+  weather,
+  calendar,
+  gear,
+  statistics,
+  navigation,
+  nearby
+}
 
 class _DrawerItem {
   final _DrawerItemId id;
@@ -248,9 +254,12 @@ const List<_DrawerItem> _drawerItems = [
   _DrawerItem(id: _DrawerItemId.weather, icon: '⛅', label: '天气'),
   _DrawerItem(id: _DrawerItemId.gear, icon: '🎒', label: '装备'),
   _DrawerItem(id: _DrawerItemId.calendar, icon: '📅', label: '日历'),
-  _DrawerItem(id: _DrawerItemId.statistics, icon: '📊', label: '统计', available: false),
-  _DrawerItem(id: _DrawerItemId.navigation, icon: '🧭', label: '导航', available: false),
-  _DrawerItem(id: _DrawerItemId.nearby, icon: '📍', label: '附近', available: false),
+  _DrawerItem(
+      id: _DrawerItemId.statistics, icon: '📊', label: '统计', available: false),
+  _DrawerItem(
+      id: _DrawerItemId.navigation, icon: '🧭', label: '导航', available: false),
+  _DrawerItem(
+      id: _DrawerItemId.nearby, icon: '📍', label: '附近', available: false),
   // 第 9 格留空，保持 3×3 布局
 ];
 
@@ -274,7 +283,8 @@ class _DrawerGridItemState extends State<_DrawerGridItem> {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
-    final labelColor = item.available ? AppColors.textSecondary : AppColors.textHint;
+    final labelColor =
+        item.available ? AppColors.textSecondary : AppColors.textWeak;
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
@@ -286,9 +296,9 @@ class _DrawerGridItemState extends State<_DrawerGridItem> {
         curve: Curves.easeOut,
         decoration: BoxDecoration(
           color: _pressed ? AppColors.surfaceCardHover : AppColors.surfaceCard,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
+          borderRadius: BorderRadius.circular(AppRadius.control),
           border: Border.all(
-            color: AppColors.surfaceCardBorder,
+            color: AppColors.border,
             width: 0.5,
           ),
         ),

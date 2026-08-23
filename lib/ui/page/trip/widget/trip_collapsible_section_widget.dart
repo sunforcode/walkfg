@@ -112,7 +112,7 @@ class _TripCollapsibleSectionWidgetState
                         widget.subtitle,
                         style: const TextStyle(
                           fontSize: 13,
-                          color: AppColors.textBody,
+                          color: AppColors.textWeak,
                         ),
                       ),
                     ],
@@ -124,7 +124,7 @@ class _TripCollapsibleSectionWidgetState
                   child: const Icon(
                     CupertinoIcons.chevron_down,
                     size: 16,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
               ],

@@ -149,9 +149,8 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _isSaving ? null : _save,
-          child: _isSaving
-              ? const CupertinoActivityIndicator()
-              : const Text('保存'),
+          child:
+              _isSaving ? const CupertinoActivityIndicator() : const Text('保存'),
         ),
       ),
       child: SafeArea(
@@ -228,7 +227,7 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
         label,
         style: const TextStyle(
           fontSize: 13,
-          color: AppColors.textSubtitle,
+          color: AppColors.textWeak,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -290,7 +289,7 @@ class _EquipmentItemEditScreenState extends State<EquipmentItemEditScreen> {
           const Icon(
             CupertinoIcons.chevron_down,
             size: 16,
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
           ),
         ],
       ),

@@ -149,8 +149,7 @@ class _TrailPainter extends CustomPainter {
 
     // 终点标记 — 圆 5px rgba(255,100,100,.8)
     final endOffset = Offset(size.width * 0.853, size.height * 0.345);
-    canvas.drawCircle(
-        endOffset, 5, Paint()..color = const Color(0xCCFF6464));
+    canvas.drawCircle(endOffset, 5, Paint()..color = const Color(0xCCFF6464));
   }
 
   @override
@@ -238,7 +237,7 @@ class _DepartureLine extends StatelessWidget {
           TextSpan(
             text: '$diff',
             style: const TextStyle(
-              color: AppColors.accentBlue,
+              color: AppColors.interactiveAccent,
               fontSize: 18,
               fontWeight: FontWeight.w900,
             ),
@@ -268,7 +267,7 @@ class _MetricLine extends StatelessWidget {
     return Text(
       parts.join('  ·  '),
       style: const TextStyle(
-        color: AppColors.textBody,
+        color: AppColors.textWeak,
         fontSize: 14,
         fontWeight: FontWeight.w400,
         letterSpacing: 1.0,
@@ -289,16 +288,16 @@ class _WeatherHud extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.xxl),
+      borderRadius: BorderRadius.circular(AppRadius.panel),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(
             color: const Color(0x14FFFFFF), // rgba(255,255,255,.08)
-            borderRadius: BorderRadius.circular(AppRadius.xxl),
+            borderRadius: BorderRadius.circular(AppRadius.panel),
             border: Border.all(
-              color: AppColors.surfaceCardBorder,
+              color: AppColors.border,
               width: 1,
             ),
           ),
@@ -310,7 +309,7 @@ class _WeatherHud extends StatelessWidget {
               const Text(
                 '徒步日天气',
                 style: TextStyle(
-                  color: AppColors.textSubtitle,
+                  color: AppColors.textWeak,
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                 ),
@@ -382,7 +381,7 @@ class _HudMetric extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
             fontSize: 11,
             fontWeight: FontWeight.w400,
           ),
@@ -449,7 +448,7 @@ class _SwipeIndicatorState extends State<_SwipeIndicator>
           const Text(
             '推荐路线',
             style: TextStyle(
-              color: AppColors.textDim,
+              color: AppColors.textWeak,
               fontSize: 11,
               fontWeight: FontWeight.w400,
             ),
@@ -464,7 +463,7 @@ class _UpArrowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.textDim
+      ..color = AppColors.textWeak
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round

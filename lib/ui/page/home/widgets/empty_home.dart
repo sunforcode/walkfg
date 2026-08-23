@@ -45,7 +45,7 @@ class EmptyHome extends StatelessWidget {
                   Text(
                     '徒步旅行助手',
                     style: TextStyle(
-                      color: AppColors.textBody,
+                      color: AppColors.textWeak,
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
                       height: 1.4,
@@ -73,7 +73,7 @@ class EmptyHome extends StatelessWidget {
                   Text(
                     '还没有行程',
                     style: TextStyle(
-                      color: AppColors.textLabel,
+                      color: AppColors.textWeak,
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                     ),
@@ -251,7 +251,7 @@ class _PressableShell extends StatelessWidget {
         onTapCancel: () => onPressChange(false),
         child: AnimatedScale(
           scale: pressed ? 0.97 : 1.0,
-          duration: pressed ? AppMotion.instant : AppMotion.normal,
+          duration: pressed ? AppMotion.press : AppMotion.feedback,
           curve: Curves.ease,
           child: child,
         ),
@@ -274,7 +274,7 @@ class _FrostedPill extends StatelessWidget {
       child: BackdropBlur(
         blur: 20,
         child: AnimatedContainer(
-          duration: AppMotion.normal,
+          duration: AppMotion.feedback,
           curve: Curves.ease,
           padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
           decoration: BoxDecoration(

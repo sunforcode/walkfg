@@ -28,7 +28,7 @@ class UserInfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: AppColors.surfaceOverlay,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -61,8 +61,8 @@ class UserInfoCard extends StatelessWidget {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                    color: AppColors.interactiveAccentBg,
-                    border: Border.all(
+                      color: AppColors.interactiveAccentBg,
+                      border: Border.all(
                         color: AppColors.interactiveAccentSoft,
                         width: 2,
                       ),
@@ -96,7 +96,7 @@ class UserInfoCard extends StatelessWidget {
                   'ID: ${user?.id ?? '未知'}',
                   style: const TextStyle(
                     fontSize: 14,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
                 if (user?.bio != null && user!.bio!.isNotEmpty) ...[
@@ -105,7 +105,7 @@ class UserInfoCard extends StatelessWidget {
                     user!.bio!,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: AppColors.textSubtitle,
+                      color: AppColors.textWeak,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

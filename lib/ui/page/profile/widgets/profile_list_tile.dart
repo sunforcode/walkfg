@@ -54,7 +54,7 @@ class ProfileListTile extends StatelessWidget {
             ),
             const Icon(
               CupertinoIcons.chevron_right,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
               size: 18,
             ),
           ],

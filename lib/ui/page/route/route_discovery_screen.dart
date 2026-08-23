@@ -179,7 +179,7 @@ class _RouteListContent extends StatelessWidget {
           child: Text(
             text,
             style: const TextStyle(
-              color: AppColors.textHint,
+              color: AppColors.textWeak,
               fontSize: 15,
               fontWeight: FontWeight.w400,
             ),
@@ -208,7 +208,7 @@ class _NavBack extends StatelessWidget {
         child: Text(
           '← 首页',
           style: TextStyle(
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
             fontSize: 14,
             fontWeight: FontWeight.w400,
           ),
@@ -253,7 +253,7 @@ class _HeaderCopy extends StatelessWidget {
           Text(
             '点选后直接回到首页，看轨迹和这周/下周天气。',
             style: TextStyle(
-              color: AppColors.textHint,
+              color: AppColors.textWeak,
               fontSize: 13,
               fontWeight: FontWeight.w400,
               height: 1.5,
@@ -335,10 +335,11 @@ class _PressableCard extends StatelessWidget {
           duration: const Duration(milliseconds: 150),
           curve: Curves.ease,
           child: AnimatedContainer(
-            duration: AppMotion.normal,
+            duration: AppMotion.feedback,
             curve: Curves.ease,
             decoration: BoxDecoration(
-              color: pressed ? AppColors.cardPressed : AppColors.surfaceCard,
+              color:
+                  pressed ? AppColors.surfaceCardHover : AppColors.surfaceCard,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: AppColors.surfaceDivider, width: 1),
             ),
@@ -474,7 +475,8 @@ class _RouteInfo extends StatelessWidget {
           runSpacing: 4,
           children: [
             _MetricPill(_formatDistance(route.distanceKm)),
-            _MetricPill('爬升 ${route.elevationGainM?.toStringAsFixed(0) ?? "—"}m'),
+            _MetricPill(
+                '爬升 ${route.elevationGainM?.toStringAsFixed(0) ?? "—"}m'),
             _MetricPill(route.difficulty.getName()),
           ],
         ),
@@ -505,7 +507,7 @@ class _MetricPill extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(
-          color: AppColors.textBody,
+          color: AppColors.textWeak,
           fontSize: 11,
           fontWeight: FontWeight.w400,
         ),

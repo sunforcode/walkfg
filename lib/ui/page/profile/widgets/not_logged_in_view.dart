@@ -68,7 +68,7 @@ class NotLoggedInView extends StatelessWidget {
             '登录后可以使用更多功能',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
               fontSize: 14,
             ),
           ),

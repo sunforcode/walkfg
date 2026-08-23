@@ -26,7 +26,7 @@ class TripCoverWidget extends StatelessWidget {
                 ? NetworkImageWithFallback(
                     url: trip.coverUrl!,
                     fit: BoxFit.cover,
-                    fallbackColor: AppColors.primary,
+                    fallbackColor: AppColors.interactiveAccent,
                   )
                 : Container(
                     color: CupertinoColors.systemGrey5,

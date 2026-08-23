@@ -47,79 +47,112 @@ class AppColors {
   static const Color statusCancelled = Color(0xFFf87171);
 
   // ---- 语义色 ----
-  static const Color error = Color(0xFFef4444);
-  static const Color success = Color(0xFF16a34a);
-  static const Color warning = Color(0xFFd97706);
-  static const Color info = Color(0xFF2563eb);
+  static const Color error = Color(0xFFFF6464);
+  static const Color success = Color(0xFF4CAF50);
+  static const Color warning = Color(0xFFFFB74D);
+  static const Color info = interactiveAccent;
 
   // ============================================================
   //  Alias Token — 语义化 (PRD §8.1.2)
   // ============================================================
 
-  // ---- 文字层级（白色 alpha 15 级）----
-  static const Color textPrimary = Color(0xD9FFFFFF);   // rgba(255,255,255,.85)
-  static const Color textSecondary = Color(0xB3FFFFFF);  // rgba(255,255,255,.7)
-  static const Color textTertiary = Color(0x99FFFFFF);   // rgba(255,255,255,.6)
-  static const Color textBody = Color(0x80FFFFFF);       // rgba(255,255,255,.5)
-  static const Color textSubtitle = Color(0x66FFFFFF);   // rgba(255,255,255,.4)
-  static const Color textLabel = Color(0x59FFFFFF);      // rgba(255,255,255,.35)
-  static const Color textHint = Color(0x4DFFFFFF);       // rgba(255,255,255,.3)
-  static const Color textPlaceholder = Color(0x40FFFFFF); // rgba(255,255,255,.25)
-  static const Color textDim = Color(0x33FFFFFF);        // rgba(255,255,255,.2)
-  static const Color textFaint = Color(0x2EFFFFFF);      // rgba(255,255,255,.18)
+  // ---- 核心语义层级 ----
+  static const Color textPrimary = Color(0xFFFFFFFF);
+  static const Color textSecondary = Color(0xB3FFFFFF);
+  static const Color textWeak = Color(0x80FFFFFF);
+  static const Color surfaceCard = Color(0x0FFFFFFF);
+  static const Color surfaceGlass = Color(0x1FFFFFFF);
+  static const Color border = Color(0x1AFFFFFF);
+  static const Color interactiveAccent = Color(0xFF64C8FF);
+  static const LinearGradient heroScrim = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0x0A03080C), Color(0xE603080C)],
+  );
+
+  // ---- 兼容层级 ----
+  static const Color textTertiary = Color(0x99FFFFFF); // rgba(255,255,255,.6)
+  static const Color textBody = textWeak;
+  static const Color textSubtitle = Color(0x66FFFFFF); // rgba(255,255,255,.4)
+  static const Color textLabel = Color(0x59FFFFFF); // rgba(255,255,255,.35)
+  static const Color textHint = Color(0x4DFFFFFF); // rgba(255,255,255,.3)
+  static const Color textPlaceholder =
+      Color(0x40FFFFFF); // rgba(255,255,255,.25)
+  static const Color textDim = Color(0x33FFFFFF); // rgba(255,255,255,.2)
+  static const Color textFaint = Color(0x2EFFFFFF); // rgba(255,255,255,.18)
 
   // ---- 背景层级 ----
-  static const Color surfaceCard = Color(0x0DFFFFFF);       // rgba(255,255,255,.05)
-  static const Color surfaceCardHover = Color(0x14FFFFFF);   // rgba(255,255,255,.08)
-  static const Color surfaceCardBorder = Color(0x0FFFFFFF);  // rgba(255,255,255,.06)
-  static const Color surfaceInput = Color(0x0AFFFFFF);       // rgba(255,255,255,.04)
-  static const Color surfaceInputFocus = Color(0x0A64C8FF);  // rgba(100,200,255,.04)
-  static const Color surfaceDivider = Color(0x0AFFFFFF);     // rgba(255,255,255,.04)
-  static const Color surfaceOverlay = Color(0x80000000);     // rgba(0,0,0,.5)
-  static const Color surfaceToast = Color(0xCC000000);       // rgba(0,0,0,.8)
+  static const Color surfaceCardHover =
+      Color(0x14FFFFFF); // rgba(255,255,255,.08)
+  static const Color surfaceCardBorder =
+      Color(0x0FFFFFFF); // rgba(255,255,255,.06)
+  static const Color surfaceInput = Color(0x0AFFFFFF); // rgba(255,255,255,.04)
+  static const Color surfaceInputFocus =
+      Color(0x0A64C8FF); // rgba(100,200,255,.04)
+  static const Color surfaceDivider =
+      Color(0x0AFFFFFF); // rgba(255,255,255,.04)
+  static const Color surfaceOverlay = Color(0x80000000); // rgba(0,0,0,.5)
+  static const Color surfaceToast = Color(0xCC000000); // rgba(0,0,0,.8)
 
   // ---- 交互色 ----
-  static const Color interactiveAccent = Color(0xCC64C8FF);      // rgba(100,200,255,.8)
-  static const Color interactiveAccentSoft = Color(0x9964C8FF);  // rgba(100,200,255,.6)
-  static const Color interactiveAccentBg = Color(0x1F64C8FF);   // rgba(100,200,255,.12)
-  static const Color interactiveAccentFocus = Color(0x4D64C8FF); // rgba(100,200,255,.3)
-  static const Color interactiveCta = Color(0x1FFFFFFF);        // rgba(255,255,255,.12)
-  static const Color interactiveCtaBorder = Color(0x33FFFFFF);  // rgba(255,255,255,.2)
+  static const Color interactiveAccentSoft =
+      Color(0x9964C8FF); // rgba(100,200,255,.6)
+  static const Color interactiveAccentBg =
+      Color(0x1F64C8FF); // rgba(100,200,255,.12)
+  static const Color interactiveAccentFocus =
+      Color(0x4D64C8FF); // rgba(100,200,255,.3)
+  static const Color interactiveCta =
+      Color(0x1FFFFFFF); // rgba(255,255,255,.12)
+  static const Color interactiveCtaBorder =
+      Color(0x33FFFFFF); // rgba(255,255,255,.2)
 
   // ---- 状态色 Alias ----
-  static const Color statusPlanningBg = Color(0x26F59E0B);   // rgba(245,158,11,.15)
+  static const Color statusPlanningBg =
+      Color(0x26F59E0B); // rgba(245,158,11,.15)
   static const Color statusPlanningText = Color(0xFFfbbf24);
-  static const Color statusConfirmedBg = Color(0x263B82F6);  // rgba(59,130,246,.15)
+  static const Color statusConfirmedBg =
+      Color(0x263B82F6); // rgba(59,130,246,.15)
   static const Color statusConfirmedText = Color(0xFF60a5fa);
-  static const Color statusCompletedBg = Color(0x1F22C55E);  // rgba(34,197,94,.12)
+  static const Color statusCompletedBg =
+      Color(0x1F22C55E); // rgba(34,197,94,.12)
   static const Color statusCompletedText = Color(0xFF4ade80);
-  static const Color statusCancelledBg = Color(0x1AEF4444);  // rgba(239,68,68,.1)
+  static const Color statusCancelledBg =
+      Color(0x1AEF4444); // rgba(239,68,68,.1)
   static const Color statusCancelledText = Color(0xFFf87171);
-  static const Color statusPreparingBg = Color(0x1F3B82F6);  // rgba(59,130,246,.12)
+  static const Color statusPreparingBg =
+      Color(0x1F3B82F6); // rgba(59,130,246,.12)
   static const Color statusPreparingText = Color(0xFF60a5fa);
 
   // ---- 语义色 Alias ----
-  static const Color semanticErrorBg = Color(0x14EF4444);     // rgba(239,68,68,.08)
-  static const Color semanticErrorBorder = Color(0x66EF4444);  // rgba(239,68,68,.4)
-  static const Color semanticErrorText = Color(0x99EF4444);    // rgba(239,68,68,.6)
-  static const Color semanticWarningBg = Color(0x14F59E0B);   // rgba(245,158,11,.08)
-  static const Color semanticSuccessBg = Color(0x1A22C55E);   // rgba(34,197,94,.1)
+  static const Color semanticErrorBg = Color(0x14EF4444); // rgba(239,68,68,.08)
+  static const Color semanticErrorBorder =
+      Color(0x66EF4444); // rgba(239,68,68,.4)
+  static const Color semanticErrorText =
+      Color(0x99EF4444); // rgba(239,68,68,.6)
+  static const Color semanticWarningBg =
+      Color(0x14F59E0B); // rgba(245,158,11,.08)
+  static const Color semanticSuccessBg =
+      Color(0x1A22C55E); // rgba(34,197,94,.1)
 
   // ---- 轨迹色 ----
-  static const Color trailOuter = Color(0x2664C8FF);   // rgba(100,200,255,.15)
-  static const Color trailInner = Color(0xCC64C8FF);   // rgba(100,200,255,.8)
-  static const Color trailStart = Color(0xCC64C8FF);   // rgba(100,200,255,.8)
-  static const Color trailEnd = Color(0xE6EF4444);     // rgba(239,68,68,.9)
+  static const Color trailOuter = Color(0x2664C8FF); // rgba(100,200,255,.15)
+  static const Color trailInner = Color(0xCC64C8FF); // rgba(100,200,255,.8)
+  static const Color trailStart = Color(0xCC64C8FF); // rgba(100,200,255,.8)
+  static const Color trailEnd = Color(0xE6EF4444); // rgba(239,68,68,.9)
 
   // ---- 功能图标底色 ----
-  static const Color iconBgRoute = Color(0x1F64C8FF);      // rgba(100,200,255,.12)
-  static const Color iconBgTrip = Color(0x1F78B4FF);      // rgba(120,180,255,.12)
-  static const Color iconBgWeather = Color(0x1FFFC850);    // rgba(255,200,80,.12)
-  static const Color iconBgEquipment = Color(0x1F8CC864);  // rgba(140,200,100,.12)
-  static const Color iconBgCalendar = Color(0x1FFFA078);   // rgba(255,160,120,.12)
-  static const Color iconBgStatistics = Color(0x1FB482FF); // rgba(180,130,255,.12)
-  static const Color iconBgNavigation = Color(0x1F64B4FF); // rgba(100,180,255,.12)
-  static const Color iconBgNearby = Color(0x1FFF8C78);    // rgba(255,140,120,.12)
+  static const Color iconBgRoute = Color(0x1F64C8FF); // rgba(100,200,255,.12)
+  static const Color iconBgTrip = Color(0x1F78B4FF); // rgba(120,180,255,.12)
+  static const Color iconBgWeather = Color(0x1FFFC850); // rgba(255,200,80,.12)
+  static const Color iconBgEquipment =
+      Color(0x1F8CC864); // rgba(140,200,100,.12)
+  static const Color iconBgCalendar =
+      Color(0x1FFFA078); // rgba(255,160,120,.12)
+  static const Color iconBgStatistics =
+      Color(0x1FB482FF); // rgba(180,130,255,.12)
+  static const Color iconBgNavigation =
+      Color(0x1F64B4FF); // rgba(100,180,255,.12)
+  static const Color iconBgNearby = Color(0x1FFF8C78); // rgba(255,140,120,.12)
 
   // ============================================================
   //  渐变 (PRD §8.1.2 渐变段)
@@ -164,42 +197,27 @@ class AppColors {
   );
 
   // ---- P3 路线发现 绿色系 (PRD §7.1) ----
-  static const Color accentGreenBright = Color(0xB3B4FFB4);   // rgba(180,255,180,.7) 区域标签
-  static const Color accentGreenSoft = Color(0x80B4FFB4);    // rgba(180,255,180,.5) 副标题
-  static const Color accentGreenFaint = Color(0x26B4FFB4);   // rgba(180,255,180,.15) 出发按钮背景
-  static const Color accentGreenArrow = Color(0xCCB4FFB4);   // rgba(180,255,180,.8) 出发箭头
-  static const Color contourLine = Color(0x0FB4FFB4);        // rgba(180,255,180,.06) 整体 opacity × rgba(180,255,180,.4)
+  static const Color accentGreenBright =
+      Color(0xB3B4FFB4); // rgba(180,255,180,.7) 区域标签
+  static const Color accentGreenSoft =
+      Color(0x80B4FFB4); // rgba(180,255,180,.5) 副标题
+  static const Color accentGreenFaint =
+      Color(0x26B4FFB4); // rgba(180,255,180,.15) 出发按钮背景
+  static const Color accentGreenArrow =
+      Color(0xCCB4FFB4); // rgba(180,255,180,.8) 出发箭头
+  static const Color contourLine = Color(
+      0x0FB4FFB4); // rgba(180,255,180,.06) 整体 opacity × rgba(180,255,180,.4)
 
   // ---- P3 卡片 (PRD §7.1) ----
-  static const Color cardPressed = Color(0x1AFFFFFF);        // rgba(255,255,255,.1) 卡片 hover/按下
-  static const Color pillBg = Color(0x14FFFFFF);             // rgba(255,255,255,.08) 指标药丸背景
-  static const Color thumbStart = Color(0x1464C8FF);         // rgba(100,200,255,.08) 缩略图渐变起
-  static const Color thumbEnd = Color(0x0F8CC864);           // rgba(140,200,100,.06) 缩略图渐变止
+  static const Color cardPressed =
+      Color(0x1AFFFFFF); // rgba(255,255,255,.1) 卡片 hover/按下
+  static const Color pillBg = Color(0x14FFFFFF); // rgba(255,255,255,.08) 指标药丸背景
+  static const Color thumbStart =
+      Color(0x1464C8FF); // rgba(100,200,255,.08) 缩略图渐变起
+  static const Color thumbEnd =
+      Color(0x0F8CC864); // rgba(140,200,100,.06) 缩略图渐变止
 
-  // ============================================================
-  //  兼容旧 API — 让现有代码逐步迁移
-  // ============================================================
-
-  // 这些字段保留以减少迁移改文件数量，新代码应使用 Alias Token。
-  static const Color primary = interactiveAccent;
-  static const Color onPrimary = bgBase;
-  static const Color background = bgBase;
-  static const Color surface = bgPanel;
-  static const Color card = surfaceCard;
-  static const Color divider = surfaceDivider;
-  static const Color border = surfaceCardBorder;
-  static const Color disabled = textDim;
-  static const Color overlay = surfaceOverlay;
-  static const Color shadow = Color(0x33000000);
-  static const Color like = Color(0xFFE91E63);
-  static const Color favorite = Color(0xFFfbbf24);
-  static const Color textOnDark = textPrimary;
-
-  // ---- 兼容已删除字段 ----
-  static const Color secondary = accentSky;
-  static const LinearGradient primaryGradient = gradientCta;
-
-  // ---- 交互状态 (保留兼容) ----
+  // ---- 交互状态 ----
   static const Color pressed = Color(0x0AFFFFFF);
   static const Color hovered = Color(0x05FFFFFF);
   static const Color focused = interactiveAccent;
@@ -263,38 +281,40 @@ class AppColors {
   // ============================================================
 
   // ---- 抽屉背景 ----
-  static const Color sheetBg = Color(0xFFFFFFFF);               // #ffffff
-  static const Color sheetTextPrimary = Color(0xFF1a1a1a);       // #1a1a1a
-  static const Color sheetTextSecondary = Color(0xFF888888);     // #888888
-  static const Color sheetTextWeak = Color(0xFFaaaaaa);          // #aaaaaa
-  static const Color sheetTextTag = Color(0xFF555555);           // #555555
+  static const Color sheetBg = Color(0xFFFFFFFF); // #ffffff
+  static const Color sheetTextPrimary = Color(0xFF1a1a1a); // #1a1a1a
+  static const Color sheetTextSecondary = Color(0xFF888888); // #888888
+  static const Color sheetTextWeak = Color(0xFFaaaaaa); // #aaaaaa
+  static const Color sheetTextTag = Color(0xFF555555); // #555555
 
   // ---- 抽屉分割线 / 手柄 ----
-  static const Color sheetDivider = Color(0x0F000000);           // rgba(0,0,0,.06)
-  static const Color sheetDragHandle = Color(0x26000000);        // rgba(0,0,0,.15)
+  static const Color sheetDivider = Color(0x0F000000); // rgba(0,0,0,.06)
+  static const Color sheetDragHandle = Color(0x26000000); // rgba(0,0,0,.15)
 
   // ---- 抽屉标签底色 ----
-  static const Color sheetTagBg = Color(0x0D000000);             // rgba(0,0,0,.05)
+  static const Color sheetTagBg = Color(0x0D000000); // rgba(0,0,0,.05)
 
   // ---- 横滑卡片底色 ----
-  static const Color sheetCardBg = Color(0x08000000);            // rgba(0,0,0,.03)
+  static const Color sheetCardBg = Color(0x08000000); // rgba(0,0,0,.03)
 
   // ---- 徽标色 ----
-  static const Color badgeEssentialBg = Color(0x1AEF4444);       // rgba(239,68,68,.10)
-  static const Color badgeEssentialText = Color(0xFFdc2626);     // #dc2626
-  static const Color badgeRecommendedBg = Color(0x1AF59E0B);     // rgba(245,158,11,.10)
-  static const Color badgeRecommendedText = Color(0xFFd97706);   // #d97706
-  static const Color badgeVerifiedBg = Color(0x1A22C55E);        // rgba(34,197,94,.10)
-  static const Color badgeVerifiedText = Color(0xFF16a34a);      // #16a34a
-  static const Color badgeBlueBg = Color(0x1A3B82F6);            // rgba(59,130,246,.10)
-  static const Color badgeBlueText = Color(0xFF2563eb);          // #2563eb
+  static const Color badgeEssentialBg =
+      Color(0x1AEF4444); // rgba(239,68,68,.10)
+  static const Color badgeEssentialText = Color(0xFFdc2626); // #dc2626
+  static const Color badgeRecommendedBg =
+      Color(0x1AF59E0B); // rgba(245,158,11,.10)
+  static const Color badgeRecommendedText = Color(0xFFd97706); // #d97706
+  static const Color badgeVerifiedBg = Color(0x1A22C55E); // rgba(34,197,94,.10)
+  static const Color badgeVerifiedText = Color(0xFF16a34a); // #16a34a
+  static const Color badgeBlueBg = Color(0x1A3B82F6); // rgba(59,130,246,.10)
+  static const Color badgeBlueText = Color(0xFF2563eb); // #2563eb
 
   // ---- 图标按钮边框 ----
-  static const Color iconBtnBorder = Color(0x14000000);          // rgba(0,0,0,.08)
+  static const Color iconBtnBorder = Color(0x14000000); // rgba(0,0,0,.08)
 
   // ---- 返回按钮 ----
-  static const Color navBackBg = Color(0x66000000);              // rgba(0,0,0,.40)
-  static const double navBackBlur = 10.0;                         // backdrop-filter:blur(10px)
+  static const Color navBackBg = Color(0x66000000); // rgba(0,0,0,.40)
+  static const double navBackBlur = 10.0; // backdrop-filter:blur(10px)
 
   // ============================================================
   //  工具方法
@@ -319,7 +339,9 @@ class AppColors {
     final lower = condition.toLowerCase();
     if (lower.contains('晴') || lower.contains('sunny')) {
       return weatherSunnyGradient;
-    } else if (lower.contains('多云') || lower.contains('阴') || lower.contains('cloudy')) {
+    } else if (lower.contains('多云') ||
+        lower.contains('阴') ||
+        lower.contains('cloudy')) {
       return weatherCloudyGradient;
     } else if (lower.contains('雨') || lower.contains('rain')) {
       return weatherRainyGradient;

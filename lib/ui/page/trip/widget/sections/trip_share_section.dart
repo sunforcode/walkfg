@@ -38,7 +38,7 @@ class TripShareSection extends StatelessWidget {
             children: [
               Icon(
                 CupertinoIcons.share,
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -87,7 +87,7 @@ class TripShareSection extends StatelessWidget {
             width: double.infinity,
             child: CupertinoButton(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              color: AppColors.primary,
+              color: AppColors.interactiveAccent,
               borderRadius: BorderRadius.circular(8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -206,7 +206,7 @@ class TripShareSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
+        color: AppColors.interactiveAccent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -215,14 +215,14 @@ class TripShareSection extends StatelessWidget {
           Icon(
             CupertinoIcons.heart_fill,
             size: 14,
-            color: AppColors.primary,
+            color: AppColors.interactiveAccent,
           ),
           const SizedBox(width: 6),
           Text(
             '已分享 $totalShares 次',
             style: TextStyle(
               fontSize: 12,
-              color: AppColors.primary,
+              color: AppColors.interactiveAccent,
               fontWeight: FontWeight.w500,
             ),
           ),

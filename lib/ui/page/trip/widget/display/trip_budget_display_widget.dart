@@ -56,8 +56,7 @@ class TripBudgetDisplayWidget extends StatelessWidget {
         const Spacer(),
         if (hasBudget || hasActualCost)
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: AppColors.statusPlanningBg,
               borderRadius: BorderRadius.circular(12),
@@ -189,7 +188,7 @@ class TripBudgetDisplayWidget extends StatelessWidget {
 
   Color _getBudgetComparisonColor() {
     if (trip.budget == null || trip.actualCost == null) {
-      return AppColors.textSubtitle;
+      return AppColors.textWeak;
     }
     final difference = trip.actualCost! - trip.budget!;
     if (difference > 0) {

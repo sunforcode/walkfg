@@ -11,11 +11,11 @@ class LoadingCard extends StatelessWidget {
     return Container(
       height: 220,
       decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: AppRadius.borderXl,
+        gradient: AppColors.gradientCta,
+        borderRadius: AppRadius.borderPanel,
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: AppColors.surfaceOverlay,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -23,7 +23,7 @@ class LoadingCard extends StatelessWidget {
       ),
       child: const Center(
         child: CupertinoActivityIndicator(
-          color: AppColors.textOnDark,
+          color: AppColors.textPrimary,
           radius: 16,
         ),
       ),

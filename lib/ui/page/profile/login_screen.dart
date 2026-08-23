@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       // 调用实际的登录API
       await UserService.login(username, password);
-      
+
       // 登录成功，返回个人主页
       if (mounted) {
         setState(() {
@@ -72,24 +72,26 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       debugPrint('LoginScreen: Login error: $e');
-      
+
       if (mounted) {
         setState(() {
           _isLoggingIn = false;
         });
-        
+
         // 显示错误信息
         String errorMessage = '登录失败';
         if (e.toString().contains('用户名或密码错误')) {
           errorMessage = '用户名或密码错误';
-        } else if (e.toString().contains('401') || e.toString().contains('Unauthorized')) {
+        } else if (e.toString().contains('401') ||
+            e.toString().contains('Unauthorized')) {
           errorMessage = '用户名或密码错误';
         } else if (e.toString().contains('404')) {
           errorMessage = '服务器连接失败';
-        } else if (e.toString().contains('SocketException') || e.toString().contains('Connection')) {
+        } else if (e.toString().contains('SocketException') ||
+            e.toString().contains('Connection')) {
           errorMessage = '网络连接失败，请检查网络';
         }
-        
+
         _showErrorDialog(errorMessage);
       }
     }
@@ -162,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 '徒步旅行助手',
                 style: TextStyle(
                   fontSize: 16,
-                  color: AppColors.textSubtitle,
+                  color: AppColors.textWeak,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -175,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.person,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
                 padding:
@@ -194,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.lock,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
                 suffix: CupertinoButton(
@@ -203,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     _obscurePassword
                         ? CupertinoIcons.eye
                         : CupertinoIcons.eye_slash,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                   onPressed: () {
                     setState(() {
@@ -222,8 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
               CupertinoButton(
                 color: AppColors.interactiveAccent,
                 child: _isLoggingIn
-                    ? const CupertinoActivityIndicator(
-                        color: AppColors.bgBase)
+                    ? const CupertinoActivityIndicator(color: AppColors.bgBase)
                     : const Text('登录'),
                 onPressed: _isLoggingIn ? null : _handleLogin,
               ),

@@ -63,7 +63,7 @@ class _TripTransportationCardWidgetState
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
@@ -86,7 +86,7 @@ class _TripTransportationCardWidgetState
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
@@ -129,8 +129,9 @@ class _TripTransportationCardWidgetState
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color:
-                          _isOutbound ? AppColors.primary : Colors.transparent,
+                      color: _isOutbound
+                          ? AppColors.interactiveAccent
+                          : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -168,8 +169,9 @@ class _TripTransportationCardWidgetState
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color:
-                          !_isOutbound ? AppColors.primary : Colors.transparent,
+                      color: !_isOutbound
+                          ? AppColors.interactiveAccent
+                          : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -214,46 +216,46 @@ class _TripTransportationCardWidgetState
                   ? saveButton
                   : editButton)
               : null,
-          content:
-              widget.isEditMode && widget.editingSectionId == 'transportation'
-                  ? Column(
-                      children: [
-                        TripTransportationWidget(
-                          transportations: filteredTransportations,
-                        ),
-                        const SizedBox(height: 16),
-                        CupertinoButton(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 8),
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                CupertinoIcons.add,
-                                color: AppColors.primary,
-                                size: 16,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '添加交通方案',
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          onPressed: () {
-                            // TODO: 显示添加交通方案对话框
-                          },
-                        ),
-                      ],
-                    )
-                  : TripTransportationWidget(
+          content: widget.isEditMode &&
+                  widget.editingSectionId == 'transportation'
+              ? Column(
+                  children: [
+                    TripTransportationWidget(
                       transportations: filteredTransportations,
                     ),
+                    const SizedBox(height: 16),
+                    CupertinoButton(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 8),
+                      color: AppColors.interactiveAccent.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            CupertinoIcons.add,
+                            color: AppColors.interactiveAccent,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '添加交通方案',
+                            style: TextStyle(
+                              color: AppColors.interactiveAccent,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        // TODO: 显示添加交通方案对话框
+                      },
+                    ),
+                  ],
+                )
+              : TripTransportationWidget(
+                  transportations: filteredTransportations,
+                ),
           warningText: hasUnbookedTransportation ? '您有未预订的交通，建议尽快完成预订' : null,
           buttonText: widget.isEditMode ? null : '预订交通',
           onButtonPressed: widget.isEditMode
@@ -358,7 +360,7 @@ class _TripTransportationCardWidgetState
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
-                        color: AppColors.primary,
+                        color: AppColors.interactiveAccent,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       alignment: Alignment.center,

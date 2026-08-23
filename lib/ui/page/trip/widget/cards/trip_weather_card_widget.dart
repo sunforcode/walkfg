@@ -44,7 +44,7 @@ class TripWeatherCardWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
@@ -66,7 +66,7 @@ class TripWeatherCardWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
