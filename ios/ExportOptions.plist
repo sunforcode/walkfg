@@ -11,7 +11,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.sunyongji.walk</key>
-		<string>walk-app-store</string>
+		<string>walk</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>Apple Distribution</string>
