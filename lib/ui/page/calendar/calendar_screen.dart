@@ -168,7 +168,7 @@ class _DragHandle extends StatelessWidget {
       width: 36,
       height: 4,
       decoration: BoxDecoration(
-        color: AppColors.textHint,
+        color: AppColors.textWeak,
         borderRadius: BorderRadius.circular(2),
       ),
     );
@@ -226,7 +226,7 @@ class _MonthNavButton extends StatelessWidget {
       child: Icon(
         icon,
         size: 20,
-        color: AppColors.textBody,
+        color: AppColors.textWeak,
       ),
     );
   }
@@ -311,7 +311,7 @@ class _WeekLabelRow extends StatelessWidget {
                     label,
                     style: TextStyle(
                       fontSize: 11,
-                      color: AppColors.textHint,
+                      color: AppColors.textWeak,
                     ),
                   ),
                 ),
@@ -342,9 +342,8 @@ class _DayCell extends StatelessWidget {
     // PRD §4.2: 有行程 → 白色加粗文字 + 红点
     // PRD §4.2: 今日 → 白色加粗文字 + 亮蓝半透明背景 (rgba(100,200,255,.12))
     // PRD §4.2: 普通日期 → rgba(255,255,255,.6)
-    final textColor = hasTrip || isToday
-        ? AppColors.textPrimary
-        : AppColors.textTertiary;
+    final textColor =
+        hasTrip || isToday ? AppColors.textPrimary : AppColors.textSecondary;
     final fontWeight = hasTrip || isToday ? FontWeight.w600 : FontWeight.w400;
 
     return GestureDetector(
@@ -404,7 +403,7 @@ class _CloseButton extends StatelessWidget {
           '关闭日历',
           style: TextStyle(
             fontSize: 14,
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
           ),
         ),
       ),

@@ -123,7 +123,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password: password,
         email: email,
       );
-      
+
       // 注册成功，返回个人主页
       if (mounted) {
         setState(() {
@@ -133,26 +133,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     } catch (e) {
       debugPrint('RegisterScreen: Registration error: $e');
-      
+
       if (mounted) {
         setState(() {
           _isRegistering = false;
         });
-        
+
         // 显示错误信息
         String errorMessage = '注册失败';
-        if (e.toString().contains('用户名已存在') || e.toString().contains('username')) {
+        if (e.toString().contains('用户名已存在') ||
+            e.toString().contains('username')) {
           errorMessage = '用户名已存在';
-        } else if (e.toString().contains('邮箱已被注册') || e.toString().contains('email')) {
+        } else if (e.toString().contains('邮箱已被注册') ||
+            e.toString().contains('email')) {
           errorMessage = '该邮箱已被注册';
-        } else if (e.toString().contains('409') || e.toString().contains('Conflict')) {
+        } else if (e.toString().contains('409') ||
+            e.toString().contains('Conflict')) {
           errorMessage = '用户名或邮箱已存在';
         } else if (e.toString().contains('404')) {
           errorMessage = '服务器连接失败';
-        } else if (e.toString().contains('SocketException') || e.toString().contains('Connection')) {
+        } else if (e.toString().contains('SocketException') ||
+            e.toString().contains('Connection')) {
           errorMessage = '网络连接失败，请检查网络';
         }
-        
+
         _showErrorDialog(errorMessage);
       }
     }
@@ -214,7 +218,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 '开始您的徒步旅行',
                 style: TextStyle(
                   fontSize: 16,
-                  color: AppColors.textSubtitle,
+                  color: AppColors.textWeak,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -226,7 +230,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.person,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
                 padding:
@@ -245,7 +249,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.mail,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
                 padding:
@@ -264,7 +268,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.lock,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
                 suffix: CupertinoButton(
@@ -273,7 +277,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _obscurePassword
                         ? CupertinoIcons.eye
                         : CupertinoIcons.eye_slash,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                   onPressed: () {
                     setState(() {
@@ -297,7 +301,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(left: 10),
                   child: Icon(
                     CupertinoIcons.lock,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
                 suffix: CupertinoButton(
@@ -306,7 +310,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _obscureConfirmPassword
                         ? CupertinoIcons.eye
                         : CupertinoIcons.eye_slash,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                   onPressed: () {
                     setState(() {
@@ -325,8 +329,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               CupertinoButton(
                 color: AppColors.interactiveAccent,
                 child: _isRegistering
-                    ? const CupertinoActivityIndicator(
-                        color: AppColors.bgBase)
+                    ? const CupertinoActivityIndicator(color: AppColors.bgBase)
                     : const Text('注册'),
                 onPressed: _isRegistering ? null : _handleRegister,
               ),

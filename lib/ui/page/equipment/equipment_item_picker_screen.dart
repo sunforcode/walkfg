@@ -19,8 +19,7 @@ class EquipmentItemPickerScreen extends StatefulWidget {
       _EquipmentItemPickerScreenState();
 }
 
-class _EquipmentItemPickerScreenState
-    extends State<EquipmentItemPickerScreen> {
+class _EquipmentItemPickerScreenState extends State<EquipmentItemPickerScreen> {
   final List<EquipmentItemModel> _items = [];
   bool _isLoading = true;
   bool _isLoadingMore = false;
@@ -169,7 +168,7 @@ class _EquipmentItemPickerScreenState
                                 '${item.categoryName} · ${item.weightText}',
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.textSubtitle,
+                                  color: AppColors.textWeak,
                                 ),
                               ),
                             ],

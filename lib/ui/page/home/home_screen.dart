@@ -100,8 +100,8 @@ class _HomeScreenState extends State<HomeScreen>
     final kmlUrl = route.kmlUrl;
     if (kmlUrl != null && kmlUrl.isNotEmpty) {
       try {
-        final mapData =
-            await KmlCacheService.instance.getMapData(kmlUrl, routeId: route.id);
+        final mapData = await KmlCacheService.instance
+            .getMapData(kmlUrl, routeId: route.id);
         return mapData.trackPoints;
       } catch (_) {}
     }
@@ -184,8 +184,8 @@ class _HomeScreenState extends State<HomeScreen>
 
           // 顶部按钮区 (hamburger moved to right, calendar moved to drawer)
           Positioned(
-            top: AppSpacing.safeTopAlt,
-            right: AppSpacing.base,
+            top: MediaQuery.viewPaddingOf(context).top + AppSpacing.md,
+            right: AppSpacing.pageHorizontal,
             child: _HamburgerButton(
               onTap: widget.onOpenDrawer,
             ),

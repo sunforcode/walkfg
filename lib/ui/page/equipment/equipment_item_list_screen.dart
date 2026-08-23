@@ -208,7 +208,7 @@ class _EquipmentItemCard extends StatelessWidget {
               ),
               child: const Icon(
                 CupertinoIcons.bag_fill,
-                color: AppColors.textSubtitle,
+                color: AppColors.textWeak,
               ),
             ),
             const SizedBox(width: 12),
@@ -231,7 +231,7 @@ class _EquipmentItemCard extends StatelessWidget {
                     '${item.categoryName} · ${item.weightText} · 数量${item.quantity}',
                     style: const TextStyle(
                       fontSize: 13,
-                      color: AppColors.textSubtitle,
+                      color: AppColors.textWeak,
                     ),
                   ),
                 ],
@@ -240,7 +240,7 @@ class _EquipmentItemCard extends StatelessWidget {
             const Icon(
               CupertinoIcons.chevron_right,
               size: 18,
-              color: AppColors.textTertiary,
+              color: AppColors.textSecondary,
             ),
           ],
         ),

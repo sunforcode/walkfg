@@ -24,14 +24,14 @@ class WeatherMainInfo extends StatelessWidget {
               children: [
                 Icon(
                   Icons.location_on,
-                  color: AppColors.textOnDark.withValues(alpha: 0.9),
+                  color: AppColors.textPrimary.withValues(alpha: 0.9),
                   size: 16,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   weather.city,
                   style: TextStyle(
-                    color: AppColors.textOnDark.withValues(alpha: 0.9),
+                    color: AppColors.textPrimary.withValues(alpha: 0.9),
                     fontSize: 14,
                   ),
                 ),
@@ -41,7 +41,7 @@ class WeatherMainInfo extends StatelessWidget {
             Text(
               '${weather.temperature.toInt()}°C',
               style: TextStyle(
-                color: AppColors.textOnDark,
+                color: AppColors.textPrimary,
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
               ),
@@ -49,7 +49,7 @@ class WeatherMainInfo extends StatelessWidget {
             Text(
               weather.getWeatherConditionText(),
               style: TextStyle(
-                color: AppColors.textOnDark.withValues(alpha: 0.9),
+                color: AppColors.textPrimary.withValues(alpha: 0.9),
                 fontSize: 16,
               ),
             ),
@@ -60,7 +60,7 @@ class WeatherMainInfo extends StatelessWidget {
           children: [
             Icon(
               weather.weatherIcon,
-              color: AppColors.textOnDark,
+              color: AppColors.textPrimary,
               size: 48,
             ),
             const SizedBox(height: 8),
@@ -70,13 +70,15 @@ class WeatherMainInfo extends StatelessWidget {
                 vertical: 6,
               ),
               decoration: BoxDecoration(
-                color: weather.suitability ? AppColors.success.withValues(alpha: 0.8) : AppColors.error.withValues(alpha: 0.8),
+                color: weather.suitability
+                    ? AppColors.success.withValues(alpha: 0.8)
+                    : AppColors.error.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 weather.suitability ? '适宜徒步' : '不宜徒步',
                 style: TextStyle(
-                  color: AppColors.textOnDark,
+                  color: AppColors.textPrimary,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),

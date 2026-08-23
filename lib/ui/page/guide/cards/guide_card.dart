@@ -26,7 +26,6 @@ class GuideCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -153,7 +152,8 @@ class GuideCard extends StatelessWidget {
                               backgroundImage: guide.authorAvatarUrl != null
                                   ? NetworkImage(guide.authorAvatarUrl!)
                                   : null,
-                              backgroundColor: accentColor.withValues(alpha: 0.1),
+                              backgroundColor:
+                                  accentColor.withValues(alpha: 0.1),
                               child: guide.authorAvatarUrl == null
                                   ? Icon(CupertinoIcons.person,
                                       size: 10,
@@ -166,8 +166,8 @@ class GuideCard extends StatelessWidget {
                                 guide.author,
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color:
-                                      AppColors.textSecondary.withValues(alpha: 0.7),
+                                  color: AppColors.textSecondary
+                                      .withValues(alpha: 0.7),
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -184,14 +184,16 @@ class GuideCard extends StatelessWidget {
                           Icon(
                             CupertinoIcons.eye,
                             size: 10,
-                            color: AppColors.textSecondary.withValues(alpha: 0.5),
+                            color:
+                                AppColors.textSecondary.withValues(alpha: 0.5),
                           ),
                           const SizedBox(width: 2),
                           Text(
                             _formatNumber(guide.views),
                             style: TextStyle(
                               fontSize: 9,
-                              color: AppColors.textSecondary.withValues(alpha: 0.5),
+                              color: AppColors.textSecondary
+                                  .withValues(alpha: 0.5),
                             ),
                           ),
 
@@ -230,7 +232,7 @@ class GuideCard extends StatelessWidget {
   /// 构建点赞按钮
   Widget _buildLikeButton(GuideModel guide, Color accentColor) {
     final likeColor = guide.isLiked
-        ? AppColors.like.withValues(alpha: 0.7)
+        ? AppColors.error.withValues(alpha: 0.7)
         : accentColor.withValues(alpha: 0.5);
 
     return GestureDetector(

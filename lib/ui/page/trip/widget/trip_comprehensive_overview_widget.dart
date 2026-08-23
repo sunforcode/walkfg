@@ -366,7 +366,7 @@ class TripComprehensiveOverviewWidget extends StatelessWidget {
               subtitle,
               style: const TextStyle(
                 fontSize: 10,
-                color: AppColors.textSubtitle,
+                color: AppColors.textWeak,
               ),
             ),
           ],

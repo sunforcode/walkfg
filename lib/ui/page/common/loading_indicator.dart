@@ -5,10 +5,10 @@ import 'package:walk/theme/tokens/colors.dart';
 class LoadingIndicator extends StatelessWidget {
   /// 高度
   final double height;
-  
+
   /// 颜色
   final Color? color;
-  
+
   /// 构造函数
   const LoadingIndicator({
     super.key,
@@ -23,7 +23,7 @@ class LoadingIndicator extends StatelessWidget {
       child: Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(
-            color ?? AppColors.primary,
+            color ?? AppColors.interactiveAccent,
           ),
         ),
       ),

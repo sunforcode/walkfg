@@ -29,8 +29,7 @@ class _ListItemWithDetail {
   const _ListItemWithDetail({required this.relation, this.item});
 }
 
-class _EquipmentListDetailScreenState
-    extends State<EquipmentListDetailScreen> {
+class _EquipmentListDetailScreenState extends State<EquipmentListDetailScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   bool _hasChanged = false;
@@ -57,8 +56,8 @@ class _EquipmentListDetailScreenState
 
       final itemsWithDetail = await Future.wait(relations.map((relation) async {
         try {
-          final item =
-              await EquipmentService.getEquipmentItemById(relation.equipmentItemId);
+          final item = await EquipmentService.getEquipmentItemById(
+              relation.equipmentItemId);
           return _ListItemWithDetail(relation: relation, item: item);
         } catch (_) {
           return _ListItemWithDetail(relation: relation, item: null);
@@ -284,7 +283,7 @@ class _EquipmentListDetailScreenState
               child: Center(
                 child: Text(
                   '暂无装备，点击右上角"+"添加',
-                  style: TextStyle(color: AppColors.textSubtitle),
+                  style: TextStyle(color: AppColors.textWeak),
                 ),
               ),
             ),
@@ -372,13 +371,13 @@ class _EquipmentListDetailScreenState
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: AppColors.textSubtitle),
+        Icon(icon, size: 14, color: AppColors.textWeak),
         const SizedBox(width: 4),
         Text(
           label,
           style: const TextStyle(
             fontSize: 12,
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
           ),
         ),
       ],
@@ -457,7 +456,7 @@ class _EquipmentListDetailScreenState
           label,
           style: const TextStyle(
             fontSize: 12,
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
           ),
         ),
       ],
@@ -494,7 +493,7 @@ class _StatusBadge extends StatelessWidget {
       case EquipmentListStatus.completed:
         return AppColors.badgeVerifiedText;
       case EquipmentListStatus.archived:
-        return AppColors.textSubtitle;
+        return AppColors.textWeak;
     }
   }
 
@@ -584,7 +583,7 @@ class _ListItemCard extends StatelessWidget {
                       : '数量${entry.relation.quantity}',
                   style: const TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSubtitle,
+                    color: AppColors.textWeak,
                   ),
                 ),
                 if (entry.relation.notes != null &&
@@ -594,7 +593,7 @@ class _ListItemCard extends StatelessWidget {
                     entry.relation.notes!,
                     style: const TextStyle(
                       fontSize: 12,
-                      color: AppColors.textTertiary,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],

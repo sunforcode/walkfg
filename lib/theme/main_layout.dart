@@ -55,7 +55,7 @@ class _MainLayoutState extends State<MainLayout>
           GestureDetector(
             onTap: closeDrawer,
             child: AnimatedContainer(
-              duration: AppMotion.slow,
+              duration: AppMotion.drawer,
               curve: AppMotion.spring,
               color: AppColors.surfaceOverlay,
             ),
@@ -63,7 +63,7 @@ class _MainLayoutState extends State<MainLayout>
 
         // ─── 抽屉 ───
         AnimatedPositioned(
-          duration: AppMotion.slow,
+          duration: AppMotion.drawer,
           curve: AppMotion.spring,
           left: _drawerOpen ? 0 : -AppSizes.drawer,
           top: 0,

@@ -15,7 +15,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoApp(
       title: 'Walk - 徒步旅行助手',
-      theme: AppTheme.cupertinoDark,
+      theme: AppTheme.cupertino,
+      builder: AppTheme.buildMaterialTheme,
       home: const MainLayout(),
       routes: {
         AppRoutes.debug: (context) => const DebugMenuPage(),

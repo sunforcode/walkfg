@@ -120,8 +120,7 @@ class TripTransportationDisplayWidget extends StatelessWidget {
             ),
             const Spacer(),
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.interactiveAccentBg,
                 borderRadius: BorderRadius.circular(4),
@@ -142,7 +141,7 @@ class TripTransportationDisplayWidget extends StatelessWidget {
           '交通方式详情展示区域',
           style: TextStyle(
             fontSize: 12,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
       ],
@@ -171,8 +170,7 @@ class TripTransportationDisplayWidget extends StatelessWidget {
             ),
             const Spacer(),
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.statusPlanningBg,
                 borderRadius: BorderRadius.circular(4),
@@ -193,7 +191,7 @@ class TripTransportationDisplayWidget extends StatelessWidget {
           '住宿安排详情展示区域',
           style: TextStyle(
             fontSize: 12,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
       ],

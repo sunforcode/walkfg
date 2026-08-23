@@ -37,7 +37,7 @@ class ProfileSectionCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: AppColors.shadow,
+                color: AppColors.surfaceOverlay,
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
