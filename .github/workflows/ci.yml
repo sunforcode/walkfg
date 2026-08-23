@@ -122,9 +122,6 @@ jobs:
     runs-on: macos-15
     needs: analyze-test
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    env:
-      KEYCHAIN_PATH: ${{ runner.temp }}/walk-signing.keychain-db
-      PROVISIONING_PROFILE_PATH: ${{ runner.temp }}/walk-app-store.mobileprovision
     steps:
       - uses: actions/checkout@v4
 
@@ -155,6 +152,8 @@ jobs:
           IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
         run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/walk-signing.keychain-db"
+          PROVISIONING_PROFILE_PATH="$RUNNER_TEMP/walk-app-store.mobileprovision"
           printf '%s' "$IOS_DISTRIBUTION_CERTIFICATE_BASE64" | base64 --decode > "$RUNNER_TEMP/walk-distribution.p12"
           printf '%s' "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROVISIONING_PROFILE_PATH"
 
@@ -204,8 +203,8 @@ jobs:
       - name: Clean up signing material
         if: always()
         run: |
-          security delete-keychain "$KEYCHAIN_PATH" 2>/dev/null || true
-          rm -f "$RUNNER_TEMP/walk-distribution.p12" "$PROVISIONING_PROFILE_PATH"
+          security delete-keychain "$RUNNER_TEMP/walk-signing.keychain-db" 2>/dev/null || true
+          rm -f "$RUNNER_TEMP/walk-distribution.p12" "$RUNNER_TEMP/walk-app-store.mobileprovision"
           rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8"
 
   build-web:
