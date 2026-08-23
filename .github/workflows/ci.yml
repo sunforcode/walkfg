@@ -4,7 +4,7 @@
 #
 # analyze-test : PR + push 都跑，静态检查 + 单元测试
 # build-android: push 到 master 跑，产出 debug APK artifact
-# build-ios    : push 到 master 跑（macOS runner），--no-codesign 验证编译，产出 .app
+# build-ios    : push 到 master 或手动触发时，签名构建 IPA 并上传 TestFlight
 # build-web    : push 到 master 跑，--base-href /app/ 构建，产出静态文件 artifact
 # deploy-web   : push 到 master 跑，把 web 构建产物发布到 walk-server，
 #                覆盖 ~/walk/flutter-web（nginx /app/ 路由的数据卷挂载点）
@@ -118,10 +118,13 @@ jobs:
           retention-days: 30
 
   build-ios:
-    name: Build iOS (no-codesign)
+    name: Build iOS & Upload TestFlight
     runs-on: macos-15
     needs: analyze-test
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    env:
+      KEYCHAIN_PATH: ${{ runner.temp }}/walk-signing.keychain-db
+      PROVISIONING_PROFILE_PATH: ${{ runner.temp }}/walk-app-store.mobileprovision
     steps:
       - uses: actions/checkout@v4
 
@@ -139,20 +142,71 @@ jobs:
         # 不先跑 build_runner 则 analyze/build 必报 missing part 错误。
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Prepare .env (placeholder)
-        # pubspec.yaml 把 .env 声明为 asset，CI checkout 后无此文件会导致
-        # asset bundle 构建失败。本 job 不需要真 token，占位即可。
-        run: cp .env.example .env
+      - name: Prepare .env (inject Mapbox token)
+        env:
+          MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+        run: |
+          sed "s|pk.YOUR_MAPBOX_PUBLIC_TOKEN|${MAPBOX_TOKEN:-pk.YOUR_MAPBOX_PUBLIC_TOKEN}|" .env.example > .env
 
-      - name: Build iOS (no codesign)
-        run: flutter build ios --release --no-codesign
+      - name: Install signing certificate and provisioning profile
+        env:
+          IOS_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+        run: |
+          printf '%s' "$IOS_DISTRIBUTION_CERTIFICATE_BASE64" | base64 --decode > "$RUNNER_TEMP/walk-distribution.p12"
+          printf '%s' "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROVISIONING_PROFILE_PATH"
 
-      - name: Upload .app
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$RUNNER_TEMP/walk-distribution.p12" \
+            -P "$IOS_DISTRIBUTION_CERTIFICATE_PASSWORD" \
+            -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list \
+            -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+
+          PROFILE_UUID=$(security cms -D -i "$PROVISIONING_PROFILE_PATH" | plutil -extract UUID raw -)
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROVISIONING_PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+
+      - name: Build signed IPA
+        run: >-
+          flutter build ipa --release
+          --build-number=${{ github.run_number }}
+          --export-options-plist=ios/ExportOptions.plist
+
+      - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ios-app
-          path: build/ios/iphoneos/Runner.app
+          name: ios-ipa-${{ github.run_number }}
+          path: build/ios/ipa/*.ipa
+          if-no-files-found: error
           retention-days: 30
+
+      - name: Upload to TestFlight
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_API_PRIVATE_KEY }}
+        run: |
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$APP_STORE_CONNECT_API_PRIVATE_KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_API_KEY_ID.p8"
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$(find build/ios/ipa -name '*.ipa' -print -quit)" \
+            --apiKey "$APP_STORE_CONNECT_API_KEY_ID" \
+            --apiIssuer "$APP_STORE_CONNECT_API_ISSUER_ID"
+
+      - name: Clean up signing material
+        if: always()
+        run: |
+          security delete-keychain "$KEYCHAIN_PATH" 2>/dev/null || true
+          rm -f "$RUNNER_TEMP/walk-distribution.p12" "$PROVISIONING_PROFILE_PATH"
+          rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8"
 
   build-web:
     name: Build Web
