@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
 import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
+
 import 'guide_detail_constants.dart';
 
 /// 攻略封面组件
@@ -18,7 +20,7 @@ class GuideCoverWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: _CoverConstants.coverHeight,
       width: double.infinity,
       child: Stack(
@@ -45,11 +47,11 @@ class GuideCoverWidget extends StatelessWidget {
     return Hero(
       tag: 'guide_image_${guide.id}',
       child: guide.coverUrl != null
-          ? Image.network(
-              guide.coverUrl!,
+          ? NetworkImageWithFallback(
+              url: guide.coverUrl!,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) =>
-                  _buildFallbackImage(),
+              fallbackColor: AppColors.interactiveAccent,
+              errorBuilder: (_) => _buildFallbackImage(),
             )
           : _buildFallbackImage(),
     );

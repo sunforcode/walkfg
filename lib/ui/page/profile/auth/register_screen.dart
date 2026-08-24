@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/service/user_service.dart';
 import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/theme/tokens/typography.dart';
+import 'package:walk/ui/page/common/utility_page_scaffold.dart';
 import '../login_screen.dart';
 
 /// 注册屏幕
@@ -190,157 +192,146 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('注册'),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: ListView(
-            children: [
-              const Icon(
-                CupertinoIcons.person_add,
-                size: 80,
-                color: AppColors.interactiveAccent,
+    return UtilityPageScaffold(
+      title: '注册',
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: ListView(
+          children: [
+            const Icon(
+              CupertinoIcons.person_add,
+              size: 80,
+              color: AppColors.interactiveAccent,
+            ),
+            const SizedBox(height: 40),
+            const Text(
+              '创建账号',
+              style: AppTypography.pageTitle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '开始您的徒步旅行',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.textWeak,
               ),
-              const SizedBox(height: 40),
-              const Text(
-                '创建账号',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '开始您的徒步旅行',
-                style: TextStyle(
-                  fontSize: 16,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+            CupertinoTextField(
+              controller: _usernameController,
+              placeholder: '用户名',
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(
+                  CupertinoIcons.person,
                   color: AppColors.textWeak,
                 ),
-                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 40),
-              CupertinoTextField(
-                controller: _usernameController,
-                placeholder: '用户名',
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(
-                    CupertinoIcons.person,
-                    color: AppColors.textWeak,
-                  ),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(8),
               ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: _emailController,
-                placeholder: '电子邮件',
-                keyboardType: TextInputType.emailAddress,
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(
-                    CupertinoIcons.mail,
-                    color: AppColors.textWeak,
-                  ),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(8),
+            ),
+            const SizedBox(height: 16),
+            CupertinoTextField(
+              controller: _emailController,
+              placeholder: '电子邮件',
+              keyboardType: TextInputType.emailAddress,
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(
+                  CupertinoIcons.mail,
+                  color: AppColors.textWeak,
                 ),
               ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: _passwordController,
-                placeholder: '密码',
-                obscureText: _obscurePassword,
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(
-                    CupertinoIcons.lock,
-                    color: AppColors.textWeak,
-                  ),
-                ),
-                suffix: CupertinoButton(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Icon(
-                    _obscurePassword
-                        ? CupertinoIcons.eye
-                        : CupertinoIcons.eye_slash,
-                    color: AppColors.textWeak,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
-                ),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(8),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 16),
+            CupertinoTextField(
+              controller: _passwordController,
+              placeholder: '密码',
+              obscureText: _obscurePassword,
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(
+                  CupertinoIcons.lock,
+                  color: AppColors.textWeak,
                 ),
               ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: _confirmPasswordController,
-                placeholder: '确认密码',
-                obscureText: _obscureConfirmPassword,
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(
-                    CupertinoIcons.lock,
-                    color: AppColors.textWeak,
-                  ),
+              suffix: CupertinoButton(
+                padding: const EdgeInsets.only(right: 10),
+                child: Icon(
+                  _obscurePassword
+                      ? CupertinoIcons.eye
+                      : CupertinoIcons.eye_slash,
+                  color: AppColors.textWeak,
                 ),
-                suffix: CupertinoButton(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Icon(
-                    _obscureConfirmPassword
-                        ? CupertinoIcons.eye
-                        : CupertinoIcons.eye_slash,
-                    color: AppColors.textWeak,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureConfirmPassword = !_obscureConfirmPassword;
-                    });
-                  },
-                ),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(8),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 16),
+            CupertinoTextField(
+              controller: _confirmPasswordController,
+              placeholder: '确认密码',
+              obscureText: _obscureConfirmPassword,
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(
+                  CupertinoIcons.lock,
+                  color: AppColors.textWeak,
                 ),
               ),
-              const SizedBox(height: 24),
-              CupertinoButton(
-                color: AppColors.interactiveAccent,
-                child: _isRegistering
-                    ? const CupertinoActivityIndicator(color: AppColors.bgBase)
-                    : const Text('注册'),
-                onPressed: _isRegistering ? null : _handleRegister,
+              suffix: CupertinoButton(
+                padding: const EdgeInsets.only(right: 10),
+                child: Icon(
+                  _obscureConfirmPassword
+                      ? CupertinoIcons.eye
+                      : CupertinoIcons.eye_slash,
+                  color: AppColors.textWeak,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                  });
+                },
               ),
-              const SizedBox(height: 16),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: const Text('已有账号？登录'),
-                onPressed: _navigateToLogin,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(8),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 24),
+            CupertinoButton(
+              color: AppColors.interactiveAccent,
+              onPressed: _isRegistering ? null : _handleRegister,
+              child: _isRegistering
+                  ? const CupertinoActivityIndicator(color: AppColors.bgBase)
+                  : const Text('注册'),
+            ),
+            const SizedBox(height: 16),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: _navigateToLogin,
+              child: const Text('已有账号？登录'),
+            ),
+          ],
         ),
       ),
     );

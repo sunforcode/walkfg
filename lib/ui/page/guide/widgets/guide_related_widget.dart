@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
+
 import 'guide_detail_constants.dart';
 
 /// 相关攻略组件
@@ -53,7 +56,7 @@ class GuideRelatedWidget extends StatelessWidget {
           style: const TextStyle(
             fontSize: _RelatedConstants.headerFontSize,
             fontWeight: FontWeight.bold,
-            color: CupertinoColors.label,
+            color: AppColors.textPrimary,
           ),
         ),
       ],
@@ -81,7 +84,7 @@ class GuideRelatedWidget extends StatelessWidget {
       width: _RelatedConstants.cardWidth,
       margin: const EdgeInsets.only(right: _RelatedConstants.cardSpacing),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(_RelatedConstants.cardBorderRadius),
       ),
       child: GestureDetector(
@@ -106,15 +109,15 @@ class GuideRelatedWidget extends StatelessWidget {
       borderRadius: const BorderRadius.vertical(
         top: Radius.circular(_RelatedConstants.cardBorderRadius),
       ),
-      child: Container(
+      child: SizedBox(
         height: _RelatedConstants.imageHeight,
         width: double.infinity,
         child: relatedGuide.coverUrl != null
-            ? Image.network(
-                relatedGuide.coverUrl!,
+            ? NetworkImageWithFallback(
+                url: relatedGuide.coverUrl!,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    _buildFallbackImage(),
+                fallbackColor: AppColors.interactiveAccent,
+                errorBuilder: (_) => _buildFallbackImage(),
               )
             : _buildFallbackImage(),
       ),
@@ -147,7 +150,7 @@ class GuideRelatedWidget extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: _RelatedConstants.locationFontSize,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: _RelatedConstants.contentSpacing),
@@ -166,14 +169,14 @@ class GuideRelatedWidget extends StatelessWidget {
         Icon(
           CupertinoIcons.eye,
           size: _RelatedConstants.statIconSize,
-          color: CupertinoColors.secondaryLabel,
+          color: AppColors.textSecondary,
         ),
         const SizedBox(width: _RelatedConstants.statIconSpacing),
         Text(
           _formatNumber(relatedGuide.views),
           style: const TextStyle(
             fontSize: _RelatedConstants.statFontSize,
-            color: CupertinoColors.secondaryLabel,
+            color: AppColors.textSecondary,
           ),
         ),
         const Spacer(),
@@ -183,8 +186,8 @@ class GuideRelatedWidget extends StatelessWidget {
             vertical: _RelatedConstants.difficultyPaddingVertical,
           ),
           decoration: BoxDecoration(
-            color: CupertinoColors.systemTeal
-                .withValues(alpha: _RelatedConstants.difficultyBackgroundOpacity),
+            color: CupertinoColors.systemTeal.withValues(
+                alpha: _RelatedConstants.difficultyBackgroundOpacity),
             borderRadius:
                 BorderRadius.circular(_RelatedConstants.difficultyBorderRadius),
           ),
@@ -220,7 +223,7 @@ class GuideRelatedWidget extends StatelessWidget {
     return Container(
       height: _RelatedConstants.emptyStateHeight,
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius:
             BorderRadius.circular(_RelatedConstants.emptyStateBorderRadius),
       ),
@@ -231,13 +234,13 @@ class GuideRelatedWidget extends StatelessWidget {
             Icon(
               CupertinoIcons.doc_text,
               size: _RelatedConstants.emptyStateIconSize,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textSecondary,
             ),
             SizedBox(height: _RelatedConstants.emptyStateSpacing),
             Text(
               _RelatedConstants.emptyStateText,
               style: TextStyle(
-                color: CupertinoColors.secondaryLabel,
+                color: AppColors.textSecondary,
                 fontSize: _RelatedConstants.emptyStateFontSize,
               ),
             ),

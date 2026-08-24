@@ -24,6 +24,12 @@ class NetworkImageWithFallback extends StatelessWidget {
   /// 边框圆角
   final double borderRadius;
 
+  /// 受控加载占位；未提供时使用默认进度指示器。
+  final WidgetBuilder? placeholderBuilder;
+
+  /// 受控失败占位；未提供时使用默认图标占位。
+  final WidgetBuilder? errorBuilder;
+
   /// 构造函数
   const NetworkImageWithFallback({
     super.key,
@@ -34,44 +40,37 @@ class NetworkImageWithFallback extends StatelessWidget {
     this.fallbackColor = CupertinoColors.systemBlue,
     this.fallbackIcon = CupertinoIcons.photo,
     this.borderRadius = 0,
+    this.placeholderBuilder,
+    this.errorBuilder,
   });
 
   @override
   Widget build(BuildContext context) {
-    // 使用CachedNetworkImage替代Image.network
-    final imageWidget = CachedNetworkImage(
-      imageUrl: url,
-      width: width,
-      height: height,
-      fit: fit,
-      placeholder: (context, url) => Container(
-        width: width,
-        height: height,
-        color: fallbackColor.withValues(alpha: 0.1),
-        child: Center(
-          child: CupertinoActivityIndicator(
-            color: fallbackColor,
-          ),
-        ),
-      ),
-      errorWidget: (context, url, error) => Container(
-        width: width,
-        height: height,
-        color: fallbackColor.withValues(alpha: 0.2),
-        child: Center(
-          child: Icon(
-            fallbackIcon,
-            size: height != null ? height! * 0.3 : 40,
-            color: fallbackColor,
-          ),
-        ),
-      ),
-      // 缓存配置
-      memCacheWidth: 800,
-      memCacheHeight: 800,
-      maxWidthDiskCache: 1500,
-      maxHeightDiskCache: 1500,
-    );
+    final imageWidget = url.trim().isEmpty
+        ? errorBuilder?.call(context) ?? _buildDefaultError()
+        : CachedNetworkImage(
+            imageUrl: url,
+            width: width,
+            height: height,
+            fit: fit,
+            placeholder: (context, url) =>
+                placeholderBuilder?.call(context) ??
+                Container(
+                  width: width,
+                  height: height,
+                  color: fallbackColor.withValues(alpha: 0.1),
+                  child: Center(
+                    child: CupertinoActivityIndicator(color: fallbackColor),
+                  ),
+                ),
+            errorWidget: (context, url, error) =>
+                errorBuilder?.call(context) ?? _buildDefaultError(),
+            // 缓存配置
+            memCacheWidth: 800,
+            memCacheHeight: 800,
+            maxWidthDiskCache: 1500,
+            maxHeightDiskCache: 1500,
+          );
 
     if (borderRadius > 0) {
       return ClipRRect(
@@ -81,5 +80,20 @@ class NetworkImageWithFallback extends StatelessWidget {
     }
 
     return imageWidget;
+  }
+
+  Widget _buildDefaultError() {
+    return Container(
+      width: width,
+      height: height,
+      color: fallbackColor.withValues(alpha: 0.2),
+      child: Center(
+        child: Icon(
+          fallbackIcon,
+          size: height != null ? height! * 0.3 : 40,
+          color: fallbackColor,
+        ),
+      ),
+    );
   }
 }

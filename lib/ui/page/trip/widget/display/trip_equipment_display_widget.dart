@@ -229,7 +229,7 @@ class _TripEquipmentDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -259,10 +259,10 @@ class _TripEquipmentDisplayWidgetState
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.sheetCardBg,
+          color: AppColors.surfaceCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.sheetDivider,
+            color: AppColors.border,
             width: 0.5,
           ),
         ),
@@ -382,10 +382,10 @@ class _TripEquipmentDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -433,7 +433,7 @@ class _TripEquipmentDisplayWidgetState
               CupertinoButton(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: AppColors.sheetDivider,
+                color: AppColors.border,
                 borderRadius: BorderRadius.circular(8),
                 onPressed: _linkExistingList,
                 child: const Text(

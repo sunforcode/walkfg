@@ -23,12 +23,6 @@ class AppColors {
   static const Color bgDrawer = Color(0xFF111122);
   static const Color bgLight = Color(0xFFffffff);
 
-  // ---- 亮色背景文字 ----
-  static const Color textLight = Color(0xFF1a1a1a);
-  static const Color textLightSecondary = Color(0xFF888888);
-  static const Color textLightWeak = Color(0xFFaaaaaa);
-  static const Color textLightTag = Color(0xFF555555);
-
   // ---- 强调色 ----
   static const Color accentBlue = Color(0xFF64C8FF);
   static const Color accentSky = Color(0xFF88BBFF);
@@ -69,17 +63,6 @@ class AppColors {
     end: Alignment.bottomCenter,
     colors: [Color(0x0A03080C), Color(0xE603080C)],
   );
-
-  // ---- 兼容层级 ----
-  static const Color textTertiary = Color(0x99FFFFFF); // rgba(255,255,255,.6)
-  static const Color textBody = textWeak;
-  static const Color textSubtitle = Color(0x66FFFFFF); // rgba(255,255,255,.4)
-  static const Color textLabel = Color(0x59FFFFFF); // rgba(255,255,255,.35)
-  static const Color textHint = Color(0x4DFFFFFF); // rgba(255,255,255,.3)
-  static const Color textPlaceholder =
-      Color(0x40FFFFFF); // rgba(255,255,255,.25)
-  static const Color textDim = Color(0x33FFFFFF); // rgba(255,255,255,.2)
-  static const Color textFaint = Color(0x2EFFFFFF); // rgba(255,255,255,.18)
 
   // ---- 背景层级 ----
   static const Color surfaceCardHover =
@@ -165,27 +148,12 @@ class AppColors {
     colors: [brandStart, brandEnd],
   );
 
-  /// AI FAB 渐变
-  static const LinearGradient gradientAiFab = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [aiStart, aiEnd],
-  );
-
   /// 首页空态渐变
   static const LinearGradient gradientHome = LinearGradient(
     begin: Alignment(-0.5, -1.0),
     end: Alignment(0.5, 1.0),
     stops: [0.0, 0.4, 1.0],
     colors: [bgBase, bgMap, bgGradientEnd],
-  );
-
-  /// 路线发现渐变（LinearGradient 兼容旧代码）
-  static const LinearGradient gradientRoute = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    stops: [0.0, 0.5, 1.0],
-    colors: [bgRouteStart, bgRouteMid, bgRouteEnd],
   );
 
   /// 路线发现径向渐变（PRD P3 §3.1 — radial-gradient ellipse at 50% 30%）

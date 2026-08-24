@@ -106,10 +106,10 @@ class _TripParticipantsDisplayWidgetState
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.sheetCardBg,
+          color: AppColors.surfaceCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.sheetDivider,
+            color: AppColors.border,
             width: 0.5,
           ),
         ),
@@ -152,10 +152,10 @@ class _TripParticipantsDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -184,7 +184,7 @@ class _TripParticipantsDisplayWidgetState
       decoration: BoxDecoration(
         color: isOrganizer
             ? AppColors.interactiveAccent.withValues(alpha: 0.2)
-            : AppColors.sheetDivider,
+            : AppColors.border,
         borderRadius: BorderRadius.circular(25),
       ),
       child: Center(
@@ -313,10 +313,10 @@ class _TripParticipantsDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),

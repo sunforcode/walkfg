@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+// flutter_markdown exposes MarkdownElementBuilder using markdown elements.
+// ignore: depend_on_referenced_packages
 import 'package:markdown/markdown.dart' as md;
 import 'package:walk/model/guide/guide_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
+
 import 'guide_detail_constants.dart';
 
 /// 攻略内容组件
@@ -56,7 +61,7 @@ class GuideContentWidget extends StatelessWidget {
           style: const TextStyle(
             fontSize: _ContentConstants.headerFontSize,
             fontWeight: FontWeight.bold,
-            color: CupertinoColors.label,
+            color: AppColors.textPrimary,
           ),
         ),
       ],
@@ -91,37 +96,37 @@ class GuideContentWidget extends StatelessWidget {
       h1: const TextStyle(
         fontSize: _ContentConstants.heading1FontSize,
         fontWeight: FontWeight.bold,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
         height: 1.3,
       ),
       h2: const TextStyle(
         fontSize: _ContentConstants.heading2FontSize,
         fontWeight: FontWeight.w600,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
         height: 1.3,
       ),
       h3: const TextStyle(
         fontSize: _ContentConstants.heading3FontSize,
         fontWeight: FontWeight.w500,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
         height: 1.3,
       ),
       h4: const TextStyle(
         fontSize: _ContentConstants.heading4FontSize,
         fontWeight: FontWeight.w500,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
         height: 1.3,
       ),
       h5: const TextStyle(
         fontSize: _ContentConstants.heading5FontSize,
         fontWeight: FontWeight.w500,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
         height: 1.3,
       ),
       h6: const TextStyle(
         fontSize: _ContentConstants.heading6FontSize,
         fontWeight: FontWeight.w500,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
         height: 1.3,
       ),
 
@@ -129,7 +134,7 @@ class GuideContentWidget extends StatelessWidget {
       p: const TextStyle(
         fontSize: _ContentConstants.contentFontSize,
         height: _ContentConstants.contentLineHeight,
-        color: CupertinoColors.secondaryLabel,
+        color: AppColors.textSecondary,
       ),
 
       // 列表样式
@@ -143,11 +148,11 @@ class GuideContentWidget extends StatelessWidget {
       blockquote: const TextStyle(
         fontSize: _ContentConstants.contentFontSize,
         height: _ContentConstants.contentLineHeight,
-        color: CupertinoColors.secondaryLabel,
+        color: AppColors.textSecondary,
         fontStyle: FontStyle.italic,
       ),
       blockquoteDecoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius:
             BorderRadius.circular(_ContentConstants.quoteBorderRadius),
         border: const Border(
@@ -164,10 +169,10 @@ class GuideContentWidget extends StatelessWidget {
         fontSize: _ContentConstants.codeFontSize,
         fontFamily: 'Courier',
         color: CupertinoColors.systemRed,
-        backgroundColor: CupertinoColors.systemGrey6,
+        backgroundColor: AppColors.surfaceCard,
       ),
       codeblockDecoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius:
             BorderRadius.circular(_ContentConstants.codeBlockBorderRadius),
       ),
@@ -183,24 +188,24 @@ class GuideContentWidget extends StatelessWidget {
       // 强调样式
       strong: const TextStyle(
         fontWeight: FontWeight.bold,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
       ),
       em: const TextStyle(
         fontStyle: FontStyle.italic,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
       ),
 
       // 表格样式
       tableHead: const TextStyle(
         fontWeight: FontWeight.bold,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
       ),
       tableBody: const TextStyle(
         fontSize: _ContentConstants.contentFontSize,
-        color: CupertinoColors.secondaryLabel,
+        color: AppColors.textSecondary,
       ),
       tableBorder: TableBorder.all(
-        color: CupertinoColors.separator,
+        color: AppColors.border,
         width: 0.5,
       ),
 
@@ -208,7 +213,7 @@ class GuideContentWidget extends StatelessWidget {
       horizontalRuleDecoration: const BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: CupertinoColors.separator,
+            color: AppColors.border,
             width: 1.0,
           ),
         ),
@@ -235,43 +240,39 @@ class GuideContentWidget extends StatelessWidget {
       child: ClipRRect(
         borderRadius:
             BorderRadius.circular(_ContentConstants.imageBorderRadius),
-        child: Image.network(
-          uri.toString(),
+        child: NetworkImageWithFallback(
+          url: uri.toString(),
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              height: 200,
-              color: CupertinoColors.systemGrey6,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    CupertinoIcons.photo,
-                    size: 48,
-                    color: CupertinoColors.systemGrey,
+          fallbackColor: AppColors.interactiveAccent,
+          errorBuilder: (_) => Container(
+            height: 200,
+            color: AppColors.surfaceCard,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  CupertinoIcons.photo,
+                  size: 48,
+                  color: AppColors.textWeak,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  alt ?? '图片加载失败',
+                  style: const TextStyle(
+                    color: AppColors.textWeak,
+                    fontSize: 14,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    alt ?? '图片加载失败',
-                    style: const TextStyle(
-                      color: CupertinoColors.systemGrey,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Container(
-              height: 200,
-              color: CupertinoColors.systemGrey6,
-              child: const Center(
-                child: CupertinoActivityIndicator(),
-              ),
-            );
-          },
+                ),
+              ],
+            ),
+          ),
+          placeholderBuilder: (_) => const SizedBox(
+            height: 200,
+            child: ColoredBox(
+              color: AppColors.surfaceCard,
+              child: Center(child: CupertinoActivityIndicator()),
+            ),
+          ),
         ),
       ),
     );
@@ -296,7 +297,7 @@ class GuideContentWidget extends StatelessWidget {
       style: TextStyle(
         fontSize: _ContentConstants.tagsTitleFontSize,
         fontWeight: FontWeight.w600,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
       ),
     );
   }
@@ -368,7 +369,7 @@ class _HighlightBuilder extends MarkdownElementBuilder {
               element.textContent,
               style: const TextStyle(
                 fontSize: 14,
-                color: CupertinoColors.label,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -408,7 +409,7 @@ class _WarningBuilder extends MarkdownElementBuilder {
               element.textContent,
               style: const TextStyle(
                 fontSize: 14,
-                color: CupertinoColors.label,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -448,7 +449,7 @@ class _TipBuilder extends MarkdownElementBuilder {
               element.textContent,
               style: const TextStyle(
                 fontSize: 14,
-                color: CupertinoColors.label,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),

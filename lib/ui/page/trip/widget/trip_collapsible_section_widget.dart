@@ -138,7 +138,7 @@ class _TripCollapsibleSectionWidgetState
               decoration: const BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: AppColors.sheetDivider,
+                    color: AppColors.border,
                     width: 0.5,
                   ),
                 ),

@@ -147,18 +147,28 @@ class GuideCard extends StatelessWidget {
                       Expanded(
                         child: Row(
                           children: [
-                            CircleAvatar(
-                              radius: 10,
-                              backgroundImage: guide.authorAvatarUrl != null
-                                  ? NetworkImage(guide.authorAvatarUrl!)
-                                  : null,
-                              backgroundColor:
-                                  accentColor.withValues(alpha: 0.1),
-                              child: guide.authorAvatarUrl == null
-                                  ? Icon(CupertinoIcons.person,
-                                      size: 10,
-                                      color: accentColor.withValues(alpha: 0.5))
-                                  : null,
+                            ClipOval(
+                              child: SizedBox.square(
+                                dimension: 20,
+                                child: guide.authorAvatarUrl != null
+                                    ? NetworkImageWithFallback(
+                                        url: guide.authorAvatarUrl!,
+                                        width: 20,
+                                        height: 20,
+                                        fallbackColor: accentColor,
+                                        fallbackIcon: CupertinoIcons.person,
+                                      )
+                                    : ColoredBox(
+                                        color:
+                                            accentColor.withValues(alpha: 0.1),
+                                        child: Icon(
+                                          CupertinoIcons.person,
+                                          size: 10,
+                                          color: accentColor.withValues(
+                                              alpha: 0.5),
+                                        ),
+                                      ),
+                              ),
                             ),
                             const SizedBox(width: 4),
                             Expanded(

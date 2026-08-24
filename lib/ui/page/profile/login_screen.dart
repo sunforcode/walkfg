@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/theme/tokens/typography.dart';
+import 'package:walk/ui/page/common/utility_page_scaffold.dart';
 import 'auth/register_screen.dart';
 import 'auth/forgot_password_screen.dart';
 import '../../../service/user_service.dart';
@@ -134,118 +136,109 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('登录'),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Icon(
-                CupertinoIcons.person_crop_circle_fill,
-                size: 80,
-                color: AppColors.interactiveAccent,
+    return UtilityPageScaffold(
+      title: '登录',
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Icon(
+              CupertinoIcons.person_crop_circle_fill,
+              size: 80,
+              color: AppColors.interactiveAccent,
+            ),
+            const SizedBox(height: 40),
+            const Text(
+              'Walk',
+              style: AppTypography.pageTitle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '徒步旅行助手',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.textWeak,
               ),
-              const SizedBox(height: 40),
-              const Text(
-                'Walk',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '徒步旅行助手',
-                style: TextStyle(
-                  fontSize: 16,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+            CupertinoTextField(
+              controller: _usernameController,
+              placeholder: '用户名',
+              keyboardType: TextInputType.text,
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(
+                  CupertinoIcons.person,
                   color: AppColors.textWeak,
                 ),
-                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 40),
-              CupertinoTextField(
-                controller: _usernameController,
-                placeholder: '用户名',
-                keyboardType: TextInputType.text,
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(
-                    CupertinoIcons.person,
-                    color: AppColors.textWeak,
-                  ),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(8),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 16),
+            CupertinoTextField(
+              controller: _passwordController,
+              placeholder: '密码（6-20位）',
+              obscureText: _obscurePassword,
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(
+                  CupertinoIcons.lock,
+                  color: AppColors.textWeak,
                 ),
               ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: _passwordController,
-                placeholder: '密码（6-20位）',
-                obscureText: _obscurePassword,
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(
-                    CupertinoIcons.lock,
-                    color: AppColors.textWeak,
-                  ),
+              suffix: CupertinoButton(
+                padding: const EdgeInsets.only(right: 10),
+                child: Icon(
+                  _obscurePassword
+                      ? CupertinoIcons.eye
+                      : CupertinoIcons.eye_slash,
+                  color: AppColors.textWeak,
                 ),
-                suffix: CupertinoButton(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Icon(
-                    _obscurePassword
-                        ? CupertinoIcons.eye
-                        : CupertinoIcons.eye_slash,
-                    color: AppColors.textWeak,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 24),
+            CupertinoButton(
+              color: AppColors.interactiveAccent,
+              onPressed: _isLoggingIn ? null : _handleLogin,
+              child: _isLoggingIn
+                  ? const CupertinoActivityIndicator(color: AppColors.bgBase)
+                  : const Text('登录'),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: _navigateToRegister,
+                  child: const Text('没有账号？注册'),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(8),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: _navigateToForgotPassword,
+                  child: const Text('忘记密码？'),
                 ),
-              ),
-              const SizedBox(height: 24),
-              CupertinoButton(
-                color: AppColors.interactiveAccent,
-                child: _isLoggingIn
-                    ? const CupertinoActivityIndicator(color: AppColors.bgBase)
-                    : const Text('登录'),
-                onPressed: _isLoggingIn ? null : _handleLogin,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: const Text('没有账号？注册'),
-                    onPressed: _navigateToRegister,
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: const Text('忘记密码？'),
-                    onPressed: _navigateToForgotPassword,
-                  ),
-                ],
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
     );

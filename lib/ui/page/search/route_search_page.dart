@@ -1,12 +1,17 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:walk/model/route/route_model.dart';
 import 'package:walk/service/route_service.dart';
 import 'package:walk/theme/tokens/colors.dart';
-import 'package:walk/ui/page/common/network_image_with_fallback.dart';
-import 'package:walk/ui/page/search/search_section.dart';
-import 'package:walk/ui/page/common/loading_indicator.dart';
+import 'package:walk/theme/tokens/radius.dart';
+import 'package:walk/theme/tokens/shadows.dart';
+import 'package:walk/theme/tokens/spacing.dart';
+import 'package:walk/theme/tokens/typography.dart';
+import 'package:walk/ui/page/common/empty_content_widget.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
+import 'package:walk/ui/page/common/loading_indicator.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
+import 'package:walk/ui/page/common/utility_page_scaffold.dart';
+import 'package:walk/ui/page/search/search_section.dart';
 
 /// 路线搜索页面
 class RouteSearchPage extends StatefulWidget {
@@ -61,6 +66,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
         _isSearching = false;
       });
     }).catchError((error) {
+      if (!context.mounted) return;
       setState(() {
         _searchResults = [];
         _isSearching = false;
@@ -88,28 +94,21 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('搜索路线'),
-      ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            // 搜索部分
-            SearchSection(
-              searchController: _searchController,
-              hotSearches: _defaultHotSearches,
-              onSearch: _handleSearch,
-            ),
-
-            // 搜索结果
-            Expanded(
-              child: _currentKeyword.isEmpty
-                  ? _buildRecommendedRoutes()
-                  : _buildSearchResults(),
-            ),
-          ],
-        ),
+    return UtilityPageScaffold(
+      title: '搜索路线',
+      body: Column(
+        children: [
+          SearchSection(
+            searchController: _searchController,
+            hotSearches: _defaultHotSearches,
+            onSearch: _handleSearch,
+          ),
+          Expanded(
+            child: _currentKeyword.isEmpty
+                ? _buildRecommendedRoutes()
+                : _buildSearchResults(),
+          ),
+        ],
       ),
     );
   }
@@ -132,7 +131,10 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(
-            child: Text('暂无推荐路线'),
+            child: EmptyContentWidget(
+              icon: CupertinoIcons.map,
+              title: '暂无推荐路线',
+            ),
           );
         }
 
@@ -142,18 +144,21 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.pageHorizontal,
+                AppSpacing.pageVertical,
+                AppSpacing.pageHorizontal,
+                AppSpacing.sm,
+              ),
+              child: const Text(
                 '推荐路线',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: AppTypography.sectionTitle,
               ),
             ),
             Expanded(
               child: ListView.builder(
                 itemCount: routes.length,
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.allLg,
                 itemBuilder: (context, index) {
                   final route = routes[index];
                   return _buildRouteItem(route);
@@ -174,23 +179,10 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
 
     if (_searchResults.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              CupertinoIcons.search,
-              size: 48,
-              color: CupertinoColors.systemGrey,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '未找到与"$_currentKeyword"相关的路线',
-              style: const TextStyle(
-                color: CupertinoColors.systemGrey,
-                fontSize: 16,
-              ),
-            ),
-          ],
+        child: EmptyContentWidget(
+          icon: CupertinoIcons.search,
+          title: '未找到相关路线',
+          subtitle: '没有与“$_currentKeyword”匹配的路线',
         ),
       );
     }
@@ -199,18 +191,21 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.pageHorizontal,
+            AppSpacing.pageVertical,
+            AppSpacing.pageHorizontal,
+            AppSpacing.sm,
+          ),
           child: Text(
             '搜索结果: $_currentKeyword',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: AppTypography.sectionTitle,
           ),
         ),
         Expanded(
           child: ListView.builder(
             itemCount: _searchResults.length,
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.allLg,
             itemBuilder: (context, index) {
               final route = _searchResults[index];
               return _buildRouteItem(route);
@@ -226,25 +221,21 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
     return GestureDetector(
       onTap: () => _navigateToRouteDetail(route),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: AppSpacing.lg),
         decoration: BoxDecoration(
-          color: CupertinoColors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.systemGrey.withValues(alpha: 0.1),
-              blurRadius: 5,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: AppColors.surfaceCard,
+          border: Border.all(color: AppColors.border),
+          borderRadius: AppRadius.borderControl,
+          boxShadow: AppShadows.panel,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 路线图片
             ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(
+                top: AppRadius.radiusControl,
+              ),
               child: Container(
                 height: 120,
                 width: double.infinity,
@@ -255,7 +246,7 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
                         height: 80,
                         width: 80,
                         fit: BoxFit.cover,
-                        borderRadius: 8,
+                        borderRadius: AppRadius.small,
                       )
                     : Container(
                         height: 80,
@@ -275,40 +266,34 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
 
             // 路线信息
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: AppSpacing.allMd,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     route.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTypography.cardTitle,
                   ),
-                  const SizedBox(height: 4),
+                  AppSpacing.gapVerticalXs,
                   Text(
                     route.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: CupertinoColors.systemGrey,
-                    ),
+                    style: AppTypography.bodySm,
                   ),
-                  const SizedBox(height: 8),
+                  AppSpacing.gapVerticalSm,
                   Row(
                     children: [
                       _buildInfoTag(
                         '${route.distance}km',
                         CupertinoIcons.arrow_right,
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.gapSm,
                       _buildInfoTag(
                         '${route.elevationGain}m爬升',
                         CupertinoIcons.arrow_up,
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.gapSm,
                       _buildInfoTag(
                         route.difficulty.name,
                         CupertinoIcons.flag,
@@ -327,10 +312,13 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
   /// 构建信息标签
   Widget _buildInfoTag(String text, IconData icon) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.interactiveAccent.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: const BoxDecoration(
+        color: AppColors.interactiveAccentBg,
+        borderRadius: AppRadius.borderSmall,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -340,12 +328,12 @@ class _RouteSearchPageState extends State<RouteSearchPage> {
             size: 12,
             color: AppColors.interactiveAccent,
           ),
-          const SizedBox(width: 4),
+          AppSpacing.gapXs,
           Text(
             text,
-            style: TextStyle(
-              fontSize: 12,
-              color: AppColors.interactiveAccent,
+            style: AppTypography.withColor(
+              AppTypography.label,
+              AppColors.interactiveAccent,
             ),
           ),
         ],
