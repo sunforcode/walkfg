@@ -10,6 +10,12 @@ import 'package:walk/theme/tokens/tokens.dart';
 
 void main() {
   group('immersive dark design tokens', () {
+    test('does not reference invalid bundled font files', () {
+      final pubspec = File('pubspec.yaml').readAsStringSync();
+      expect(pubspec, isNot(contains('assets/fonts/NotoSansSC-')));
+      expect(AppTypography.fontFamily, isNull);
+    });
+
     test('colors match the semantic dark palette', () {
       expect(AppColors.bgBase, const Color(0xFF0A0A1A));
       expect(AppColors.bgPanel, const Color(0xFF1A1A2E));

@@ -85,18 +85,6 @@ flutter:
     - assets/images/
     - assets/maps/
     - assets/mock_data/
-  fonts:
-    - family: NotoSansSC
-      fonts:
-        - asset: assets/fonts/NotoSansSC-Light.otf
-          weight: 300
-        - asset: assets/fonts/NotoSansSC-Regular.otf
-          weight: 400
-        - asset: assets/fonts/NotoSansSC-Medium.otf
-          weight: 500
-        - asset: assets/fonts/NotoSansSC-Bold.otf
-          weight: 700
-
 flutter_native_splash:
   color: "#4CAF50"
   image: assets/images/splash.png

@@ -21,7 +21,9 @@
 
 应用配置在 `runApp` 前同步建立，因为它仅读取编译期常量且网络层构造依赖它。其余异步初始化在 `runApp` 后启动，并通过共享 Future 传给首页。首页在 Future 完成前显示现有 `EmptyHome`，完成后再执行当前 `_loadHomeData`。
 
-Web HTML 使用无图片、无外部字体的 CSS 首页壳层。它不模拟完整交互，只提供与 Flutter 首页一致的背景、品牌和主文案，并在 Flutter 第一帧时移除。
+Web HTML 使用无图片、无外部字体的 CSS 首页壳层。它不模拟完整交互，只提供与 Flutter 首页一致的背景、品牌和主文案。静态壳不在 Flutter 第一帧时立即移除，而是在初始化和首次首页数据解析完成后淡出，从而避免先暴露中间空态、随后再整页切换到路线首页。
+
+项目原有 `NotoSansSC` 文件实际为 GitHub 404 HTML，并非有效字体。移除损坏资源及其注册，Flutter 与 HTML 首屏统一使用平台无衬线字体回退，避免字体解码失败和额外布局跳变。
 
 删除未被 Dart 代码引用的 MapLibre 全局脚本和样式。`main.dart.js` 不再使用 `no-store`，改为 `no-cache`，允许浏览器保存副本并通过 ETag 重新验证；HTML 和 bootstrap 仍保持不可复用旧版本。
 

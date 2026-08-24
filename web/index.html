@@ -34,7 +34,7 @@
       height: 100%;
       margin: 0;
       overflow: hidden;
-      background: #07111f;
+      background: #0a0a1a;
     }
 
     .home-shell {
@@ -44,11 +44,11 @@
       place-items: center;
       overflow: hidden;
       color: #f6f7f5;
-      background:
-        linear-gradient(180deg, rgba(5, 13, 24, 0.2), rgba(7, 17, 31, 0.95)),
-        radial-gradient(circle at 75% 20%, rgba(42, 78, 101, 0.22), transparent 48%),
-        #07111f;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      z-index: 2147483647;
+      background: linear-gradient(170deg, #0a0a1a 0%, #0d1b2a 55%, #1b2838 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      opacity: 1;
+      transition: opacity 120ms ease-out;
       text-align: center;
     }
 
@@ -56,67 +56,82 @@
     .home-shell::after {
       content: "";
       position: absolute;
-      right: -8%;
+      right: 0;
       bottom: 0;
-      left: -8%;
-      height: 27%;
-      background: rgba(55, 74, 94, 0.26);
-      clip-path: polygon(0 78%, 17% 48%, 29% 62%, 47% 16%, 68% 58%, 84% 36%, 100% 70%, 100% 100%, 0 100%);
+      left: 0;
+      height: min(280px, 33.18%);
+      background: rgba(255, 255, 255, 0.04);
+      clip-path: polygon(0 100%, 16% 42.9%, 26.7% 57.1%, 48% 14.3%, 69.3% 50%, 85.3% 28.6%, 100% 57.1%, 100% 100%);
     }
 
     .home-shell::after {
-      height: 20%;
-      background: rgba(38, 55, 76, 0.42);
-      clip-path: polygon(0 100%, 19% 44%, 35% 68%, 58% 18%, 74% 58%, 100% 38%, 100% 100%);
+      height: min(280px, 33.18%);
+      background: rgba(255, 255, 255, 0.02);
+      clip-path: polygon(0 100%, 21.3% 57.1%, 37.3% 67.9%, 58.7% 25%, 80% 53.6%, 100% 42.9%, 100% 100%);
     }
 
     .home-shell__menu {
       position: absolute;
-      top: max(28px, env(safe-area-inset-top));
-      right: 28px;
-      color: rgba(255, 255, 255, 0.55);
-      font-size: 22px;
+      top: max(16px, env(safe-area-inset-top));
+      right: 16px;
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 18px;
       line-height: 1;
     }
 
+    .home-shell--leaving {
+      pointer-events: none;
+      opacity: 0;
+    }
+
     .home-shell__content {
-      transform: translateY(-8px);
+      padding: 0 28px;
     }
 
     .home-shell__title {
       margin: 0;
       font-size: 42px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      line-height: 1;
     }
 
     .home-shell__subtitle {
-      margin: 6px 0 28px;
-      color: rgba(255, 255, 255, 0.62);
+      margin: 8px 0 32px;
+      color: rgba(255, 255, 255, 0.5);
       font-size: 16px;
-      letter-spacing: 1px;
+      font-weight: 400;
+      line-height: 1.4;
     }
 
     .home-shell__question {
-      margin: 0 0 26px;
-      color: rgba(255, 255, 255, 0.82);
+      margin: 0 0 48px;
+      color: rgba(255, 255, 255, 0.7);
       font-size: 20px;
+      font-weight: 300;
+      line-height: 1.4;
     }
 
     .home-shell__button {
       display: inline-block;
-      min-width: 104px;
-      padding: 11px 24px;
+      padding: 14px 48px;
       border: 1px solid rgba(255, 255, 255, 0.28);
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.12);
       color: #fff;
       font-size: 18px;
     }
 
     .home-shell__hint {
       margin: 16px 0 0;
-      color: rgba(255, 255, 255, 0.45);
+      color: rgba(255, 255, 255, 0.5);
       font-size: 14px;
     }
   </style>
@@ -134,10 +149,17 @@
   </div>
 
   <script>
-    window.addEventListener('flutter-first-frame', function () {
-      const loading = document.querySelector('#loading');
-      if (loading) loading.remove();
-    });
+    window.hideWalkHomeShell = function () {
+      const shell = document.querySelector('#loading');
+      if (!shell || shell.classList.contains('home-shell--leaving')) return;
+      shell.classList.add('home-shell--leaving');
+      shell.addEventListener('transitionend', function () {
+        shell.remove();
+      }, { once: true });
+      window.setTimeout(function () {
+        shell.remove();
+      }, 200);
+    };
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>

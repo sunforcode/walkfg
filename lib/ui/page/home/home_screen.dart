@@ -35,12 +35,16 @@ class HomeScreen extends StatefulWidget {
   /// 重新执行基础设施初始化。
   final Future<void> Function()? retryStartup;
 
+  /// 首页最终状态首次确定后触发，用于让 Web 静态壳平滑退场。
+  final VoidCallback? onHomeReady;
+
   const HomeScreen({
     super.key,
     this.onOpenDrawer,
     this.dataLoader,
     this.startup,
     this.retryStartup,
+    this.onHomeReady,
   });
 
   @override
@@ -59,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen>
   bool _startupComplete = false;
   bool _retryingStartup = false;
   bool _waitingForRoutePicker = false;
+  bool _homeReadyReported = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -250,6 +255,14 @@ class _HomeScreenState extends State<HomeScreen>
     retryStartup();
   }
 
+  void _reportHomeReady() {
+    if (_homeReadyReported) return;
+    _homeReadyReported = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) widget.onHomeReady?.call();
+    });
+  }
+
   Widget _emptyHome() {
     return EmptyHome(
       onFindRoute: _waitingForRoutePicker ? null : _openRoutePicker,
@@ -265,6 +278,7 @@ class _HomeScreenState extends State<HomeScreen>
         future: _homeFuture,
         builder: (context, snapshot) {
           if (_startupError != null) {
+            _reportHomeReady();
             return ErrorHome(
               onRetry: _retryingStartup ? null : _retryStartup,
               onChange: _openRoutePicker,
@@ -277,9 +291,11 @@ class _HomeScreenState extends State<HomeScreen>
             return _emptyHome();
           }
           if (snapshot.hasError) {
+            _reportHomeReady();
             return ErrorHome(onRetry: _reload, onChange: _openRoutePicker);
           }
           final data = snapshot.data;
+          _reportHomeReady();
           if (data == null) {
             return _emptyHome();
           }

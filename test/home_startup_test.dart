@@ -45,6 +45,57 @@ void main() {
     expect(find.text('找路线'), findsNothing);
   });
 
+  testWidgets('reveals Flutter only after the home state is resolved', (
+    tester,
+  ) async {
+    final startup = Completer<void>();
+    final homeData = Completer<HomeData?>();
+    var reveals = 0;
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: HomeScreen(
+          startup: ValueNotifier<Future<void>>(startup.future),
+          dataLoader: ({routeHint}) => homeData.future,
+          onHomeReady: () => reveals += 1,
+        ),
+      ),
+    );
+
+    expect(reveals, 0);
+
+    startup.complete();
+    await tester.pump();
+    await tester.pump();
+    expect(reveals, 0);
+
+    homeData.complete(null);
+    await tester.pump();
+    await tester.pump();
+    expect(reveals, 1);
+  });
+
+  testWidgets('reveals Flutter when startup fails', (tester) async {
+    final startup = Completer<void>();
+    var reveals = 0;
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: HomeScreen(
+          startup: ValueNotifier<Future<void>>(startup.future),
+          onHomeReady: () => reveals += 1,
+        ),
+      ),
+    );
+
+    startup.completeError(StateError('startup failed'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(reveals, 1);
+    expect(find.text('当前路线加载失败'), findsOneWidget);
+  });
+
   testWidgets('keeps the simple home shell while home data loads', (
     tester,
   ) async {

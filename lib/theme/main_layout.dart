@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
+import '../platform/home_shell.dart';
 import '../ui/page/drawer/walk_drawer.dart';
 import '../ui/page/home/home_screen.dart';
 import '../theme/tokens/colors.dart';
@@ -59,6 +60,7 @@ class _MainLayoutState extends State<MainLayout>
           onOpenDrawer: openDrawer,
           startup: widget.startup,
           retryStartup: widget.retryStartup,
+          onHomeReady: hideHomeShell,
         ),
 
         // ─── 遮罩层 ───

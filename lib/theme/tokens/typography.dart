@@ -9,7 +9,8 @@ class AppTypography {
   AppTypography._();
 
   // ============ 字体族 ============
-  static const String fontFamily = 'NotoSansSC';
+  // 不指定自定义字体，让各平台使用原生字体与中文 fallback。
+  static const String? fontFamily = null;
 
   // ============ 沉浸式语义字体 ============
   static const TextStyle heroTitle = TextStyle(
