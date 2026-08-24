@@ -28,7 +28,7 @@ class ErrorHome extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(CupertinoIcons.exclamationmark_triangle,
-                      color: AppColors.accentBlue, size: 42),
+                      color: AppColors.interactiveAccent, size: 42),
                   const SizedBox(height: 18),
                   const Text('当前路线加载失败',
                       textAlign: TextAlign.center,
@@ -39,9 +39,8 @@ class ErrorHome extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text('可以重试，或者换一条路线。',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: AppColors.textBody,
-                          fontSize: 15)),
+                      style:
+                          TextStyle(color: AppColors.textWeak, fontSize: 15)),
                   const SizedBox(height: 26),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -91,14 +90,12 @@ class _GlassButton extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: accent
-                  ? AppColors.interactiveCta
-                  : const Color(0x0AFFFFFF),
+              color:
+                  accent ? AppColors.interactiveCta : const Color(0x0AFFFFFF),
               borderRadius: BorderRadius.circular(50),
               border: Border.all(
-                color: accent
-                    ? AppColors.interactiveCtaBorder
-                    : AppColors.surfaceCardBorder,
+                color:
+                    accent ? AppColors.interactiveCtaBorder : AppColors.border,
                 width: 1,
               ),
             ),

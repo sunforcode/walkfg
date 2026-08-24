@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
 import 'package:walk/utils/toast_utils.dart';
+
 import 'guide_detail_constants.dart';
 
 /// 攻略概览组件
@@ -65,7 +68,7 @@ class GuideOverviewWidget extends StatelessWidget {
       style: const TextStyle(
         fontSize: _OverviewConstants.titleFontSize,
         fontWeight: FontWeight.bold,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
       ),
     );
   }
@@ -87,27 +90,27 @@ class GuideOverviewWidget extends StatelessWidget {
   /// 构建作者头像
   Widget _buildAuthorAvatar() {
     final double diameter = _OverviewConstants.avatarRadius * 2;
-    return Container(
-      width: diameter,
-      height: diameter,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: CupertinoColors.systemBlue
-            .withValues(alpha: _OverviewConstants.avatarBackgroundOpacity),
-        image: guide.authorAvatarUrl != null
-            ? DecorationImage(
-                image: NetworkImage(guide.authorAvatarUrl!),
-                fit: BoxFit.cover,
+    final avatarUrl = guide.authorAvatarUrl;
+    return ClipOval(
+      child: SizedBox.square(
+        dimension: diameter,
+        child: avatarUrl != null
+            ? NetworkImageWithFallback(
+                url: avatarUrl,
+                width: diameter,
+                height: diameter,
+                fallbackColor: AppColors.interactiveAccent,
+                fallbackIcon: CupertinoIcons.person,
               )
-            : null,
+            : const ColoredBox(
+                color: AppColors.interactiveAccentBg,
+                child: Icon(
+                  CupertinoIcons.person,
+                  size: _OverviewConstants.avatarIconSize,
+                  color: AppColors.interactiveAccent,
+                ),
+              ),
       ),
-      child: guide.authorAvatarUrl == null
-          ? Icon(
-              CupertinoIcons.person,
-              size: _OverviewConstants.avatarIconSize,
-              color: CupertinoColors.systemBlue,
-            )
-          : null,
     );
   }
 
@@ -121,14 +124,14 @@ class GuideOverviewWidget extends StatelessWidget {
           style: const TextStyle(
             fontSize: _OverviewConstants.authorNameFontSize,
             fontWeight: FontWeight.w500,
-            color: CupertinoColors.label,
+            color: AppColors.textPrimary,
           ),
         ),
         Text(
           _getTimeAgo(guide.publishDate),
           style: const TextStyle(
             fontSize: _OverviewConstants.publishTimeFontSize,
-            color: CupertinoColors.secondaryLabel,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -164,14 +167,14 @@ class GuideOverviewWidget extends StatelessWidget {
         Icon(
           icon,
           size: _OverviewConstants.statIconSize,
-          color: CupertinoColors.secondaryLabel,
+          color: AppColors.textSecondary,
         ),
         const SizedBox(width: _OverviewConstants.statIconSpacing),
         Text(
           value,
           style: const TextStyle(
             fontSize: _OverviewConstants.statValueFontSize,
-            color: CupertinoColors.secondaryLabel,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -197,7 +200,7 @@ class GuideOverviewWidget extends StatelessWidget {
       style: TextStyle(
         fontSize: _OverviewConstants.quickActionsTitleFontSize,
         fontWeight: FontWeight.w600,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
       ),
     );
   }
@@ -252,7 +255,8 @@ class GuideOverviewWidget extends StatelessWidget {
           horizontal: _OverviewConstants.quickActionButtonPaddingHorizontal,
           vertical: _OverviewConstants.quickActionButtonPaddingVertical,
         ),
-        color: color.withValues(alpha: _OverviewConstants.quickActionButtonOpacity),
+        color: color.withValues(
+            alpha: _OverviewConstants.quickActionButtonOpacity),
         borderRadius: BorderRadius.circular(
             _OverviewConstants.quickActionButtonBorderRadius),
         minSize: 0, // ignore: deprecated_member_use
@@ -406,9 +410,6 @@ class _OverviewConstants {
   static const double quickActionLabelFontSize = 12.0;
 
   // ==================== 透明度 ====================
-
-  /// 头像背景透明度
-  static const double avatarBackgroundOpacity = 0.1;
 
   /// 快速操作按钮背景透明度
   static const double quickActionButtonOpacity = 0.1;

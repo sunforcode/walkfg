@@ -70,10 +70,10 @@ class TripWeatherSafetyDisplayWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -117,8 +117,7 @@ class TripWeatherSafetyDisplayWidget extends StatelessWidget {
             ),
             const Spacer(),
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.interactiveAccentBg,
                 borderRadius: BorderRadius.circular(4),
@@ -139,7 +138,7 @@ class TripWeatherSafetyDisplayWidget extends StatelessWidget {
           '出行前请关注天气预报，做好相应准备',
           style: TextStyle(
             fontSize: 12,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
       ],
@@ -168,8 +167,7 @@ class TripWeatherSafetyDisplayWidget extends StatelessWidget {
             ),
             const Spacer(),
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.badgeEssentialBg,
                 borderRadius: BorderRadius.circular(4),
@@ -190,7 +188,7 @@ class TripWeatherSafetyDisplayWidget extends StatelessWidget {
           '请携带必要的安全装备，告知家人行程安排',
           style: TextStyle(
             fontSize: 12,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
       ],

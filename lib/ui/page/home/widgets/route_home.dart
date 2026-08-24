@@ -1,12 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 import '../../../../model/route/route_model.dart';
 import '../../../../model/weather/weather_model.dart';
 import '../../../../theme/tokens/colors.dart';
 import '../../../../theme/tokens/radius.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../common/immersive_components.dart';
+import '../../common/network_image_with_fallback.dart';
 import '../home_screen.dart' show HomeData;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -25,40 +27,103 @@ class RouteHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // Layer 1 — Trail 背景（山峦 + 轨迹线）
-        const _TrailBackground(),
+    final mediaQuery = MediaQuery.of(context);
+    final viewPadding = mediaQuery.viewPadding;
+    final isCompactHeight = mediaQuery.size.height <= 600;
 
-        // Layer 2 — 全屏点击层（→ P6）
-        // 交互由 HomeScreen 管理，此处仅占位保证视觉层级
-
-        // Layer 3 — 上方信息覆盖
-        Positioned(
-          top: 80,
-          left: 24,
-          right: 80,
-          child: _InfoOverlay(data: data),
-        ),
-
-        // Layer 4 — Weather HUD
-        Positioned(
-          bottom: 100,
-          left: 20,
-          right: 20,
-          child: _WeatherHud(weather: data.weatherFor(data.hikingDate)),
-        ),
-
-        // Layer 7 — 上滑指示器
-        const Positioned(
-          bottom: 20,
-          left: 0,
-          right: 0,
-          child: _SwipeIndicator(),
-        ),
-      ],
+    return ImmersiveHero(
+      image: _RouteHeroImage(route: data.route),
+      overlay: Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned(
+            top: viewPadding.top + AppSpacing.hero,
+            left: AppSpacing.heroHorizontal,
+            right: AppSpacing.hero,
+            child: KeyedSubtree(
+              key: const Key('home-info-overlay'),
+              child: _InfoOverlay(data: data),
+            ),
+          ),
+          if (isCompactHeight)
+            Positioned(
+              bottom: viewPadding.bottom + AppSpacing.heroHorizontal,
+              left: AppSpacing.heroHorizontal,
+              right: AppSpacing.heroHorizontal,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GlassIconAction(
+                    key: const Key('home-change-route'),
+                    semanticLabel: '更换路线',
+                    icon: CupertinoIcons.arrow_2_circlepath,
+                    onPressed: onChangeRoute,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  _WeatherHud(weather: data.weatherFor(data.hikingDate)),
+                ],
+              ),
+            )
+          else ...[
+            Positioned(
+              bottom: viewPadding.bottom + 200,
+              left: AppSpacing.heroHorizontal,
+              child: GlassIconAction(
+                key: const Key('home-change-route'),
+                semanticLabel: '更换路线',
+                icon: CupertinoIcons.arrow_2_circlepath,
+                onPressed: onChangeRoute,
+              ),
+            ),
+            Positioned(
+              bottom: viewPadding.bottom + 100,
+              left: AppSpacing.heroHorizontal,
+              right: AppSpacing.heroHorizontal,
+              child: _WeatherHud(weather: data.weatherFor(data.hikingDate)),
+            ),
+            Positioned(
+              bottom: viewPadding.bottom + AppSpacing.heroHorizontal,
+              left: 0,
+              right: 0,
+              child: const _SwipeIndicator(),
+            ),
+          ],
+        ],
+      ),
     );
+  }
+}
+
+class _RouteHeroImage extends StatelessWidget {
+  final RouteModel route;
+
+  const _RouteHeroImage({required this.route});
+
+  @override
+  Widget build(BuildContext context) {
+    final imageUrl = _imageUrl;
+    if (imageUrl == null) return const _TrailBackground();
+
+    return SizedBox.expand(
+      key: const Key('home-route-image'),
+      child: NetworkImageWithFallback(
+        url: imageUrl,
+        fit: BoxFit.cover,
+        fallbackColor: AppColors.bgBase,
+        placeholderBuilder: (_) => const _TrailBackground(),
+        errorBuilder: (_) => const _TrailBackground(),
+      ),
+    );
+  }
+
+  String? get _imageUrl {
+    final coverUrl = route.coverUrl?.trim();
+    if (coverUrl != null && coverUrl.isNotEmpty) return coverUrl;
+    for (final imageUrl in route.imageUrls ?? const <String>[]) {
+      final trimmedUrl = imageUrl.trim();
+      if (trimmedUrl.isNotEmpty) return trimmedUrl;
+    }
+    return null;
   }
 }
 
@@ -73,6 +138,7 @@ class _TrailBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
+      key: const Key('home-route-image-fallback'),
       painter: _TrailPainter(),
       child: const SizedBox.expand(),
     );
@@ -149,8 +215,7 @@ class _TrailPainter extends CustomPainter {
 
     // 终点标记 — 圆 5px rgba(255,100,100,.8)
     final endOffset = Offset(size.width * 0.853, size.height * 0.345);
-    canvas.drawCircle(
-        endOffset, 5, Paint()..color = const Color(0xCCFF6464));
+    canvas.drawCircle(endOffset, 5, Paint()..color = const Color(0xCCFF6464));
   }
 
   @override
@@ -168,37 +233,25 @@ class _InfoOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // 路线名
-        Text(
-          data.route.name,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: Color(0xFFFFFFFF),
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            height: 1.1,
-            shadows: [
-              Shadow(
-                color: Color(0x80000000),
-                blurRadius: 12,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 6),
-        // 出发日期 + 倒计时
-        _DepartureLine(hikingDate: data.hikingDate),
-        const SizedBox(height: 4),
-        // 核心指标
-        _MetricLine(route: data.route),
-      ],
+    return HeroTitleOverlay(
+      title: data.route.name,
+      supportingText: _DepartureLine(hikingDate: data.hikingDate),
+      metrics: MetricGroup(metrics: _metrics(data.route)),
     );
+  }
+
+  List<MetricData> _metrics(RouteModel route) {
+    final distance = route.distance == route.distance.roundToDouble()
+        ? route.distance.round().toString()
+        : route.distance.toStringAsFixed(1);
+    return [
+      MetricData(value: distance, unit: '公里'),
+      MetricData(
+        value: route.elevationGain.toStringAsFixed(0),
+        unit: '米爬升',
+      ),
+      MetricData(value: route.durationText, unit: '预计用时'),
+    ];
   }
 }
 
@@ -238,40 +291,13 @@ class _DepartureLine extends StatelessWidget {
           TextSpan(
             text: '$diff',
             style: const TextStyle(
-              color: AppColors.accentBlue,
+              color: AppColors.interactiveAccent,
               fontSize: 18,
               fontWeight: FontWeight.w900,
             ),
           ),
           const TextSpan(text: ' 天'),
         ],
-      ),
-    );
-  }
-}
-
-class _MetricLine extends StatelessWidget {
-  final RouteModel route;
-  const _MetricLine({required this.route});
-
-  @override
-  Widget build(BuildContext context) {
-    final parts = <String>[];
-    final dist = route.distance;
-    if (dist == dist.roundToDouble()) {
-      parts.add('${dist.round()} km');
-    } else {
-      parts.add('${dist.toStringAsFixed(1)} km');
-    }
-    parts.add('爬升 ${route.elevationGain.toStringAsFixed(0)} m');
-    parts.add(route.durationText);
-    return Text(
-      parts.join('  ·  '),
-      style: const TextStyle(
-        color: AppColors.textBody,
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 1.0,
       ),
     );
   }
@@ -289,16 +315,17 @@ class _WeatherHud extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.xxl),
+      key: const Key('home-weather-overlay'),
+      borderRadius: BorderRadius.circular(AppRadius.panel),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(
             color: const Color(0x14FFFFFF), // rgba(255,255,255,.08)
-            borderRadius: BorderRadius.circular(AppRadius.xxl),
+            borderRadius: BorderRadius.circular(AppRadius.panel),
             border: Border.all(
-              color: AppColors.surfaceCardBorder,
+              color: AppColors.border,
               width: 1,
             ),
           ),
@@ -310,7 +337,7 @@ class _WeatherHud extends StatelessWidget {
               const Text(
                 '徒步日天气',
                 style: TextStyle(
-                  color: AppColors.textSubtitle,
+                  color: AppColors.textWeak,
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                 ),
@@ -382,7 +409,7 @@ class _HudMetric extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
             fontSize: 11,
             fontWeight: FontWeight.w400,
           ),
@@ -438,6 +465,7 @@ class _SwipeIndicatorState extends State<_SwipeIndicator>
         );
       },
       child: Column(
+        key: const Key('home-swipe-indicator'),
         mainAxisSize: MainAxisSize.min,
         children: [
           // 向上箭头
@@ -449,7 +477,7 @@ class _SwipeIndicatorState extends State<_SwipeIndicator>
           const Text(
             '推荐路线',
             style: TextStyle(
-              color: AppColors.textDim,
+              color: AppColors.textWeak,
               fontSize: 11,
               fontWeight: FontWeight.w400,
             ),
@@ -464,7 +492,7 @@ class _UpArrowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.textDim
+      ..color = AppColors.textWeak
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round

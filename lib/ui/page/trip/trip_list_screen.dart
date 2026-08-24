@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/trip/trip_model.dart';
-import 'package:walk/ui/page/trip/trip_detail_screen.dart';
+import 'package:walk/theme/tokens/tokens.dart';
 import 'package:walk/ui/page/common/empty_content_widget.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
+import 'package:walk/ui/page/trip/trip_detail_screen.dart';
 
 /// 行程列表页面
 class TripListScreen extends StatefulWidget {
@@ -35,8 +37,11 @@ class _TripListScreenState extends State<TripListScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: AppColors.bgBase,
       navigationBar: const CupertinoNavigationBar(
-        middle: Text('我的行程'),
+        backgroundColor: AppColors.bgBase,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+        middle: Text('我的行程', style: AppTypography.navTitle),
       ),
       child: SafeArea(
         child: FutureBuilder<List<TripModel>>(
@@ -72,9 +77,9 @@ class _TripListScreenState extends State<TripListScreen> {
   /// 构建行程列表
   Widget _buildTripList(List<TripModel> trips) {
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.page,
       itemCount: trips.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      separatorBuilder: (context, index) => AppSpacing.gapVerticalMd,
       itemBuilder: (context, index) {
         final trip = trips[index];
         return _buildTripCard(trip);
@@ -90,69 +95,48 @@ class _TripListScreenState extends State<TripListScreen> {
     return GestureDetector(
       onTap: () => _navigateToTripDetail(trip),
       child: Container(
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: CupertinoColors.systemBackground,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.systemGrey5.withValues(alpha: 0.5),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: AppColors.surfaceCard,
+          borderRadius: AppRadius.borderControl,
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 封面图片
             if (trip.coverUrl != null)
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
-                child: Image.network(
-                  trip.coverUrl!,
-                  height: 120,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    height: 120,
-                    color: CupertinoColors.systemGrey5,
-                    child: const Icon(
-                      CupertinoIcons.photo,
-                      color: CupertinoColors.systemGrey,
-                    ),
-                  ),
-                ),
+              NetworkImageWithFallback(
+                url: trip.coverUrl!,
+                height: 120,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                fallbackColor: AppColors.bgPanel,
+                fallbackIcon: CupertinoIcons.photo,
               ),
 
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.component,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 行程名称
                   Text(
                     trip.name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTypography.cardTitle,
                   ),
 
-                  const SizedBox(height: 8),
+                  AppSpacing.gapVerticalSm,
 
                   // 行程描述
                   Text(
                     trip.description,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: CupertinoColors.systemGrey,
-                    ),
+                    style: AppTypography.bodySm,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
 
-                  const SizedBox(height: 12),
+                  AppSpacing.gapVerticalMd,
 
                   // 行程信息
                   Row(
@@ -161,12 +145,12 @@ class _TripListScreenState extends State<TripListScreen> {
                         CupertinoIcons.calendar,
                         '${trip.startDate.year}/${trip.startDate.month}/${trip.startDate.day}',
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.gapSm,
                       _buildInfoChip(
                         CupertinoIcons.clock,
                         '$tripDays 天',
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.gapSm,
                       _buildStatusChip(trip.status),
                     ],
                   ),
@@ -182,10 +166,13 @@ class _TripListScreenState extends State<TripListScreen> {
   /// 构建信息标签
   Widget _buildInfoChip(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
-        borderRadius: BorderRadius.circular(16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceCard,
+        borderRadius: AppRadius.borderFull,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -193,15 +180,12 @@ class _TripListScreenState extends State<TripListScreen> {
           Icon(
             icon,
             size: 14,
-            color: CupertinoColors.systemGrey,
+            color: AppColors.textWeak,
           ),
-          const SizedBox(width: 4),
+          AppSpacing.gapXs,
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: CupertinoColors.systemGrey,
-            ),
+            style: AppTypography.label,
           ),
         ],
       ),
@@ -210,44 +194,49 @@ class _TripListScreenState extends State<TripListScreen> {
 
   /// 构建状态标签
   Widget _buildStatusChip(TripStatus status) {
-    Color color;
-    String label = '';
-
-    switch (status) {
-      case TripStatus.planning:
-        color = CupertinoColors.activeOrange;
-        label = '计划中';
-        break;
-      case TripStatus.inProgress:
-        color = CupertinoColors.activeBlue;
-        label = '进行中';
-        break;
-      case TripStatus.completed:
-        color = CupertinoColors.activeGreen;
-        label = '已完成';
-        break;
-      case TripStatus.cancelled:
-        color = CupertinoColors.systemGrey;
-        label = '已取消';
-        break;
-      case TripStatus.confirmed:
-        color = CupertinoColors.systemGrey;
-        label = '已确认';
-    }
+    final (backgroundColor, foregroundColor, label) = switch (status) {
+      TripStatus.planning => (
+          AppColors.statusPlanningBg,
+          AppColors.statusPlanningText,
+          '计划中',
+        ),
+      TripStatus.inProgress => (
+          AppColors.semanticSuccessBg,
+          AppColors.statusProgress,
+          '进行中',
+        ),
+      TripStatus.completed => (
+          AppColors.statusCompletedBg,
+          AppColors.statusCompletedText,
+          '已完成',
+        ),
+      TripStatus.cancelled => (
+          AppColors.statusCancelledBg,
+          AppColors.statusCancelledText,
+          '已取消',
+        ),
+      TripStatus.confirmed => (
+          AppColors.statusConfirmedBg,
+          AppColors.statusConfirmedText,
+          '已确认',
+        ),
+    };
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: backgroundColor,
+        borderRadius: AppRadius.borderFull,
+        border: Border.all(color: foregroundColor.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 12,
-          color: color,
-          fontWeight: FontWeight.bold,
+        style: AppTypography.withColor(
+          AppTypography.label,
+          foregroundColor,
         ),
       ),
     );

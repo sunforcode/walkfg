@@ -1,115 +1,52 @@
 import 'package:flutter/widgets.dart';
 
-/// 应用圆角 Token
-///
-/// 专业运动风格 - 方正现代 (小圆角)
-/// PRD §8.1.5 圆角别名 Token
+/// Semantic corner-radius tokens.
 class AppRadius {
   AppRadius._();
 
-  // ============ 圆角值 (PRD §8.1.5) ============
-  /// 无圆角
   static const double none = 0.0;
-
-  /// 极小圆角 - 6px (PRD --radius-xs = 6px)
-  static const double xs = 6.0;
-
-  /// 小圆角 - 8px (PRD --radius-sm = 8px)
-  static const double sm = 8.0;
-
-  /// 中圆角 - 10px (PRD --radius-md = 10px)
-  static const double md = 10.0;
-
-  /// 大圆角 - 12px (PRD --radius-lg = 12px)
-  static const double lg = 12.0;
-
-  /// 超大圆角 - 14px (PRD --radius-xl = 14px)
-  static const double xl = 14.0;
-
-  /// 特大圆角 - 16px (PRD --radius-2xl = 16px)
-  static const double xxl = 16.0;
-
-  /// 全圆角 (圆形)
+  static const double small = 8.0;
+  static const double control = 12.0;
+  static const double panel = 16.0;
+  static const double overlay = 24.0;
   static const double full = 9999.0;
 
-  // ============ BorderRadius 快捷方式 ============
-  /// 无圆角
   static const BorderRadius borderNone = BorderRadius.zero;
+  static const BorderRadius borderSmall =
+      BorderRadius.all(Radius.circular(small));
+  static const BorderRadius borderControl =
+      BorderRadius.all(Radius.circular(control));
+  static const BorderRadius borderPanel =
+      BorderRadius.all(Radius.circular(panel));
+  static const BorderRadius borderOverlay =
+      BorderRadius.all(Radius.circular(overlay));
+  static const BorderRadius borderFull =
+      BorderRadius.all(Radius.circular(full));
 
-  /// 极小圆角
-  static const BorderRadius borderXs = BorderRadius.all(Radius.circular(xs));
-
-  /// 小圆角
-  static const BorderRadius borderSm = BorderRadius.all(Radius.circular(sm));
-
-  /// 中圆角 (按钮、卡片)
-  static const BorderRadius borderMd = BorderRadius.all(Radius.circular(md));
-
-  /// 大圆角 (弹窗)
-  static const BorderRadius borderLg = BorderRadius.all(Radius.circular(lg));
-
-  /// 超大圆角
-  static const BorderRadius borderXl = BorderRadius.all(Radius.circular(xl));
-
-  /// 特大圆角
-  static const BorderRadius borderXxl = BorderRadius.all(Radius.circular(xxl));
-
-  /// 特大圆角（兼容旧名 border2xl）
-  static const BorderRadius border2xl = borderXxl;
-
-  /// 全圆角
-  static const BorderRadius borderFull = BorderRadius.all(Radius.circular(full));
-
-  // ============ 特殊圆角 ============
-  /// 顶部圆角 (底部表单)
-  static BorderRadius topLg = const BorderRadius.only(
-    topLeft: Radius.circular(lg),
-    topRight: Radius.circular(lg),
+  static const BorderRadius topPanel = BorderRadius.only(
+    topLeft: Radius.circular(panel),
+    topRight: Radius.circular(panel),
+  );
+  static const BorderRadius topOverlay = BorderRadius.only(
+    topLeft: Radius.circular(overlay),
+    topRight: Radius.circular(overlay),
+  );
+  static const BorderRadius bottomControl = BorderRadius.only(
+    bottomLeft: Radius.circular(control),
+    bottomRight: Radius.circular(control),
+  );
+  static const BorderRadius leftControl = BorderRadius.only(
+    topLeft: Radius.circular(control),
+    bottomLeft: Radius.circular(control),
+  );
+  static const BorderRadius rightControl = BorderRadius.only(
+    topRight: Radius.circular(control),
+    bottomRight: Radius.circular(control),
   );
 
-  /// 顶部圆角 xl
-  static BorderRadius topXl = const BorderRadius.only(
-    topLeft: Radius.circular(xl),
-    topRight: Radius.circular(xl),
-  );
-
-  /// 底部圆角
-  static BorderRadius bottomLg = const BorderRadius.only(
-    bottomLeft: Radius.circular(lg),
-    bottomRight: Radius.circular(lg),
-  );
-
-  /// 左侧圆角
-  static BorderRadius leftMd = const BorderRadius.only(
-    topLeft: Radius.circular(md),
-    bottomLeft: Radius.circular(md),
-  );
-
-  /// 右侧圆角
-  static BorderRadius rightMd = const BorderRadius.only(
-    topRight: Radius.circular(md),
-    bottomRight: Radius.circular(md),
-  );
-
-  // ============ Radius 值 ============
-  /// 极小 Radius
-  static const Radius radiusXs = Radius.circular(xs);
-
-  /// 小 Radius
-  static const Radius radiusSm = Radius.circular(sm);
-
-  /// 中 Radius
-  static const Radius radiusMd = Radius.circular(md);
-
-  /// 大 Radius
-  static const Radius radiusLg = Radius.circular(lg);
-
-  /// 超大 Radius
-  static const Radius radiusXl = Radius.circular(xl);
-
-  /// 特大 Radius
-  static const Radius radiusXxl = Radius.circular(xxl);
-
-  /// 全圆 Radius
+  static const Radius radiusSmall = Radius.circular(small);
+  static const Radius radiusControl = Radius.circular(control);
+  static const Radius radiusPanel = Radius.circular(panel);
+  static const Radius radiusOverlay = Radius.circular(overlay);
   static const Radius radiusFull = Radius.circular(full);
 }

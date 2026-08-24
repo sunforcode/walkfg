@@ -133,7 +133,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
           const Icon(
             CupertinoIcons.money_dollar_circle,
             size: 48,
-            color: AppColors.textHint,
+            color: AppColors.textWeak,
           ),
           const SizedBox(height: 16),
           const Text(
@@ -141,7 +141,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
             ),
           ),
           const SizedBox(height: 8),
@@ -149,7 +149,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
             '设置预算有助于更好地控制行程费用',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textHint,
+              color: AppColors.textWeak,
             ),
           ),
           const SizedBox(height: 16),
@@ -199,7 +199,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
             subtitle,
             style: const TextStyle(
               fontSize: 12,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
             ),
           ),
         ],
@@ -243,7 +243,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
         'budgeted': 200.0,
         'actual': 150.0,
         'icon': CupertinoIcons.ellipsis_circle_fill,
-        'color': AppColors.textHint,
+        'color': AppColors.textWeak,
       },
     ];
 
@@ -289,7 +289,7 @@ class TripBudgetSummaryWidget extends StatelessWidget {
                           fontSize: 13,
                           color: isOverBudget
                               ? AppColors.statusCancelledText
-                              : AppColors.textSubtitle,
+                              : AppColors.textWeak,
                           fontWeight: isOverBudget
                               ? FontWeight.w600
                               : FontWeight.normal,

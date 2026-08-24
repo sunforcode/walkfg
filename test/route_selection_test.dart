@@ -41,9 +41,12 @@ void main() {
     );
 
     await tester.tap(find.text('选择路线'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text('鳌太穿越'), findsOneWidget);
     await tester.tap(find.text('鳌太穿越'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(selectedRoute?.id, 'route_001');
     expect(

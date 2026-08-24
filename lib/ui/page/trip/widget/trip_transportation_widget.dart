@@ -58,12 +58,12 @@ class TripTransportationWidget extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.interactiveAccent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   directionIcon,
-                  color: AppColors.primary,
+                  color: AppColors.interactiveAccent,
                   size: 20,
                 ),
               ),
@@ -91,7 +91,7 @@ class TripTransportationWidget extends StatelessWidget {
                     Text(
                       transport.time,
                       style: TextStyle(
-                        color: AppColors.primary,
+                        color: AppColors.interactiveAccent,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),

@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/theme/tokens/typography.dart';
+import 'package:walk/ui/page/common/network_image_with_fallback.dart';
+
 import 'guide_detail_constants.dart';
 
 /// 作者推荐组件
@@ -54,7 +58,7 @@ class GuideAuthorWidget extends StatelessWidget {
           style: const TextStyle(
             fontSize: _AuthorConstants.headerFontSize,
             fontWeight: FontWeight.bold,
-            color: CupertinoColors.label,
+            color: AppColors.textPrimary,
           ),
         ),
       ],
@@ -66,7 +70,7 @@ class GuideAuthorWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(_AuthorConstants.authorInfoPadding),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius:
             BorderRadius.circular(_AuthorConstants.authorInfoBorderRadius),
       ),
@@ -89,27 +93,27 @@ class GuideAuthorWidget extends StatelessWidget {
   /// 构建作者头像
   Widget _buildAuthorAvatar() {
     final double diameter = _AuthorConstants.avatarRadius * 2;
-    return Container(
-      width: diameter,
-      height: diameter,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: CupertinoColors.systemPurple
-            .withValues(alpha: _AuthorConstants.avatarBackgroundOpacity),
-        image: guide.authorAvatarUrl != null
-            ? DecorationImage(
-                image: NetworkImage(guide.authorAvatarUrl!),
-                fit: BoxFit.cover,
+    final avatarUrl = guide.authorAvatarUrl;
+    return ClipOval(
+      child: SizedBox.square(
+        dimension: diameter,
+        child: avatarUrl != null
+            ? NetworkImageWithFallback(
+                url: avatarUrl,
+                width: diameter,
+                height: diameter,
+                fallbackColor: AppColors.interactiveAccent,
+                fallbackIcon: CupertinoIcons.person,
               )
-            : null,
+            : const ColoredBox(
+                color: AppColors.interactiveAccentBg,
+                child: Icon(
+                  CupertinoIcons.person,
+                  size: _AuthorConstants.avatarIconSize,
+                  color: AppColors.interactiveAccent,
+                ),
+              ),
       ),
-      child: guide.authorAvatarUrl == null
-          ? Icon(
-              CupertinoIcons.person,
-              size: _AuthorConstants.avatarIconSize,
-              color: CupertinoColors.systemPurple,
-            )
-          : null,
     );
   }
 
@@ -120,17 +124,14 @@ class GuideAuthorWidget extends StatelessWidget {
       children: [
         Text(
           guide.author,
-          style: const TextStyle(
-            fontSize: _AuthorConstants.authorNameFontSize,
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTypography.bodyLg.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: _AuthorConstants.authorDetailsSpacing),
         Text(
           guide.getAuthorExperienceText(),
           style: const TextStyle(
             fontSize: _AuthorConstants.experienceFontSize,
-            color: CupertinoColors.secondaryLabel,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -147,8 +148,8 @@ class GuideAuthorWidget extends StatelessWidget {
           vertical: _AuthorConstants.followButtonPaddingVertical,
         ),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemPurple
-              .withValues(alpha: _AuthorConstants.followButtonBackgroundOpacity),
+          color: CupertinoColors.systemPurple.withValues(
+              alpha: _AuthorConstants.followButtonBackgroundOpacity),
           borderRadius:
               BorderRadius.circular(_AuthorConstants.followButtonBorderRadius),
           border: Border.all(
@@ -188,7 +189,7 @@ class GuideAuthorWidget extends StatelessWidget {
       style: TextStyle(
         fontSize: _AuthorConstants.tipsTitleFontSize,
         fontWeight: FontWeight.w600,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
       ),
     );
   }
@@ -221,7 +222,7 @@ class GuideAuthorWidget extends StatelessWidget {
               _getTipsText(),
               style: const TextStyle(
                 fontSize: _AuthorConstants.tipsTextFontSize,
-                color: CupertinoColors.label,
+                color: AppColors.textPrimary,
                 height: _AuthorConstants.tipsTextLineHeight,
               ),
             ),
@@ -315,9 +316,6 @@ class _AuthorConstants {
   /// 头部标题字体大小
   static const double headerFontSize = 18.0;
 
-  /// 作者名称字体大小
-  static const double authorNameFontSize = 16.0;
-
   /// 经验文本字体大小
   static const double experienceFontSize = 12.0;
 
@@ -334,9 +332,6 @@ class _AuthorConstants {
   static const double tipsTextLineHeight = 1.4;
 
   // ==================== 透明度 ====================
-
-  /// 头像背景透明度
-  static const double avatarBackgroundOpacity = 0.1;
 
   /// 关注按钮背景透明度
   static const double followButtonBackgroundOpacity = 0.1;

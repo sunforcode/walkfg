@@ -79,7 +79,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                   padding: EdgeInsets.only(left: 12),
                   child: Icon(
                     CupertinoIcons.search,
-                    color: AppColors.textHint,
+                    color: AppColors.textWeak,
                     size: 20,
                   ),
                 ),
@@ -101,7 +101,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                     },
                     child: Icon(
                       CupertinoIcons.xmark_circle_fill,
-                      color: AppColors.textHint,
+                      color: AppColors.textWeak,
                       size: 20,
                     ),
                   ),
@@ -136,7 +136,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                             child: Text(
                               '未找到相关路线',
                               style: TextStyle(
-                                color: AppColors.textHint,
+                                color: AppColors.textWeak,
                               ),
                             ),
                           ),
@@ -198,7 +198,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
                                               color: isSelected
-                                                  ? AppColors.textHint
+                                                  ? AppColors.textWeak
                                                   : AppColors.textPrimary,
                                             ),
                                           ),
@@ -208,14 +208,15 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                                               Icon(
                                                 CupertinoIcons.star_fill,
                                                 size: 12,
-                                                color: AppColors.statusPlanningText,
+                                                color: AppColors
+                                                    .statusPlanningText,
                                               ),
                                               SizedBox(width: 4),
                                               Text(
                                                 route.rating.toStringAsFixed(1),
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color: AppColors.textHint,
+                                                  color: AppColors.textWeak,
                                                 ),
                                               ),
                                               SizedBox(width: 8),
@@ -223,7 +224,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                                                 route.difficulty.getName(),
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color: AppColors.textHint,
+                                                  color: AppColors.textWeak,
                                                 ),
                                               ),
                                             ],
@@ -296,9 +297,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
               child: Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.surfaceCard
-                      : AppColors.bgBase,
+                  color: isSelected ? AppColors.surfaceCard : AppColors.bgBase,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
@@ -319,7 +318,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: isSelected
-                                  ? AppColors.textHint
+                                  ? AppColors.textWeak
                                   : AppColors.textPrimary,
                             ),
                             maxLines: 2,
@@ -347,7 +346,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                           route.rating.toStringAsFixed(1),
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.textHint,
+                            color: AppColors.textWeak,
                           ),
                         ),
                         Spacer(),
@@ -355,7 +354,7 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                           route.difficulty.getName(),
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.textHint,
+                            color: AppColors.textWeak,
                           ),
                         ),
                       ],
@@ -384,7 +383,8 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: 6),
                         decoration: BoxDecoration(
-                          color: AppColors.statusCompletedText.withValues(alpha: 0.1),
+                          color: AppColors.statusCompletedText
+                              .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
@@ -420,7 +420,8 @@ class _QuickRouteSelectorState extends State<QuickRouteSelector> {
             Icon(CupertinoIcons.checkmark_circle_fill,
                 color: AppColors.statusCompletedText, size: 16),
             SizedBox(width: 8),
-            Text('路线已添加', style: TextStyle(fontSize: 14, color: AppColors.textPrimary)),
+            Text('路线已添加',
+                style: TextStyle(fontSize: 14, color: AppColors.textPrimary)),
           ],
         ),
         actions: [

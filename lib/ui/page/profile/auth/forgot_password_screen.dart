@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/theme/tokens/typography.dart';
+import 'package:walk/ui/page/common/utility_page_scaffold.dart';
 
 /// 忘记密码屏幕
 class ForgotPasswordScreen extends StatefulWidget {
@@ -43,6 +45,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     // 模拟发送过程
     Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
       setState(() {
         _isSending = false;
         _isSent = true;
@@ -93,80 +96,70 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('忘记密码'),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Icon(
-                CupertinoIcons.lock_rotation,
-                size: 80,
-                color: AppColors.interactiveAccent,
+    return UtilityPageScaffold(
+      title: '忘记密码',
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Icon(
+              CupertinoIcons.lock_rotation,
+              size: 80,
+              color: AppColors.interactiveAccent,
+            ),
+            const SizedBox(height: 40),
+            const Text(
+              '重置密码',
+              style: AppTypography.pageTitle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '请输入您的电子邮件，我们将向您发送重置密码的链接',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.textWeak,
               ),
-              const SizedBox(height: 40),
-              const Text(
-                '重置密码',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+            CupertinoTextField(
+              controller: _emailController,
+              placeholder: '电子邮件',
+              keyboardType: TextInputType.emailAddress,
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(
+                  CupertinoIcons.mail,
+                  color: AppColors.textWeak,
                 ),
-                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
-              const Text(
-                '请输入您的电子邮件，我们将向您发送重置密码的链接',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.textSubtitle,
-                ),
-                textAlign: TextAlign.center,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(8),
               ),
-              const SizedBox(height: 40),
-              CupertinoTextField(
-                controller: _emailController,
-                placeholder: '电子邮件',
-                keyboardType: TextInputType.emailAddress,
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(
-                    CupertinoIcons.mail,
-                    color: AppColors.textSubtitle,
-                  ),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                enabled: !_isSent,
-              ),
-              const SizedBox(height: 24),
-              CupertinoButton(
-                color: _isSent
-                    ? AppColors.badgeVerifiedBg
-                    : AppColors.interactiveAccent,
-                child: _isSending
-                    ? const CupertinoActivityIndicator(
-                        color: AppColors.bgBase)
-                    : Text(_isSent ? '已发送' : '发送重置链接'),
-                onPressed:
-                    (_isSending || _isSent) ? null : _handleSendResetLink,
-              ),
-              const SizedBox(height: 16),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: const Text('返回登录'),
-                onPressed: _navigateToLogin,
-              ),
-            ],
-          ),
+              enabled: !_isSent,
+            ),
+            const SizedBox(height: 24),
+            CupertinoButton(
+              color: _isSent
+                  ? AppColors.badgeVerifiedBg
+                  : AppColors.interactiveAccent,
+              onPressed: (_isSending || _isSent) ? null : _handleSendResetLink,
+              child: _isSending
+                  ? const CupertinoActivityIndicator(color: AppColors.bgBase)
+                  : Text(_isSent ? '已发送' : '发送重置链接'),
+            ),
+            const SizedBox(height: 16),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: _navigateToLogin,
+              child: const Text('返回登录'),
+            ),
+          ],
         ),
       ),
     );

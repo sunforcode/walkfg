@@ -77,19 +77,20 @@ class WelcomeWeatherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient:
-            weather != null ? AppColors.getWeatherGradient(weather!.condition.name) : AppColors.weatherDefaultGradient,
-        borderRadius: AppRadius.borderXl,
+        gradient: weather != null
+            ? AppColors.getWeatherGradient(weather!.condition.name)
+            : AppColors.weatherDefaultGradient,
+        borderRadius: AppRadius.borderPanel,
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: AppColors.surfaceOverlay,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: AppRadius.borderXl,
+        borderRadius: AppRadius.borderPanel,
         child: Stack(
           children: [
             // 背景图案
@@ -105,7 +106,7 @@ class WelcomeWeatherCard extends StatelessWidget {
 
             // 内容
             Padding(
-              padding: AppSpacing.allMd,
+              padding: AppSpacing.allLg,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

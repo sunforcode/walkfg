@@ -77,10 +77,10 @@ class TripFoodWaterDisplayWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -127,8 +127,7 @@ class TripFoodWaterDisplayWidget extends StatelessWidget {
             ),
             const Spacer(),
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.statusPlanningBg,
                 borderRadius: BorderRadius.circular(4),
@@ -149,7 +148,7 @@ class TripFoodWaterDisplayWidget extends StatelessWidget {
           '餐食计划详情展示区域',
           style: TextStyle(
             fontSize: 12,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
       ],
@@ -178,8 +177,7 @@ class TripFoodWaterDisplayWidget extends StatelessWidget {
             ),
             const Spacer(),
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.interactiveAccentBg,
                 borderRadius: BorderRadius.circular(4),
@@ -200,7 +198,7 @@ class TripFoodWaterDisplayWidget extends StatelessWidget {
           '饮水计划详情展示区域',
           style: TextStyle(
             fontSize: 12,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
       ],

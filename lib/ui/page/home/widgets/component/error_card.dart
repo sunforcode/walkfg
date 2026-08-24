@@ -25,8 +25,8 @@ class ErrorCard extends StatelessWidget {
         ),
         borderRadius: const BorderRadius.all(Radius.circular(16.0)),
         boxShadow: [
-BoxShadow(
-            color: AppColors.shadow,
+          BoxShadow(
+            color: AppColors.surfaceOverlay,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -38,30 +38,30 @@ BoxShadow(
           children: [
             const Icon(
               Icons.error_outline,
-              color: AppColors.textOnDark,
+              color: AppColors.textPrimary,
               size: 48,
             ),
-            SizedBox(height: AppSpacing.md),
+            SizedBox(height: AppSpacing.lg),
             Text(
               '加载失败: $error',
               style: const TextStyle(
-                color: AppColors.textOnDark,
+                color: AppColors.textPrimary,
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
-              SizedBox(height: AppSpacing.md),
+              SizedBox(height: AppSpacing.lg),
               CupertinoButton(
                 padding: EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: AppSpacing.xs,
                 ),
-                color: AppColors.textOnDark.withValues(alpha: 0.3),
+                color: AppColors.textPrimary.withValues(alpha: 0.3),
                 child: const Text(
                   '重试',
                   style: TextStyle(
-                    color: AppColors.textOnDark,
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

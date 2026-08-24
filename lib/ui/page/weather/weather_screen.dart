@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../model/weather/day_weather_model.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/typography.dart';
+import '../common/utility_page_scaffold.dart';
 
 /// P11 天气 — 徒步日逐日天气预报与详细气象数据查看页
 ///
@@ -13,35 +14,25 @@ class WeatherScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: AppColors.bgBase,
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('天气', style: AppTypography.titleSm),
-        backgroundColor: AppColors.bgBase,
-        border: null,
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              '← 返回',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textTertiary,
-              ),
-            ),
+    return UtilityPageScaffold(
+      title: '天气',
+      leading: CupertinoButton(
+        padding: EdgeInsets.zero,
+        onPressed: () => Navigator.of(context).maybePop(),
+        child: Text(
+          '返回',
+          style: AppTypography.bodySm.copyWith(
+            color: AppColors.textSecondary,
           ),
         ),
       ),
-      child: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.only(bottom: 40),
-          children: const [
-            _CurrentWeatherCard(),
-            _ForecastSection(),
-            _DetailDataSection(),
-          ],
-        ),
+      body: ListView(
+        padding: const EdgeInsets.only(bottom: 40),
+        children: const [
+          _CurrentWeatherCard(),
+          _ForecastSection(),
+          _DetailDataSection(),
+        ],
       ),
     );
   }
@@ -71,15 +62,15 @@ class _CurrentWeatherCard extends StatelessWidget {
         children: [
           // 当前温度 48px / w200 / #fff
           Text(
-            '${_mockCurrentTemp}°',
+            '$_mockCurrentTemp°',
             style: AppTypography.displayHero,
           ),
           const SizedBox(height: 4),
           // 天气状况 16px / rgba(255,255,255,.6)
           Text(
-            '${_mockConditionIcon} ${_mockCondition}',
+            '$_mockConditionIcon $_mockCondition',
             style: AppTypography.bodyLg.copyWith(
-              color: AppColors.textTertiary,
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
@@ -87,7 +78,7 @@ class _CurrentWeatherCard extends StatelessWidget {
           Text(
             _mockLocation,
             style: AppTypography.caption.copyWith(
-              color: AppColors.textHint,
+              color: AppColors.textWeak,
             ),
           ),
         ],
@@ -112,13 +103,11 @@ class _ForecastSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 区块标题
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(4, 0, 4, 8),
             child: Text(
               '徒步日预报',
-              style: AppTypography.caption.copyWith(
-                color: AppColors.textHint,
-              ),
+              style: AppTypography.sectionTitle,
             ),
           ),
           // 卡片容器
@@ -185,7 +174,7 @@ class _ForecastDayItem extends StatelessWidget {
             child: Text(
               _tempRange(day),
               style: AppTypography.caption.copyWith(
-                color: AppColors.textBody,
+                color: AppColors.textWeak,
               ),
             ),
           ),
@@ -238,13 +227,11 @@ class _DetailDataSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 区块标题
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(4, 0, 4, 8),
             child: Text(
               '详细数据',
-              style: AppTypography.caption.copyWith(
-                color: AppColors.textHint,
-              ),
+              style: AppTypography.sectionTitle,
             ),
           ),
           // 卡片容器
@@ -301,7 +288,7 @@ class _DetailItem extends StatelessWidget {
             child: Text(
               item.value,
               style: AppTypography.caption.copyWith(
-                color: AppColors.textBody,
+                color: AppColors.textWeak,
               ),
               textAlign: TextAlign.right,
             ),

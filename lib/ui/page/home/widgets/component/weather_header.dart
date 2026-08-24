@@ -22,7 +22,8 @@ class WeatherHeader extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 20,
-          backgroundImage: user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
+          backgroundImage:
+              user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
           child: user.avatarUrl == null ? const Icon(Icons.person) : null,
         ),
         const SizedBox(width: 12),
@@ -32,7 +33,7 @@ class WeatherHeader extends StatelessWidget {
             Text(
               '欢迎，${user.nickname}',
               style: const TextStyle(
-                color: AppColors.textOnDark,
+                color: AppColors.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -40,7 +41,7 @@ class WeatherHeader extends StatelessWidget {
             Text(
               _getGreetingByTime(),
               style: TextStyle(
-                color: AppColors.textOnDark.withValues(alpha: 0.9),
+                color: AppColors.textPrimary.withValues(alpha: 0.9),
                 fontSize: 14,
               ),
             ),
@@ -49,7 +50,7 @@ class WeatherHeader extends StatelessWidget {
         const Spacer(),
         if (onRefresh != null)
           IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.textOnDark),
+            icon: const Icon(Icons.refresh, color: AppColors.textPrimary),
             onPressed: onRefresh,
             tooltip: '刷新天气',
           ),

@@ -2,19 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'tokens/tokens.dart';
 
-/// Walk v1 主题配置
+/// Walk 沉浸式暗色主题配置。
 ///
-/// v1 固定暗色主题，基于 PRD §8.1 Design Token 体系。
-/// - UI 框架: Cupertino (iOS 风格)
-/// - 配色: 深蓝黑底 (#0a0a1a) + 品牌蓝渐变
-/// - 界面: 列表式 + 数据卡片
+/// Cupertino 与 Material 控件共享同一组语义 Design Token。
 class AppTheme {
   AppTheme._();
 
   // ============ Cupertino 主题 ============
 
-  /// 暗色 Cupertino 主题
-  static CupertinoThemeData get cupertinoDark => CupertinoThemeData(
+  /// 应用唯一支持的 Cupertino 主题入口。
+  static CupertinoThemeData get cupertino => CupertinoThemeData(
         primaryColor: AppColors.interactiveAccent,
         primaryContrastingColor: AppColors.bgBase,
         brightness: Brightness.dark,
@@ -25,28 +22,28 @@ class AppTheme {
           textStyle: TextStyle(
             fontFamily: AppTypography.fontFamily,
             color: AppColors.textPrimary,
-            fontSize: 15,
+            fontSize: AppTypography.body.fontSize,
           ),
           actionTextStyle: TextStyle(
             fontFamily: AppTypography.fontFamily,
             color: AppColors.interactiveAccent,
-            fontSize: 15,
+            fontSize: AppTypography.body.fontSize,
           ),
           navTitleTextStyle: TextStyle(
             fontFamily: AppTypography.fontFamily,
             color: AppColors.textPrimary,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
+            fontSize: AppTypography.navTitle.fontSize,
+            fontWeight: AppTypography.navTitle.fontWeight,
           ),
           navLargeTitleTextStyle: TextStyle(
             fontFamily: AppTypography.fontFamily,
             color: AppColors.textPrimary,
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
+            fontSize: AppTypography.pageTitle.fontSize,
+            fontWeight: AppTypography.pageTitle.fontWeight,
           ),
           tabLabelTextStyle: TextStyle(
             fontFamily: AppTypography.fontFamily,
-            color: AppColors.textHint,
+            color: AppColors.textWeak,
             fontSize: 10,
           ),
         ),
@@ -54,8 +51,8 @@ class AppTheme {
 
   // ============ Material 主题 (兼容使用) ============
 
-  /// 暗色 Material 主题
-  static ThemeData get materialDark => ThemeData(
+  /// 应用唯一支持的 Material 主题入口。
+  static ThemeData get material => ThemeData(
         fontFamily: AppTypography.fontFamily,
         useMaterial3: true,
         brightness: Brightness.dark,
@@ -64,7 +61,7 @@ class AppTheme {
         colorScheme: ColorScheme.dark(
           primary: AppColors.interactiveAccent,
           onPrimary: AppColors.bgBase,
-          secondary: AppColors.accentSky,
+          secondary: AppColors.interactiveAccent,
           error: AppColors.error,
           onError: AppColors.bgBase,
           surface: AppColors.bgPanel,
@@ -82,7 +79,7 @@ class AppTheme {
           foregroundColor: AppColors.textPrimary,
           titleTextStyle: AppTypography.navTitle,
           iconTheme: const IconThemeData(
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
             size: 24,
           ),
         ),
@@ -92,8 +89,8 @@ class AppTheme {
           elevation: 0,
           color: AppColors.surfaceCard,
           shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.borderXl,
-            side: const BorderSide(color: AppColors.surfaceCardBorder, width: 1),
+            borderRadius: AppRadius.borderPanel,
+            side: const BorderSide(color: AppColors.border, width: 1),
           ),
           margin: EdgeInsets.zero,
         ),
@@ -104,9 +101,12 @@ class AppTheme {
             backgroundColor: AppColors.brandStart,
             foregroundColor: AppColors.textPrimary,
             elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.componentPadding,
+              vertical: AppSpacing.md,
+            ),
             shape: RoundedRectangleBorder(
-              borderRadius: AppRadius.borderXl,
+              borderRadius: AppRadius.borderControl,
             ),
             textStyle: AppTypography.button,
           ),
@@ -115,20 +115,29 @@ class AppTheme {
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.interactiveAccent,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: AppRadius.borderXl,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.componentPadding,
+              vertical: AppSpacing.md,
             ),
-            side: const BorderSide(color: AppColors.interactiveAccent, width: 1),
-            textStyle: AppTypography.button.copyWith(color: AppColors.interactiveAccent),
+            shape: RoundedRectangleBorder(
+              borderRadius: AppRadius.borderControl,
+            ),
+            side:
+                const BorderSide(color: AppColors.interactiveAccent, width: 1),
+            textStyle: AppTypography.button
+                .copyWith(color: AppColors.interactiveAccent),
           ),
         ),
 
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             foregroundColor: AppColors.interactiveAccent,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            textStyle: AppTypography.button.copyWith(color: AppColors.interactiveAccent),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.componentPadding,
+              vertical: AppSpacing.md,
+            ),
+            textStyle: AppTypography.button
+                .copyWith(color: AppColors.interactiveAccent),
           ),
         ),
 
@@ -136,26 +145,29 @@ class AppTheme {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppColors.surfaceInput,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.componentPadding,
+            vertical: AppSpacing.md,
+          ),
           border: OutlineInputBorder(
-            borderRadius: AppRadius.borderMd,
-            borderSide: const BorderSide(color: AppColors.surfaceCardBorder, width: 1),
+            borderRadius: AppRadius.borderControl,
+            borderSide: const BorderSide(color: AppColors.border, width: 1),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: AppRadius.borderMd,
-            borderSide: const BorderSide(color: AppColors.surfaceCardBorder, width: 1),
+            borderRadius: AppRadius.borderControl,
+            borderSide: const BorderSide(color: AppColors.border, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: AppRadius.borderMd,
-            borderSide: const BorderSide(color: AppColors.interactiveAccentFocus, width: 2),
+            borderRadius: AppRadius.borderControl,
+            borderSide: const BorderSide(
+                color: AppColors.interactiveAccentFocus, width: 2),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: AppRadius.borderMd,
-            borderSide: const BorderSide(color: AppColors.semanticErrorBorder, width: 1),
+            borderRadius: AppRadius.borderControl,
+            borderSide: const BorderSide(
+                color: AppColors.semanticErrorBorder, width: 1),
           ),
-          hintStyle: AppTypography.body
-              .copyWith(color: AppColors.textPlaceholder),
+          hintStyle: AppTypography.body.copyWith(color: AppColors.textWeak),
           labelStyle: AppTypography.body,
         ),
 
@@ -165,10 +177,13 @@ class AppTheme {
           selectedColor: AppColors.interactiveAccentBg,
           labelStyle: AppTypography.label,
           shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.borderSm,
-            side: const BorderSide(color: AppColors.surfaceCardBorder, width: 1),
+            borderRadius: AppRadius.borderSmall,
+            side: const BorderSide(color: AppColors.border, width: 1),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
+          ),
         ),
 
         // 分割线主题
@@ -180,18 +195,20 @@ class AppTheme {
 
         // 列表主题
         listTileTheme: ListTileThemeData(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.componentPadding,
+          ),
           titleTextStyle: AppTypography.bodyLg,
           subtitleTextStyle: AppTypography.bodySm,
-          iconColor: AppColors.textBody,
+          iconColor: AppColors.textWeak,
         ),
 
         // Dialog 主题
         dialogTheme: DialogThemeData(
           backgroundColor: AppColors.bgPanel,
-          elevation: 24,
+          elevation: AppShadows.overlayElevation,
           shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.border2xl,
+            borderRadius: AppRadius.borderOverlay,
           ),
           titleTextStyle: AppTypography.headline,
           contentTextStyle: AppTypography.body,
@@ -200,11 +217,11 @@ class AppTheme {
         // BottomSheet 主题
         bottomSheetTheme: BottomSheetThemeData(
           backgroundColor: AppColors.bgPanel,
-          elevation: 16,
-          shape: RoundedRectangleBorder(
+          elevation: AppShadows.panelElevation,
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(AppRadius.xxl),
-              topRight: Radius.circular(AppRadius.xxl),
+              topLeft: Radius.circular(AppRadius.overlay),
+              topRight: Radius.circular(AppRadius.overlay),
             ),
           ),
         ),
@@ -215,7 +232,7 @@ class AppTheme {
           contentTextStyle:
               AppTypography.body.copyWith(color: AppColors.textPrimary),
           shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.borderMd,
+            borderRadius: AppRadius.borderControl,
           ),
           behavior: SnackBarBehavior.floating,
         ),
@@ -224,15 +241,13 @@ class AppTheme {
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: AppColors.brandStart,
           foregroundColor: AppColors.textPrimary,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.borderXl,
-          ),
+          elevation: AppShadows.floatingControlElevation,
+          shape: const CircleBorder(),
         ),
 
         // Icon 主题
         iconTheme: const IconThemeData(
-          color: AppColors.textBody,
+          color: AppColors.textWeak,
           size: 24,
         ),
 
@@ -256,10 +271,21 @@ class AppTheme {
         ),
       );
 
-  // ============ 兼容旧 API ============
-  // 保留 cupertinoLight / materialLight 作为 dark 的别名，
-  // 让现有调用处不报错，后续逐步清理。
+  /// 旧暗色主题入口，仅用于源码迁移。
+  @Deprecated('Use AppTheme.cupertino')
+  static CupertinoThemeData get cupertinoDark => cupertino;
 
-  static CupertinoThemeData get cupertinoLight => cupertinoDark;
-  static ThemeData get materialLight => materialDark;
+  /// 旧暗色主题入口，仅用于源码迁移。
+  @Deprecated('Use AppTheme.material')
+  static ThemeData get materialDark => material;
+
+  /// 在以 [CupertinoApp] 为根的应用中承载 Material 主题与消息设施。
+  static Widget buildMaterialTheme(BuildContext context, Widget? child) {
+    return Theme(
+      data: material,
+      child: ScaffoldMessenger(
+        child: child ?? const SizedBox.shrink(),
+      ),
+    );
+  }
 }

@@ -49,8 +49,7 @@ class _TripParticipantsDisplayWidgetState
             }).toList(),
 
             // 更多按钮
-            if (hasMore && !_showAll)
-              _buildShowMoreButton(mockParticipants),
+            if (hasMore && !_showAll) _buildShowMoreButton(mockParticipants),
           ] else
             _buildEmptyState(),
         ],
@@ -107,10 +106,10 @@ class _TripParticipantsDisplayWidgetState
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.sheetCardBg,
+          color: AppColors.surfaceCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.sheetDivider,
+            color: AppColors.border,
             width: 0.5,
           ),
         ),
@@ -130,7 +129,7 @@ class _TripParticipantsDisplayWidgetState
               '(${participants.length - _maxDisplayCount}人)',
               style: const TextStyle(
                 fontSize: 12,
-                color: AppColors.textSubtitle,
+                color: AppColors.textWeak,
               ),
             ),
             const SizedBox(width: 8),
@@ -153,10 +152,10 @@ class _TripParticipantsDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -185,7 +184,7 @@ class _TripParticipantsDisplayWidgetState
       decoration: BoxDecoration(
         color: isOrganizer
             ? AppColors.interactiveAccent.withValues(alpha: 0.2)
-            : AppColors.sheetDivider,
+            : AppColors.border,
         borderRadius: BorderRadius.circular(25),
       ),
       child: Center(
@@ -250,21 +249,21 @@ class _TripParticipantsDisplayWidgetState
               participant['experience'] as String,
               style: const TextStyle(
                 fontSize: 13,
-                color: AppColors.textBody,
+                color: AppColors.textWeak,
               ),
             ),
             const SizedBox(width: 12),
             const Icon(
               CupertinoIcons.calendar,
               size: 12,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
             ),
             const SizedBox(width: 4),
             Text(
               participant['joinDate'] as String,
               style: const TextStyle(
                 fontSize: 12,
-                color: AppColors.textSubtitle,
+                color: AppColors.textWeak,
               ),
             ),
           ],
@@ -276,10 +275,12 @@ class _TripParticipantsDisplayWidgetState
   Widget _buildStatusBadge(bool isConfirmed, Map<String, dynamic> participant) {
     final Color statusBg =
         isConfirmed ? AppColors.badgeVerifiedBg : AppColors.badgeRecommendedBg;
-    final Color statusText =
-        isConfirmed ? AppColors.badgeVerifiedText : AppColors.badgeRecommendedText;
-    final IconData statusIcon =
-        isConfirmed ? CupertinoIcons.checkmark_circle_fill : CupertinoIcons.clock_fill;
+    final Color statusText = isConfirmed
+        ? AppColors.badgeVerifiedText
+        : AppColors.badgeRecommendedText;
+    final IconData statusIcon = isConfirmed
+        ? CupertinoIcons.checkmark_circle_fill
+        : CupertinoIcons.clock_fill;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -312,10 +313,10 @@ class _TripParticipantsDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -324,7 +325,7 @@ class _TripParticipantsDisplayWidgetState
           Icon(
             CupertinoIcons.person_2,
             size: 48,
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
           ),
           SizedBox(height: 16),
           Text(
@@ -332,7 +333,7 @@ class _TripParticipantsDisplayWidgetState
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.textBody,
+              color: AppColors.textWeak,
             ),
           ),
           SizedBox(height: 8),
@@ -340,7 +341,7 @@ class _TripParticipantsDisplayWidgetState
             '邀请朋友一起参加这次徒步之旅',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
             ),
             textAlign: TextAlign.center,
           ),

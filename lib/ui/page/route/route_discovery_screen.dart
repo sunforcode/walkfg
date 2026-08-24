@@ -1,263 +1,276 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../../model/route/route_enums.dart';
 import '../../../model/route/route_model.dart';
 import '../../../service/route/current_route_selection_service.dart';
 import '../../../service/route_service.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/motion.dart';
+import '../../../theme/tokens/radius.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/typography.dart';
+import '../common/immersive_components.dart';
+import '../common/immersive_page_scaffold.dart';
+import '../common/network_image_with_fallback.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// P3 路线发现 (PRD §3)
-// 暗色地形氛围下的经典路线卡片列表，一划一选，回到首页看轨迹和天气。
-// ─────────────────────────────────────────────────────────────────────────────
+typedef RouteDiscoveryLoader = Future<List<RouteModel>> Function({
+  required int page,
+  required int size,
+});
+typedef RouteSelectionSaver = Future<void> Function(RouteModel route);
 
+/// 沉浸式路线发现页。
+///
+/// 加载入口可注入以固定页面状态契约；生产环境按热门顺序分页加载路线。
 class RouteDiscoveryScreen extends StatefulWidget {
-  const RouteDiscoveryScreen({super.key});
+  final RouteDiscoveryLoader? routesLoader;
+  final RouteSelectionSaver? routeSelectionSaver;
+
+  const RouteDiscoveryScreen({
+    super.key,
+    this.routesLoader,
+    this.routeSelectionSaver,
+  });
 
   @override
   State<RouteDiscoveryScreen> createState() => _RouteDiscoveryScreenState();
 }
 
 class _RouteDiscoveryScreenState extends State<RouteDiscoveryScreen> {
-  late Future<List<RouteModel>> _routesFuture;
+  static const int _pageSize = 20;
+
+  final List<RouteModel> _routes = [];
+  bool _isLoading = true;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  Object? _initialError;
+  int _page = 1;
+  int _requestGeneration = 0;
+  bool _isSelectingRoute = false;
 
   @override
   void initState() {
     super.initState();
-    _routesFuture = _loadRoutes();
+    _loadInitial();
   }
 
-  Future<List<RouteModel>> _loadRoutes() async {
-    try {
-      final routes = await RouteService.getPopularRoutes(limit: 50);
-      if (routes.isNotEmpty) return routes;
-    } catch (e) {
-      debugPrint('RouteDiscoveryScreen: 热门路线加载失败，尝试全部路线: $e');
+  Future<List<RouteModel>> _loadPage(int page) {
+    if (widget.routesLoader case final loader?) {
+      return loader(page: page, size: _pageSize);
     }
-    return RouteService.getRoutes(limit: 50);
+    return RouteService.getRoutes(
+      sort: 'popular',
+      page: page,
+      size: _pageSize,
+    );
   }
 
-  void _reload() {
+  Future<void> _loadInitial() async {
+    final generation = ++_requestGeneration;
     setState(() {
-      _routesFuture = _loadRoutes();
+      _isLoading = true;
+      _isLoadingMore = false;
+      _initialError = null;
+      _page = 1;
+      _hasMore = true;
     });
+    try {
+      final routes = await _loadPage(1);
+      if (!mounted || generation != _requestGeneration) return;
+      setState(() {
+        _routes
+          ..clear()
+          ..addAll(routes);
+        _page = 1;
+        _hasMore = routes.length == _pageSize;
+        _isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted || generation != _requestGeneration) return;
+      setState(() {
+        _initialError = error;
+        _isLoading = false;
+      });
+    }
   }
 
-  Future<void> _onCardTap(RouteModel route) async {
-    await CurrentRouteSelectionService.instance.setSelectedRoute(route);
-    if (!mounted) return;
-    Navigator.of(context).pop(route);
+  Future<void> _loadMore() async {
+    if (_isLoading || _isLoadingMore || !_hasMore) return;
+    setState(() {
+      _isLoadingMore = true;
+    });
+    final generation = _requestGeneration;
+    final nextPage = _page + 1;
+    try {
+      final routes = await _loadPage(nextPage);
+      if (!mounted || generation != _requestGeneration) return;
+      setState(() {
+        _routes.addAll(routes);
+        _page = nextPage;
+        _hasMore = routes.length == _pageSize;
+        _isLoadingMore = false;
+      });
+    } catch (error) {
+      debugPrint('RouteDiscoveryScreen: 第 $nextPage 页加载失败: $error');
+      if (!mounted || generation != _requestGeneration) return;
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
   }
 
-  void _goHome() {
-    Navigator.of(context).pop();
+  Future<void> _refreshRoutes() => _loadInitial();
+
+  void _retry() {
+    _loadInitial();
+  }
+
+  Future<void> _selectRoute(RouteModel route) async {
+    if (_isSelectingRoute) return;
+    _isSelectingRoute = true;
+    try {
+      await (widget.routeSelectionSaver ??
+          CurrentRouteSelectionService.instance.setSelectedRoute)(route);
+      if (!mounted) return;
+      Navigator.of(context).pop(route);
+    } finally {
+      _isSelectingRoute = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: AppColors.bgRouteMid,
-      child: Stack(
+    return ImmersivePageScaffold(
+      body: Stack(
+        fit: StackFit.expand,
         children: [
-          // Layer 1 — 暗绿径向渐变背景
-          const Positioned.fill(child: _RouteGradientBackground()),
-          // Layer 2 — 地形等高线装饰
-          const Positioned.fill(child: _ContourLines()),
-          // Layer 3 — 内容
-          SafeArea(
-            child: FutureBuilder<List<RouteModel>>(
-              future: _routesFuture,
-              builder: (context, snapshot) {
-                return _RouteListContent(
-                  state: _listState(snapshot),
-                  routes: snapshot.data ?? const [],
-                  onCardTap: _onCardTap,
-                  onRetry: _reload,
-                  onGoHome: _goHome,
-                );
-              },
-            ),
+          const _DiscoveryBackdrop(),
+          _RouteDiscoveryScrollView(
+            state: _state,
+            routes: _routes,
+            isLoadingMore: _isLoadingMore,
+            onRefresh: _refreshRoutes,
+            onLoadMore: _loadMore,
+            onRetry: _retry,
+            onRouteTap: _selectRoute,
           ),
         ],
+      ),
+      leadingAction: GlassIconAction(
+        key: const Key('route-discovery-back'),
+        semanticLabel: '返回',
+        icon: CupertinoIcons.back,
+        onPressed: () => Navigator.of(context).pop(),
       ),
     );
   }
 
-  _ListState _listState(AsyncSnapshot<List<RouteModel>> snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return _ListState.loading;
-    }
-    if (snapshot.hasError) return _ListState.error;
-    if ((snapshot.data ?? const []).isEmpty) return _ListState.empty;
+  _ListState get _state {
+    if (_isLoading) return _ListState.loading;
+    if (_initialError != null) return _ListState.error;
+    if (_routes.isEmpty) return _ListState.empty;
     return _ListState.ready;
   }
 }
 
 enum _ListState { loading, ready, empty, error }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 内容区 — 导航 + 头部文案 + 卡片列表（骨架屏/正常/空态/错误态）
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _RouteListContent extends StatelessWidget {
+class _RouteDiscoveryScrollView extends StatelessWidget {
   final _ListState state;
   final List<RouteModel> routes;
-  final ValueChanged<RouteModel> onCardTap;
+  final bool isLoadingMore;
+  final Future<void> Function() onRefresh;
+  final Future<void> Function() onLoadMore;
   final VoidCallback onRetry;
-  final VoidCallback onGoHome;
+  final ValueChanged<RouteModel> onRouteTap;
 
-  const _RouteListContent({
+  const _RouteDiscoveryScrollView({
     required this.state,
     required this.routes,
-    required this.onCardTap,
+    required this.isLoadingMore,
+    required this.onRefresh,
+    required this.onLoadMore,
     required this.onRetry,
-    required this.onGoHome,
+    required this.onRouteTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        // 导航区 — "← 首页"
-        SliverToBoxAdapter(child: _NavBack(onTap: onGoHome)),
-        // 头部文案区
-        const SliverToBoxAdapter(child: _HeaderCopy()),
-        // 卡片列表区（根据状态切换）
-        switch (state) {
-          _ListState.loading => _skeletonSliver(),
-          _ListState.ready => _routeSliver(routes, onCardTap),
-          _ListState.empty => _messageSliver('暂无路线', null),
-          _ListState.error => _messageSliver('加载失败，点击重试', onRetry),
-        },
-        // 底部留白
-        const SliverToBoxAdapter(child: SizedBox(height: 40)),
-      ],
-    );
-  }
-
-  Widget _skeletonSliver() {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (_, index) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: const _SkeletonCard(),
+    final topInset = MediaQuery.viewPaddingOf(context).top;
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification.metrics.pixels >=
+            notification.metrics.maxScrollExtent - 200) {
+          onLoadMore();
+        }
+        return false;
+      },
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
         ),
-        childCount: 3,
-      ),
-    );
-  }
-
-  Widget _routeSliver(List<RouteModel> routes, ValueChanged<RouteModel> onTap) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (_, index) => Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: index == 0 ? 0 : 6,
-            bottom: index == routes.length - 1 ? 0 : 6,
-          ),
-          child: _RouteChoiceCard(
-            route: routes[index],
-            onTap: () => onTap(routes[index]),
-          ),
-        ),
-        childCount: routes.length,
-      ),
-    );
-  }
-
-  Widget _messageSliver(String text, VoidCallback? onTap) {
-    return SliverFillRemaining(
-      hasScrollBody: false,
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: AppColors.textHint,
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
+        slivers: [
+          CupertinoSliverRefreshControl(onRefresh: onRefresh),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.heroHorizontal,
+                topInset + AppSpacing.hero,
+                AppSpacing.heroHorizontal,
+                AppSpacing.sectionGap,
+              ),
+              child: const _HeaderCopy(),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 导航区 — "← 首页" (PRD §3.3)
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _NavBack extends StatelessWidget {
-  final VoidCallback onTap;
-  const _NavBack({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Text(
-          '← 首页',
-          style: TextStyle(
-            color: AppColors.textBody,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 头部文案区 (PRD §3.4)
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _HeaderCopy extends StatelessWidget {
-  const _HeaderCopy();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '这周去哪走？',
-            style: TextStyle(
-              color: AppColors.accentGreenSoft,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
+          switch (state) {
+            _ListState.loading => const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.pageHorizontal,
+                  ),
+                  child: _HeroSkeleton(),
+                ),
+              ),
+            _ListState.ready => SliverList.builder(
+                itemCount: routes.length,
+                itemBuilder: (context, index) {
+                  final route = routes[index];
+                  return Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      AppSpacing.pageHorizontal,
+                      index == 0 ? 0 : AppSpacing.listItemGap / 2,
+                      AppSpacing.pageHorizontal,
+                      index == routes.length - 1
+                          ? 0
+                          : AppSpacing.listItemGap / 2,
+                    ),
+                    child: _RouteHeroItem(
+                      route: route,
+                      onTap: () => onRouteTap(route),
+                    ),
+                  );
+                },
+              ),
+            _ListState.empty => const SliverFillRemaining(
+                hasScrollBody: false,
+                child: _StateMessage(text: '暂无路线，下拉刷新'),
+              ),
+            _ListState.error => SliverFillRemaining(
+                hasScrollBody: false,
+                child: _StateMessage(
+                  text: '加载失败，点击重试',
+                  onTap: onRetry,
+                ),
+              ),
+          },
+          if (isLoadingMore)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: AppSpacing.verticalLg,
+                child: Center(child: CupertinoActivityIndicator()),
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            '选一条经典路线',
-            style: TextStyle(
-              color: Color(0xFFFFFFFF),
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '点选后直接回到首页，看轨迹和这周/下周天气。',
-            style: TextStyle(
-              color: AppColors.textHint,
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-              height: 1.5,
-            ),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: AppSpacing.sectionGap),
           ),
         ],
       ),
@@ -265,378 +278,213 @@ class _HeaderCopy extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 路线卡片 (PRD §3.5.1)
-// 拆分：_RouteChoiceCard → _PressableCard → _CardInner → (_Thumb / _RouteInfo / _GoButton)
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _RouteChoiceCard extends StatefulWidget {
-  final RouteModel route;
-  final VoidCallback onTap;
-
-  const _RouteChoiceCard({required this.route, required this.onTap});
-
-  @override
-  State<_RouteChoiceCard> createState() => _RouteChoiceCardState();
-}
-
-class _RouteChoiceCardState extends State<_RouteChoiceCard> {
-  bool _pressed = false;
-  DateTime? _lastTap;
-
-  void _handleTap() {
-    final now = DateTime.now();
-    if (_lastTap != null && now.difference(_lastTap!).inMilliseconds < 300) {
-      return;
-    }
-    _lastTap = now;
-    widget.onTap();
-  }
+class _HeaderCopy extends StatelessWidget {
+  const _HeaderCopy();
 
   @override
   Widget build(BuildContext context) {
-    return _PressableCard(
-      pressed: _pressed,
-      onPressChange: (v) => setState(() => _pressed = v),
-      onTap: _handleTap,
-      child: _CardInner(route: widget.route),
-    );
-  }
-}
-
-/// 交互壳：MouseRegion + GestureDetector + AnimatedScale
-class _PressableCard extends StatelessWidget {
-  final bool pressed;
-  final ValueChanged<bool> onPressChange;
-  final VoidCallback onTap;
-  final Widget child;
-
-  const _PressableCard({
-    required this.pressed,
-    required this.onPressChange,
-    required this.onTap,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) {},
-      onExit: (_) {},
-      child: GestureDetector(
-        onTapDown: (_) => onPressChange(true),
-        onTapUp: (_) {
-          onPressChange(false);
-          onTap();
-        },
-        onTapCancel: () => onPressChange(false),
-        child: AnimatedScale(
-          scale: pressed ? 0.98 : 1.0,
-          duration: const Duration(milliseconds: 150),
-          curve: Curves.ease,
-          child: AnimatedContainer(
-            duration: AppMotion.normal,
-            curve: Curves.ease,
-            decoration: BoxDecoration(
-              color: pressed ? AppColors.cardPressed : AppColors.surfaceCard,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.surfaceDivider, width: 1),
-            ),
-            padding: const EdgeInsets.all(14),
-            child: child,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 卡片内容：缩略图 + 路线信息 + 出发按钮
-class _CardInner extends StatelessWidget {
-  final RouteModel route;
-  const _CardInner({required this.route});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Thumb(route: route),
-        const SizedBox(width: 14),
-        Expanded(child: _RouteInfo(route: route)),
-        const SizedBox(width: 14),
-        const _GoButton(),
+        Text('WALK / 发现', style: AppTypography.label),
+        SizedBox(height: AppSpacing.sm),
+        Text('这周，走进山里。', style: AppTypography.displayTitle),
+        SizedBox(height: AppSpacing.sm),
+        Text('一屏一条经典路线，上滑继续探索。', style: AppTypography.heroSubtitle),
       ],
     );
   }
 }
 
-// ─── 缩略图 (PRD §3.5.1 .thumb) ───
-
-class _Thumb extends StatelessWidget {
+class _RouteHeroItem extends StatefulWidget {
   final RouteModel route;
-  const _Thumb({required this.route});
+  final VoidCallback onTap;
+
+  const _RouteHeroItem({required this.route, required this.onTap});
+
+  @override
+  State<_RouteHeroItem> createState() => _RouteHeroItemState();
+}
+
+class _RouteHeroItemState extends State<_RouteHeroItem> {
+  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: SizedBox(
-        width: 86,
-        height: 108,
-        child: route.coverUrl != null && route.coverUrl!.isNotEmpty
-            ? Image.network(
-                route.coverUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const _ThumbFallback(),
-              )
-            : const _ThumbFallback(),
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final heroHeight = (screenHeight * 0.72).clamp(400.0, 680.0);
+
+    return Semantics(
+      button: true,
+      label: '选择路线 ${widget.route.name}',
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTapUp: (_) {
+          setState(() => _pressed = false);
+          widget.onTap();
+        },
+        child: AnimatedScale(
+          scale: _pressed ? 0.985 : 1,
+          duration: AppMotion.feedback,
+          curve: AppMotion.out,
+          child: SizedBox(
+            key: Key('route-hero-${widget.route.id}'),
+            height: heroHeight,
+            child: ImmersiveHero(
+              variant: ImmersiveHeroVariant.editorial,
+              image: _RouteHeroImage(route: widget.route),
+              overlay: Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.heroHorizontal),
+                  child: _RouteHeroOverlay(route: widget.route),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 }
 
-class _ThumbFallback extends StatelessWidget {
-  const _ThumbFallback();
+class _RouteHeroImage extends StatelessWidget {
+  final RouteModel route;
+
+  const _RouteHeroImage({required this.route});
+
+  @override
+  Widget build(BuildContext context) {
+    final url = _coverUrl(route);
+    if (url == null) return _RouteImageFallback(routeId: route.id);
+
+    return NetworkImageWithFallback(
+      url: url,
+      fit: BoxFit.cover,
+      fallbackColor: AppColors.bgRouteStart,
+      fallbackIcon: CupertinoIcons.photo_fill,
+      placeholderBuilder: (_) => _RouteImageFallback(routeId: route.id),
+      errorBuilder: (_) => _RouteImageFallback(routeId: route.id),
+    );
+  }
+
+  String? _coverUrl(RouteModel route) {
+    final cover = route.coverUrl?.trim();
+    if (cover != null && cover.isNotEmpty) return cover;
+    for (final url in route.imageUrls ?? const <String>[]) {
+      if (url.trim().isNotEmpty) return url.trim();
+    }
+    return null;
+  }
+}
+
+class _RouteImageFallback extends StatelessWidget {
+  final String routeId;
+
+  const _RouteImageFallback({required this.routeId});
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.thumbStart, AppColors.thumbEnd],
-        ),
-      ),
-      child: Center(
-        child: Text(
-          _emojiForDifficulty(null),
-          style: const TextStyle(fontSize: 36),
-        ),
+      key: Key('route-image-fallback-$routeId'),
+      decoration: const BoxDecoration(gradient: AppColors.gradientRouteRadial),
+      child: const CustomPaint(
+        painter: _MountainFallbackPainter(),
+        child: SizedBox.expand(),
       ),
     );
   }
 }
 
-String _emojiForDifficulty(RouteDifficulty? d) {
-  switch (d) {
-    case RouteDifficulty.easy:
-      return '🌿';
-    case RouteDifficulty.medium:
-      return '⛰';
-    case RouteDifficulty.hard:
-      return '🏔';
-    case RouteDifficulty.extreme:
-      return '❄️';
-    default:
-      return '🌲';
-  }
-}
-
-// ─── 路线信息 (PRD §3.5.1 .route-info) ───
-
-class _RouteInfo extends StatelessWidget {
+class _RouteHeroOverlay extends StatelessWidget {
   final RouteModel route;
-  const _RouteInfo({required this.route});
+
+  const _RouteHeroOverlay({required this.route});
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 区域标签
-        Text(
-          route.region,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: AppColors.accentGreenBright,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+        HeroTitleOverlay(
+          eyebrow: Text(
+            '${route.region} · ${route.difficulty.getName()}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.label.copyWith(
+              color: AppColors.interactiveAccent,
+            ),
+          ),
+          title: route.name,
+          metrics: MetricGroup(
+            metrics: [
+              MetricData(value: _distance(route.distanceKm), unit: '公里'),
+              MetricData(value: _elevation(route.elevationGainM), unit: '爬升'),
+              MetricData(
+                value: route.difficulty.getName(),
+                unit: '难度',
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 4),
-        // 路线名
-        Text(
-          route.name,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: Color(0xFFFFFFFF),
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 8),
-        // 指标药丸组
-        Wrap(
-          spacing: 6,
-          runSpacing: 4,
+        const SizedBox(height: AppSpacing.lg),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _MetricPill(_formatDistance(route.distanceKm)),
-            _MetricPill('爬升 ${route.elevationGainM?.toStringAsFixed(0) ?? "—"}m'),
-            _MetricPill(route.difficulty.getName()),
+            Text('点击选择路线', style: AppTypography.caption),
+            Icon(CupertinoIcons.arrow_up_right, color: AppColors.textPrimary),
           ],
         ),
       ],
     );
   }
 
-  String _formatDistance(double? km) {
-    if (km == null) return '— km';
-    if (km == km.roundToDouble()) return '${km.toInt()} km';
-    return '${km.toStringAsFixed(1)} km';
+  String _distance(double? value) {
+    if (value == null) return '—';
+    return value == value.roundToDouble()
+        ? value.toInt().toString()
+        : value.toStringAsFixed(1);
   }
+
+  String _elevation(double? value) =>
+      value == null ? '—' : '${value.toStringAsFixed(0)}m';
 }
 
-/// 指标药丸 (PRD §3.5.1 单个指标药丸)
-class _MetricPill extends StatelessWidget {
+class _StateMessage extends StatelessWidget {
   final String text;
-  const _MetricPill(this.text);
+  final VoidCallback? onTap;
+
+  const _StateMessage({required this.text, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      onPressed: onTap,
+      child: Text(text, style: AppTypography.body),
+    );
+  }
+}
+
+class _HeroSkeleton extends StatelessWidget {
+  const _HeroSkeleton();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: AppColors.pillBg,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: AppColors.textBody,
-          fontSize: 11,
-          fontWeight: FontWeight.w400,
-        ),
+      key: const Key('route-hero-skeleton'),
+      height: (MediaQuery.sizeOf(context).height * 0.72).clamp(400.0, 680.0),
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceCard,
+        borderRadius: AppRadius.borderOverlay,
       ),
     );
   }
 }
 
-// ─── 出发按钮 (PRD §3.5.1 .go-btn) ───
-
-class _GoButton extends StatelessWidget {
-  const _GoButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: AppColors.accentGreenFaint,
-        shape: BoxShape.circle,
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        '›',
-        style: TextStyle(
-          color: AppColors.accentGreenArrow,
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 骨架屏卡片 (PRD §4 加载态)
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _SkeletonCard extends StatefulWidget {
-  const _SkeletonCard();
-
-  @override
-  State<_SkeletonCard> createState() => _SkeletonCardState();
-}
-
-class _SkeletonCardState extends State<_SkeletonCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _ctrl,
-      builder: (context, _) {
-        final t = _ctrl.value;
-        // shimmer 亮度：0.03 → 0.08 → 0.03
-        final alpha = (0.03 + 0.05 * (0.5 - (t - 0.5).abs())).clamp(0.03, 0.08);
-        return Container(
-          height: 136,
-          decoration: BoxDecoration(
-            color: Color.fromRGBO(255, 255, 255, alpha),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.surfaceDivider, width: 1),
-          ),
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              // 缩略图占位
-              Container(
-                width: 86,
-                height: 108,
-                decoration: BoxDecoration(
-                  color: const Color(0x0DFFFFFF),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              const SizedBox(width: 14),
-              // 文字占位
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _shimmerBar(60, 12),
-                    const SizedBox(height: 8),
-                    _shimmerBar(100, 17),
-                    const SizedBox(height: 12),
-                    _shimmerBar(48, 11),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _shimmerBar(double width, double height) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: const Color(0x0DFFFFFF),
-        borderRadius: BorderRadius.circular(4),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 暗绿径向渐变背景 (PRD §3.1)
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _RouteGradientBackground extends StatelessWidget {
-  const _RouteGradientBackground();
+class _DiscoveryBackdrop extends StatelessWidget {
+  const _DiscoveryBackdrop();
 
   @override
   Widget build(BuildContext context) {
@@ -646,44 +494,21 @@ class _RouteGradientBackground extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 地形等高线装饰 (PRD §3.2)
-// 4 条贝塞尔曲线，opacity .06，stroke rgba(180,255,180,.4)
-// ─────────────────────────────────────────────────────────────────────────────
+class _MountainFallbackPainter extends CustomPainter {
+  const _MountainFallbackPainter();
 
-class _ContourLines extends StatelessWidget {
-  const _ContourLines();
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _ContourPainter(),
-      child: const SizedBox.expand(),
-    );
-  }
-}
-
-class _ContourPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = AppColors.contourLine
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5;
-
-    // 4 条等高线，y 从 300 至 450，间隔约 50px
-    for (var i = 0; i < 4; i++) {
-      final y = 300.0 + i * 50.0;
+      ..strokeWidth = 1;
+    for (var index = 0; index < 5; index++) {
+      final y = size.height * (0.32 + index * 0.1);
       final path = Path()
-        ..moveTo(-10, y)
-        ..cubicTo(
-          size.width * 0.3,
-          y - 20 + i * 5,
-          size.width * 0.6,
-          y + 25 - i * 3,
-          size.width + 10,
-          y - 10,
-        );
+        ..moveTo(0, y)
+        ..quadraticBezierTo(size.width * 0.35, y - 70, size.width * 0.55, y)
+        ..quadraticBezierTo(size.width * 0.78, y + 55, size.width, y - 10);
       canvas.drawPath(path, paint);
     }
   }

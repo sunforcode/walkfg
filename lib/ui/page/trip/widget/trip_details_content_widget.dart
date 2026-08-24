@@ -183,21 +183,22 @@ class TripDetailsContentWidget extends StatelessWidget {
                         CupertinoButton(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 8),
-                          color: AppColors.primary.withValues(alpha: 0.1),
+                          color: AppColors.interactiveAccent
+                              .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 CupertinoIcons.person_add,
-                                color: AppColors.primary,
+                                color: AppColors.interactiveAccent,
                                 size: 16,
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 '添加参与者',
                                 style: TextStyle(
-                                  color: AppColors.primary,
+                                  color: AppColors.interactiveAccent,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -264,21 +265,22 @@ class TripDetailsContentWidget extends StatelessWidget {
                           CupertinoButton(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 8),
-                            color: AppColors.primary.withValues(alpha: 0.1),
+                            color: AppColors.interactiveAccent
+                                .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
                                   CupertinoIcons.pencil,
-                                  color: AppColors.primary,
+                                  color: AppColors.interactiveAccent,
                                   size: 16,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   '编辑膳食计划',
                                   style: TextStyle(
-                                    color: AppColors.primary,
+                                    color: AppColors.interactiveAccent,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -313,21 +315,22 @@ class TripDetailsContentWidget extends StatelessWidget {
                           CupertinoButton(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 8),
-                            color: AppColors.primary.withValues(alpha: 0.1),
+                            color: AppColors.interactiveAccent
+                                .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
                                   CupertinoIcons.pencil,
-                                  color: AppColors.primary,
+                                  color: AppColors.interactiveAccent,
                                   size: 16,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   '编辑饮水计划',
                                   style: TextStyle(
-                                    color: AppColors.primary,
+                                    color: AppColors.interactiveAccent,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -402,7 +405,7 @@ class TripDetailsContentWidget extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: AppColors.interactiveAccent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Text(
@@ -422,7 +425,7 @@ class TripDetailsContentWidget extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: AppColors.interactiveAccent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Text(

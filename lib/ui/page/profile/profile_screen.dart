@@ -3,6 +3,9 @@ import 'package:walk/core/network/interceptors/auth_interceptor.dart';
 import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/core/state/auth_notifier.dart';
 import 'package:walk/service/user_service.dart';
+import 'package:walk/ui/page/common/error_widget.dart';
+import 'package:walk/ui/page/common/loading_indicator.dart';
+import 'package:walk/ui/page/common/utility_page_scaffold.dart';
 import '../../../model/user/user_model.dart';
 import '../../../model/user/user_stats_model.dart';
 import '../../page/home/widgets/stats_card.dart';
@@ -60,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _isLoggedIn = AuthNotifier().isLoggedIn;
         _isLoading = false;
       });
-      
+
       // 如果已登录，重新加载用户数据
       if (AuthNotifier().isLoggedIn) {
         _loadUserData();
@@ -158,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ToastUtils.showToast(context, '请先登录');
       return;
     }
-    
+
     setState(() {
       _userStatsFuture = _loadUserStatsData();
     });
@@ -234,17 +237,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 try {
                   await UserService.logout();
-                  if (mounted) {
-                    setState(() {
-                      _user = null;
-                      _isLoggedIn = false;
-                    });
-                    ToastUtils.showToast(context, '已退出登录');
-                  }
+                  if (!mounted) return;
+                  setState(() {
+                    _user = null;
+                    _isLoggedIn = false;
+                  });
+                  ToastUtils.showToast(this.context, '已退出登录');
                 } catch (e) {
-                  if (mounted) {
-                    ToastUtils.showToast(context, '退出登录失败：$e');
-                  }
+                  if (!mounted) return;
+                  ToastUtils.showToast(this.context, '退出登录失败：$e');
                 }
               },
             ),
@@ -256,131 +257,82 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 显示加载状态
+    Widget body;
     if (_isLoading) {
-      return const CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text('个人中心'),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: CupertinoActivityIndicator(),
-          ),
+      body = const Center(child: LoadingIndicator());
+    } else if (!_isLoggedIn) {
+      body = NotLoggedInView(
+        onLoginPressed: _navigateToLogin,
+        onRegisterPressed: _navigateToRegister,
+      );
+    } else if (_user == null) {
+      body = Center(
+        child: ErrorMessageWidget(
+          errorMessage: '加载用户数据失败',
+          onRetry: () {
+            setState(() => _isLoading = true);
+            _loadUserData();
+          },
         ),
       );
-    }
-
-    // 未登录状态
-    if (!_isLoggedIn) {
-      return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-          middle: Text('个人中心'),
-        ),
-        child: SafeArea(
-          child: NotLoggedInView(
-            onLoginPressed: _navigateToLogin,
-            onRegisterPressed: _navigateToRegister,
+    } else {
+      body = ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // 用户信息卡片
+          UserInfoCard(
+            user: _user,
+            onEditPressed: () => _showEditProfileDialog(context),
           ),
-        ),
-      );
-    }
 
-    // 用户数据为空时显示错误信息
-    if (_user == null) {
-      return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-          middle: Text('个人中心'),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  CupertinoIcons.exclamationmark_circle,
-                  size: 50,
-                  color: AppColors.statusCancelledText,
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  '加载用户数据失败',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 16),
-                CupertinoButton(
-                  child: const Text('重试'),
-                  onPressed: () {
-                    setState(() {
-                      _isLoading = true;
-                    });
-                    _loadUserData();
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
+          const SizedBox(height: 20),
 
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('个人中心'),
-      ),
-      child: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            // 用户信息卡片
-            UserInfoCard(
-              user: _user,
-              onEditPressed: () => _showEditProfileDialog(context),
-            ),
-
-            const SizedBox(height: 20),
-
-            // 我的统计
-            if (_userStatsFuture != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: StatsCard(
-                  userStatsFuture: _userStatsFuture!,
-                  onCompletedRoutesPressed: _navigateToCompletedRoutes,
-                  onEquipmentListPressed: _navigateToEquipmentList,
-                  onFavoriteRoutesPressed: _navigateToFavoriteRoutes,
-                  onRefreshPressed: _refreshUserStats,
-                ),
+          // 我的统计
+          if (_userStatsFuture != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              child: StatsCard(
+                userStatsFuture: _userStatsFuture!,
+                onCompletedRoutesPressed: _navigateToCompletedRoutes,
+                onEquipmentListPressed: _navigateToEquipmentList,
+                onFavoriteRoutesPressed: _navigateToFavoriteRoutes,
+                onRefreshPressed: _refreshUserStats,
               ),
-
-            const SizedBox(height: 20),
-
-            // 功能列表
-            const ProfileFunctionList(),
-
-            const SizedBox(height: 20),
-
-            // 设置列表
-            const ProfileSettingsList(),
-
-            const SizedBox(height: 20),
-
-            // 关于我们
-            const ProfileAboutSection(),
-
-            const SizedBox(height: 20),
-
-            // 退出登录按钮
-            CupertinoButton(
-              color: AppColors.statusCancelledBg,
-              child: const Text(
-                '退出登录',
-                style: TextStyle(color: AppColors.statusCancelledText),
-              ),
-              onPressed: _logout,
             ),
-          ],
-        ),
-      ),
+
+          const SizedBox(height: 20),
+
+          // 功能列表
+          const ProfileFunctionList(),
+
+          const SizedBox(height: 20),
+
+          // 设置列表
+          const ProfileSettingsList(),
+
+          const SizedBox(height: 20),
+
+          // 关于我们
+          const ProfileAboutSection(),
+
+          const SizedBox(height: 20),
+
+          // 退出登录按钮
+          CupertinoButton(
+            color: AppColors.statusCancelledBg,
+            onPressed: _logout,
+            child: const Text(
+              '退出登录',
+              style: TextStyle(color: AppColors.statusCancelledText),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return UtilityPageScaffold(
+      title: '个人中心',
+      body: body,
     );
   }
 

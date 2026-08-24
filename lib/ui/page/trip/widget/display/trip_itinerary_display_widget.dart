@@ -46,8 +46,7 @@ class _TripItineraryDisplayWidgetState
               );
             }).toList(),
             // 更多按钮
-            if (hasMore && !_showAll)
-              _buildShowMoreButton(itinerary),
+            if (hasMore && !_showAll) _buildShowMoreButton(itinerary),
           ] else
             _buildEmptyState(),
         ],
@@ -104,10 +103,10 @@ class _TripItineraryDisplayWidgetState
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.sheetCardBg,
+          color: AppColors.surfaceCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.sheetDivider,
+            color: AppColors.border,
             width: 0.5,
           ),
         ),
@@ -127,7 +126,7 @@ class _TripItineraryDisplayWidgetState
               '(${itinerary.length - _maxDisplayCount}天)',
               style: const TextStyle(
                 fontSize: 12,
-                color: AppColors.textSubtitle,
+                color: AppColors.textWeak,
               ),
             ),
             const SizedBox(width: 8),
@@ -146,10 +145,10 @@ class _TripItineraryDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -230,35 +229,35 @@ class _TripItineraryDisplayWidgetState
           '',
           style: const TextStyle(
             fontSize: 13,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
         const SizedBox(width: 16),
         Icon(
           CupertinoIcons.location,
           size: 12,
-          color: AppColors.textBody,
+          color: AppColors.textWeak,
         ),
         const SizedBox(width: 4),
         Text(
           '${plan.distance.toStringAsFixed(1)}km',
           style: const TextStyle(
             fontSize: 12,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
         const SizedBox(width: 12),
         Icon(
           CupertinoIcons.arrow_up_arrow_down,
           size: 12,
-          color: AppColors.textBody,
+          color: AppColors.textWeak,
         ),
         const SizedBox(width: 4),
         Text(
           '+${plan.elevationGain}m',
           style: const TextStyle(
             fontSize: 12,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
       ],
@@ -325,7 +324,7 @@ class _TripItineraryDisplayWidgetState
           label,
           style: const TextStyle(
             fontSize: 10,
-            color: AppColors.textBody,
+            color: AppColors.textWeak,
           ),
         ),
       ],
@@ -336,10 +335,10 @@ class _TripItineraryDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -348,7 +347,7 @@ class _TripItineraryDisplayWidgetState
           Icon(
             CupertinoIcons.calendar,
             size: 48,
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
           ),
           SizedBox(height: 16),
           Text(
@@ -356,7 +355,7 @@ class _TripItineraryDisplayWidgetState
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.textBody,
+              color: AppColors.textWeak,
             ),
           ),
           SizedBox(height: 8),
@@ -364,7 +363,7 @@ class _TripItineraryDisplayWidgetState
             '行程规划完成后将显示详细的每日安排',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
             ),
             textAlign: TextAlign.center,
           ),

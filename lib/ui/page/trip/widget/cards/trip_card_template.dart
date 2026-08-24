@@ -2,36 +2,36 @@ import 'package:flutter/cupertino.dart';
 import 'package:walk/theme/tokens/colors.dart';
 
 /// 行程卡片模板
-/// 
+///
 /// 提供统一的卡片样式，包括标题栏、内容区域和底部按钮
 class TripCardTemplate extends StatelessWidget {
   /// 卡片标题
   final String title;
-  
+
   /// 标题图标
   final IconData icon;
-  
+
   /// 卡片内容
   final Widget content;
-  
+
   /// 按钮文本
   final String? buttonText;
-  
+
   /// 按钮点击回调
   final VoidCallback? onButtonPressed;
-  
+
   /// 警告文本
   final String? warningText;
-  
+
   /// 信息文本
   final String? infoText;
-  
+
   /// 是否使用主色调标题栏
   final bool usePrimaryHeader;
-  
+
   /// 右侧操作按钮
   final Widget? actionButton;
-  
+
   /// 构造函数
   const TripCardTemplate({
     Key? key,
@@ -45,26 +45,23 @@ class TripCardTemplate extends StatelessWidget {
     this.usePrimaryHeader = false,
     this.actionButton,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     // 根据usePrimaryHeader确定颜色
-    final Color headerColor = usePrimaryHeader 
-        ? AppColors.primary 
-        : AppColors.primary.withValues(alpha: 0.1);
-    
-    final Color headerTextColor = usePrimaryHeader 
-        ? CupertinoColors.white 
-        : AppColors.primary;
-    
-    final Color iconBackgroundColor = usePrimaryHeader 
-        ? CupertinoColors.white 
-        : AppColors.primary;
-    
-    final Color iconColor = usePrimaryHeader 
-        ? AppColors.primary 
-        : CupertinoColors.white;
-    
+    final Color headerColor = usePrimaryHeader
+        ? AppColors.interactiveAccent
+        : AppColors.interactiveAccent.withValues(alpha: 0.1);
+
+    final Color headerTextColor =
+        usePrimaryHeader ? CupertinoColors.white : AppColors.interactiveAccent;
+
+    final Color iconBackgroundColor =
+        usePrimaryHeader ? CupertinoColors.white : AppColors.interactiveAccent;
+
+    final Color iconColor =
+        usePrimaryHeader ? AppColors.interactiveAccent : CupertinoColors.white;
+
     return Container(
       decoration: BoxDecoration(
         color: CupertinoColors.white,
@@ -127,14 +124,15 @@ class TripCardTemplate extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 content,
-                
+
                 // 警告文本
                 if (warningText != null) ...[
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemYellow.withValues(alpha: 0.1),
+                      color:
+                          CupertinoColors.systemYellow.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -157,7 +155,7 @@ class TripCardTemplate extends StatelessWidget {
                     ),
                   ),
                 ],
-                
+
                 // 信息文本
                 if (infoText != null) ...[
                   const SizedBox(height: 16),
@@ -187,14 +185,15 @@ class TripCardTemplate extends StatelessWidget {
                     ),
                   ),
                 ],
-                
+
                 // 按钮
                 if (buttonText != null && onButtonPressed != null) ...[
                   const SizedBox(height: 16),
                   Center(
                     child: CupertinoButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                      color: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 8),
+                      color: AppColors.interactiveAccent,
                       borderRadius: BorderRadius.circular(20),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

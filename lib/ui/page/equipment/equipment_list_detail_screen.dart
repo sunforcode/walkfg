@@ -6,15 +6,40 @@ import 'package:walk/model/equipment/equipment_list_item_model.dart';
 import 'package:walk/model/equipment/equipment_list_model.dart';
 import 'package:walk/service/equipment_service.dart';
 import 'package:walk/theme/tokens/colors.dart';
+import 'package:walk/theme/tokens/radius.dart';
+import 'package:walk/theme/tokens/spacing.dart';
+import 'package:walk/theme/tokens/typography.dart';
 import 'package:walk/ui/page/common/error_widget.dart';
 import 'package:walk/ui/page/common/loading_indicator.dart';
+import 'package:walk/ui/page/common/utility_page_scaffold.dart';
 import 'package:walk/ui/page/equipment/equipment_item_picker_screen.dart';
+
+/// 装备清单详情加载依赖，默认保持现有 [EquipmentService] 调用链。
+class EquipmentListDetailDependencies {
+  final Future<EquipmentListModel> Function(String listId)? loadList;
+  final Future<List<EquipmentListItemModel>> Function(String listId)?
+      loadRelations;
+  final Future<EquipmentItemModel> Function(String itemId)? loadItem;
+  final Future<Map<String, dynamic>> Function(String listId)? loadWeightStats;
+
+  const EquipmentListDetailDependencies({
+    this.loadList,
+    this.loadRelations,
+    this.loadItem,
+    this.loadWeightStats,
+  });
+}
 
 /// 装备清单详情：展示清单元数据、状态切换、清单内装备（含移除）与重量统计。
 class EquipmentListDetailScreen extends StatefulWidget {
   final String listId;
+  final EquipmentListDetailDependencies dependencies;
 
-  const EquipmentListDetailScreen({super.key, required this.listId});
+  const EquipmentListDetailScreen({
+    super.key,
+    required this.listId,
+    this.dependencies = const EquipmentListDetailDependencies(),
+  });
 
   @override
   State<EquipmentListDetailScreen> createState() =>
@@ -29,8 +54,7 @@ class _ListItemWithDetail {
   const _ListItemWithDetail({required this.relation, this.item});
 }
 
-class _EquipmentListDetailScreenState
-    extends State<EquipmentListDetailScreen> {
+class _EquipmentListDetailScreenState extends State<EquipmentListDetailScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   bool _hasChanged = false;
@@ -51,14 +75,20 @@ class _EquipmentListDetailScreenState
       _errorMessage = null;
     });
     try {
-      final list = await EquipmentService.getEquipmentListById(widget.listId);
-      final relations =
-          await EquipmentService.getEquipmentListItems(widget.listId);
+      final loadList =
+          widget.dependencies.loadList ?? EquipmentService.getEquipmentListById;
+      final loadRelations = widget.dependencies.loadRelations ??
+          EquipmentService.getEquipmentListItems;
+      final loadItem =
+          widget.dependencies.loadItem ?? EquipmentService.getEquipmentItemById;
+      final loadWeightStats = widget.dependencies.loadWeightStats ??
+          EquipmentService.getEquipmentListWeightStats;
+      final list = await loadList(widget.listId);
+      final relations = await loadRelations(widget.listId);
 
       final itemsWithDetail = await Future.wait(relations.map((relation) async {
         try {
-          final item =
-              await EquipmentService.getEquipmentItemById(relation.equipmentItemId);
+          final item = await loadItem(relation.equipmentItemId);
           return _ListItemWithDetail(relation: relation, item: item);
         } catch (_) {
           return _ListItemWithDetail(relation: relation, item: null);
@@ -67,8 +97,7 @@ class _EquipmentListDetailScreenState
 
       Map<String, dynamic>? weightStats;
       try {
-        weightStats =
-            await EquipmentService.getEquipmentListWeightStats(widget.listId);
+        weightStats = await loadWeightStats(widget.listId);
       } catch (_) {
         weightStats = null;
       }
@@ -223,21 +252,19 @@ class _EquipmentListDetailScreenState
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      child: CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(_list?.name ?? '清单详情'),
-          leading: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () => Navigator.of(context).pop(_hasChanged),
-            child: const Icon(CupertinoIcons.back),
-          ),
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: _list == null ? null : _addItem,
-            child: const Icon(CupertinoIcons.add),
-          ),
+      child: UtilityPageScaffold(
+        title: _list?.name ?? '清单详情',
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () => Navigator.of(context).pop(_hasChanged),
+          child: const Icon(CupertinoIcons.back),
         ),
-        child: SafeArea(child: _buildBody()),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: _list == null ? null : _addItem,
+          child: const Icon(CupertinoIcons.add),
+        ),
+        body: _buildBody(),
       ),
     );
   }
@@ -265,36 +292,43 @@ class _EquipmentListDetailScreenState
         SliverToBoxAdapter(child: _buildHeaderCard(list)),
         SliverToBoxAdapter(child: _buildWeightStatsCard()),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.pageHorizontal,
+            AppSpacing.sm,
+            AppSpacing.pageHorizontal,
+            AppSpacing.lg,
+          ),
           sliver: SliverToBoxAdapter(
             child: Text(
               '清单内装备 (${_items.length})',
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTypography.body.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ),
         if (_items.isEmpty)
           const SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 32),
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
               child: Center(
                 child: Text(
                   '暂无装备，点击右上角"+"添加',
-                  style: TextStyle(color: AppColors.textSubtitle),
+                  style: AppTypography.bodySm,
                 ),
               ),
             ),
           )
         else
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.pageHorizontal,
+              0,
+              AppSpacing.pageHorizontal,
+              AppSpacing.pageVertical,
+            ),
             sliver: SliverList.separated(
               itemCount: _items.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 10),
+              separatorBuilder: (context, index) =>
+                  const SizedBox(height: AppSpacing.listItemGap),
               itemBuilder: (context, index) {
                 final entry = _items[index];
                 return _ListItemCard(
@@ -305,14 +339,21 @@ class _EquipmentListDetailScreenState
             ),
           ),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.pageHorizontal,
+            0,
+            AppSpacing.pageHorizontal,
+            AppSpacing.xxl,
+          ),
           sliver: SliverToBoxAdapter(
             child: CupertinoButton(
               color: AppColors.statusCancelledBg,
               onPressed: _deleteList,
-              child: const Text(
+              child: Text(
                 '删除清单',
-                style: TextStyle(color: AppColors.statusCancelledText),
+                style: AppTypography.button.copyWith(
+                  color: AppColors.statusCancelledText,
+                ),
               ),
             ),
           ),
@@ -323,12 +364,12 @@ class _EquipmentListDetailScreenState
 
   Widget _buildHeaderCard(EquipmentListModel list) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.pageHorizontal),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.component,
         decoration: BoxDecoration(
           color: AppColors.bgPanel,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: AppRadius.borderPanel,
           border: Border.all(color: AppColors.border),
         ),
         child: Column(
@@ -339,11 +380,7 @@ class _EquipmentListDetailScreenState
                 Expanded(
                   child: Text(
                     list.name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
+                    style: AppTypography.cardTitle,
                   ),
                 ),
                 _StatusBadge(
@@ -352,13 +389,13 @@ class _EquipmentListDetailScreenState
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            Row(
+            const SizedBox(height: AppSpacing.md),
+            Wrap(
+              spacing: AppSpacing.lg,
+              runSpacing: AppSpacing.sm,
               children: [
                 _buildStat(CupertinoIcons.bag, '${list.itemCount} 件装备'),
-                const SizedBox(width: 16),
                 _buildStat(CupertinoIcons.person_2, '${list.personCount} 人'),
-                const SizedBox(width: 16),
                 _buildStat(CupertinoIcons.cube_box, list.totalWeightText),
               ],
             ),
@@ -372,15 +409,9 @@ class _EquipmentListDetailScreenState
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: AppColors.textSubtitle),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textSubtitle,
-          ),
-        ),
+        Icon(icon, size: 14, color: AppColors.textWeak),
+        const SizedBox(width: AppSpacing.xs),
+        Text(label, style: AppTypography.label),
       ],
     );
   }
@@ -398,25 +429,26 @@ class _EquipmentListDetailScreenState
     }
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.pageHorizontal,
+        0,
+        AppSpacing.pageHorizontal,
+        AppSpacing.lg,
+      ),
       child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        padding: AppSpacing.component,
+        decoration: const BoxDecoration(
           color: AppColors.surfaceCard,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: AppRadius.borderPanel,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               '重量统计',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTypography.body.copyWith(fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
                 if (totalWeight != null)
@@ -444,22 +476,9 @@ class _EquipmentListDetailScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textSubtitle,
-          ),
-        ),
+        Text(value, style: AppTypography.metricValue),
+        const SizedBox(height: AppSpacing.xs),
+        Text(label, style: AppTypography.metricUnit),
       ],
     );
   }
@@ -475,11 +494,11 @@ class _StatusBadge extends StatelessWidget {
   Color get _bgColor {
     switch (status) {
       case EquipmentListStatus.planning:
-        return AppColors.badgeRecommendedBg;
+        return AppColors.statusPlanningBg;
       case EquipmentListStatus.preparing:
-        return AppColors.badgeBlueBg;
+        return AppColors.statusPreparingBg;
       case EquipmentListStatus.completed:
-        return AppColors.badgeVerifiedBg;
+        return AppColors.statusCompletedBg;
       case EquipmentListStatus.archived:
         return AppColors.surfaceCard;
     }
@@ -488,13 +507,13 @@ class _StatusBadge extends StatelessWidget {
   Color get _textColor {
     switch (status) {
       case EquipmentListStatus.planning:
-        return AppColors.badgeRecommendedText;
+        return AppColors.statusPlanningText;
       case EquipmentListStatus.preparing:
-        return AppColors.badgeBlueText;
+        return AppColors.statusPreparingText;
       case EquipmentListStatus.completed:
-        return AppColors.badgeVerifiedText;
+        return AppColors.statusCompletedText;
       case EquipmentListStatus.archived:
-        return AppColors.textSubtitle;
+        return AppColors.textWeak;
     }
   }
 
@@ -516,23 +535,25 @@ class _StatusBadge extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: _bgColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.borderFull,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               _statusName,
-              style: TextStyle(
-                fontSize: 12,
+              style: AppTypography.label.copyWith(
                 color: _textColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(width: 2),
+            const SizedBox(width: AppSpacing.xs),
             Icon(
               CupertinoIcons.chevron_down,
               size: 12,
@@ -555,10 +576,10 @@ class _ListItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final item = entry.item;
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: AppSpacing.component,
       decoration: BoxDecoration(
         color: AppColors.bgPanel,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderPanel,
         border: Border.all(color: AppColors.border),
       ),
       child: Row(
@@ -569,32 +590,26 @@ class _ListItemCard extends StatelessWidget {
               children: [
                 Text(
                   item?.name ?? '未知装备',
-                  style: const TextStyle(
-                    fontSize: 15,
+                  style: AppTypography.body.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 Text(
                   item != null
                       ? '${item.categoryName} · ${item.weightText} · 数量${entry.relation.quantity}'
                       : '数量${entry.relation.quantity}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSubtitle,
-                  ),
+                  style: AppTypography.label,
                 ),
                 if (entry.relation.notes != null &&
                     entry.relation.notes!.isNotEmpty) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   Text(
                     entry.relation.notes!,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textTertiary,
+                    style: AppTypography.label.copyWith(
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],

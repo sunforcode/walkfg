@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:walk/model/guide/guide_model.dart';
+import 'package:walk/theme/tokens/colors.dart';
+
 import 'guide_detail_constants.dart';
 
 /// 行程规划组件
@@ -59,7 +61,7 @@ class GuideTripPlanWidget extends StatelessWidget {
           style: const TextStyle(
             fontSize: _TripPlanConstants.headerFontSize,
             fontWeight: FontWeight.bold,
-            color: CupertinoColors.label,
+            color: AppColors.textPrimary,
           ),
         ),
       ],
@@ -71,7 +73,7 @@ class GuideTripPlanWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(_TripPlanConstants.overviewPadding),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius:
             BorderRadius.circular(_TripPlanConstants.overviewBorderRadius),
       ),
@@ -126,7 +128,7 @@ class GuideTripPlanWidget extends StatelessWidget {
           guide.getTripDescription(),
           style: const TextStyle(
             fontSize: _TripPlanConstants.tripDescriptionFontSize,
-            color: CupertinoColors.secondaryLabel,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -179,7 +181,7 @@ class GuideTripPlanWidget extends StatelessWidget {
       style: TextStyle(
         fontSize: _TripPlanConstants.highlightsTitleFontSize,
         fontWeight: FontWeight.w600,
-        color: CupertinoColors.label,
+        color: AppColors.textPrimary,
       ),
     );
   }
@@ -205,7 +207,7 @@ class GuideTripPlanWidget extends StatelessWidget {
           horizontal: _TripPlanConstants.fullPlanButtonPaddingHorizontal,
           vertical: _TripPlanConstants.fullPlanButtonPaddingVertical,
         ),
-        color: CupertinoColors.systemGrey6,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(
             _TripPlanConstants.fullPlanButtonBorderRadius),
         child: Text(
@@ -260,7 +262,7 @@ class GuideTripPlanWidget extends StatelessWidget {
             description,
             style: const TextStyle(
               fontSize: _TripPlanConstants.highlightDescriptionFontSize,
-              color: CupertinoColors.secondaryLabel,
+              color: AppColors.textSecondary,
             ),
           ),
       ],

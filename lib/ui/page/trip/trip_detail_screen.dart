@@ -293,7 +293,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     }
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.interactiveAccent,
         middle: Text(
           _getPageTitle(trip),
           style: const TextStyle(

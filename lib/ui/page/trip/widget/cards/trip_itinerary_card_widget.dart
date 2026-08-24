@@ -46,7 +46,7 @@ class TripItineraryCardWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
@@ -68,7 +68,7 @@ class TripItineraryCardWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
@@ -112,21 +112,21 @@ class TripItineraryCardWidget extends StatelessWidget {
             const SizedBox(height: 16),
             CupertinoButton(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: AppColors.interactiveAccent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     CupertinoIcons.add,
-                    color: AppColors.primary,
+                    color: AppColors.interactiveAccent,
                     size: 16,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '添加行程日',
                     style: TextStyle(
-                      color: AppColors.primary,
+                      color: AppColors.interactiveAccent,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -158,13 +158,13 @@ class TripItineraryCardWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: AppColors.interactiveAccent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               '第${day.day}天',
               style: TextStyle(
-                color: AppColors.primary,
+                color: AppColors.interactiveAccent,
                 fontWeight: FontWeight.bold,
               ),
             ),

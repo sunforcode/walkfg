@@ -85,7 +85,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
           const Icon(
             CupertinoIcons.person_2,
             size: 48,
-            color: AppColors.textHint,
+            color: AppColors.textWeak,
           ),
           const SizedBox(height: 16),
           const Text(
@@ -93,7 +93,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
             ),
           ),
           const SizedBox(height: 8),
@@ -101,7 +101,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
             '邀请朋友一起参加这次徒步之旅',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textHint,
+              color: AppColors.textWeak,
             ),
           ),
           const SizedBox(height: 16),
@@ -147,7 +147,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
             title,
             style: const TextStyle(
               fontSize: 11,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
             ),
             textAlign: TextAlign.center,
           ),
@@ -264,7 +264,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                         participant['experience'] as String,
                         style: const TextStyle(
                           fontSize: 13,
-                          color: AppColors.textSubtitle,
+                          color: AppColors.textWeak,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -272,7 +272,7 @@ class TripParticipantsSummaryWidget extends StatelessWidget {
                         '加入: ${participant['joinDate']}',
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppColors.textHint,
+                          color: AppColors.textWeak,
                         ),
                       ),
                     ],

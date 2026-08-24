@@ -83,9 +83,8 @@ class _TripCreateScreenState extends State<TripCreateScreen> {
     if (_selectedSlot < 0 || _creating) return;
     setState(() => _creating = true);
 
-    final startDate = _selectedSlot == 0
-        ? _thisWeekStartDate()
-        : _nextWeekStartDate();
+    final startDate =
+        _selectedSlot == 0 ? _thisWeekStartDate() : _nextWeekStartDate();
     final endDate = startDate.add(const Duration(days: 1));
 
     final routeName = _route?.name ?? widget.routeId;
@@ -153,7 +152,7 @@ class _TripCreateScreenState extends State<TripCreateScreen> {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textBody,
+                    color: AppColors.textWeak,
                   ),
                 ),
               ),
@@ -219,7 +218,7 @@ class _RouteNameHeader extends StatelessWidget {
           '确认出发时间即可创建行程',
           style: TextStyle(
             fontSize: 13,
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
           ),
         ),
       ],
@@ -291,12 +290,9 @@ class _TimeSlotCard extends StatelessWidget {
     final borderColor = isSelected
         ? AppColors.interactiveAccent.withValues(alpha: 0.5)
         : AppColors.border;
-    final labelColor = isSelected
-        ? AppColors.interactiveAccent
-        : AppColors.textBody;
-    final dateColor = isSelected
-        ? AppColors.textBody
-        : AppColors.textSubtitle;
+    final labelColor =
+        isSelected ? AppColors.interactiveAccent : AppColors.textWeak;
+    final dateColor = isSelected ? AppColors.textWeak : AppColors.textWeak;
 
     return GestureDetector(
       onTap: onTap,
@@ -358,9 +354,7 @@ class _ConfirmButton extends StatelessWidget {
     } else {
       bgColor = AppColors.interactiveAccent;
     }
-    final textColor = enabled
-        ? AppColors.bgLight
-        : AppColors.textSubtitle;
+    final textColor = enabled ? AppColors.bgLight : AppColors.textWeak;
 
     return SizedBox(
       width: double.infinity,

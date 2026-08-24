@@ -67,7 +67,8 @@ class PlannedTripsSection extends StatelessWidget {
   }
 
   /// 构建规划行程列表
-  Widget _buildPlannedTripsList(BuildContext context, List<TripModel> plannedTrips) {
+  Widget _buildPlannedTripsList(
+      BuildContext context, List<TripModel> plannedTrips) {
     return SizedBox(
       height: 120,
       child: ListView.builder(
@@ -91,7 +92,7 @@ class PlannedTripsSection extends StatelessWidget {
                 width: 200,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
-                  borderRadius: AppRadius.borderLg,
+                  borderRadius: AppRadius.borderControl,
                   border: Border.all(
                     color: color.withValues(alpha: 0.3),
                     width: 1,
@@ -180,9 +181,9 @@ class PlannedTripsSection extends StatelessWidget {
       case TripStatus.planning:
         return AppColors.statusPlanningText;
       case TripStatus.cancelled:
-        return AppColors.textHint;
+        return AppColors.textWeak;
       case TripStatus.confirmed:
-        return AppColors.textHint;
+        return AppColors.textWeak;
     }
   }
 
@@ -236,5 +237,4 @@ class PlannedTripsSection extends StatelessWidget {
       );
     }
   }
-
 }

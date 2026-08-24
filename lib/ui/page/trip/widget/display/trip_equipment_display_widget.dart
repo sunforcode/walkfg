@@ -77,7 +77,8 @@ class _TripEquipmentDisplayWidgetState
           }
         }
       }
-      matched ??= pageResult.content.isNotEmpty ? pageResult.content.first : null;
+      matched ??=
+          pageResult.content.isNotEmpty ? pageResult.content.first : null;
       setState(() {
         _list = matched;
         _linkedListCount = pageResult.totalElements;
@@ -95,8 +96,7 @@ class _TripEquipmentDisplayWidgetState
   Future<void> _createList() async {
     final result = await Navigator.of(context).push<bool>(
       CupertinoPageRoute(
-        builder: (context) =>
-            EquipmentListCreateScreen(tripId: widget.trip.id),
+        builder: (context) => EquipmentListCreateScreen(tripId: widget.trip.id),
       ),
     );
     if (result == true) {
@@ -229,7 +229,7 @@ class _TripEquipmentDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -259,10 +259,10 @@ class _TripEquipmentDisplayWidgetState
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.sheetCardBg,
+          color: AppColors.surfaceCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.sheetDivider,
+            color: AppColors.border,
             width: 0.5,
           ),
         ),
@@ -319,8 +319,7 @@ class _TripEquipmentDisplayWidgetState
           ),
         ),
         Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
           decoration: BoxDecoration(
             color: AppColors.statusPreparingBg,
             borderRadius: BorderRadius.circular(10),
@@ -338,7 +337,7 @@ class _TripEquipmentDisplayWidgetState
         const Icon(
           CupertinoIcons.chevron_right,
           size: 16,
-          color: AppColors.textSubtitle,
+          color: AppColors.textWeak,
         ),
       ],
     );
@@ -371,7 +370,7 @@ class _TripEquipmentDisplayWidgetState
             title,
             style: const TextStyle(
               fontSize: 11,
-              color: AppColors.textBody,
+              color: AppColors.textWeak,
             ),
           ),
         ],
@@ -383,10 +382,10 @@ class _TripEquipmentDisplayWidgetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheetCardBg,
+        color: AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.sheetDivider,
+          color: AppColors.border,
           width: 0.5,
         ),
       ),
@@ -395,7 +394,7 @@ class _TripEquipmentDisplayWidgetState
           const Icon(
             CupertinoIcons.bag,
             size: 48,
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
           ),
           const SizedBox(height: 16),
           const Text(
@@ -403,7 +402,7 @@ class _TripEquipmentDisplayWidgetState
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.textBody,
+              color: AppColors.textWeak,
             ),
           ),
           const SizedBox(height: 8),
@@ -411,7 +410,7 @@ class _TripEquipmentDisplayWidgetState
             '制定装备清单，确保行程安全',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSubtitle,
+              color: AppColors.textWeak,
             ),
             textAlign: TextAlign.center,
           ),
@@ -434,7 +433,7 @@ class _TripEquipmentDisplayWidgetState
               CupertinoButton(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: AppColors.sheetDivider,
+                color: AppColors.border,
                 borderRadius: BorderRadius.circular(8),
                 onPressed: _linkExistingList,
                 child: const Text(

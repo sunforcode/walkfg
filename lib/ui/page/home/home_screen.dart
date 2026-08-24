@@ -8,14 +8,15 @@ import '../../../service/kml_cache_service.dart';
 import '../../../service/route/current_route_selection_service.dart';
 import '../../../service/route_service.dart';
 import '../../../service/weather/weather_manager.dart';
-import '../../../theme/tokens/colors.dart';
-import '../../../theme/tokens/sizes.dart';
-import '../../../theme/tokens/spacing.dart';
 import '../../routes/app_navigator.dart';
+import '../common/immersive_components.dart';
+import '../common/immersive_page_scaffold.dart';
 import 'widgets/empty_home.dart';
 import 'widgets/error_home.dart';
 import 'widgets/loading_home.dart';
 import 'widgets/route_home.dart';
+
+typedef HomeDataLoader = Future<HomeData?> Function({RouteModel? routeHint});
 
 /// Walk v1 home.
 ///
@@ -25,7 +26,10 @@ class HomeScreen extends StatefulWidget {
   /// 打开抽屉回调（由 MainLayout 提供）
   final VoidCallback? onOpenDrawer;
 
-  const HomeScreen({super.key, this.onOpenDrawer});
+  /// 可替换的数据加载入口；生产环境默认沿用现有加载流程。
+  final HomeDataLoader? dataLoader;
+
+  const HomeScreen({super.key, this.onOpenDrawer, this.dataLoader});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -72,6 +76,9 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<HomeData?> _loadHomeData({RouteModel? routeHint}) async {
+    final injectedLoader = widget.dataLoader;
+    if (injectedLoader != null) return injectedLoader(routeHint: routeHint);
+
     final routeId = await _selectionService.getSelectedRouteId();
     if (routeId == null || routeId.isEmpty) return null;
 
@@ -100,8 +107,8 @@ class _HomeScreenState extends State<HomeScreen>
     final kmlUrl = route.kmlUrl;
     if (kmlUrl != null && kmlUrl.isNotEmpty) {
       try {
-        final mapData =
-            await KmlCacheService.instance.getMapData(kmlUrl, routeId: route.id);
+        final mapData = await KmlCacheService.instance
+            .getMapData(kmlUrl, routeId: route.id);
         return mapData.trackPoints;
       } catch (_) {}
     }
@@ -160,97 +167,27 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return CupertinoPageScaffold(
-      backgroundColor: AppColors.bgBase,
-      child: Stack(
-        children: [
-          // 主内容
-          FutureBuilder<HomeData?>(
-            future: _homeFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const LoadingHome();
-              }
-              if (snapshot.hasError) {
-                return ErrorHome(onRetry: _reload, onChange: _openRoutePicker);
-              }
-              final data = snapshot.data;
-              if (data == null) {
-                return EmptyHome(onFindRoute: _openRoutePicker);
-              }
-              return RouteHome(data: data, onChangeRoute: _openRoutePicker);
-            },
-          ),
-
-          // 顶部按钮区 (hamburger moved to right, calendar moved to drawer)
-          Positioned(
-            top: AppSpacing.safeTopAlt,
-            right: AppSpacing.base,
-            child: _HamburgerButton(
-              onTap: widget.onOpenDrawer,
-            ),
-          ),
-        ],
+    return ImmersivePageScaffold(
+      body: FutureBuilder<HomeData?>(
+        future: _homeFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingHome();
+          }
+          if (snapshot.hasError) {
+            return ErrorHome(onRetry: _reload, onChange: _openRoutePicker);
+          }
+          final data = snapshot.data;
+          if (data == null) {
+            return EmptyHome(onFindRoute: _openRoutePicker);
+          }
+          return RouteHome(data: data, onChangeRoute: _openRoutePicker);
+        },
       ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 顶部按钮组件
-// ─────────────────────────────────────────────────────────────────────────────
-
-/// 汉堡按钮（三横线）— PRD P1/P2 Layer 6
-/// 32×32, 透明背景, 三条白色横线 gap 3px, 1.2px 高度
-class _HamburgerButton extends StatefulWidget {
-  final VoidCallback? onTap;
-
-  const _HamburgerButton({this.onTap});
-
-  @override
-  State<_HamburgerButton> createState() => _HamburgerButtonState();
-}
-
-class _HamburgerButtonState extends State<_HamburgerButton> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final lineColor =
-        _hovered ? const Color(0xFFFFFFFF) : const Color(0x80FFFFFF);
-
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        behavior: HitTestBehavior.opaque,
-        child: SizedBox(
-          width: AppSizes.iconSm,
-          height: AppSizes.iconSm,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildBar(lineColor),
-                _buildBar(lineColor),
-                _buildBar(lineColor),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  static Widget _buildBar(Color color) {
-    return Container(
-      width: double.infinity,
-      height: 1.2,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(1),
+      trailingAction: GlassIconAction(
+        semanticLabel: '打开菜单',
+        icon: CupertinoIcons.bars,
+        onPressed: widget.onOpenDrawer,
       ),
     );
   }

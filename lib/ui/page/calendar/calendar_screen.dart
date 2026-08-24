@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/typography.dart';
 import '../../../ui/routes/app_navigator.dart';
+import '../common/utility_page_scaffold.dart';
 
 /// P12 日历面板
 ///
@@ -117,37 +118,35 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: AppColors.bgBase,
-      child: SafeArea(
-        child: GestureDetector(
-          onVerticalDragUpdate: _onVerticalDragUpdate,
-          onVerticalDragEnd: _onVerticalDragEnd,
-          behavior: HitTestBehavior.opaque,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: const Cubic(0.32, 0.72, 0, 1),
-            transform: Matrix4.translationValues(0, _dragOffset, 0),
-            child: Column(
-              children: [
-                _DragHandle(),
-                _MonthHeader(
+    return UtilityPageScaffold(
+      title: '日历',
+      body: GestureDetector(
+        onVerticalDragUpdate: _onVerticalDragUpdate,
+        onVerticalDragEnd: _onVerticalDragEnd,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: const Cubic(0.32, 0.72, 0, 1),
+          transform: Matrix4.translationValues(0, _dragOffset, 0),
+          child: Column(
+            children: [
+              _DragHandle(),
+              _MonthHeader(
+                year: _currentMonth.year,
+                month: _currentMonth.month,
+                onPrevious: _previousMonth,
+                onNext: _nextMonth,
+              ),
+              Expanded(
+                child: _CalendarGrid(
                   year: _currentMonth.year,
                   month: _currentMonth.month,
-                  onPrevious: _previousMonth,
-                  onNext: _nextMonth,
+                  hasTrip: _hasTrip,
+                  onTripDayTapped: _onTripDayTapped,
                 ),
-                Expanded(
-                  child: _CalendarGrid(
-                    year: _currentMonth.year,
-                    month: _currentMonth.month,
-                    hasTrip: _hasTrip,
-                    onTripDayTapped: _onTripDayTapped,
-                  ),
-                ),
-                _CloseButton(onTap: _close),
-              ],
-            ),
+              ),
+              _CloseButton(onTap: _close),
+            ],
           ),
         ),
       ),
@@ -168,7 +167,7 @@ class _DragHandle extends StatelessWidget {
       width: 36,
       height: 4,
       decoration: BoxDecoration(
-        color: AppColors.textHint,
+        color: AppColors.textWeak,
         borderRadius: BorderRadius.circular(2),
       ),
     );
@@ -199,9 +198,7 @@ class _MonthHeader extends StatelessWidget {
           _MonthNavButton(icon: CupertinoIcons.chevron_left, onTap: onPrevious),
           Text(
             '$year年$month月',
-            style: AppTypography.title.copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: AppTypography.pageTitle,
           ),
           _MonthNavButton(icon: CupertinoIcons.chevron_right, onTap: onNext),
         ],
@@ -226,7 +223,7 @@ class _MonthNavButton extends StatelessWidget {
       child: Icon(
         icon,
         size: 20,
-        color: AppColors.textBody,
+        color: AppColors.textWeak,
       ),
     );
   }
@@ -311,7 +308,7 @@ class _WeekLabelRow extends StatelessWidget {
                     label,
                     style: TextStyle(
                       fontSize: 11,
-                      color: AppColors.textHint,
+                      color: AppColors.textWeak,
                     ),
                   ),
                 ),
@@ -342,9 +339,8 @@ class _DayCell extends StatelessWidget {
     // PRD §4.2: 有行程 → 白色加粗文字 + 红点
     // PRD §4.2: 今日 → 白色加粗文字 + 亮蓝半透明背景 (rgba(100,200,255,.12))
     // PRD §4.2: 普通日期 → rgba(255,255,255,.6)
-    final textColor = hasTrip || isToday
-        ? AppColors.textPrimary
-        : AppColors.textTertiary;
+    final textColor =
+        hasTrip || isToday ? AppColors.textPrimary : AppColors.textSecondary;
     final fontWeight = hasTrip || isToday ? FontWeight.w600 : FontWeight.w400;
 
     return GestureDetector(
@@ -404,7 +400,7 @@ class _CloseButton extends StatelessWidget {
           '关闭日历',
           style: TextStyle(
             fontSize: 14,
-            color: AppColors.textSubtitle,
+            color: AppColors.textWeak,
           ),
         ),
       ),
