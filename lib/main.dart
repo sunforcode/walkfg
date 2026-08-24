@@ -1,55 +1,43 @@
-/// 应用程序的主入口文件
-///
-/// 包含应用程序初始化、主题设置和路由配置
+// 应用程序主入口与启动初始化流程。
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'app.dart';
-import 'core/network/api_client.dart';
+import 'app_bootstrap.dart';
+import 'app_initializer.dart';
 import 'core/config/app_config.dart';
 import 'core/network/network_manager.dart';
 import 'core/state/auth_notifier.dart';
 
-void main() async {
-  // 确保Flutter绑定初始化
+final AppInitializer _appInitializer = AppInitializer(
+  loadEnvironment: () => dotenv.load(fileName: '.env'),
+  initializeLocales: () async {
+    await Future.wait([
+      initializeDateFormatting('zh_CN', null),
+      initializeDateFormatting('en_US', null),
+    ]);
+  },
+  initializeStorage: Hive.initFlutter,
+  initializeConfiguration: () {
+    AppConfig.instance.initialize(useMockServices: false);
+  },
+  initializeNetwork: NetworkManager.instance.initialize,
+  restoreAuthentication: () => AuthNotifier().initializeFromStorage(),
+  preloadMockData: _preloadJsonData,
+  useMockServices: () => AppConfig.instance.useMockServices,
+);
+
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // 加载 .env 配置文件
-  await dotenv.load(fileName: '.env');
-
-  // 初始化日期格式化
-  await initializeDateFormatting('zh_CN', null);
-  await initializeDateFormatting('en_US', null);
-
-  // 初始化 Hive
-  await Hive.initFlutter();
-
-  // 初始化应用配置
-  // 显式禁用Mock服务,使用真实的后端API
-  AppConfig.instance.initialize(
-    useMockServices: false,
+  runApp(
+    AppBootstrap(
+      initialize: _appInitializer.initialize,
+      app: const App(),
+    ),
   );
-  await NetworkManager.instance.initialize();
-
-  // 初始化 ApiClient（包含缓存）
-  await ApiClient.instance.initialize(
-    baseUrl: AppConfig.instance.baseUrl,
-  );
-
-  // 从本地存储恢复登录状态
-  // 注意：必须在 ApiClient.initialize() 之后调用
-  // 1. ApiClient.initialize() 先调用 _restoreAuthToken() 恢复 token 到请求头
-  // 2. AuthNotifier.initializeFromStorage() 再读取 AuthInterceptor.isLoggedIn() 设置状态
-  await AuthNotifier().initializeFromStorage();
-
-  // 预加载JSON数据
-  await _preloadJsonData();
-
-  runApp(const App());
 }
 
 /// 预加载JSON数据文件（仅在使用 mock 服务时）

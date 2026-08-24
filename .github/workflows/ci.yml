@@ -274,8 +274,9 @@ jobs:
         # vialu.cn 的 Flutter Web 挂在 /app/ 子路径下，与 Admin 前端共用 nginx。
         # Web 必须使用线上 HTTPS 同源地址；若不传 dart-define，AppConfig 会回落到
         # 开发机的 http://192.168.31.127:8080，HTTPS 页面会因混合内容/不可达而加载失败。
+        # CanvasKit 随构建产物部署，避免客户端因无法访问 Google CDN 卡在启动页。
         run: >-
-          flutter build web --release --base-href /app/
+          flutter build web --release --base-href /app/ --no-web-resources-cdn
           --dart-define=ENV=production
           --dart-define=PROD_BASE_URL=https://vialu.cn
 
