@@ -191,7 +191,7 @@ void main() {
     expect(find.text('推荐路线'), findsOneWidget);
   });
 
-  testWidgets('keeps the existing empty home while home data is pending',
+  testWidgets('does not expose the empty home while home data is pending',
       (tester) async {
     final pending = Completer<HomeData?>();
 
@@ -200,7 +200,7 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.byType(EmptyHome), findsOneWidget);
+    expect(find.byType(EmptyHome), findsNothing);
     pending.complete(null);
     await tester.pumpAndSettle();
   });

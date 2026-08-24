@@ -1,11 +1,24 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:walk/ui/page/home/home_screen.dart';
 
 void main() {
-  testWidgets('shows the simple home shell while startup is pending', (
+  test('web startup shell is mobile-sized and business-neutral', () {
+    final index = File('web/index.html').readAsStringSync();
+
+    expect(index, contains('name="viewport"'));
+    expect(index, contains('width=device-width'));
+    expect(index, contains('aria-label="Walk 正在启动"'));
+    expect(index, isNot(contains('class="home-shell__button"')));
+    expect(index, isNot(contains('class="home-shell__menu"')));
+    expect(index, isNot(contains('还没有行程')));
+  });
+
+  testWidgets(
+      'does not expose an empty business state while startup is pending', (
     tester,
   ) async {
     final startup = Completer<void>();
@@ -18,31 +31,10 @@ void main() {
       ),
     );
 
-    expect(find.text('WALK'), findsOneWidget);
-    expect(find.text('徒步旅行助手'), findsOneWidget);
-    expect(find.text('找路线'), findsOneWidget);
-    expect(find.byType(CupertinoActivityIndicator), findsNothing);
-  });
-
-  testWidgets('shows preparation feedback and ignores repeated route taps', (
-    tester,
-  ) async {
-    final startupCompleter = Completer<void>();
-    final startup = ValueNotifier<Future<void>>(startupCompleter.future);
-
-    await tester.pumpWidget(
-      CupertinoApp(
-        home: HomeScreen(startup: startup),
-      ),
-    );
-
-    await tester.tap(find.text('找路线'));
-    await tester.pump();
-    await tester.tap(find.text('准备中…'));
-    await tester.pump();
-
-    expect(find.text('准备中…'), findsOneWidget);
+    expect(find.text('WALK'), findsNothing);
     expect(find.text('找路线'), findsNothing);
+    expect(find.text('还没有行程'), findsNothing);
+    expect(find.byType(CupertinoActivityIndicator), findsNothing);
   });
 
   testWidgets('reveals Flutter only after the home state is resolved', (
@@ -96,7 +88,8 @@ void main() {
     expect(find.text('当前路线加载失败'), findsOneWidget);
   });
 
-  testWidgets('keeps the simple home shell while home data loads', (
+  testWidgets('does not expose the empty home while selected route data loads',
+      (
     tester,
   ) async {
     final startup = Completer<void>();
@@ -115,8 +108,9 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('WALK'), findsOneWidget);
-    expect(find.text('找路线'), findsOneWidget);
+    expect(find.text('WALK'), findsNothing);
+    expect(find.text('找路线'), findsNothing);
+    expect(find.text('还没有行程'), findsNothing);
     expect(find.byType(CupertinoActivityIndicator), findsNothing);
   });
 
@@ -130,6 +124,7 @@ void main() {
       CupertinoApp(
         home: HomeScreen(
           startup: startup,
+          dataLoader: ({routeHint}) async => null,
           retryStartup: () {
             retries += 1;
             startup.value = secondStartup.future;
@@ -147,6 +142,13 @@ void main() {
     await tester.pump();
 
     expect(retries, 1);
+    expect(find.text('WALK'), findsNothing);
+
+    secondStartup.complete();
+    await tester.pump();
+    await tester.pump();
+    await tester.pump();
+
     expect(find.text('WALK'), findsOneWidget);
   });
 

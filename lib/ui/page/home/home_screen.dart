@@ -64,6 +64,8 @@ class _HomeScreenState extends State<HomeScreen>
   bool _retryingStartup = false;
   bool _waitingForRoutePicker = false;
   bool _homeReadyReported = false;
+  bool _initialHomeResolved = false;
+  bool _selectionListenerAttached = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -71,7 +73,6 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _selectionService.selectedRouteId.addListener(_onSelectedRouteChanged);
     widget.startup?.addListener(_onStartupChanged);
     _watchStartup();
   }
@@ -84,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen>
       _homeFuture = null;
       _retryingStartup = true;
       _waitingForRoutePicker = false;
+      _initialHomeResolved = false;
     });
     _watchStartup();
   }
@@ -92,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen>
     final startup = widget.startup?.value;
     if (startup == null) {
       _startupComplete = true;
-      _homeFuture = _loadHomeData();
+      _homeFuture = _loadInitialHomeData();
       return;
     }
     startup.then((_) {
@@ -100,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen>
       setState(() {
         _startupComplete = true;
         _retryingStartup = false;
-        _homeFuture = _loadHomeData();
+        _homeFuture = _loadInitialHomeData();
       });
     }, onError: (error) {
       if (!mounted || startup != widget.startup?.value) return;
@@ -115,14 +117,16 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void dispose() {
-    _selectionService.selectedRouteId.removeListener(_onSelectedRouteChanged);
+    if (_selectionListenerAttached) {
+      _selectionService.selectedRouteId.removeListener(_onSelectedRouteChanged);
+    }
     widget.startup?.removeListener(_onStartupChanged);
     _weatherManager.dispose();
     super.dispose();
   }
 
   void _onSelectedRouteChanged() {
-    if (!mounted || !_startupComplete) return;
+    if (!mounted || !_startupComplete || !_initialHomeResolved) return;
     setState(() {
       _homeFuture = _loadHomeData(routeHint: _selectedRouteHint);
     });
@@ -133,6 +137,18 @@ class _HomeScreenState extends State<HomeScreen>
     var days = DateTime.saturday - now.weekday;
     if (days < 0) days += 7;
     return DateTime(now.year, now.month, now.day).add(Duration(days: days));
+  }
+
+  Future<HomeData?> _loadInitialHomeData() async {
+    try {
+      return await _loadHomeData();
+    } finally {
+      _initialHomeResolved = true;
+      if (mounted && !_selectionListenerAttached) {
+        _selectionService.selectedRouteId.addListener(_onSelectedRouteChanged);
+        _selectionListenerAttached = true;
+      }
+    }
   }
 
   Future<HomeData?> _loadHomeData({RouteModel? routeHint}) async {
@@ -284,11 +300,9 @@ class _HomeScreenState extends State<HomeScreen>
               onChange: _openRoutePicker,
             );
           }
-          if (_homeFuture == null) {
-            return _emptyHome();
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return _emptyHome();
+          if (_homeFuture == null ||
+              snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox.expand();
           }
           if (snapshot.hasError) {
             _reportHomeReady();
