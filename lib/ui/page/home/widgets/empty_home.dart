@@ -10,8 +10,14 @@ import '../../../../theme/tokens/motion.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 
 class EmptyHome extends StatelessWidget {
-  final VoidCallback onFindRoute;
-  const EmptyHome({super.key, required this.onFindRoute});
+  final VoidCallback? onFindRoute;
+  final String ctaLabel;
+
+  const EmptyHome({
+    super.key,
+    required this.onFindRoute,
+    this.ctaLabel = '找路线',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +71,7 @@ class EmptyHome extends StatelessWidget {
                   const SizedBox(height: 48),
                   // CTA 毛玻璃按钮
                   _GlassCtaButton(
-                    label: '找路线',
+                    label: ctaLabel,
                     onTap: onFindRoute,
                   ),
                   const SizedBox(height: 16),
@@ -168,7 +174,7 @@ class _MountainPainter extends CustomPainter {
 /// 入口：管理 hover / pressed 状态，传递背景色给子组件
 class _GlassCtaButton extends StatefulWidget {
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _GlassCtaButton({required this.label, required this.onTap});
 
@@ -188,12 +194,13 @@ class _GlassCtaButtonState extends State<_GlassCtaButton> {
   }
 
   void _handleTap() {
+    if (widget.onTap == null) return;
     final now = DateTime.now();
     if (_lastTap != null && now.difference(_lastTap!).inMilliseconds < 300) {
       return;
     }
     _lastTap = now;
-    widget.onTap();
+    widget.onTap!();
   }
 
   @override
@@ -201,9 +208,11 @@ class _GlassCtaButtonState extends State<_GlassCtaButton> {
     return _PressableShell(
       hovered: _hovered,
       pressed: _pressed,
-      onHoverChange: (v) => setState(() => _hovered = v),
-      onPressChange: (v) => setState(() => _pressed = v),
-      onTap: _handleTap,
+      onHoverChange:
+          widget.onTap == null ? (_) {} : (v) => setState(() => _hovered = v),
+      onPressChange:
+          widget.onTap == null ? (_) {} : (v) => setState(() => _pressed = v),
+      onTap: widget.onTap == null ? null : _handleTap,
       child: _FrostedPill(
         bgColor: _bgColor,
         child: Text(
@@ -225,7 +234,7 @@ class _PressableShell extends StatelessWidget {
   final bool pressed;
   final ValueChanged<bool> onHoverChange;
   final ValueChanged<bool> onPressChange;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Widget child;
 
   const _PressableShell({
@@ -243,12 +252,14 @@ class _PressableShell extends StatelessWidget {
       onEnter: (_) => onHoverChange(true),
       onExit: (_) => onHoverChange(false),
       child: GestureDetector(
-        onTapDown: (_) => onPressChange(true),
-        onTapUp: (_) {
-          onPressChange(false);
-          onTap();
-        },
-        onTapCancel: () => onPressChange(false),
+        onTapDown: onTap == null ? null : (_) => onPressChange(true),
+        onTapUp: onTap == null
+            ? null
+            : (_) {
+                onPressChange(false);
+                onTap!();
+              },
+        onTapCancel: onTap == null ? null : () => onPressChange(false),
         child: AnimatedScale(
           scale: pressed ? 0.97 : 1.0,
           duration: pressed ? AppMotion.press : AppMotion.feedback,

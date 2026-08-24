@@ -20,83 +20,125 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A hiking app for planning and tracking your hiking trips.">
 
-  <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Walk - 徒步旅行助手">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
   <title>Walk - 徒步旅行助手</title>
   <link rel="manifest" href="manifest.json">
-  
-  <!-- MapLibre GL JS for 3D maps -->
-  <script src='https://unpkg.com/maplibre-gl@^4.3/dist/maplibre-gl.js'></script>
-  <link href='https://unpkg.com/maplibre-gl@^4.3/dist/maplibre-gl.css' rel='stylesheet'/>
-  
+
   <style>
-    /* 修复MapLibre GL在Web上的高度问题 */
-    .maplibre-map {
-      height: 100% !important;
-      width: 100% !important;
-    }
-    
-    /* 加载指示器样式 */
-    .loading-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    html, body {
+      width: 100%;
       height: 100%;
-      background-color: #f5f5f5;
+      margin: 0;
+      overflow: hidden;
+      background: #07111f;
     }
-    
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #e3e3e3;
-      border-top: 4px solid #2196F3;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+
+    .home-shell {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: #f6f7f5;
+      background:
+        linear-gradient(180deg, rgba(5, 13, 24, 0.2), rgba(7, 17, 31, 0.95)),
+        radial-gradient(circle at 75% 20%, rgba(42, 78, 101, 0.22), transparent 48%),
+        #07111f;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      text-align: center;
     }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+
+    .home-shell::before,
+    .home-shell::after {
+      content: "";
+      position: absolute;
+      right: -8%;
+      bottom: 0;
+      left: -8%;
+      height: 27%;
+      background: rgba(55, 74, 94, 0.26);
+      clip-path: polygon(0 78%, 17% 48%, 29% 62%, 47% 16%, 68% 58%, 84% 36%, 100% 70%, 100% 100%, 0 100%);
+    }
+
+    .home-shell::after {
+      height: 20%;
+      background: rgba(38, 55, 76, 0.42);
+      clip-path: polygon(0 100%, 19% 44%, 35% 68%, 58% 18%, 74% 58%, 100% 38%, 100% 100%);
+    }
+
+    .home-shell__menu {
+      position: absolute;
+      top: max(28px, env(safe-area-inset-top));
+      right: 28px;
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .home-shell__content {
+      transform: translateY(-8px);
+    }
+
+    .home-shell__title {
+      margin: 0;
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+    }
+
+    .home-shell__subtitle {
+      margin: 6px 0 28px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 16px;
+      letter-spacing: 1px;
+    }
+
+    .home-shell__question {
+      margin: 0 0 26px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 20px;
+    }
+
+    .home-shell__button {
+      display: inline-block;
+      min-width: 104px;
+      padding: 11px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+      font-size: 18px;
+    }
+
+    .home-shell__hint {
+      margin: 16px 0 0;
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <!-- 应用加载指示器 -->
-  <div id="loading" class="loading-container">
-    <div>
-      <div class="loading-spinner"></div>
-      <p style="margin-top: 16px; color: #666; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        正在加载徒步应用...
-      </p>
-    </div>
+  <div id="loading" class="home-shell" aria-label="Walk 首页">
+    <div class="home-shell__menu">≡</div>
+    <main class="home-shell__content">
+      <h1 class="home-shell__title">WALK</h1>
+      <p class="home-shell__subtitle">徒步旅行助手</p>
+      <p class="home-shell__question">这周去哪徒步？</p>
+      <span class="home-shell__button">找路线</span>
+      <p class="home-shell__hint">还没有行程</p>
+    </main>
   </div>
-  
+
   <script>
-    // 隐藏加载指示器
     window.addEventListener('flutter-first-frame', function () {
       const loading = document.querySelector('#loading');
-      if (loading) {
-        loading.remove();
-      }
-    });
-    
-    // 确保MapLibre GL正确加载
-    window.addEventListener('DOMContentLoaded', function() {
-      if (typeof maplibregl !== 'undefined') {
-        console.log('MapLibre GL 已成功加载，版本:', maplibregl.version);
-      } else {
-        console.error('MapLibre GL 加载失败');
-      }
+      if (loading) loading.remove();
     });
   </script>
-  
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

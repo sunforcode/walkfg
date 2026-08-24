@@ -8,7 +8,7 @@ import '../../../../theme/tokens/colors.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 
 class ErrorHome extends StatelessWidget {
-  final VoidCallback onRetry;
+  final VoidCallback? onRetry;
   final VoidCallback onChange;
   const ErrorHome({super.key, required this.onRetry, required this.onChange});
 
@@ -70,7 +70,7 @@ class ErrorHome extends StatelessWidget {
 /// 毛玻璃按钮 — 复用 P1 CTA 视觉语言
 class _GlassButton extends StatelessWidget {
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool accent;
 
   const _GlassButton({
@@ -101,8 +101,10 @@ class _GlassButton extends StatelessWidget {
             ),
             child: Text(
               label,
-              style: const TextStyle(
-                color: Color(0xFFFFFFFF),
+              style: TextStyle(
+                color: onTap == null
+                    ? AppColors.textWeak
+                    : const Color(0xFFFFFFFF),
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../model/map/marker_point_model.dart';
 import '../../../model/map/track_point_model.dart';
@@ -13,7 +14,6 @@ import '../common/immersive_components.dart';
 import '../common/immersive_page_scaffold.dart';
 import 'widgets/empty_home.dart';
 import 'widgets/error_home.dart';
-import 'widgets/loading_home.dart';
 import 'widgets/route_home.dart';
 
 typedef HomeDataLoader = Future<HomeData?> Function({RouteModel? routeHint});
@@ -29,7 +29,19 @@ class HomeScreen extends StatefulWidget {
   /// 可替换的数据加载入口；生产环境默认沿用现有加载流程。
   final HomeDataLoader? dataLoader;
 
-  const HomeScreen({super.key, this.onOpenDrawer, this.dataLoader});
+  /// 基础设施初始化状态；完成前首页保持现有空态壳层。
+  final ValueListenable<Future<void>>? startup;
+
+  /// 重新执行基础设施初始化。
+  final Future<void> Function()? retryStartup;
+
+  const HomeScreen({
+    super.key,
+    this.onOpenDrawer,
+    this.dataLoader,
+    this.startup,
+    this.retryStartup,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -43,6 +55,10 @@ class _HomeScreenState extends State<HomeScreen>
 
   Future<HomeData?>? _homeFuture;
   RouteModel? _selectedRouteHint;
+  Object? _startupError;
+  bool _startupComplete = false;
+  bool _retryingStartup = false;
+  bool _waitingForRoutePicker = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -51,18 +67,57 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
     _selectionService.selectedRouteId.addListener(_onSelectedRouteChanged);
-    _homeFuture = _loadHomeData();
+    widget.startup?.addListener(_onStartupChanged);
+    _watchStartup();
+  }
+
+  void _onStartupChanged() {
+    if (!mounted) return;
+    setState(() {
+      _startupComplete = false;
+      _startupError = null;
+      _homeFuture = null;
+      _retryingStartup = true;
+      _waitingForRoutePicker = false;
+    });
+    _watchStartup();
+  }
+
+  void _watchStartup() {
+    final startup = widget.startup?.value;
+    if (startup == null) {
+      _startupComplete = true;
+      _homeFuture = _loadHomeData();
+      return;
+    }
+    startup.then((_) {
+      if (!mounted || startup != widget.startup?.value) return;
+      setState(() {
+        _startupComplete = true;
+        _retryingStartup = false;
+        _homeFuture = _loadHomeData();
+      });
+    }, onError: (error) {
+      if (!mounted || startup != widget.startup?.value) return;
+      setState(() {
+        _startupComplete = false;
+        _startupError = error;
+        _retryingStartup = false;
+        _homeFuture = null;
+      });
+    });
   }
 
   @override
   void dispose() {
     _selectionService.selectedRouteId.removeListener(_onSelectedRouteChanged);
+    widget.startup?.removeListener(_onStartupChanged);
     _weatherManager.dispose();
     super.dispose();
   }
 
   void _onSelectedRouteChanged() {
-    if (!mounted) return;
+    if (!mounted || !_startupComplete) return;
     setState(() {
       _homeFuture = _loadHomeData(routeHint: _selectedRouteHint);
     });
@@ -159,9 +214,47 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<void> _openRoutePicker() async {
-    final selected = await AppNavigator.pushRouteDiscovery<RouteModel>(context);
-    if (!mounted || selected == null) return;
-    _reload(routeHint: selected);
+    if (_waitingForRoutePicker) return;
+    setState(() {
+      _waitingForRoutePicker = true;
+    });
+
+    try {
+      final startup = widget.startup?.value;
+      if (!_startupComplete && startup != null) {
+        await startup;
+        if (!mounted) return;
+      }
+      final selected =
+          await AppNavigator.pushRouteDiscovery<RouteModel>(context);
+      if (!mounted || selected == null) return;
+      _reload(routeHint: selected);
+    } catch (_) {
+      return;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _waitingForRoutePicker = false;
+        });
+      }
+    }
+  }
+
+  void _retryStartup() {
+    if (_retryingStartup) return;
+    final retryStartup = widget.retryStartup;
+    if (retryStartup == null) return;
+    setState(() {
+      _retryingStartup = true;
+    });
+    retryStartup();
+  }
+
+  Widget _emptyHome() {
+    return EmptyHome(
+      onFindRoute: _waitingForRoutePicker ? null : _openRoutePicker,
+      ctaLabel: _waitingForRoutePicker ? '准备中…' : '找路线',
+    );
   }
 
   @override
@@ -171,15 +264,24 @@ class _HomeScreenState extends State<HomeScreen>
       body: FutureBuilder<HomeData?>(
         future: _homeFuture,
         builder: (context, snapshot) {
+          if (_startupError != null) {
+            return ErrorHome(
+              onRetry: _retryingStartup ? null : _retryStartup,
+              onChange: _openRoutePicker,
+            );
+          }
+          if (_homeFuture == null) {
+            return _emptyHome();
+          }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingHome();
+            return _emptyHome();
           }
           if (snapshot.hasError) {
             return ErrorHome(onRetry: _reload, onChange: _openRoutePicker);
           }
           final data = snapshot.data;
           if (data == null) {
-            return EmptyHome(onFindRoute: _openRoutePicker);
+            return _emptyHome();
           }
           return RouteHome(data: data, onChangeRoute: _openRoutePicker);
         },

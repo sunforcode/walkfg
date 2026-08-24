@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 import '../ui/page/drawer/walk_drawer.dart';
 import '../ui/page/home/home_screen.dart';
@@ -17,10 +18,18 @@ class MainLayout extends StatefulWidget {
   /// Preserved for callers that still pass an initial tab index.
   final int initialIndex;
 
+  /// 后台基础设施初始化状态。
+  final ValueListenable<Future<void>>? startup;
+
+  /// 重新执行后台基础设施初始化。
+  final Future<void> Function()? retryStartup;
+
   /// Constructor.
   const MainLayout({
     super.key,
     this.initialIndex = 0,
+    this.startup,
+    this.retryStartup,
   });
 
   @override
@@ -48,6 +57,8 @@ class _MainLayoutState extends State<MainLayout>
         // ─── 首页内容 ───
         HomeScreen(
           onOpenDrawer: openDrawer,
+          startup: widget.startup,
+          retryStartup: widget.retryStartup,
         ),
 
         // ─── 遮罩层 ───

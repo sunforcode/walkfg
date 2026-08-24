@@ -10,7 +10,7 @@ import 'package:walk/theme/tokens/colors.dart';
 import 'package:walk/ui/page/common/immersive_components.dart';
 import 'package:walk/ui/page/common/immersive_page_scaffold.dart';
 import 'package:walk/ui/page/home/home_screen.dart';
-import 'package:walk/ui/page/home/widgets/loading_home.dart';
+import 'package:walk/ui/page/home/widgets/empty_home.dart';
 import 'package:walk/ui/page/home/widgets/route_home.dart';
 
 void main() {
@@ -191,7 +191,7 @@ void main() {
     expect(find.text('推荐路线'), findsOneWidget);
   });
 
-  testWidgets('shows the existing loading state while home data is pending',
+  testWidgets('keeps the existing empty home while home data is pending',
       (tester) async {
     final pending = Completer<HomeData?>();
 
@@ -200,7 +200,7 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.byType(LoadingHome), findsOneWidget);
+    expect(find.byType(EmptyHome), findsOneWidget);
     pending.complete(null);
     await tester.pumpAndSettle();
   });
